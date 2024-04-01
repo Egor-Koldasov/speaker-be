@@ -1,0 +1,83 @@
+openapi: 3.1.0
+info:
+  title: Speaker API
+  version: 0.0.1
+servers:
+  - url: http://localhost:9000
+components:
+  schemas:
+    Word:
+      type: object
+      properties:
+        json:
+          type: string
+        originalWord:
+          type: string
+        neutralForm:
+          type: string
+        pronounciation:
+          type: string
+        translationEnglish:
+          type: string
+        synonyms:
+          type: array
+          items:
+            type: string
+        definitionOriginal:
+          type: string
+        definitionEnglish:
+          type: string
+        origin:
+          type: string
+        examples:
+          type: array
+          items:
+            type: object
+            properties:
+              original:
+                type: string
+              english:
+                type: string
+  responses:
+    ServerError:
+      description: Server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Internal server error
+paths:
+  /word:
+    get:
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          required: false
+          description: Number of words to return, default is 100
+      responses:
+        '200':
+          description: A list of words
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Word'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Word'
+      responses:
+        '201':
+          description: Word created
+        '500':
+          $ref: '#/components/responses/ServerError'

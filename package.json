@@ -1,0 +1,24 @@
+{
+  "name": "speaker-be",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "watch-build": "tsc -w",
+    "start": "node dist/src/index.js",
+    "watch-start": "nodemon --delay 2 -w dist/ -x 'npm run start'",
+    "dev": "concurrently -k -p '[{name}]' -n 'typescript,api' -c 'yellow.bold,cyan.bold' npm:watch-build npm:watch-start",
+    "lint": "tslint --format prose --project .",
+    "test": "jest"
+  },
+  "dependencies": {
+    "fastify": "^4.26.2"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.1.0",
+    "openapi-typescript": "^7.0.0-next.8",
+    "typescript": "^5.4.3"
+  }
+}
