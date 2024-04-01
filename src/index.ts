@@ -8,8 +8,9 @@ import { components, operations } from "./openapi";
 type OperationId = keyof operations;
 
 const api = new OpenAPIBackend({
-  definition: "./openapi.ts",
+  definition: "./openapi.yml",
 });
+api.init();
 
 const app = fastify({ logger: true });
 
@@ -34,24 +35,24 @@ const registerHandler = (operationId: OperationId, handler: Handler) => {
   api.registerHandler(operationId, handler);
 };
 
-type WordRow = {
-  num: number;
-  json: string;
-};
-
 type Word = components["schemas"]["Word"];
 
+type WordRow = {
+  num: number;
+  json: Word;
+};
+
 registerHandler("getWords", async (context, req, res: FastifyReply) => {
-  const wordRows: WordRow[] = await db.select().from("words");
+  const wordRows: WordRow[] = await db.select().from("word");
   const words: Word[] = [];
   for (const row of wordRows) {
     try {
-      words.push(JSON.parse(row.json));
+      words.push(row.json);
     } catch (e) {
       console.error(e);
     }
   }
-  res.status(200);
+  res.status(200).send(words);
 });
 
 app.listen({ port: 9000 }, () =>
