@@ -1,5 +1,5 @@
 import "dotenv/config";
-import fastify, { FastifyReply } from "fastify";
+import fastify, { FastifyReply, FastifyRequest } from "fastify";
 import type { Handler } from "openapi-backend";
 import OpenAPIBackend from "openapi-backend";
 import db from "./db";
@@ -55,11 +55,14 @@ registerHandler("getWords", async (context, req, res: FastifyReply) => {
   res.status(200).send(words);
 });
 
-registerHandler("createWord", async (context, req, res: FastifyReply) => {
-  const word = req.requestBody as Word;
-  const [num] = await db("word").insert({ json: word }).returning("num");
-  res.status(201).send({ num });
-});
+registerHandler(
+  "createWord",
+  async (context, req: FastifyRequest, res: FastifyReply) => {
+    const word = req.body as Word;
+    const [num] = await db("word").insert({ json: word }).returning("num");
+    res.status(201).send({ num });
+  }
+);
 
 app.listen({ port: 9000 }, () =>
   console.info("api listening at http://localhost:9000")
