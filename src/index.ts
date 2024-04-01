@@ -1,9 +1,9 @@
 import "dotenv/config";
 import fastify, { FastifyReply } from "fastify";
-import { components, operations, paths } from "./openapi";
-import type { Handler, Request } from "openapi-backend";
+import type { Handler } from "openapi-backend";
 import OpenAPIBackend from "openapi-backend";
 import db from "./db";
+import { components, operations } from "./openapi";
 
 type OperationId = keyof operations;
 
