@@ -55,6 +55,12 @@ registerHandler("getWords", async (context, req, res: FastifyReply) => {
   res.status(200).send(words);
 });
 
+registerHandler("createWord", async (context, req, res: FastifyReply) => {
+  const word = req.requestBody as Word;
+  const [num] = await db("word").insert({ json: word }).returning("num");
+  res.status(201).send({ num });
+});
+
 app.listen({ port: 9000 }, () =>
   console.info("api listening at http://localhost:9000")
 );

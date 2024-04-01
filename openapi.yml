@@ -3,13 +3,13 @@ info:
   title: Speaker API
   version: 0.0.1
 servers:
-  - url: http://localhost:9000
+  - url: https://speaker-be.egor-koldasov.dev
+    description: Production server
 components:
   schemas:
     Word:
       type: object
       required:
-        - json
         - originalWord
         - neutralForm
         - pronounciation
@@ -20,8 +20,6 @@ components:
         - origin
         - examples
       properties:
-        json:
-          type: string
         originalWord:
           type: string
         neutralForm:
