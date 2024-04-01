@@ -10,12 +10,18 @@
     "watch-start": "nodemon --delay 2 -w dist/ -x 'npm run start'",
     "dev": "concurrently -k -p '[{name}]' -n 'typescript,api' -c 'yellow.bold,cyan.bold' npm:watch-build npm:watch-start",
     "lint": "tslint --format prose --project .",
-    "test": "jest"
+    "test": "jest",
+    "openapi:generate": "npx openapi-typescript ./openapi.yml -o ./src/openapi.ts"
   },
   "dependencies": {
-    "fastify": "^4.26.2"
+    "dotenv": "^16.4.5",
+    "fastify": "^4.26.2",
+    "knex": "^3.1.0",
+    "openapi-backend": "^5.10.6",
+    "pg": "^8.11.4"
   },
   "devDependencies": {
+    "@types/node": "^20.12.2",
     "concurrently": "^8.2.2",
     "nodemon": "^3.1.0",
     "openapi-typescript": "^7.0.0-next.8",

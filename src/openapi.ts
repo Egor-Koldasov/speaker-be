@@ -3,106 +3,109 @@
  * Do not make direct changes to the file.
  */
 
-// export interface paths {
-//     "/word": {
-//         parameters: {
-//             query?: never;
-//             header?: never;
-//             path?: never;
-//             cookie?: never;
-//         };
-//         get: {
-//             parameters: {
-//                 query?: {
-//                     /** @description Number of words to return, default is 100 */
-//                     limit?: number;
-//                 };
-//                 header?: never;
-//                 path?: never;
-//                 cookie?: never;
-//             };
-//             requestBody?: never;
-//             responses: {
-//                 /** @description A list of words */
-//                 200: {
-//                     headers: {
-//                         [name: string]: unknown;
-//                     };
-//                     content: {
-//                         "application/json": components["schemas"]["Word"][];
-//                     };
-//                 };
-//                 500: components["responses"]["ServerError"];
-//             };
-//         };
-//         put?: never;
-//         post: {
-//             parameters: {
-//                 query?: never;
-//                 header?: never;
-//                 path?: never;
-//                 cookie?: never;
-//             };
-//             requestBody?: {
-//                 content: {
-//                     "application/json": components["schemas"]["Word"];
-//                 };
-//             };
-//             responses: {
-//                 /** @description Word created */
-//                 201: {
-//                     headers: {
-//                         [name: string]: unknown;
-//                     };
-//                     content?: never;
-//                 };
-//                 500: components["responses"]["ServerError"];
-//             };
-//         };
-//         delete?: never;
-//         options?: never;
-//         head?: never;
-//         patch?: never;
-//         trace?: never;
-//     };
-// }
-// export type webhooks = Record<string, never>;
-// export interface components {
-//     schemas: {
-//         Word: {
-//             json?: string;
-//             originalWord?: string;
-//             neutralForm?: string;
-//             pronounciation?: string;
-//             translationEnglish?: string;
-//             synonyms?: string[];
-//             definitionOriginal?: string;
-//             definitionEnglish?: string;
-//             origin?: string;
-//             examples?: {
-//                 original?: string;
-//                 english?: string;
-//             }[];
-//         };
-//     };
-//     responses: {
-//         /** @description Server error */
-//         ServerError: {
-//             headers: {
-//                 [name: string]: unknown;
-//             };
-//             content: {
-//                 "application/json": {
-//                     /** @example Internal server error */
-//                     message?: string;
-//                 };
-//             };
-//         };
-//     };
-//     parameters: never;
-//     requestBodies: never;
-//     headers: never;
-//     pathItems: never;
-// }
-// export type $defs = Record<string, never>;
-// export type operations = Record<string, never>;
+export interface paths {
+    "/word": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getWords"];
+        put?: never;
+        post: operations["createWord"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+}
+export type webhooks = Record<string, never>;
+export interface components {
+    schemas: {
+        Word: {
+            json: string;
+            originalWord: string;
+            neutralForm: string;
+            pronounciation: string;
+            translationEnglish: string;
+            synonyms: string[];
+            definitionOriginal: string;
+            definitionEnglish: string;
+            origin: string;
+            examples: {
+                original?: string;
+                english?: string;
+            }[];
+        };
+    };
+    responses: {
+        /** @description Server error */
+        ServerError: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": {
+                    /** @example Internal server error */
+                    message?: string;
+                };
+            };
+        };
+    };
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
+}
+export type $defs = Record<string, never>;
+export interface operations {
+    getWords: {
+        parameters: {
+            query?: {
+                /** @description Number of words to return, default is 100 */
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description A list of words */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Word"][];
+                };
+            };
+            500: components["responses"]["ServerError"];
+        };
+    };
+    createWord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["Word"];
+            };
+        };
+        responses: {
+            /** @description Word created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            500: components["responses"]["ServerError"];
+        };
+    };
+}

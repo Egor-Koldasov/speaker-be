@@ -8,6 +8,17 @@ components:
   schemas:
     Word:
       type: object
+      required:
+        - json
+        - originalWord
+        - neutralForm
+        - pronounciation
+        - translationEnglish
+        - synonyms
+        - definitionOriginal
+        - definitionEnglish
+        - origin
+        - examples
       properties:
         json:
           type: string
@@ -52,6 +63,7 @@ components:
 paths:
   /word:
     get:
+      operationId: getWords
       parameters:
         - name: limit
           in: query
@@ -71,6 +83,7 @@ paths:
         '500':
           $ref: '#/components/responses/ServerError'
     post:
+      operationId: createWord
       requestBody:
         content:
           application/json:
