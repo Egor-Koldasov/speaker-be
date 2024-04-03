@@ -4,6 +4,7 @@ import type { Handler } from "openapi-backend";
 import OpenAPIBackend from "openapi-backend";
 import db from "./db";
 import { components, operations } from "./openapi";
+import { stringify } from "csv-stringify/sync";
 
 type OperationId = keyof operations;
 
@@ -64,6 +65,34 @@ registerHandler(
   }
 );
 
-app.listen({ port: 9000 }, () =>
-  console.info("api listening at http://localhost:9000")
+registerHandler(
+  "exportCSV",
+  async (context, req: FastifyRequest, res: FastifyReply) => {
+    const wordRows: WordRow[] = await db.select().from("word");
+    const csv = stringify(
+      wordRows.map(({ json }) => [
+        json.originalWord,
+        json.neutralForm,
+        json.pronounciation,
+        json.translationEnglish,
+        json.synonyms.join(", "),
+        json.definitionOriginal,
+        json.definitionEnglish,
+        json.origin,
+        json.examples
+          .map((example) => `${example.original}\n${example.english}`)
+          .join("\n\n\n"),
+      ]),
+      {
+        header: false,
+      }
+    );
+    res.header("Content-Type", "text/csv").send(csv);
+  }
+);
+
+app.listen({ port: 9000 }, (error) =>
+  error
+    ? console.error(error)
+    : console.info("api listening at http://localhost:9000")
 );

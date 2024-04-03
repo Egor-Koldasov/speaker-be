@@ -137,3 +137,15 @@ paths:
           description: Word created
         '500':
           $ref: '#/components/responses/ServerError'
+  /csv:
+    get:
+      operationId: exportCSV
+      responses:
+        '200':
+          description: Export words as CSV
+          content:
+            text/csv:
+              schema:
+                type: string
+        '500':
+          $ref: '#/components/responses/ServerError'

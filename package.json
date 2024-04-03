@@ -14,6 +14,7 @@
     "openapi:generate": "npx openapi-typescript ./openapi.yml -o ./src/openapi.ts"
   },
   "dependencies": {
+    "csv-stringify": "^6.4.6",
     "dotenv": "^16.4.5",
     "fastify": "^4.26.2",
     "knex": "^3.1.0",
