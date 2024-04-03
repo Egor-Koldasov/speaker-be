@@ -1,0 +1,17 @@
+CREATE TABLE word(
+    num serial PRIMARY KEY,
+    json jsonb
+);
+
+ALTER TABLE word
+    ADD COLUMN IF NOT EXISTS created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE word
+    ADD COLUMN IF NOT EXISTS language_original TEXT;
+
+ALTER TABLE word
+    ADD COLUMN IF NOT EXISTS language_translated TEXT;
+
+ALTER TABLE word
+    ADD COLUMN IF NOT EXISTS csvExported BOOLEAN DEFAULT FALSE;
+

@@ -51,6 +51,12 @@ components:
         - origin
         - examples
       properties:
+        languageOriginal:
+          type: string
+          description: The original language of the word in a BCP 47 format
+        languageTranslated:
+          type: string
+          description: The language the word is translated to in a BCP 47 format
         originalWord:
           type: string
           description: The original word given, in the exact same grammatic form, capitalized
@@ -60,7 +66,7 @@ components:
         pronounciation:
           type: string
           description: A pronunciation of the original word given
-        translationEnglish:
+        translation:
           type: string
           description: An extensive translation to English, the more words the better
         synonyms:
@@ -71,7 +77,7 @@ components:
         definitionOriginal:
           description: An extensive definition in the original language
           type: string
-        definitionEnglish:
+        definitionTranslated:
           description: An extensive definition in English
           type: string
         origin:
@@ -90,7 +96,7 @@ components:
             properties:
               original:
                 type: string
-              english:
+              translation:
                 type: string
   responses:
     ServerError:
