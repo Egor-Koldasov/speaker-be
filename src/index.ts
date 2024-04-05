@@ -123,8 +123,10 @@ registerHandler(
 );
 
 app.get("/openapi", async (req, res) => {
-  const stream = createReadStream(path.resolve("../openapi-resolved.yml"));
-  res.type("text/html").send(stream);
+  const stream = createReadStream(
+    path.resolve(__dirname, "../../openapi-resolved.yml")
+  );
+  return res.type("application/yaml").send(stream);
 });
 
 app.listen({ port: 9000 }, (error) =>
