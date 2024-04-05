@@ -5,6 +5,8 @@ import OpenAPIBackend from "openapi-backend";
 import db from "./db";
 import { components, operations } from "./openapi";
 import { stringify } from "csv-stringify/sync";
+import { createReadStream } from "fs";
+import path = require("path");
 
 type OperationId = keyof operations;
 
@@ -68,28 +70,53 @@ registerHandler(
 registerHandler(
   "exportCSV",
   async (context, req: FastifyRequest, res: FastifyReply) => {
-    const wordRows: WordRow[] = await db.select().from("word");
+    const params = req.query as operations["exportCSV"]["parameters"]["query"];
+    const wordRows: WordRow[] = await db
+      .select()
+      .from("word")
+      .whereRaw(
+        `json::jsonb ->> 'languageOriginal' = $1 and json::jsonb ->> 'languageTranslated' = $2`,
+        [params.languageOriginal, params.languageTranslated]
+      )
+      .whereRaw(`not json::jsonb ? 'csvExportedAt'`);
     const csv = stringify(
       wordRows.map(({ json }) => [
         json.originalWord,
         json.neutralForm,
         json.pronounciation,
-        json.translationEnglish,
+        json.translation,
         json.synonyms.join(", "),
         json.definitionOriginal,
-        json.definitionEnglish,
+        json.definitionTranslated,
         json.origin,
         json.examples
-          .map((example) => `${example.original}\n${example.english}`)
+          .map((example) => `${example.original}\n${example.translation}`)
           .join("\n\n\n"),
       ]),
       {
         header: false,
       }
     );
-    res.header("Content-Type", "text/csv").send(csv);
+    const fileName = `words-${params.languageOriginal}-${
+      params.languageTranslated
+    }-${new Date().toISOString()}.csv`;
+    res.header("Content-Type", "text/csv");
+    res
+      .header(`Content-Disposition`, `attachment; filename=${fileName}`)
+      .send(csv);
+
+    const updatedWordIds = wordRows.map(({ num }) => num);
+    await db("word")
+      .update({ csvExportedAt: new Date() })
+      .whereIn("num", updatedWordIds);
+    console.log(`Exported ${updatedWordIds.length} words`);
   }
 );
+
+app.get("/openapi", async (req, res) => {
+  const stream = createReadStream(path.resolve("../openapi-resolved.yml"));
+  res.type("text/html").send(stream);
+});
 
 app.listen({ port: 9000 }, (error) =>
   error

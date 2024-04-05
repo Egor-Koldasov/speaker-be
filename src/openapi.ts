@@ -67,30 +67,97 @@ export interface components {
          *           "english": "Despite the difficulties, we become hopeful upon seeing people's solidarity."
          *         }
          *       ]
-         *     }
+         *     } languageOriginal:
+         *       type: string
+         *       description: The original language of the word in a BCP 47 format
+         *     languageTranslated:
+         *       type: string
+         *       description: The language the word is translated to in a BCP 47 format
+         *     originalWord:
+         *       type: string
+         *       description: The original word given, in the exact same grammatic form, capitalized
+         *     neutralForm:
+         *       type: string
+         *       description: The word in a neutral grammatic form
+         *     pronounciation:
+         *       type: string
+         *       description: A pronunciation of the original word given
+         *     translation:
+         *       type: string
+         *       description: An extensive translation to English, the more words the better
+         *     synonyms:
+         *       description: Common synonyms in the original language
+         *       type: array
+         *       items:
+         *         type: string
+         *     definitionOriginal:
+         *       description: An extensive definition in the original language
+         *       type: string
+         *     definitionTranslated:
+         *       description: An extensive definition in English
+         *       type: string
+         *     origin:
+         *       description: The root parts of the word and the origin in English. If the original form from Part 1 is different from the neutral grammatic form from Part 2, explain that difference including all the details.
+         *       type: string
+         *     examples:
+         *       description:
+         *         Three sentence examples of the usage of the original word in the same grammatic form followed by an English translation.
+         *         The sentence and the translation should be separated by one new line,
+         *         while the examples themselves should be separated by three new lines.
+         *         If there was a context from which that word was taken, include a phrase from that context in examples,
+         *         replacing the first example.
+         *       type: array
+         *       items:
+         *         type: object
+         *         properties:
+         *           original:
+         *             type: string
+         *           translation:
+         *             type: string
+         *     csvExportedAt:
+         *       type: string
+         *       format: date-time
+         *       description: The date and time when the word was exported to CSV
+         *       readOnly: true
          *      */
-        Word: {
-            /** @description The original word given, in the exact same grammatic form, capitalized */
+        Word: components["schemas"]["Word.schema"];
+        /**
+         * Word
+         * @description A detailed representation of a word, including its original and neutral forms, pronunciations, translations, definitions, origin, and usage examples.
+         */
+        "Word.schema": {
+            /** @description The original language of the word in a BCP 47 format. */
+            languageOriginal: string;
+            /** @description The language the word is translated to in a BCP 47 format. */
+            languageTranslated: string;
+            /** @description The original word given, in the exact same grammatic form, capitalized. */
             originalWord: string;
-            /** @description The word in a neutral grammatic form */
+            /** @description The word in a neutral grammatic form. */
             neutralForm: string;
-            /** @description A pronunciation of the original word given */
+            /** @description A pronunciation of the original word given. */
             pronounciation: string;
-            /** @description An extensive translation to English, the more words the better */
-            translationEnglish: string;
-            /** @description Common synonyms in the original language */
+            /** @description An extensive translation to English, the more words the better. */
+            translation: string;
+            /** @description Common synonyms in the original language. */
             synonyms: string[];
-            /** @description An extensive definition in the original language */
+            /** @description An extensive definition in the original language. */
             definitionOriginal: string;
-            /** @description An extensive definition in English */
-            definitionEnglish: string;
+            /** @description An extensive definition in English. */
+            definitionTranslated: string;
             /** @description The root parts of the word and the origin in English. If the original form from Part 1 is different from the neutral grammatic form from Part 2, explain that difference including all the details. */
             origin: string;
             /** @description Three sentence examples of the usage of the original word in the same grammatic form followed by an English translation. The sentence and the translation should be separated by one new line, while the examples themselves should be separated by three new lines. If there was a context from which that word was taken, include a phrase from that context in examples, replacing the first example. */
             examples: {
-                original?: string;
-                english?: string;
+                /** @description An example sentence in the original language using the word. */
+                original: string;
+                /** @description The English translation of the example sentence. */
+                translation: string;
             }[];
+            /**
+             * Format: date-time
+             * @description The date and time when the word was exported to CSV.
+             */
+            readonly csvExportedAt?: string;
         };
     };
     responses: {
@@ -132,7 +199,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Word"][];
+                    "application/json": components["schemas"]["Word.schema"][];
                 };
             };
             500: components["responses"]["ServerError"];
@@ -147,7 +214,7 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": components["schemas"]["Word"];
+                "application/json": components["schemas"]["Word.schema"];
             };
         };
         responses: {
@@ -163,7 +230,12 @@ export interface operations {
     };
     exportCSV: {
         parameters: {
-            query?: never;
+            query: {
+                /** @description The original language of the words in a BCP 47 format */
+                languageOriginal: string;
+                /** @description The language the words are translated to in a BCP 47 format */
+                languageTranslated: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
