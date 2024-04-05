@@ -7,11 +7,20 @@ import { components, operations } from "./openapi";
 import { stringify } from "csv-stringify/sync";
 import { createReadStream } from "fs";
 import path = require("path");
+import addFormats from "ajv-formats";
 
 type OperationId = keyof operations;
 
 const api = new OpenAPIBackend({
   definition: "./openapi.yml",
+  customizeAjv: (ajv) => {
+    addFormats(ajv, {
+      mode: "fast",
+      formats: ["email", "uri", "date-time", "uuid"],
+    });
+
+    return ajv;
+  },
 });
 api.init();
 
