@@ -5,7 +5,7 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type Message = MessageCreateWord;
+export type MessageUnion = MessageCreateWord | MessageParseText;
 
 export interface MessageCreateWord {
   name: "createWord";
@@ -77,5 +77,13 @@ export interface Word {
    * The date and time when the word was exported to CSV.
    */
   csvExportedAt?: string;
+  [k: string]: unknown;
+}
+export interface MessageParseText {
+  name: "parseText";
+  data: {
+    text: string;
+    [k: string]: unknown;
+  };
   [k: string]: unknown;
 }

@@ -5,18 +5,18 @@ import path from "path";
 
 const exportSchemas = async (ajv: Ajv) => {
   const types = await compileFromFile(
-    path.resolve(__dirname, "../schema/Message.schema.json"),
+    path.resolve(__dirname, "../schema/MessageUnion.schema.json"),
     {
       cwd: path.resolve(__dirname, "../schema"),
     }
   );
   console.log(types);
   await writeFile(
-    path.resolve(__dirname, "../../src/schema/Message.schema.ts"),
+    path.resolve(__dirname, "../../src/schema/MessageUnion.schema.ts"),
     types
   );
   await writeFile(
-    path.resolve(__dirname, "../../vue/src/schema/Message.schema.ts"),
+    path.resolve(__dirname, "../../vue/src/schema/MessageUnion.schema.ts"),
     types
   );
 };

@@ -3,6 +3,7 @@ import { reactive, watch } from 'vue'
 import { useSpeakerHealth, speakerUrl } from '../util/useSpeakerHealth'
 import { useToasts } from '../uiStore/useToasts'
 import type { ChatCompletion } from 'openai/resources/index.mjs'
+import type { MessageParseText } from '../schema/MessageUnion.schema'
 
 const { healthData, checkHealth } = useSpeakerHealth()
 const uisToasts = useToasts()
@@ -16,16 +17,28 @@ const parts = reactive({
 
 const handleSubmit = async () => {
   parts.loading = true
-  const res = await fetch(`${speakerUrl}/phrase`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
+  const message: MessageParseText = {
+    name: 'parseText',
+    data: {
+      text: form.phrase,
     },
-    body: JSON.stringify({ phrase: form.phrase }),
-  })
-  const data = (await res.json()) as ChatCompletion.Choice
-  const response = JSON.parse(data.message.content ?? 'null') as { parts: string[] }
-  parts.data = response.parts
+  }
+  try {
+    const res = await fetch(`${speakerUrl}/message`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(message),
+    })
+    const data = (await res.json()) as ChatCompletion.Choice
+    const response = JSON.parse(data.message.content ?? 'null') as { parts: string[] }
+    parts.data = response.parts
+  } catch (err) {
+    console.error(err)
+    return
+  }
+
   parts.loading = false
 }
 watch(healthData, (newVal) => {

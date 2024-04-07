@@ -12,6 +12,8 @@ import { openai, splitPhrase, test } from "./ai";
 import cors from "@fastify/cors";
 import Ajv from "ajv";
 import { readFile, readdir } from "fs/promises";
+import { MessageUnion } from "./schema/MessageUnion.schema";
+import { handleMesasge } from "./message";
 
 type OperationId = keyof operations;
 
@@ -169,14 +171,16 @@ app.post("/message", async (req, res) => {
       ajv.addSchema(schema, fileName);
     })
   );
-  const messageValidator = ajv.getSchema("Message.schema.json");
-  const data = await messageValidator(req.body);
-  console.log(data);
-  if (data === false) {
+  const messageValidator = ajv.getSchema("MessageUnion.schema.json");
+  const valid = await messageValidator(req.body);
+  console.log(valid);
+  if (!valid) {
     console.log(messageValidator.errors);
     return res.status(400).send(messageValidator.errors);
   }
-  return res.status(200).send(data);
+  const message = req.body as MessageUnion;
+  const result = await handleMesasge(message);
+  return res.status(200).send(result);
 });
 
 app.listen({ port: 9000 }, (error) =>
