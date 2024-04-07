@@ -8,7 +8,7 @@ servers:
 components:
   schemas:
     Word:
-      $ref: './json-schema/Word.schema.json'
+      $ref: './json-schema/schema/Word.schema.json'
   responses:
     ServerError:
       description: Server error

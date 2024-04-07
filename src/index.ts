@@ -8,6 +8,10 @@ import { stringify } from "csv-stringify/sync";
 import { createReadStream } from "fs";
 import path = require("path");
 import addFormats from "ajv-formats";
+import { openai, splitPhrase, test } from "./ai";
+import cors from "@fastify/cors";
+import Ajv from "ajv";
+import { readFile, readdir } from "fs/promises";
 
 type OperationId = keyof operations;
 
@@ -25,6 +29,11 @@ const api = new OpenAPIBackend({
 api.init();
 
 const app = fastify({ logger: true });
+
+app.register(cors, {
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+});
 
 app.route({
   method: ["GET", "POST", "PUT", "PATCH", "DELETE"],
@@ -127,6 +136,47 @@ app.get("/openapi", async (req, res) => {
     path.resolve(__dirname, "../../openapi-resolved.yml")
   );
   return res.type("application/yaml").send(stream);
+});
+
+app.get("/health", async (req, res) => {
+  openai;
+  const completion = await test();
+  return res.status(200).send({ status: "ok", message: completion.choices[0] });
+});
+
+app.post("/text", async (req, res) => {
+  const body = req.body as { text: string };
+  const completion = await splitPhrase(body.text);
+  return res.status(200).send(completion.choices[0]);
+});
+
+app.post("/message", async (req, res) => {
+  const ajv = new Ajv();
+  addFormats(ajv, {
+    mode: "fast",
+    formats: ["email", "uri", "date-time", "uuid"],
+  });
+  const fileNames = await readdir(
+    path.resolve(__dirname, "../json-schema/schema")
+  );
+  await Promise.all(
+    fileNames.map(async (fileName) => {
+      const schemaString = await readFile(
+        path.resolve(__dirname, `../json-schema/schema/${fileName}`),
+        "utf-8"
+      );
+      const schema = JSON.parse(schemaString);
+      ajv.addSchema(schema, fileName);
+    })
+  );
+  const messageValidator = ajv.getSchema("Message.schema.json");
+  const data = await messageValidator(req.body);
+  console.log(data);
+  if (data === false) {
+    console.log(messageValidator.errors);
+    return res.status(400).send(messageValidator.errors);
+  }
+  return res.status(200).send(data);
 });
 
 app.listen({ port: 9000 }, (error) =>

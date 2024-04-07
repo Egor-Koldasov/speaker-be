@@ -5,9 +5,12 @@
     "noImplicitAny": true,
     "noUnusedLocals": true,
     "baseUrl": ".",
-    "rootDir": ".",
+    "rootDir": "./src",
     "outDir": "dist",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "sourceMap": true
   },
   "include": ["./src/**/*.ts"],
   "exclude": ["node_modules"]

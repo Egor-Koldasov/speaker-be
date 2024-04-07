@@ -1,0 +1,16 @@
+{
+  "name": "speaker-json-schema",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Egor Koldasov",
+  "license": "MIT",
+  "scripts": {
+    "run-ts": "nodemon --delay 2 -w ./ -i ./dist -x 'npx tsc && node $1'",
+    "dev": "yarn run-ts -- ./dist/export-schemas.js"
+  },
+  "devDependencies": {
+    "json-schema-to-typescript": "^13.1.2",
+    "nodemon": "^3.1.0",
+    "typescript": "^5.4.4"
+  }
+}

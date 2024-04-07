@@ -1,0 +1,37 @@
+@import './colors';
+@import './font';
+@import '@picocss/pico/scss/pico';
+
+*::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+  border-radius: 2px;
+}
+
+/* Track */
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Handle */
+*::-webkit-scrollbar-thumb {
+  background: #bbc6ce;
+}
+
+input,
+button,
+select,
+textarea,
+form {
+  &,
+  &[type] {
+    margin: 0;
+  }
+}
+select,
+option {
+  cursor: pointer;
+}
+button {
+  border: none;
+}
