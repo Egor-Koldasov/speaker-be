@@ -1,9 +1,11 @@
 <script lang="ts" setup>
-import { reactive, watch } from 'vue'
+import { computed, reactive, watch } from 'vue'
 import { useSpeakerHealth, speakerUrl } from '../util/useSpeakerHealth'
 import { useToasts } from '../uiStore/useToasts'
 import type { ChatCompletion } from 'openai/resources/index.mjs'
 import type { MessageParseText } from '../schema/MessageUnion.schema'
+import Modal from '../components/Modal.vue'
+import DefinitionItem from '../components/DefinitionItem/DefinitionItem.vue'
 
 const { healthData, checkHealth } = useSpeakerHealth()
 const uisToasts = useToasts()
@@ -13,6 +15,9 @@ const form = reactive({
 const parts = reactive({
   data: [] as string[],
   loading: false,
+})
+const uiState = reactive({
+  selectedWordIndex: -1,
 })
 
 const handleSubmit = async () => {
@@ -36,7 +41,6 @@ const handleSubmit = async () => {
     parts.data = response.parts
   } catch (err) {
     console.error(err)
-    return
   }
 
   parts.loading = false
@@ -48,6 +52,10 @@ watch(healthData, (newVal) => {
     message: `Health status: ${messageContent}`,
   })
 })
+
+const selectedWord = computed(() => {
+  return parts.data[uiState.selectedWordIndex]
+})
 </script>
 
 <template>
@@ -57,9 +65,25 @@ watch(healthData, (newVal) => {
       :class="{ loading: healthData.loading, healthy: !!healthData.data }"
       @click="checkHealth"
     ></div>
+    <Modal
+      v-if="!!selectedWord"
+      @close="uiState.selectedWordIndex = -1"
+      :title="`Define ${selectedWord}`"
+    >
+      <DefinitionItem :word="selectedWord" />
+    </Modal>
     <form class="speaker-form" @submit.prevent="handleSubmit">
       <div class="parts">
-        <div v-for="part in parts.data" :key="part">{{ part }}</div>
+        <button
+          type="button"
+          v-for="(part, index) in parts.data"
+          :key="part"
+          class="part"
+          :class="{ selected: uiState.selectedWordIndex === index }"
+          @click="uiState.selectedWordIndex = index"
+        >
+          {{ part }}
+        </button>
       </div>
       <textarea type="text" placeholder="Enter a phrase" v-model="form.phrase" />
       <button type="submit" class="submit-btn" :disabled="parts.loading">Learn</button>
@@ -131,5 +155,21 @@ main {
 .parts {
   display: flex;
   gap: 1rem;
+
+  .part {
+    padding: 0 1rem;
+    border: 1px solid #89147f;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    background-color: transparent;
+
+    &:hover {
+      background-color: #89147f;
+    }
+
+    &.selected {
+      background-color: #148954;
+    }
+  }
 }
 </style>

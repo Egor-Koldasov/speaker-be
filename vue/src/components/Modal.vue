@@ -30,7 +30,7 @@ const props = defineProps<{
 @import '../styles/colors';
 
 .modal {
-  width: 300px;
+  min-width: 300px;
   /* border: 1px dotted $modalMoveNode; */
   border-radius: 8px;
   background-color: $mainBg;

@@ -146,12 +146,6 @@ app.get("/health", async (req, res) => {
   return res.status(200).send({ status: "ok", message: completion.choices[0] });
 });
 
-app.post("/text", async (req, res) => {
-  const body = req.body as { text: string };
-  const completion = await splitPhrase(body.text);
-  return res.status(200).send(completion.choices[0]);
-});
-
 app.post("/message", async (req, res) => {
   const ajv = new Ajv();
   addFormats(ajv, {

@@ -18,7 +18,8 @@
   height: 100vh;
   z-index: 2;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: center;
   flex-direction: column;
   gap: 8px;
   pointer-events: none;

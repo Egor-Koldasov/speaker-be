@@ -5,7 +5,7 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type MessageUnion = MessageCreateWord | MessageParseText;
+export type MessageUnion = MessageCreateWord | MessageParseText | MessageDefineWord;
 
 export interface MessageCreateWord {
   name: "createWord";
@@ -83,6 +83,14 @@ export interface MessageParseText {
   name: "parseText";
   data: {
     text: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+export interface MessageDefineWord {
+  name: "defineWord";
+  data: {
+    wordString: string;
     [k: string]: unknown;
   };
   [k: string]: unknown;

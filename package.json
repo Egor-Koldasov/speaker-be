@@ -8,7 +8,7 @@
     "watch-build": "tsc -w",
     "start": "node dist/index.js",
     "watch-start": "nodemon --delay 2 -w dist/ -x 'npm run start'",
-    "dev": "concurrently -k -p '[{name}]' -n 'typescript,api,json-schema' -c 'yellow.bold,cyan.bold' npm:watch-build npm:watch-start npm:json-schema-validate-watch",
+    "dev": "concurrently -k -p '[{name}]' -n 'typescript,api' -c 'yellow.bold,cyan.bold' npm:watch-build npm:watch-start",
     "lint": "tslint --format prose --project .",
     "test": "jest",
     "openapi:generate": "npx openapi-typescript ./openapi.yml -o ./src/openapi.ts",
@@ -25,7 +25,8 @@
     "knex": "^3.1.0",
     "openai": "^4.33.0",
     "openapi-backend": "^5.10.6",
-    "pg": "^8.11.4"
+    "pg": "^8.11.4",
+    "uuidv7": "^0.6.3"
   },
   "devDependencies": {
     "@types/node": "^20.12.2",

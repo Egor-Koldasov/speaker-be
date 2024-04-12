@@ -1,4 +1,4 @@
-import { splitPhrase } from "./ai";
+import { defineWord, splitPhrase } from "./ai";
 import db from "./db";
 import {
   MessageUnion,
@@ -18,7 +18,11 @@ const messageHandlers = {
   },
   parseText: async (message: MessageParseText) => {
     const text = message.data.text;
-    const completion = await splitPhrase(text);
+    const completion = await splitPhrase(text, false);
+    return completion.choices[0];
+  },
+  defineWord: async (message: MessageByName<"defineWord">) => {
+    const completion = await defineWord(message.data.wordString, false);
     return completion.choices[0];
   },
 } satisfies Record<MessageName, (message: any) => Promise<any>>;

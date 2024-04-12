@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "type": "object",
+  "title": "MessageDefineWord",
+  "required": ["name", "data"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "const": "defineWord"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "wordString": {
+          "type": "string"
+        }
+      },
+      "required": ["wordString"]
+    }
+  }
+}
