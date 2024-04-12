@@ -4,6 +4,8 @@ import openaiSchema from "../openapi-resolved.json";
 import db from "./db";
 import { uuidv7 } from "uuidv7";
 import WordJsonSchema from "../json-schema/schema/Word.schema.json";
+import MessageParseTextJsonSchema from "../json-schema/schema/MessageParseText.schema.json";
+import { MessageParseText } from "./schema/MessageUnion.schema";
 
 const CreateWord = openaiSchema.paths["/word"].post;
 
@@ -41,42 +43,41 @@ export const test = async () => {
   return completion;
 };
 
-const instructionSplit = (phrase: string) =>
-  `
-Split the text into grammatical parts. A part can be a single word or a famous phrase,
-it is something that can be defined or translated. Do not include symbols, unless they are the integral part of a phrase. Output the result as an array of strings and put
-that inside a JSON object with the key "parts".
-Here is the text to split:
+const instructionSplit = `
+Handle the operation following the JSON schema.
+Here's the description of the input that should be passed:
+\`\`\`json
+${JSON.stringify(MessageParseTextJsonSchema.properties.input, null, 2)}
 \`\`\`
-${phrase}
+Generate a response following the instructions and the structure of this JSON schema:
+\`\`\`json
+${JSON.stringify(MessageParseTextJsonSchema.properties.output, null, 2)}
 \`\`\`
 `;
 
-export const splitPhrase = async (phrase: string, force: boolean) => {
-  const operation_json = {
-    name: "splitPhrase",
-    parameters: {
-      phrase: phrase,
-    },
-  };
-  if (!force) {
-    const [operation] = await db
-      .select()
-      .from("history_ai")
-      .orderBy("created_at", "desc")
-      .limit(1)
-      .whereRaw(
-        `operation_json->>'name' = 'splitPhrase' AND operation_json#>>'{parameters,phrase}' = ?`,
-        [phrase]
-      );
-    if (operation) {
-      try {
-        return operation.response_json.completion as OpenAI.ChatCompletion;
-      } catch (error) {
-        console.error(error);
-      }
-    }
-  }
+export const splitPhrase = async (
+  data: MessageParseText["input"],
+  force: boolean
+) => {
+  const operation_json = data;
+  // if (!force) {
+  //   const [operation] = await db
+  //     .select()
+  //     .from("history_ai")
+  //     .orderBy("created_at", "desc")
+  //     .limit(1)
+  //     .whereRaw(
+  //       `operation_json->>'name' = 'splitPhrase' AND operation_json#>>'{parameters,phrase}' = ?`,
+  //       [phrase]
+  //     );
+  //   if (operation) {
+  //     try {
+  //       return operation.response_json.completion as OpenAI.ChatCompletion;
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   }
+  // }
 
   const completion = await openai.chat.completions.create({
     model: "gpt-4-1106-preview",
@@ -84,8 +85,12 @@ export const splitPhrase = async (phrase: string, force: boolean) => {
       {
         role: "system",
         content: JSON.stringify({
-          instructions: instructionSplit(phrase),
+          instructions: instructionSplit,
         }),
+      },
+      {
+        role: "user",
+        content: JSON.stringify(data satisfies MessageParseText["input"]),
       },
     ],
     n: 1,

@@ -15,7 +15,7 @@ const form = reactive({
   phrase: '',
 })
 const parts = reactive({
-  data: [] as string[],
+  data: null as null | NonNullable<MessageParseText['output']>,
   loading: false,
 })
 const uiState = reactive({
@@ -25,10 +25,12 @@ const uisSettings = useSettings()
 
 const handleSubmit = async () => {
   parts.loading = true
-  const message: MessageParseText = {
+  const message: MessageParseText['input'] = {
     name: 'parseText',
     data: {
       text: form.phrase,
+      originalLanguages: uisSettings.originalLanguages,
+      translationLanguage: uisSettings.translationLanguage ?? 'en',
     },
   }
   try {
@@ -40,8 +42,10 @@ const handleSubmit = async () => {
       body: JSON.stringify(message),
     })
     const data = (await res.json()) as ChatCompletion.Choice
-    const response = JSON.parse(data.message.content ?? 'null') as { parts: string[] }
-    parts.data = response.parts
+    const response = JSON.parse(data.message.content ?? 'null') as NonNullable<
+      MessageParseText['output']
+    >
+    parts.data = response
   } catch (err) {
     console.error(err)
   }
@@ -57,7 +61,7 @@ watch(healthData, (newVal) => {
 })
 
 const selectedWord = computed(() => {
-  return parts.data[uiState.selectedWordIndex]
+  return parts.data?.definitionParts[uiState.selectedWordIndex]
 })
 </script>
 
@@ -67,10 +71,15 @@ const selectedWord = computed(() => {
       <div class="language-bar">
         <LanguageSelector
           :language-bcp47-list="uisSettings.originalLanguages"
-          @add-language-bcp47="(code) => uisSettings.originalLanguages.push(code.toLowerCase())"
+          @add-language-bcp47="
+            (code) => uisSettings.originalLanguages.push(code.toLowerCase())
+          "
           @remove-language-bcp47="
             (code) =>
-              uisSettings.originalLanguages.splice(uisSettings.originalLanguages.indexOf(code), 1)
+              uisSettings.originalLanguages.splice(
+                uisSettings.originalLanguages.indexOf(code),
+                1,
+              )
           "
         />
       </div>
@@ -85,23 +94,32 @@ const selectedWord = computed(() => {
       @close="uiState.selectedWordIndex = -1"
       :title="`Define ${selectedWord}`"
     >
-      <DefinitionItem :word="selectedWord" />
+      <DefinitionItem :word="selectedWord.text" />
     </Modal>
     <form class="speaker-form" @submit.prevent="handleSubmit">
       <div class="parts">
         <button
           type="button"
-          v-for="(part, index) in parts.data"
-          :key="part"
+          v-for="(part, index) in parts.data?.definitionParts ?? []"
+          :key="part.text"
           class="part"
           :class="{ selected: uiState.selectedWordIndex === index }"
           @click="uiState.selectedWordIndex = index"
         >
-          {{ part }}
+          {{ part.text }}
         </button>
       </div>
-      <textarea type="text" placeholder="Enter a phrase" v-model="form.phrase" />
-      <button type="submit" class="submit-btn" :disabled="parts.loading">Learn</button>
+      <div v-if="parts.data?.translation">
+        {{ parts.data.translation.text }}
+      </div>
+      <textarea
+        type="text"
+        placeholder="Enter a phrase"
+        v-model="form.phrase"
+      />
+      <button type="submit" class="submit-btn" :disabled="parts.loading">
+        Learn
+      </button>
       <progress v-if="parts.loading" />
     </form>
   </main>

@@ -5,92 +5,62 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type MessageUnion = MessageCreateWord | MessageParseText | MessageDefineWord;
+export type MessageUnion = MessageParseText | MessageDefineWord;
 
-export interface MessageCreateWord {
-  name: "createWord";
-  data: {
-    word: Word;
+export interface MessageParseText {
+  input: {
+    name: "parseText";
+    data: {
+      text: string;
+      /**
+       * The list of BCP 47 language tags of the languages that are most commonly used by the user. Take this list as a priority when you try to detect the text language. Although it is not guaranteed to completely match the text languages
+       */
+      originalLanguages: string[];
+      /**
+       * The BCP 47 language tag of the language that the user wants to translate the text to.
+       */
+      translationLanguage: string;
+      [k: string]: unknown;
+    };
     [k: string]: unknown;
   };
-  [k: string]: unknown;
-}
-/**
- * A detailed representation of a word, including its original and neutral forms, pronunciations, translations, definitions, origin, and usage examples.
- */
-export interface Word {
   /**
-   * The original language of the word in a BCP 47 format.
+   * The result of parsing the text for futher translation.
    */
-  languageOriginal: string;
-  /**
-   * The language the word is translated to in a BCP 47 format.
-   */
-  languageTranslated: string;
-  /**
-   * The original word given, in the exact same grammatic form, capitalized.
-   */
-  originalWord: string;
-  /**
-   * The word in a neutral grammatic form.
-   */
-  neutralForm: string;
-  /**
-   * A pronunciation of the original word given.
-   */
-  pronounciation: string;
-  /**
-   * An extensive translation to English, the more words the better.
-   */
-  translation: string;
-  /**
-   * Common synonyms in the original language.
-   */
-  synonyms: string[];
-  /**
-   * An extensive definition in the original language.
-   */
-  definitionOriginal: string;
-  /**
-   * An extensive definition in English.
-   */
-  definitionTranslated: string;
-  /**
-   * The root parts of the word and the origin in English. If the original form from Part 1 is different from the neutral grammatic form from Part 2, explain that difference including all the details.
-   */
-  origin: string;
-  /**
-   * Three sentence examples of the usage of the original word in the same grammatic form followed by an English translation. The sentence and the translation should be separated by one new line, while the examples themselves should be separated by three new lines. If there was a context from which that word was taken, include a phrase from that context in examples, replacing the first example.
-   */
-  examples: {
+  output?: {
     /**
-     * An example sentence in the original language using the word.
+     * Split the text into grammatical parts. A part can be a single word or a famous phrase, it is something that can be defined or translated. Do not include symbols, unless they are the integral part of a phrase.
      */
-    original: string;
+    definitionParts: {
+      text: string;
+      /**
+       * The BCP 47 language tag of the language of that part. Null for unknown
+       */
+      language: string | null;
+      [k: string]: unknown;
+    }[];
     /**
-     * The English translation of the example sentence.
+     * The full translation of the text to the requested language.
      */
-    translation: string;
-    [k: string]: unknown;
-  }[];
-  /**
-   * The date and time when the word was exported to CSV.
-   */
-  csvExportedAt?: string;
-  [k: string]: unknown;
-}
-export interface MessageParseText {
-  name: "parseText";
-  data: {
-    text: string;
+    translation: {
+      text: string;
+      /**
+       * The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'
+       */
+      language: string;
+      [k: string]: unknown;
+    };
     [k: string]: unknown;
   };
   [k: string]: unknown;
 }
 export interface MessageDefineWord {
-  name: "defineWord";
-  data: {
-    wordString: string;
+  input: {
+    name: "defineWord";
+    data: {
+      wordString: string;
+      [k: string]: unknown;
+    };
     [k: string]: unknown;
   };
   [k: string]: unknown;

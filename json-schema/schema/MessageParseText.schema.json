@@ -2,20 +2,75 @@
   "$schema": "http://json-schema.org/draft-07/schema",
   "type": "object",
   "title": "MessageParseText",
-  "required": ["name", "data"],
+  "required": ["input"],
   "properties": {
-    "name": {
-      "type": "string",
-      "const": "parseText"
-    },
-    "data": {
+    "input": {
       "type": "object",
+      "required": ["name", "data"],
       "properties": {
-        "text": {
-          "type": "string"
+        "name": {
+          "type": "string",
+          "const": "parseText"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string"
+            },
+            "originalLanguages": {
+              "type": "array",
+              "description": "The list of BCP 47 language tags of the languages that are most commonly used by the user. Take this list as a priority when you try to detect the text language. Although it is not guaranteed to completely match the text languages",
+              "items": {
+                "type": "string"
+              }
+            },
+            "translationLanguage": {
+              "type": "string",
+              "description": "The BCP 47 language tag of the language that the user wants to translate the text to."
+            }
+          },
+          "required": ["text", "originalLanguages", "translationLanguage"]
         }
-      },
-      "required": ["text"]
+      }
+    },
+    "output": {
+      "type": "object",
+      "required": ["definitionParts", "translation"],
+      "description": "The result of parsing the text for futher translation.",
+      "properties": {
+        "definitionParts": {
+          "type": "array",
+          "description": "Split the text into grammatical parts. A part can be a single word or a famous phrase, it is something that can be defined or translated. Do not include symbols, unless they are the integral part of a phrase.",
+          "items": {
+            "type": "object",
+            "required": ["text", "language"],
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "language": {
+                "type": ["string", "null"],
+                "description": "The BCP 47 language tag of the language of that part. Null for unknown"
+              }
+            }
+          }
+        },
+        "translation": {
+          "type": "object",
+          "required": ["text", "language"],
+          "description": "The full translation of the text to the requested language.",
+          "properties": {
+            "text": {
+              "type": "string"
+            },
+            "language": {
+              "type": "string",
+              "description": "The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'"
+            }
+          }
+        }
+      }
     }
   }
 }

@@ -166,13 +166,13 @@ app.post("/message", async (req, res) => {
     })
   );
   const messageValidator = ajv.getSchema("MessageUnion.schema.json");
-  const valid = await messageValidator(req.body);
+  const valid = await messageValidator({ input: req.body });
   console.log(valid);
   if (!valid) {
     console.log(messageValidator.errors);
     return res.status(400).send(messageValidator.errors);
   }
-  const message = req.body as MessageUnion;
+  const message = req.body as MessageUnion["input"];
   const result = await handleMesasge(message);
   return res.status(200).send(result);
 });

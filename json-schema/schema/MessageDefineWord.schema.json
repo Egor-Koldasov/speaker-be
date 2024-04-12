@@ -2,20 +2,26 @@
   "$schema": "http://json-schema.org/draft-07/schema",
   "type": "object",
   "title": "MessageDefineWord",
-  "required": ["name", "data"],
+  "required": ["input"],
   "properties": {
-    "name": {
-      "type": "string",
-      "const": "defineWord"
-    },
-    "data": {
+    "input": {
       "type": "object",
+      "required": ["name", "data"],
       "properties": {
-        "wordString": {
-          "type": "string"
+        "name": {
+          "type": "string",
+          "const": "defineWord"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "wordString": {
+              "type": "string"
+            }
+          },
+          "required": ["wordString"]
         }
-      },
-      "required": ["wordString"]
+      }
     }
   }
 }

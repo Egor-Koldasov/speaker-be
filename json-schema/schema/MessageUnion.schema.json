@@ -3,9 +3,6 @@
   "type": "object",
   "anyOf": [
     {
-      "$ref": "./MessageCreateWord.schema.json"
-    },
-    {
       "$ref": "./MessageParseText.schema.json"
     },
     {
