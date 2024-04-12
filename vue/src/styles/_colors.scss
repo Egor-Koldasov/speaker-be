@@ -1,3 +1,7 @@
+@use '@picocss/pico/scss/pico' with (
+  $theme-color: 'fuchsia'
+);
+
 // # Colors raw
 $primary-500: #e91e63;
 $primary-600: #d81b60;

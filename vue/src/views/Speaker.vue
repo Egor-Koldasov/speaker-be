@@ -6,6 +6,8 @@ import type { ChatCompletion } from 'openai/resources/index.mjs'
 import type { MessageParseText } from '../schema/MessageUnion.schema'
 import Modal from '../components/Modal.vue'
 import DefinitionItem from '../components/DefinitionItem/DefinitionItem.vue'
+import LanguageSelector from '../components/LanguageSelector.vue'
+import { useSettings } from '../uiStore/useSettings'
 
 const { healthData, checkHealth } = useSpeakerHealth()
 const uisToasts = useToasts()
@@ -19,6 +21,7 @@ const parts = reactive({
 const uiState = reactive({
   selectedWordIndex: -1,
 })
+const uisSettings = useSettings()
 
 const handleSubmit = async () => {
   parts.loading = true
@@ -60,6 +63,18 @@ const selectedWord = computed(() => {
 
 <template>
   <main>
+    <header>
+      <div class="language-bar">
+        <LanguageSelector
+          :language-bcp47-list="uisSettings.originalLanguages"
+          @add-language-bcp47="(code) => uisSettings.originalLanguages.push(code.toLowerCase())"
+          @remove-language-bcp47="
+            (code) =>
+              uisSettings.originalLanguages.splice(uisSettings.originalLanguages.indexOf(code), 1)
+          "
+        />
+      </div>
+    </header>
     <div
       class="health-status"
       :class="{ loading: healthData.loading, healthy: !!healthData.data }"
@@ -97,8 +112,21 @@ main {
   position: fixed;
   inset: 0;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  header {
+    margin-bottom: auto;
+    width: 100%;
+    display: flex;
+    padding: 0.5rem;
+    .language-bar {
+      margin-left: auto;
+      .dropdown {
+        margin: 0;
+      }
+    }
+  }
 }
 
 .health-status {
