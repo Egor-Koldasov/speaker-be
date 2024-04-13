@@ -6,7 +6,17 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: () => import('../views/Speaker.vue'),
+      redirect: '/define-from-foreign',
+    },
+    {
+      path: '/define-from-foreign',
+      name: 'define-from-foreign',
+      component: () => import('../components/pages/DefineFromForeign.vue'),
+    },
+    {
+      path: '/define-to-foreign',
+      name: 'define-to-foreign',
+      component: () => import('../components/pages/DefineToForeigh.vue'),
     },
   ],
 })

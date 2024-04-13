@@ -8,6 +8,9 @@
     },
     {
       "$ref": "./MessageDefineWord.schema.json"
+    },
+    {
+      "$ref": "./MessageParseTextToForeign.schema.json"
     }
   ]
 }

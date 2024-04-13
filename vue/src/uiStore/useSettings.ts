@@ -5,6 +5,8 @@ import { getLocalData, setLocalData } from '../util/localData'
 const initState = {
   originalLanguages: [] as string[],
   translationLanguage: '',
+  primaryForeignLanguage: 'TH',
+  nativeLanguages: [] as string[],
 }
 const useSettings_ = defineStore('uisSettings', {
   state: () => initState,

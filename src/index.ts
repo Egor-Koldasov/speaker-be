@@ -12,7 +12,7 @@ import { openai, splitPhrase, test } from "./ai";
 import cors from "@fastify/cors";
 import Ajv from "ajv";
 import { readFile, readdir } from "fs/promises";
-import { MessageUnion } from "./schema/MessageUnion.schema";
+import { MessageUnion } from "./schema/Main.schema";
 import { handleMesasge } from "./message";
 
 type OperationId = keyof operations;

@@ -5,11 +5,15 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type MessageUnion = MessageParseText | MessageDefineWord;
+export type MessageUnion = MessageParseText | MessageDefineWord | MessageParseTextToForeign;
 /**
  * The list of BCP 47 language tags of the languages that are most commonly used by the user. Take this list as a priority when you try to detect the text language. Although it is not guaranteed to completely match the text languages
  */
 export type OriginalLanguages = string[];
+/**
+ * The list of BCP 47 language tags of the languages native to the user. Take this list as a priority when you try to detect the text language. Although it is not guaranteed to completely match the text languages
+ */
+export type NativeLanguages = string[];
 
 export interface Main {
   MessageUnion?: MessageUnion;
@@ -160,5 +164,66 @@ export interface Word {
    * The date and time when the word was exported to CSV.
    */
   csvExportedAt?: string;
+  [k: string]: unknown;
+}
+export interface MessageParseTextToForeign {
+  input: {
+    name: "parseTextToForeign";
+    data: {
+      text: string;
+      nativeLanguages: NativeLanguages;
+      /**
+       * The BCP 47 language tag of the language that the user wants to translate the text to.
+       */
+      primaryForeignLanguage: string;
+      [k: string]: unknown;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * The result of parsing the text for futher translation.
+   */
+  output?: {
+    /**
+     * The list of possible translations. It should include not only direct translations, but also different ways of saying that. As if answering the question: 'How to say {data.text} in {data.primaryForeignLanguage}'? The first item in the list should be the best fitting the original context from the user input text that was sent for this parsing. Each translations should come in an array, split into grammatical parts. It is a 'reverse' translation, meaning that the `text` property should have the translated part in `primaryForeignLanguage` language
+     */
+    translationChoices: {
+      /**
+       * Split the text into grammatical parts. A part should be a dictionary entry like a single word or a famous phrase, it is something that can be defined or translated. Do not include symbols, unless they are the integral part of a phrase.
+       */
+      definitionParts: {
+        /**
+         * The text of the foreign language translation part split
+         */
+        text: string;
+        /**
+         * A short translation of the definition part without additional formatting. Among several translation choices, choose the one that is the best fitting the original context from the user input text that was sent for this parsing.
+         */
+        translationToNative?: string;
+        /**
+         * The BCP 47 language tag of the translation language. It should match the requested 'primaryForeignLanguage'.
+         */
+        languageForeign?: string;
+        /**
+         * The BCP 47 language tag of the native language matching the part of the original text. Null for unknown
+         */
+        languageNative?: string | null;
+        [k: string]: unknown;
+      }[];
+      /**
+       * The full translation of the text to the requested language.
+       */
+      translation: {
+        text: string;
+        /**
+         * The BCP 47 language tag of the language of the translation. It should match the requested 'primaryForeignLanguage'
+         */
+        language: string;
+        [k: string]: unknown;
+      };
+      [k: string]: unknown;
+    }[];
+    [k: string]: unknown;
+  };
   [k: string]: unknown;
 }

@@ -7,6 +7,7 @@ import path from "path";
 const jsonSchemasToBundle = [
   "MessageDefineWord.schema.json",
   "MessageParseText.schema.json",
+  "MessageParseTextToForeign.schema.json",
 ];
 
 const exportJsonSchemaBundles = async () => {
