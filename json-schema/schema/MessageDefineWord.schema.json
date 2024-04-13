@@ -16,10 +16,35 @@
           "type": "object",
           "properties": {
             "wordString": {
-              "type": "string"
+              "type": "string",
+              "description": "A word or a common phrase to define"
+            },
+            "context": {
+              "type": "string",
+              "description": "A context from which the word or phrase is taken"
+            },
+            "originalLanguages": {
+              "$ref": "./Property.schema.json#/$defs/originalLanguages"
+            },
+            "translationLanguage": {
+              "$ref": "./Property.schema.json#/$defs/translationLanguage"
             }
           },
-          "required": ["wordString"]
+          "required": [
+            "wordString",
+            "context",
+            "originalLanguages",
+            "translationLanguage"
+          ]
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "required": ["definition"],
+      "properties": {
+        "definition": {
+          "$ref": "./Word.schema.json"
         }
       }
     }

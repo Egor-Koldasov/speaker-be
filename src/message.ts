@@ -4,7 +4,7 @@ import {
   MessageUnion,
   // MessageCreateWord,
   MessageParseText,
-} from "./schema/MessageUnion.schema";
+} from "./schema/Main.schema";
 
 type MessageName = MessageUnion["input"]["name"];
 
@@ -20,12 +20,11 @@ const messageHandlers = {
   //   return { num };
   // },
   parseText: async (message: MessageParseText["input"]) => {
-    const text = message.data.text;
-    const completion = await splitPhrase(text, false);
+    const completion = await splitPhrase(message, false);
     return completion.choices[0];
   },
   defineWord: async (message: MessageByName<"defineWord">["input"]) => {
-    const completion = await defineWord(message.data.wordString, false);
+    const completion = await defineWord(message, false);
     return completion.choices[0];
   },
 } satisfies Record<MessageName, (message: any) => Promise<any>>;

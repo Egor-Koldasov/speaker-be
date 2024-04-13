@@ -12,5 +12,8 @@
     "json-schema-to-typescript": "^13.1.2",
     "nodemon": "^3.1.0",
     "typescript": "^5.4.4"
+  },
+  "dependencies": {
+    "@apidevtools/json-schema-ref-parser": "^11.5.4"
   }
 }

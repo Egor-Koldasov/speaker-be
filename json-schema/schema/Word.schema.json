@@ -40,7 +40,7 @@
     },
     "translation": {
       "type": "string",
-      "description": "An extensive translation to English, the more words the better."
+      "description": "An extensive translation to the language defined by a `languageTranslated` property, the more words the better."
     },
     "synonyms": {
       "type": "array",
@@ -55,11 +55,11 @@
     },
     "definitionTranslated": {
       "type": "string",
-      "description": "An extensive definition in English."
+      "description": "An extensive definition in the language defined by a `languageTranslated` property."
     },
     "origin": {
       "type": "string",
-      "description": "The root parts of the word and the origin in English. If the original form from Part 1 is different from the neutral grammatic form from Part 2, explain that difference including all the details."
+      "description": "The root parts of the word and the origin in the language defined by a `languageTranslated` property. If the original form from Part 1 is different from the neutral grammatic form from Part 2, explain that difference including all the details."
     },
     "examples": {
       "type": "array",
@@ -73,11 +73,11 @@
           },
           "translation": {
             "type": "string",
-            "description": "The English translation of the example sentence."
+            "description": "The translation of the example sentence in the language defined by a `languageTranslated` property."
           }
         }
       },
-      "description": "Three sentence examples of the usage of the original word in the same grammatic form followed by an English translation. The sentence and the translation should be separated by one new line, while the examples themselves should be separated by three new lines. If there was a context from which that word was taken, include a phrase from that context in examples, replacing the first example."
+      "description": "Three sentence examples of the usage of the original word in the same grammatic form followed by an translation in the language defined by a `languageTranslated` property. The sentence and the translation should be separated by one new line, while the examples themselves should be separated by three new lines. If there was a context from which that word was taken, include a phrase from that context in examples, replacing the first example."
     },
     "csvExportedAt": {
       "type": "string",

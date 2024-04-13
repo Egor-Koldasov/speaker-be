@@ -8,7 +8,7 @@
     "watch-build": "tsc -w",
     "start": "node dist/index.js",
     "watch-start": "nodemon --delay 2 -w dist/ -x 'npm run start'",
-    "dev": "concurrently -k -p '[{name}]' -n 'typescript,api,vue' -c 'yellow.bold,cyan.bold' npm:watch-build npm:watch-start 'cd vue && yarn dev'",
+    "dev": "concurrently --restart-tries=30 -k -p '[{name}]' -n 'api-ts,api,vue,j-sch' -c 'yellow.bold,cyan.bold' npm:watch-build npm:watch-start 'cd vue && yarn dev' 'cd json-schema && yarn dev'",
     "lint": "tslint --format prose --project .",
     "test": "jest",
     "openapi:generate": "npx openapi-typescript ./openapi.yml -o ./src/openapi.ts",
@@ -17,6 +17,7 @@
     "openapi:resolved": "npx speccy resolve openapi.yml -o openapi-resolved.yml"
   },
   "dependencies": {
+    "@apidevtools/json-schema-ref-parser": "^11.5.4",
     "@fastify/cors": "^9.0.1",
     "ajv": "^8.12.0",
     "csv-stringify": "^6.4.6",

@@ -100,13 +100,20 @@ const selectedWord = computed(() => {
       <div class="parts">
         <button
           type="button"
-          v-for="(part, index) in parts.data?.definitionParts ?? []"
-          :key="part.text"
           class="part"
           :class="{ selected: uiState.selectedWordIndex === index }"
           @click="uiState.selectedWordIndex = index"
+          v-for="(part, index) in parts.data?.definitionParts ?? []"
+          :key="part.text"
         >
-          {{ part.text }}
+          <div class="part-text">
+            <!-- {{ part.languageOriginal }} -->
+            {{ part.text }}
+          </div>
+          <div class="part-translation">
+            <!-- {{ part.languageTranslated }} -->
+            {{ part.translation }}
+          </div>
         </button>
       </div>
       <div v-if="parts.data?.translation">
@@ -116,6 +123,7 @@ const selectedWord = computed(() => {
         type="text"
         placeholder="Enter a phrase"
         v-model="form.phrase"
+        @keydown.meta.enter="handleSubmit"
       />
       <button type="submit" class="submit-btn" :disabled="parts.loading">
         Learn
@@ -203,11 +211,21 @@ main {
   gap: 1rem;
 
   .part {
-    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
     border: 1px solid #89147f;
     border-radius: 0.5rem;
     cursor: pointer;
     background-color: transparent;
+    padding: 0;
+    .part-text {
+      border-bottom: 1px solid #89147f;
+      width: 100%;
+      padding: 0 1rem;
+    }
+    .part-translation {
+      padding: 0 1rem;
+    }
 
     &:hover {
       background-color: #89147f;

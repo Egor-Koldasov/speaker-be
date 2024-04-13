@@ -2,11 +2,16 @@
   "$schema": "http://json-schema.org/draft-07/schema",
   "type": "object",
   "title": "MessageParseText",
-  "required": ["input"],
+  "required": [
+    "input"
+  ],
   "properties": {
     "input": {
       "type": "object",
-      "required": ["name", "data"],
+      "required": [
+        "name",
+        "data"
+      ],
       "properties": {
         "name": {
           "type": "string",
@@ -19,19 +24,31 @@
               "type": "string"
             },
             "originalLanguages": {
-              "$ref": "./Property.schema.json#/$defs/originalLanguages"
+              "type": "array",
+              "description": "The list of BCP 47 language tags of the languages that are most commonly used by the user. Take this list as a priority when you try to detect the text language. Although it is not guaranteed to completely match the text languages",
+              "items": {
+                "type": "string"
+              }
             },
             "translationLanguage": {
-              "$ref": "./Property.schema.json#/$defs/translationLanguage"
+              "type": "string",
+              "description": "The BCP 47 language tag of the language that the user wants to translate the text to."
             }
           },
-          "required": ["text", "originalLanguages", "translationLanguage"]
+          "required": [
+            "text",
+            "originalLanguages",
+            "translationLanguage"
+          ]
         }
       }
     },
     "output": {
       "type": "object",
-      "required": ["definitionParts", "translation"],
+      "required": [
+        "definitionParts",
+        "translation"
+      ],
       "description": "The result of parsing the text for futher translation.",
       "properties": {
         "definitionParts": {
@@ -39,7 +56,10 @@
           "description": "Split the text into grammatical parts. A part should be a dictionary entry like a single word or a famous phrase, it is something that can be defined or translated. Do not include symbols, unless they are the integral part of a phrase.",
           "items": {
             "type": "object",
-            "required": ["text", "language"],
+            "required": [
+              "text",
+              "language"
+            ],
             "properties": {
               "text": {
                 "type": "string"
@@ -49,7 +69,10 @@
                 "description": "A short translation of the definition part without additional formatting. Among several translation choices, choose the one that is the best fitting the original context from the user input text that was sent for this parsing."
               },
               "languageOriginal": {
-                "type": ["string", "null"],
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "description": "The BCP 47 language tag of the language of that part. Null for unknown"
               },
               "languageTranslated": {
@@ -61,7 +84,10 @@
         },
         "translation": {
           "type": "object",
-          "required": ["text", "language"],
+          "required": [
+            "text",
+            "language"
+          ],
           "description": "The full translation of the text to the requested language.",
           "properties": {
             "text": {

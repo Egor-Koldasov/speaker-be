@@ -29,14 +29,22 @@ export interface MessageParseText {
    */
   output?: {
     /**
-     * Split the text into grammatical parts. A part can be a single word or a famous phrase, it is something that can be defined or translated. Do not include symbols, unless they are the integral part of a phrase.
+     * Split the text into grammatical parts. A part should be a dictionary entry like a single word or a famous phrase, it is something that can be defined or translated. Do not include symbols, unless they are the integral part of a phrase.
      */
     definitionParts: {
       text: string;
       /**
+       * A short translation of the definition part without additional formatting. Among several translation choices, choose the one that is the best fitting the original context from the user input text that was sent for this parsing.
+       */
+      translation?: string;
+      /**
        * The BCP 47 language tag of the language of that part. Null for unknown
        */
-      language: string | null;
+      languageOriginal?: string | null;
+      /**
+       * The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'
+       */
+      languageTranslated?: string;
       [k: string]: unknown;
     }[];
     /**

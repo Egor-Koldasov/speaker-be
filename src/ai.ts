@@ -4,8 +4,10 @@ import openaiSchema from "../openapi-resolved.json";
 import db from "./db";
 import { uuidv7 } from "uuidv7";
 import WordJsonSchema from "../json-schema/schema/Word.schema.json";
-import MessageParseTextJsonSchema from "../json-schema/schema/MessageParseText.schema.json";
+import MessageParseTextJsonSchema from "./json-schema-bundle/MessageParseText.schema.json";
+import MessageDefineWordJsonSchema from "./json-schema-bundle/MessageDefineWord.schema.json";
 import { MessageParseText } from "./schema/MessageUnion.schema";
+import { MessageDefineWord } from "./schema/Main.schema";
 
 const CreateWord = openaiSchema.paths["/word"].post;
 
@@ -13,7 +15,7 @@ const instructions = `
 Let's create an action, with the technical name "DefineWord".
 Your response to that action will be a translation and definition reference for a particular word given.
 You should response with a JSON object, following this schema:
-\`\`\`json
+\`\`\`json 
 ${JSON.stringify(WordJsonSchema, null, 2)}
 \`\`\`
 `;
@@ -99,11 +101,13 @@ export const splitPhrase = async (
     },
   });
 
+  console.log("splitPhrase", JSON.stringify({ completion }));
+
   db("history_ai")
     .insert({
       id: uuidv7(),
-      operation_json: operation_json,
-      response_json: JSON.stringify({ completion }),
+      operation_json: JSON.stringify(operation_json),
+      response_json: JSON.stringify(completion),
     })
     .then();
 
@@ -111,41 +115,42 @@ export const splitPhrase = async (
 };
 
 const instructionsDefineWord = `
-Let's create an action, with the technical name "DefineWord".
-Your response to that action will be a translation and definition reference for a particular word given.
-You should response with a JSON object that will contain the object property "word".
-The structure of the "word" object and additional instructions are defined in this JSON schema:
+Handle the operation following the JSON schema.
+Here's the description of the input that should be passed:
 \`\`\`json
-${JSON.stringify(WordJsonSchema, null, 2)}
+${JSON.stringify(MessageDefineWordJsonSchema.properties.input, null, 2)}
 \`\`\`
-If you cannot define the word given the data provided, set the "word" object to null, and provide an error in the "error" property as string.
+Define the word given the data provided.
+Your response to that action will be a translation and definition reference for a particular word given.
+Generate a response following the instructions and the structure of this JSON schema:
+\`\`\`json
+${JSON.stringify(MessageDefineWordJsonSchema.properties.output, null, 2)}
+\`\`\`
 `;
 
-export const defineWord = async (wordString: string, force: boolean) => {
-  const operation_json = {
-    name: "defineWord",
-    parameters: {
-      wordString,
-    },
-  };
-  if (!force) {
-    const [operation] = await db
-      .select()
-      .from("history_ai")
-      .orderBy("created_at", "desc")
-      .limit(1)
-      .whereRaw(
-        `operation_json->>'name' = 'defineWord' AND operation_json#>>'{parameters,wordString}' = ?`,
-        [wordString]
-      );
-    if (operation) {
-      try {
-        return operation.response_json.completion as OpenAI.ChatCompletion;
-      } catch (error) {
-        console.error(error);
-      }
-    }
-  }
+export const defineWord = async (
+  data: MessageDefineWord["input"],
+  force: boolean
+) => {
+  const operation_json = data;
+  // if (!force) {
+  //   const [operation] = await db
+  //     .select()
+  //     .from("history_ai")
+  //     .orderBy("created_at", "desc")
+  //     .limit(1)
+  //     .whereRaw(
+  //       `operation_json->>'name' = 'defineWord' AND operation_json#>>'{parameters,wordString}' = ?`,
+  //       [wordString]
+  //     );
+  //   if (operation) {
+  //     try {
+  //       return operation.response_json.completion as OpenAI.ChatCompletion;
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   }
+  // }
 
   const completion = await openai.chat.completions.create({
     model: "gpt-4-1106-preview",
@@ -157,12 +162,8 @@ export const defineWord = async (wordString: string, force: boolean) => {
         }),
       },
       {
-        role: "system",
-        content: JSON.stringify({
-          action: "DefineWord",
-          wordString,
-          language: "de",
-        }),
+        role: "user",
+        content: JSON.stringify(data),
       },
     ],
     n: 1,
@@ -174,7 +175,7 @@ export const defineWord = async (wordString: string, force: boolean) => {
   db("history_ai")
     .insert({
       id: uuidv7(),
-      operation_json: operation_json,
+      operation_json: JSON.stringify(operation_json),
       response_json: JSON.stringify({ completion }),
     })
     .then();
