@@ -73,7 +73,7 @@
                   "properties": {
                     "text": {
                       "type": "string",
-                      "description": "The text of the foreign language translation part split"
+                      "description": "The text of the foreign language translation part split. Keep this part small, it should not be longer than a typical dictionary entry point. Do not include any punctuation symbols, enclosing parentheses or apostrophes an so on."
                     },
                     "translationToNative": {
                       "type": "string",

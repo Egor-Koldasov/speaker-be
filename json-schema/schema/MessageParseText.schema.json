@@ -42,7 +42,8 @@
             "required": ["text", "language"],
             "properties": {
               "text": {
-                "type": "string"
+                "type": "string",
+                "description": "The text of the part split. Keep this part small, it should not be longer than a typical dictionary entry point. Usualy a single word or sometimes a single word or a famous phrase. Do not include any punctuation symbols, enclosing parentheses or apostrophes an so on."
               },
               "translation": {
                 "type": "string",

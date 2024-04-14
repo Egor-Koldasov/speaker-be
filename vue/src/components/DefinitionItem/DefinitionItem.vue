@@ -1,55 +1,30 @@
 <script setup lang="ts">
-import { onMounted, reactive, watch } from 'vue'
-import { speakerUrl } from '../../util/useSpeakerHealth'
-import type { ChatCompletion } from 'openai/resources/index.mjs'
-import type { Word } from '../../schema/Main.schema'
 import tags from 'language-tags'
-import type { MessageDefineWord } from '../../schema/Main.schema'
+import { onMounted, watch } from 'vue'
+import { useDataStore } from '../../dataStore/dataStore'
 import { useSettings } from '../../uiStore/useSettings'
 
 // # Props, State
 const props = defineProps<{
   word: string
+  context: string
 }>()
 
-const definitionData = reactive({
-  data: null as null | { word: Word },
-  loading: false,
-})
-
-const uisSettings = useSettings()
 // # Hooks
+const uisSettings = useSettings()
+const dataStore = useDataStore()
 // # Computed
 // # Callbacks
 const loadDefinition = async () => {
-  definitionData.loading = true
-  const message: MessageDefineWord['input'] = {
+  dataStore.sendMessage({
     name: 'defineWord',
     data: {
       wordString: props.word,
-      context: props.word,
+      context: props.context,
       originalLanguages: uisSettings.originalLanguages,
       translationLanguage: uisSettings.translationLanguage || 'en',
     },
-  }
-  try {
-    const res = await fetch(`${speakerUrl}/message`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(message),
-    })
-    const data = (await res.json()) as ChatCompletion.Choice
-    const response = JSON.parse(data.message.content ?? 'null') as NonNullable<
-      MessageDefineWord['output']
-    >
-    definitionData.data = { word: response.definition }
-  } catch (err) {
-    console.error(err)
-  }
-
-  definitionData.loading = false
+  })
 }
 // # Watchers
 onMounted(() => {
@@ -64,8 +39,8 @@ watch(
 </script>
 <template>
   <div class="DefinitionItem">
-    <div v-if="definitionData.loading">Loading...</div>
-    <div v-else-if="definitionData.data">
+    <div v-if="dataStore.defineWord.loading">Loading...</div>
+    <div v-else-if="dataStore.defineWord.data">
       <ul>
         <li>
           <label>Language original</label>
@@ -73,7 +48,7 @@ watch(
             rows="1"
             :value="
               tags
-                .language(definitionData.data.word.languageOriginal)
+                .language(dataStore.defineWord.data.definition.languageOriginal)
                 ?.descriptions()
                 .join(', ')
             "
@@ -84,7 +59,7 @@ watch(
           <label>Original word</label>
           <textarea
             rows="1"
-            v-model="definitionData.data.word.originalWord"
+            v-model="dataStore.defineWord.data.definition.originalWord"
             readonly
           />
         </li>
@@ -92,7 +67,7 @@ watch(
           <label>Translation</label>
           <textarea
             rows="1"
-            v-model="definitionData.data.word.translation"
+            v-model="dataStore.defineWord.data.definition.translation"
             readonly
           />
         </li>
@@ -100,7 +75,7 @@ watch(
           <label>Neutral form</label>
           <textarea
             rows="1"
-            v-model="definitionData.data.word.neutralForm"
+            v-model="dataStore.defineWord.data.definition.neutralForm"
             readonly
           />
         </li>
@@ -108,7 +83,7 @@ watch(
           <label>Synonyms</label>
           <textarea
             rows="1"
-            v-model="definitionData.data.word.synonyms"
+            v-model="dataStore.defineWord.data.definition.synonyms"
             readonly
           />
         </li>
@@ -116,7 +91,7 @@ watch(
           <label>Definition translated</label>
           <textarea
             rows="1"
-            v-model="definitionData.data.word.definitionTranslated"
+            v-model="dataStore.defineWord.data.definition.definitionTranslated"
             readonly
           />
         </li>
@@ -124,7 +99,7 @@ watch(
           <label>Definition original</label>
           <textarea
             rows="1"
-            v-model="definitionData.data.word.definitionOriginal"
+            v-model="dataStore.defineWord.data.definition.definitionOriginal"
             readonly
           />
         </li>
@@ -132,7 +107,7 @@ watch(
           <label>Origin</label>
           <textarea
             rows="1"
-            v-model="definitionData.data.word.origin"
+            v-model="dataStore.defineWord.data.definition.origin"
             readonly
           />
         </li>
@@ -140,7 +115,7 @@ watch(
           <label>Examples</label>
           <ul>
             <li
-              v-for="example in definitionData.data.word.examples"
+              v-for="example in dataStore.defineWord.data.definition.examples"
               :key="example.original"
             >
               <textarea rows="1" v-model="example.original" readonly />
@@ -159,6 +134,7 @@ watch(
   max-width: 1000px;
   max-height: 90vh;
   overflow: auto;
+  flex-shrink: 1;
   ul {
     li {
       list-style-type: none;

@@ -11,6 +11,9 @@
     },
     {
       "$ref": "./MessageParseTextToForeign.schema.json"
+    },
+    {
+      "$ref": "./MessageTextToSpeech.json"
     }
   ]
 }

@@ -3,7 +3,6 @@ import type { MessageName } from '../types/MessageName'
 import type { MessageOutputByName } from '../types/MessageOutputByName'
 import type { MessageInputByName } from '../types/MessageInputByName'
 import { speakerUrl } from '../util/useSpeakerHealth'
-import type { ChatCompletion } from 'openai/resources/index.mjs'
 
 type DataStateItem<Data, Name extends string> = {
   name: Name
@@ -12,7 +11,7 @@ type DataStateItem<Data, Name extends string> = {
   errors: string[]
 }
 
-const initDateStateItem = <Data, Name extends MessageName>(
+const initDateStateItem = <const Data, const Name extends MessageName>(
   name: Name,
 ): DataStateItem<Data, Name> => ({
   name,
@@ -21,7 +20,7 @@ const initDateStateItem = <Data, Name extends MessageName>(
   errors: [],
 })
 
-const initMessageDataItem = <Name extends MessageName>(name: Name) =>
+const initMessageDataItem = <const Name extends MessageName>(name: Name) =>
   initDateStateItem<MessageOutputByName<Name>, Name>(name)
 
 export const useDataStore = defineStore('dataStore', {
@@ -29,6 +28,10 @@ export const useDataStore = defineStore('dataStore', {
     parseText: initMessageDataItem('parseText'),
     defineWord: initMessageDataItem('defineWord'),
     parseTextToForeign: initMessageDataItem('parseTextToForeign'),
+    textToSpeech: initDateStateItem<
+      MessageOutputByName<'textToSpeech'>,
+      'textToSpeech'
+    >('textToSpeech'),
   }),
   actions: {
     async sendMessage<Name extends MessageName>(
@@ -43,11 +46,8 @@ export const useDataStore = defineStore('dataStore', {
           },
           body: JSON.stringify(input),
         })
-        const data = (await res.json()) as ChatCompletion.Choice
-        const response = JSON.parse(
-          data.message.content ?? 'null',
-        ) as MessageOutputByName<Name>
-        this[input.name].data = response
+        const data = (await res.json()) as MessageOutputByName<Name>
+        this[input.name].data = data
       } catch (err) {
         console.error(err)
         this[input.name].errors = [String(err)]

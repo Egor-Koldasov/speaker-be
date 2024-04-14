@@ -11,6 +11,7 @@ import { MessageParseText } from "./schema/MessageUnion.schema";
 import {
   MessageDefineWord,
   MessageParseTextToForeign,
+  MessageTextToSpeech,
 } from "./schema/Main.schema";
 
 const CreateWord = openaiSchema.paths["/word"].post;
@@ -230,4 +231,14 @@ export const parseTextToForeign = async (
     },
   });
   return completion;
+};
+
+export const textToSpeech = async (input: MessageTextToSpeech["input"]) => {
+  const audio = await openai.audio.speech.create({
+    model: "tts-1",
+    voice: "nova",
+    input: input.data.text,
+  });
+  const base64 = Buffer.from(await audio.arrayBuffer()).toString("base64");
+  return base64;
 };

@@ -5,7 +5,7 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type MessageUnion = MessageParseText | MessageDefineWord | MessageParseTextToForeign;
+export type MessageUnion = MessageParseText | MessageDefineWord | MessageParseTextToForeign | MessageTextToSpeech;
 /**
  * The list of BCP 47 language tags of the languages that are most commonly used by the user. Take this list as a priority when you try to detect the text language. Although it is not guaranteed to completely match the text languages
  */
@@ -45,6 +45,9 @@ export interface MessageParseText {
      * Split the text into grammatical parts. A part should be a dictionary entry like a single word or a famous phrase, it is something that can be defined or translated. Do not include symbols, unless they are the integral part of a phrase.
      */
     definitionParts: {
+      /**
+       * The text of the part split. Keep this part small, it should not be longer than a typical dictionary entry point. Usualy a single word or sometimes a single word or a famous phrase. Do not include any punctuation symbols, enclosing parentheses or apostrophes an so on.
+       */
       text: string;
       /**
        * A short translation of the definition part without additional formatting. Among several translation choices, choose the one that is the best fitting the original context from the user input text that was sent for this parsing.
@@ -127,7 +130,7 @@ export interface Word {
    */
   pronounciation: string;
   /**
-   * An extensive translation to the language defined by a `languageTranslated` property, the more words the better.
+   * An extensive translation to the language defined by a `languageTranslated` property, the more words the better. In case of multiple meanings, include all of them.
    */
   translation: string;
   /**
@@ -193,7 +196,7 @@ export interface MessageParseTextToForeign {
        */
       definitionParts: {
         /**
-         * The text of the foreign language translation part split
+         * The text of the foreign language translation part split. Keep this part small, it should not be longer than a typical dictionary entry point. Do not include any punctuation symbols, enclosing parentheses or apostrophes an so on.
          */
         text: string;
         /**
@@ -223,6 +226,30 @@ export interface MessageParseTextToForeign {
       };
       [k: string]: unknown;
     }[];
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+export interface MessageTextToSpeech {
+  input: {
+    name: "textToSpeech";
+    data: {
+      /**
+       * Text to convert to speech
+       */
+      text: string;
+      [k: string]: unknown;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Message output
+   */
+  output?: {
+    /**
+     * Base64 encoded audio data
+     */
+    audio?: string;
     [k: string]: unknown;
   };
   [k: string]: unknown;

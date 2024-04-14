@@ -80,7 +80,10 @@ const handleSubmit = async () => {
           </button>
         </div>
         <div v-if="dataStore.parseText.data?.translation">
-          {{ dataStore.parseText.data.translation.text }}
+          {{
+            dataStore.parseTextToForeign.data?.translationChoices[0]
+              ?.translation.text
+          }}
         </div>
         <textarea
           type="text"
@@ -131,6 +134,7 @@ const handleSubmit = async () => {
 .parts {
   display: flex;
   gap: 1rem;
+  overflow-x: auto;
 
   .part {
     display: flex;

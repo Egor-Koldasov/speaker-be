@@ -115,13 +115,11 @@ const selectedWord = computed(() => {
         </button>
         <progress v-if="dataStore.parseText.loading" />
       </form>
-      <div
+      <DefinitionItem
         v-if="!!selectedWord"
-        @close="uiState.selectedWordIndex = -1"
-        :title="`Define ${selectedWord}`"
-      >
-        <DefinitionItem :word="selectedWord.text" />
-      </div>
+        :word="selectedWord.text"
+        :context="form.phrase"
+      />
     </div>
   </Page>
 </template>
@@ -182,6 +180,9 @@ const selectedWord = computed(() => {
 .parts {
   display: flex;
   gap: 1rem;
+  overflow-x: auto;
+  flex-grow: 1;
+  flex-shrink: 0;
 
   .part {
     display: flex;
@@ -195,9 +196,11 @@ const selectedWord = computed(() => {
       border-bottom: 1px solid #89147f;
       width: 100%;
       padding: 0 1rem;
+      text-wrap: nowrap;
     }
     .part-translation {
       padding: 0 1rem;
+      text-wrap: nowrap;
     }
 
     &:hover {

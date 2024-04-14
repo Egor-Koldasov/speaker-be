@@ -1,39 +1,6 @@
-import { defineWord, parseTextToForeign, splitPhrase } from "./ai";
-import db from "./db";
-import {
-  MessageUnion,
-  // MessageCreateWord,
-  MessageParseText,
-} from "./schema/Main.schema";
-
-type MessageName = MessageUnion["input"]["name"];
-
-type MessageByName<T extends MessageName> = Extract<
-  MessageUnion,
-  { input: { name: T } }
->;
-
-const messageHandlers = {
-  // createWord: async (message: MessageCreateWord) => {
-  //   const word = message.data.word;
-  //   const [num] = await db("word").insert({ json: word }).returning("num");
-  //   return { num };
-  // },
-  parseText: async (message: MessageParseText["input"]) => {
-    const completion = await splitPhrase(message, false);
-    return completion.choices[0];
-  },
-  defineWord: async (message: MessageByName<"defineWord">["input"]) => {
-    const completion = await defineWord(message, false);
-    return completion.choices[0];
-  },
-  parseTextToForeign: async (
-    message: MessageByName<"parseTextToForeign">["input"]
-  ) => {
-    const completion = await parseTextToForeign(message);
-    return completion.choices[0];
-  },
-} satisfies Record<MessageName, (message: any) => Promise<any>>;
+import { MessageName } from "./message/Message";
+import { messageHandlers } from "./message/messageHandlers";
+import { MessageUnion } from "./schema/Main.schema";
 
 type MessageHandles = typeof messageHandlers;
 type MessageHandlerByName<T extends MessageName> = MessageHandles[T];

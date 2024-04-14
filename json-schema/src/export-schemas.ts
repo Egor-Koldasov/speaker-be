@@ -8,6 +8,7 @@ const jsonSchemasToBundle = [
   "MessageDefineWord.schema.json",
   "MessageParseText.schema.json",
   "MessageParseTextToForeign.schema.json",
+  "MessageTextToSpeech.json",
 ];
 
 const exportJsonSchemaBundles = async () => {

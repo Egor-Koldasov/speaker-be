@@ -97,7 +97,7 @@
             },
             "translation": {
               "type": "string",
-              "description": "An extensive translation to the language defined by a `languageTranslated` property, the more words the better."
+              "description": "An extensive translation to the language defined by a `languageTranslated` property, the more words the better. In case of multiple meanings, include all of them."
             },
             "synonyms": {
               "type": "array",
