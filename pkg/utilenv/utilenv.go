@@ -1,7 +1,7 @@
 package utilenv
 
 import (
-	utilerror "speaker/bin/v2/pkg"
+	"speaker/bin/v2/pkg/utilerror"
 
 	"github.com/joho/godotenv"
 )

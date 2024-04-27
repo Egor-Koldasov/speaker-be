@@ -3,7 +3,7 @@ package migrations
 import (
 	"context"
 	"database/sql"
-	utilerror "speaker/bin/v2/pkg"
+	"speaker/bin/v2/pkg/utilerror"
 	"speaker/bin/v2/pkg/utiljson"
 
 	"github.com/pressly/goose/v3"

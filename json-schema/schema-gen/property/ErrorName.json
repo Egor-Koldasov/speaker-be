@@ -1,0 +1,13 @@
+{
+  "description": "The code name of the error.",
+  "type": "string",
+  "enum": [
+    "Unknown",
+    "AiCreateCompletion",
+    "AIResponseUnmarshal",
+    "AiResponse"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "property/ErrorName",
+  "title": "ErrorName"
+}

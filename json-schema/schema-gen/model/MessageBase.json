@@ -1,0 +1,77 @@
+{
+  "type": "object",
+  "properties": {
+    "input": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "data",
+        "name"
+      ]
+    },
+    "output": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": true
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "$ref": "#/definitions/ErrorName"
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "message",
+              "name"
+            ]
+          }
+        }
+      },
+      "required": [
+        "data",
+        "errors",
+        "name"
+      ]
+    }
+  },
+  "required": [
+    "input",
+    "output"
+  ],
+  "definitions": {
+    "ErrorName": {
+      "description": "The code name of the error.",
+      "type": "string",
+      "enum": [
+        "Unknown",
+        "AiCreateCompletion",
+        "AIResponseUnmarshal",
+        "AiResponse"
+      ]
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "model/MessageBase",
+  "title": "MessageBase"
+}

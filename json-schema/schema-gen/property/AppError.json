@@ -1,0 +1,30 @@
+{
+  "type": "object",
+  "properties": {
+    "name": {
+      "$ref": "#/definitions/ErrorName"
+    },
+    "message": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "message",
+    "name"
+  ],
+  "definitions": {
+    "ErrorName": {
+      "description": "The code name of the error.",
+      "type": "string",
+      "enum": [
+        "Unknown",
+        "AiCreateCompletion",
+        "AIResponseUnmarshal",
+        "AiResponse"
+      ]
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "property/AppError",
+  "title": "AppError"
+}

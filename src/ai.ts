@@ -25,6 +25,28 @@ ${JSON.stringify(WordJsonSchema, null, 2)}
 \`\`\`
 `;
 
+type ChatPricing = {
+  inputCost: number;
+  outputCost: number;
+};
+
+const chatPricingMap = {
+  "gpt-4": {
+    inputCost: 30 / 1000000,
+    outputCost: 30 / 1000000,
+  },
+  "gpt-4-turbo-2024-04-09": {
+    inputCost: 10 / 1000000,
+    outputCost: 30 / 1000000,
+  },
+  "gpt-3.5-turbo-0125": {
+    inputCost: 0.5 / 1000000,
+    outputCost: 1.5 / 1000000,
+  },
+} as Record<string, ChatPricing>;
+
+const selectedModel: keyof typeof chatPricingMap = "gpt-4-turbo-2024-04-09";
+
 export const openai = new OpenAI();
 
 export const test = async () => {
@@ -87,7 +109,7 @@ export const splitPhrase = async (
   // }
 
   const completion = await openai.chat.completions.create({
-    model: "gpt-4-1106-preview",
+    model: selectedModel,
     messages: [
       {
         role: "system",
@@ -105,6 +127,13 @@ export const splitPhrase = async (
       type: "json_object",
     },
   });
+
+  const inputCost =
+    completion.usage.prompt_tokens * chatPricingMap[selectedModel].inputCost;
+  const outputCost =
+    completion.usage.completion_tokens *
+    chatPricingMap[selectedModel].outputCost;
+  console.log("Cost", inputCost + outputCost, { inputCost, outputCost });
 
   console.log("splitPhrase", JSON.stringify({ completion }));
 
@@ -177,7 +206,7 @@ export const defineWord = async (
   // }
 
   const completion = await openai.chat.completions.create({
-    model: "gpt-4-1106-preview",
+    model: "gpt-4-turbo-2024-04-09",
     messages: [
       {
         role: "system",
@@ -212,7 +241,7 @@ export const parseTextToForeign = async (
   data: MessageParseTextToForeign["input"]
 ) => {
   const completion = await openai.chat.completions.create({
-    model: "gpt-4-1106-preview",
+    model: "gpt-4-turbo-2024-04-09",
     messages: [
       {
         role: "system",

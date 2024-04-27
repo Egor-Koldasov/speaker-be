@@ -6,8 +6,8 @@ import (
 	"context"
 	"log"
 	"os"
-	utilerror "speaker/bin/v2/pkg"
 	"speaker/bin/v2/pkg/utilenv"
+	"speaker/bin/v2/pkg/utilerror"
 
 	_ "speaker/bin/v2/migrations"
 

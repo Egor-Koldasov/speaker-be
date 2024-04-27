@@ -5,6 +5,14 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Launch api-go",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/api-go/cmd/server/api-go.go",
+      "cwd": "${workspaceFolder}/api-go"
+    },
+    {
       "name": "Goose Debug up-by-one",
       "type": "go",
       "request": "launch",
