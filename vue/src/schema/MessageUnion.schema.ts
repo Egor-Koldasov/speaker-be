@@ -5,25 +5,25 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type MessageUnion = MessageParseText | MessageDefineWord;
+export type MessageUnion = MessageParseText | MessageDefineWord
 
 export interface MessageParseText {
   input: {
-    name: "parseText";
+    name: 'ParseTextFromForeign'
     data: {
-      text: string;
+      text: string
       /**
        * The list of BCP 47 language tags of the languages that are most commonly used by the user. Take this list as a priority when you try to detect the text language. Although it is not guaranteed to completely match the text languages
        */
-      originalLanguages: string[];
+      originalLanguages: string[]
       /**
        * The BCP 47 language tag of the language that the user wants to translate the text to.
        */
-      translationLanguage: string;
-      [k: string]: unknown;
-    };
-    [k: string]: unknown;
-  };
+      translationLanguage: string
+      [k: string]: unknown
+    }
+    [k: string]: unknown
+  }
   /**
    * The result of parsing the text for futher translation.
    */
@@ -32,44 +32,44 @@ export interface MessageParseText {
      * Split the text into grammatical parts. A part should be a dictionary entry like a single word or a famous phrase, it is something that can be defined or translated. Do not include symbols, unless they are the integral part of a phrase.
      */
     definitionParts: {
-      text: string;
+      text: string
       /**
        * A short translation of the definition part without additional formatting. Among several translation choices, choose the one that is the best fitting the original context from the user input text that was sent for this parsing.
        */
-      translation?: string;
+      translation?: string
       /**
        * The BCP 47 language tag of the language of that part. Null for unknown
        */
-      languageOriginal?: string | null;
+      languageOriginal?: string | null
       /**
        * The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'
        */
-      languageTranslated?: string;
-      [k: string]: unknown;
-    }[];
+      languageTranslated?: string
+      [k: string]: unknown
+    }[]
     /**
      * The full translation of the text to the requested language.
      */
     translation: {
-      text: string;
+      text: string
       /**
        * The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'
        */
-      language: string;
-      [k: string]: unknown;
-    };
-    [k: string]: unknown;
-  };
-  [k: string]: unknown;
+      language: string
+      [k: string]: unknown
+    }
+    [k: string]: unknown
+  }
+  [k: string]: unknown
 }
 export interface MessageDefineWord {
   input: {
-    name: "defineWord";
+    name: 'defineWord'
     data: {
-      wordString: string;
-      [k: string]: unknown;
-    };
-    [k: string]: unknown;
-  };
-  [k: string]: unknown;
+      wordString: string
+      [k: string]: unknown
+    }
+    [k: string]: unknown
+  }
+  [k: string]: unknown
 }

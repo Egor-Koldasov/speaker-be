@@ -10,9 +10,13 @@ type ErrorName string
 
 var enumValues_ErrorName = []interface{}{
 	"Unknown",
-	"AiCreateCompletion",
-	"AIResponseUnmarshal",
-	"AiResponse",
+	"Internal",
+	"Ai_CreateCompletion",
+	"AI_ResponseUnmarshal",
+	"JsonSchema_MessageInput",
+	"JsonSchema_MessageOutput",
+	"NotFound_MessageName",
+	"FromAi_Critical",
 }
 
 // UnmarshalJSON implements json.Unmarshaler.
@@ -35,7 +39,11 @@ func (j *ErrorName) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-const ErrorNameAIResponseUnmarshal ErrorName = "AIResponseUnmarshal"
-const ErrorNameAiCreateCompletion ErrorName = "AiCreateCompletion"
-const ErrorNameAiResponse ErrorName = "AiResponse"
+const ErrorNameAIResponseUnmarshal ErrorName = "AI_ResponseUnmarshal"
+const ErrorNameAiCreateCompletion ErrorName = "Ai_CreateCompletion"
+const ErrorNameFromAiCritical ErrorName = "FromAi_Critical"
+const ErrorNameInternal ErrorName = "Internal"
+const ErrorNameJsonSchemaMessageInput ErrorName = "JsonSchema_MessageInput"
+const ErrorNameJsonSchemaMessageOutput ErrorName = "JsonSchema_MessageOutput"
+const ErrorNameNotFoundMessageName ErrorName = "NotFound_MessageName"
 const ErrorNameUnknown ErrorName = "Unknown"

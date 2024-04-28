@@ -2,8 +2,10 @@ package apimessage
 
 import (
 	"api-go/pkg/jsonschema"
+	"api-go/pkg/jsonvalidate"
 	"api-go/pkg/utilerror"
 	"api-go/pkg/utilstruct"
+	"fmt"
 	"log"
 )
 
@@ -46,25 +48,62 @@ type MessageOutput[Data interface{}] struct {
 
 type HandlerFn[InputData interface{}, OutputData interface{}] func(*MessageInput[InputData]) *MessageOutput[OutputData]
 
-func OutputDataDefinedToUnknown[OutputData interface{}](output *MessageOutput[OutputData]) *MessageOutput[interface{}] {
+func outputDataDefinedToUnknown[OutputData interface{}](output *MessageOutput[OutputData]) *MessageOutput[interface{}] {
 	return utilstruct.TranslateStruct[*MessageOutput[interface{}]](output)
 }
 
-func MakeHandler[InputData interface{}, OutputData interface{}](handler HandlerFn[InputData, OutputData]) func(jsonschema.MessageBaseInput) *MessageOutput[interface{}] {
+func makeHandler[InputData interface{}, OutputData interface{}](handler HandlerFn[InputData, OutputData]) func(jsonschema.MessageBaseInput) *MessageOutput[interface{}] {
 	return func(messageBase jsonschema.MessageBaseInput) *MessageOutput[interface{}] {
 		input := utilstruct.TranslateStruct[MessageInput[InputData]](messageBase)
-		output := OutputDataDefinedToUnknown(handler(&input))
+		output := outputDataDefinedToUnknown(handler(&input))
 		log.Printf("Message received: %v", output)
-		utilerror.LogErrorIf("Message output name is incorrect", messageBase.Name != output.Name)
+		if utilerror.LogErrorIf("Message output name is incorrect", messageBase.Name != output.Name) {
+			return &MessageOutput[interface{}]{
+				Name: messageBase.Name,
+				Data: nil,
+				Errors: []jsonschema.AppError{
+					{
+						Name:    jsonschema.ErrorNameInternal,
+						Message: fmt.Sprintf("Message output name is incorrect: %v", output.Name),
+					},
+				},
+			}
+		}
 		return output
 	}
 }
 
-func HandleMessage(message jsonschema.MessageBaseInput) {
+func HandleMessage(message jsonschema.MessageBaseInput) *MessageOutput[interface{}] {
+	log.Printf("Message received: %v", message)
+	appErrors := jsonvalidate.ValidateMessageInput("Base", message)
+	if utilerror.LogErrorIf(fmt.Sprintf("Error validating message: %v", appErrors), len(*appErrors) > 0) {
+		return &MessageOutput[interface{}]{
+			Name:   message.Name,
+			Errors: *appErrors,
+			Data:   nil,
+		}
+	}
+	appErrors = jsonvalidate.ValidateMessageInput(message.Name, message)
+	if utilerror.LogErrorIf(fmt.Sprintf("Error validating message %v: %v", message.Name, appErrors), len(*appErrors) > 0) {
+		return &MessageOutput[interface{}]{
+			Name:   message.Name,
+			Errors: *appErrors,
+			Data:   nil,
+		}
+	}
 	handler := MessageHandlerMap[message.Name]
 	if utilerror.LogErrorIf("Message handler not found", handler == nil) {
-		return
+		return &MessageOutput[interface{}]{
+			Name: message.Name,
+			Errors: []jsonschema.AppError{
+				{
+					Name:    jsonschema.ErrorNameNotFoundMessageName,
+					Message: fmt.Sprintf("Message name not found: %v", message.Name),
+				},
+			},
+		}
 	}
-	handler(message)
-	log.Printf("Message received: %v", message)
+	output := handler(message)
+	log.Printf("Message output: %v", output)
+	return output
 }

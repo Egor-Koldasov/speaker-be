@@ -79,7 +79,7 @@ const handleSubmit = async () => {
             </div>
           </button>
         </div>
-        <div v-if="dataStore.parseText.data?.translation">
+        <div v-if="dataStore.ParseTextFromForeign.data?.translation">
           {{
             dataStore.parseTextToForeign.data?.translationChoices[0]
               ?.translation.text

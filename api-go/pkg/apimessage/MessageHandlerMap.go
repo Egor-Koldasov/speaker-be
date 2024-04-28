@@ -6,10 +6,10 @@ import (
 )
 
 var MessageHandlerMap = map[string]func(jsonschema.MessageBaseInput) *MessageOutput[interface{}]{
-	"parseText": ParseTextFromForeign,
+	string(jsonschema.MessageParseTextFromForeignInputNameParseTextFromForeign): ParseTextFromForeign,
 }
 
-var ParseTextFromForeign = MakeHandler(
+var ParseTextFromForeign = makeHandler(
 	func(input *MessageInput[jsonschema.MessageParseTextFromForeignInputData]) *MessageOutput[jsonschema.MessageParseTextFromForeignOutputData] {
 		log.Printf("Message received: %v", input.Data)
 		return &MessageOutput[jsonschema.MessageParseTextFromForeignOutputData]{}

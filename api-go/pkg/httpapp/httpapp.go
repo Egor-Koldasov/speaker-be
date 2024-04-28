@@ -30,9 +30,13 @@ func Init() {
 			return ctx.JSON(400, "Failed to parse body json")
 		}
 
-		apimessage.HandleMessage(message)
+		output := apimessage.HandleMessage(message)
+		status := 500
+		if len(output.Errors) == 0 {
+			status = 200
+		}
 
-		return ctx.JSON(200, "Message received")
+		return ctx.JSON(status, output)
 	})
 	echoApp.Logger.Fatal(echoApp.Start(fmt.Sprintf(":%s", config.Config.HttpPort)))
 }

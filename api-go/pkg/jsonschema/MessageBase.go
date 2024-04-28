@@ -4,22 +4,6 @@ package jsonschema
 
 import "encoding/json"
 import "fmt"
-import "reflect"
-
-type ErrorName string
-
-const ErrorNameAIResponseUnmarshal ErrorName = "AIResponseUnmarshal"
-const ErrorNameAiCreateCompletion ErrorName = "AiCreateCompletion"
-const ErrorNameAiResponse ErrorName = "AiResponse"
-const ErrorNameUnknown ErrorName = "Unknown"
-
-type MessageBase struct {
-	// Input corresponds to the JSON schema field "input".
-	Input MessageBaseInput `json:"input" yaml:"input" mapstructure:"input"`
-
-	// Output corresponds to the JSON schema field "output".
-	Output MessageBaseOutput `json:"output" yaml:"output" mapstructure:"output"`
-}
 
 type MessageBaseInput struct {
 	// Data corresponds to the JSON schema field "data".
@@ -30,26 +14,6 @@ type MessageBaseInput struct {
 }
 
 type MessageBaseInputData map[string]interface{}
-
-// UnmarshalJSON implements json.Unmarshaler.
-func (j *ErrorName) UnmarshalJSON(b []byte) error {
-	var v string
-	if err := json.Unmarshal(b, &v); err != nil {
-		return err
-	}
-	var ok bool
-	for _, expected := range enumValues_ErrorName {
-		if reflect.DeepEqual(v, expected) {
-			ok = true
-			break
-		}
-	}
-	if !ok {
-		return fmt.Errorf("invalid value (expected one of %#v): %#v", enumValues_ErrorName, v)
-	}
-	*j = ErrorName(v)
-	return nil
-}
 
 // UnmarshalJSON implements json.Unmarshaler.
 func (j *MessageBaseInput) UnmarshalJSON(b []byte) error {
@@ -72,47 +36,18 @@ func (j *MessageBaseInput) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-type MessageBaseOutputData map[string]interface{}
-
-type MessageBaseOutputErrorsElem struct {
-	// Message corresponds to the JSON schema field "message".
-	Message string `json:"message" yaml:"message" mapstructure:"message"`
-
-	// Name corresponds to the JSON schema field "name".
-	Name ErrorName `json:"name" yaml:"name" mapstructure:"name"`
-}
-
-// UnmarshalJSON implements json.Unmarshaler.
-func (j *MessageBaseOutputErrorsElem) UnmarshalJSON(b []byte) error {
-	var raw map[string]interface{}
-	if err := json.Unmarshal(b, &raw); err != nil {
-		return err
-	}
-	if v, ok := raw["message"]; !ok || v == nil {
-		return fmt.Errorf("field message in MessageBaseOutputErrorsElem: required")
-	}
-	if v, ok := raw["name"]; !ok || v == nil {
-		return fmt.Errorf("field name in MessageBaseOutputErrorsElem: required")
-	}
-	type Plain MessageBaseOutputErrorsElem
-	var plain Plain
-	if err := json.Unmarshal(b, &plain); err != nil {
-		return err
-	}
-	*j = MessageBaseOutputErrorsElem(plain)
-	return nil
-}
-
 type MessageBaseOutput struct {
 	// Data corresponds to the JSON schema field "data".
 	Data MessageBaseOutputData `json:"data" yaml:"data" mapstructure:"data"`
 
 	// Errors corresponds to the JSON schema field "errors".
-	Errors []MessageBaseOutputErrorsElem `json:"errors" yaml:"errors" mapstructure:"errors"`
+	Errors []AppError `json:"errors" yaml:"errors" mapstructure:"errors"`
 
 	// Name corresponds to the JSON schema field "name".
 	Name string `json:"name" yaml:"name" mapstructure:"name"`
 }
+
+type MessageBaseOutputData map[string]interface{}
 
 // UnmarshalJSON implements json.Unmarshaler.
 func (j *MessageBaseOutput) UnmarshalJSON(b []byte) error {
@@ -138,11 +73,12 @@ func (j *MessageBaseOutput) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-var enumValues_ErrorName = []interface{}{
-	"Unknown",
-	"AiCreateCompletion",
-	"AIResponseUnmarshal",
-	"AiResponse",
+type MessageBase struct {
+	// Input corresponds to the JSON schema field "input".
+	Input MessageBaseInput `json:"input" yaml:"input" mapstructure:"input"`
+
+	// Output corresponds to the JSON schema field "output".
+	Output MessageBaseOutput `json:"output" yaml:"output" mapstructure:"output"`
 }
 
 // UnmarshalJSON implements json.Unmarshaler.

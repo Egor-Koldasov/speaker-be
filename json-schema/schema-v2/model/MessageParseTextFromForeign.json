@@ -6,9 +6,7 @@
       "properties": {
         "name": {
           "type": "string",
-          "enum": [
-            "ParseTextFromForeign"
-          ]
+          "enum": ["ParseTextFromForeign"]
         },
         "data": {
           "type": "object",
@@ -27,17 +25,10 @@
               "type": "string"
             }
           },
-          "required": [
-            "originalLanguages",
-            "text",
-            "translationLanguage"
-          ]
+          "required": ["originalLanguages", "text", "translationLanguage"]
         }
       },
-      "required": [
-        "data",
-        "name"
-      ]
+      "required": ["data", "name"]
     },
     "output": {
       "description": "The result of parsing the text for futher translation.",
@@ -45,9 +36,7 @@
       "properties": {
         "name": {
           "type": "string",
-          "enum": [
-            "ParseTextFromForeign"
-          ]
+          "enum": ["ParseTextFromForeign"]
         },
         "data": {
           "description": "Split the text into grammatical parts. A part should be a dictionary entry like a single word or a famous phrase, it is something that can be defined or translated. Do not include symbols, unless they are the integral part of a phrase.",
@@ -75,9 +64,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "text"
-                ]
+                "required": ["text"]
               }
             },
             "translation": {
@@ -92,60 +79,23 @@
                   "type": "string"
                 }
               },
-              "required": [
-                "language",
-                "text"
-              ]
+              "required": ["language", "text"]
             }
           },
-          "required": [
-            "definitionParts",
-            "translation"
-          ]
+          "required": ["definitionParts", "translation"]
         },
         "errors": {
           "type": "array",
           "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "$ref": "#/definitions/ErrorName"
-              },
-              "message": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "message",
-              "name"
-            ]
+            "$ref": "../property/AppError.json"
           }
         }
       },
-      "required": [
-        "data",
-        "errors",
-        "name"
-      ]
+      "required": ["data", "errors", "name"]
     }
   },
-  "required": [
-    "input",
-    "output"
-  ],
-  "definitions": {
-    "ErrorName": {
-      "description": "The code name of the error.",
-      "type": "string",
-      "enum": [
-        "Unknown",
-        "AiCreateCompletion",
-        "AIResponseUnmarshal",
-        "AiResponse"
-      ]
-    }
-  },
+  "required": ["input", "output"],
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "model/MessageParseTextFromForeign",
+  "$id": "MessageParseTextFromForeign",
   "title": "MessageParseTextFromForeign"
 }

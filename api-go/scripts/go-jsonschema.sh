@@ -12,7 +12,7 @@ do
   schemaPaths="$schemaPaths $scriptDir../../json-schema/schema/$schema"
 done
 
-schemaPaths=$(cd "$scriptDir../../json-schema/schema-gen" && find . -name "*.json")
+schemaPaths=$(cd "$scriptDir../../json-schema/schema-v2" && find . -name "*.json")
 schemaPathsAbsolute=""
 schemaOutput=""
 
@@ -21,14 +21,14 @@ do
   schemaRelPath=${schemaPath:2}
   echo "Adding schema ${schemaRelPath}"
 
-  schemaId=${schemaRelPath%?????}
+  schemaId=$(basename ${schemaRelPath%?????})
   outputFileName=$(tr \/ _ <<< $schemaId)
   schemaOutput="$schemaOutput --schema-output=${schemaId}=$scriptDir../pkg/jsonschema/${outputFileName}.go"
-  schemaPathsAbsolute="$schemaPathsAbsolute $scriptDir../../json-schema/schema-gen/${schemaPath}"
+  schemaPathsAbsolute="$schemaPathsAbsolute $scriptDir../../json-schema/schema-v2/${schemaPath}"
 done
 
 echo ''
 echo "Generating schemas"
-echo "~/go/bin/go-jsonschema -t -p jsonschema $schemaOutput $schemaPathsAbsolute"
+echo "~/go/bin/go-jsonschema -t -p jsonschema $schemaOutput $scriptDir../../json-schema/schema-v2/Main.json"
 echo ''
-~/go/bin/go-jsonschema -t -p jsonschema $schemaOutput $schemaPathsAbsolute
+~/go/bin/go-jsonschema -t -p jsonschema $schemaOutput $scriptDir../../json-schema/schema-v2/Main.json

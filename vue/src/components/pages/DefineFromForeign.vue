@@ -23,7 +23,7 @@ const dataStore = useDataStore()
 
 const handleSubmit = async () => {
   dataStore.sendMessage({
-    name: 'parseText',
+    name: 'ParseTextFromForeign',
     data: {
       // text: form.phrase,
       invalid: 'error',
@@ -41,7 +41,9 @@ watch(healthData, (newVal) => {
 })
 
 const selectedWord = computed(() => {
-  return dataStore.parseText.data?.definitionParts[uiState.selectedWordIndex]
+  return dataStore.ParseTextFromForeign.data?.definitionParts[
+    uiState.selectedWordIndex
+  ]
 })
 </script>
 
@@ -84,8 +86,8 @@ const selectedWord = computed(() => {
             class="part"
             :class="{ selected: uiState.selectedWordIndex === index }"
             @click="uiState.selectedWordIndex = index"
-            v-for="(part, index) in dataStore.parseText.data?.definitionParts ??
-            []"
+            v-for="(part, index) in dataStore.ParseTextFromForeign.data
+              ?.definitionParts ?? []"
             :key="part.text"
           >
             <div class="part-text">
@@ -98,8 +100,8 @@ const selectedWord = computed(() => {
             </div>
           </button>
         </div>
-        <div v-if="dataStore.parseText.data?.translation">
-          {{ dataStore.parseText.data.translation.text }}
+        <div v-if="dataStore.ParseTextFromForeign.data?.translation">
+          {{ dataStore.ParseTextFromForeign.data.translation.text }}
         </div>
         <textarea
           type="text"
@@ -110,11 +112,11 @@ const selectedWord = computed(() => {
         <button
           type="submit"
           class="submit-btn"
-          :disabled="dataStore.parseText.loading"
+          :disabled="dataStore.ParseTextFromForeign.loading"
         >
           Learn
         </button>
-        <progress v-if="dataStore.parseText.loading" />
+        <progress v-if="dataStore.ParseTextFromForeign.loading" />
       </form>
       <DefinitionItem
         v-if="!!selectedWord"

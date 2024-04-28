@@ -25,7 +25,7 @@ const initMessageDataItem = <const Name extends MessageName>(name: Name) =>
 
 export const useDataStore = defineStore('dataStore', {
   state: () => ({
-    parseText: initMessageDataItem('parseText'),
+    ParseTextFromForeign: initMessageDataItem('ParseTextFromForeign'),
     defineWord: initMessageDataItem('defineWord'),
     parseTextToForeign: initMessageDataItem('parseTextToForeign'),
     textToSpeech: initDateStateItem<

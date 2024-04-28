@@ -2,6 +2,7 @@ import { mkdir, readdir, writeFile } from "fs/promises";
 import { join } from "path";
 
 import * as TJS from "typescript-json-schema";
+import { createGenerator } from "ts-json-schema-generator";
 
 const tsSchemaDir = join(__dirname, "../ts-schema");
 type SchemaFile = {
@@ -42,6 +43,9 @@ export const generateJsonSchema = async () => {
     required: true,
     excludePrivate: true,
     constAsEnum: true,
+    ref: true,
+    aliasRef: true,
+    topRef: true,
   };
 
   // optionally pass ts compiler options
@@ -53,15 +57,25 @@ export const generateJsonSchema = async () => {
   );
 
   // ... or a generator that lets us incrementally get more schemas
-
   const generator = TJS.buildGenerator(program, settings);
 
   if (!generator) {
     throw new Error("No generator");
   }
 
+  const refs = program.getProjectReferences();
+  console.log(refs);
+
   await Promise.all(
     schemaFiles.map(async (file) => {
+      const schema = createGenerator({
+        path: file.filePath,
+        expose: "export",
+        discriminatorType: "json-schema",
+      }).createSchema();
+
+      console.log(schema);
+
       const mainSymbols = generator.getMainFileSymbols(program, [
         file.filePath,
       ]);

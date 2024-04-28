@@ -5,38 +5,42 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type MessageUnion = MessageParseText | MessageDefineWord | MessageParseTextToForeign | MessageTextToSpeech;
+export type MessageUnion =
+  | MessageParseText
+  | MessageDefineWord
+  | MessageParseTextToForeign
+  | MessageTextToSpeech
 /**
  * The list of BCP 47 language tags of the languages that are most commonly used by the user. Take this list as a priority when you try to detect the text language. Although it is not guaranteed to completely match the text languages
  */
-export type OriginalLanguages = string[];
+export type OriginalLanguages = string[]
 /**
  * The list of BCP 47 language tags of the languages native to the user. Take this list as a priority when you try to detect the text language. Although it is not guaranteed to completely match the text languages
  */
-export type NativeLanguages = string[];
+export type NativeLanguages = string[]
 
 export interface Main {
-  MessageUnion?: MessageUnion;
+  MessageUnion?: MessageUnion
   model?: {
-    Word?: Word;
-    [k: string]: unknown;
-  };
-  [k: string]: unknown;
+    Word?: Word
+    [k: string]: unknown
+  }
+  [k: string]: unknown
 }
 export interface MessageParseText {
   input: {
-    name: "parseText";
+    name: 'ParseTextFromForeign'
     data: {
-      text: string;
-      originalLanguages: OriginalLanguages;
+      text: string
+      originalLanguages: OriginalLanguages
       /**
        * The BCP 47 language tag of the language that the user wants to translate the text to.
        */
-      translationLanguage: string;
-      [k: string]: unknown;
-    };
-    [k: string]: unknown;
-  };
+      translationLanguage: string
+      [k: string]: unknown
+    }
+    [k: string]: unknown
+  }
   /**
    * The result of parsing the text for futher translation.
    */
@@ -48,62 +52,62 @@ export interface MessageParseText {
       /**
        * The text of the part split. Keep this part small, it should not be longer than a typical dictionary entry point. Usualy a single word or sometimes a single word or a famous phrase. Do not include any punctuation symbols, enclosing parentheses or apostrophes an so on.
        */
-      text: string;
+      text: string
       /**
        * A short translation of the definition part without additional formatting. Among several translation choices, choose the one that is the best fitting the original context from the user input text that was sent for this parsing.
        */
-      translation?: string;
+      translation?: string
       /**
        * The BCP 47 language tag of the language of that part. Null for unknown
        */
-      languageOriginal?: string | null;
+      languageOriginal?: string | null
       /**
        * The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'
        */
-      languageTranslated?: string;
-      [k: string]: unknown;
-    }[];
+      languageTranslated?: string
+      [k: string]: unknown
+    }[]
     /**
      * The full translation of the text to the requested language.
      */
     translation: {
-      text: string;
+      text: string
       /**
        * The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'
        */
-      language: string;
-      [k: string]: unknown;
-    };
-    [k: string]: unknown;
-  };
-  [k: string]: unknown;
+      language: string
+      [k: string]: unknown
+    }
+    [k: string]: unknown
+  }
+  [k: string]: unknown
 }
 export interface MessageDefineWord {
   input: {
-    name: "defineWord";
+    name: 'defineWord'
     data: {
       /**
        * A word or a common phrase to define
        */
-      wordString: string;
+      wordString: string
       /**
        * A context from which the word or phrase is taken
        */
-      context: string;
-      originalLanguages: OriginalLanguages;
+      context: string
+      originalLanguages: OriginalLanguages
       /**
        * The BCP 47 language tag of the language that the user wants to translate the text to.
        */
-      translationLanguage: string;
-      [k: string]: unknown;
-    };
-    [k: string]: unknown;
-  };
+      translationLanguage: string
+      [k: string]: unknown
+    }
+    [k: string]: unknown
+  }
   output?: {
-    definition: Word;
-    [k: string]: unknown;
-  };
-  [k: string]: unknown;
+    definition: Word
+    [k: string]: unknown
+  }
+  [k: string]: unknown
 }
 /**
  * A detailed representation of a word, including its original and neutral forms, pronunciations, translations, definitions, origin, and usage examples.
@@ -112,43 +116,43 @@ export interface Word {
   /**
    * The original language of the word in a BCP 47 format.
    */
-  languageOriginal: string;
+  languageOriginal: string
   /**
    * The language the word is translated to in a BCP 47 format.
    */
-  languageTranslated: string;
+  languageTranslated: string
   /**
    * The original word given, in the exact same grammatic form, capitalized.
    */
-  originalWord: string;
+  originalWord: string
   /**
    * The word in a neutral grammatic form.
    */
-  neutralForm: string;
+  neutralForm: string
   /**
    * A pronunciation of the original word given.
    */
-  pronounciation: string;
+  pronounciation: string
   /**
    * An extensive translation to the language defined by a `languageTranslated` property, the more words the better. In case of multiple meanings, include all of them.
    */
-  translation: string;
+  translation: string
   /**
    * Common synonyms in the original language.
    */
-  synonyms: string[];
+  synonyms: string[]
   /**
    * An extensive definition in the original language.
    */
-  definitionOriginal: string;
+  definitionOriginal: string
   /**
    * An extensive definition in the language defined by a `languageTranslated` property.
    */
-  definitionTranslated: string;
+  definitionTranslated: string
   /**
    * The root parts of the word and the origin in the language defined by a `languageTranslated` property. If the original form from Part 1 is different from the neutral grammatic form from Part 2, explain that difference including all the details.
    */
-  origin: string;
+  origin: string
   /**
    * Three sentence examples of the usage of the original word in the same grammatic form followed by an translation in the language defined by a `languageTranslated` property. The sentence and the translation should be separated by one new line, while the examples themselves should be separated by three new lines. If there was a context from which that word was taken, include a phrase from that context in examples, replacing the first example.
    */
@@ -156,33 +160,33 @@ export interface Word {
     /**
      * An example sentence in the original language using the word.
      */
-    original: string;
+    original: string
     /**
      * The translation of the example sentence in the language defined by a `languageTranslated` property.
      */
-    translation: string;
-    [k: string]: unknown;
-  }[];
+    translation: string
+    [k: string]: unknown
+  }[]
   /**
    * The date and time when the word was exported to CSV.
    */
-  csvExportedAt?: string;
-  [k: string]: unknown;
+  csvExportedAt?: string
+  [k: string]: unknown
 }
 export interface MessageParseTextToForeign {
   input: {
-    name: "parseTextToForeign";
+    name: 'parseTextToForeign'
     data: {
-      text: string;
-      nativeLanguages: NativeLanguages;
+      text: string
+      nativeLanguages: NativeLanguages
       /**
        * The BCP 47 language tag of the language that the user wants to translate the text to.
        */
-      primaryForeignLanguage: string;
-      [k: string]: unknown;
-    };
-    [k: string]: unknown;
-  };
+      primaryForeignLanguage: string
+      [k: string]: unknown
+    }
+    [k: string]: unknown
+  }
   /**
    * The result of parsing the text for futher translation.
    */
@@ -198,50 +202,50 @@ export interface MessageParseTextToForeign {
         /**
          * The text of the foreign language translation part split. Keep this part small, it should not be longer than a typical dictionary entry point. Do not include any punctuation symbols, enclosing parentheses or apostrophes an so on.
          */
-        text: string;
+        text: string
         /**
          * A short translation of the definition part without additional formatting. Among several translation choices, choose the one that is the best fitting the original context from the user input text that was sent for this parsing.
          */
-        translationToNative?: string;
+        translationToNative?: string
         /**
          * The BCP 47 language tag of the translation language. It should match the requested 'primaryForeignLanguage'.
          */
-        languageForeign?: string;
+        languageForeign?: string
         /**
          * The BCP 47 language tag of the native language matching the part of the original text. Null for unknown
          */
-        languageNative?: string | null;
-        [k: string]: unknown;
-      }[];
+        languageNative?: string | null
+        [k: string]: unknown
+      }[]
       /**
        * The full translation of the text to the requested language.
        */
       translation: {
-        text: string;
+        text: string
         /**
          * The BCP 47 language tag of the language of the translation. It should match the requested 'primaryForeignLanguage'
          */
-        language: string;
-        [k: string]: unknown;
-      };
-      [k: string]: unknown;
-    }[];
-    [k: string]: unknown;
-  };
-  [k: string]: unknown;
+        language: string
+        [k: string]: unknown
+      }
+      [k: string]: unknown
+    }[]
+    [k: string]: unknown
+  }
+  [k: string]: unknown
 }
 export interface MessageTextToSpeech {
   input: {
-    name: "textToSpeech";
+    name: 'textToSpeech'
     data: {
       /**
        * Text to convert to speech
        */
-      text: string;
-      [k: string]: unknown;
-    };
-    [k: string]: unknown;
-  };
+      text: string
+      [k: string]: unknown
+    }
+    [k: string]: unknown
+  }
   /**
    * Message output
    */
@@ -249,8 +253,8 @@ export interface MessageTextToSpeech {
     /**
      * Base64 encoded audio data
      */
-    audio?: string;
-    [k: string]: unknown;
-  };
-  [k: string]: unknown;
+    audio?: string
+    [k: string]: unknown
+  }
+  [k: string]: unknown
 }

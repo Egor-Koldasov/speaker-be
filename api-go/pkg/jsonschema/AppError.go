@@ -4,36 +4,6 @@ package jsonschema
 
 import "encoding/json"
 import "fmt"
-import "reflect"
-
-type ErrorName string
-
-var enumValues_ErrorName = []interface{}{
-	"Unknown",
-	"AiCreateCompletion",
-	"AIResponseUnmarshal",
-	"AiResponse",
-}
-
-// UnmarshalJSON implements json.Unmarshaler.
-func (j *ErrorName) UnmarshalJSON(b []byte) error {
-	var v string
-	if err := json.Unmarshal(b, &v); err != nil {
-		return err
-	}
-	var ok bool
-	for _, expected := range enumValues_ErrorName {
-		if reflect.DeepEqual(v, expected) {
-			ok = true
-			break
-		}
-	}
-	if !ok {
-		return fmt.Errorf("invalid value (expected one of %#v): %#v", enumValues_ErrorName, v)
-	}
-	*j = ErrorName(v)
-	return nil
-}
 
 type AppError struct {
 	// Message corresponds to the JSON schema field "message".
@@ -42,11 +12,6 @@ type AppError struct {
 	// Name corresponds to the JSON schema field "name".
 	Name ErrorName `json:"name" yaml:"name" mapstructure:"name"`
 }
-
-const ErrorNameAIResponseUnmarshal ErrorName = "AIResponseUnmarshal"
-const ErrorNameAiCreateCompletion ErrorName = "AiCreateCompletion"
-const ErrorNameAiResponse ErrorName = "AiResponse"
-const ErrorNameUnknown ErrorName = "Unknown"
 
 // UnmarshalJSON implements json.Unmarshaler.
 func (j *AppError) UnmarshalJSON(b []byte) error {
