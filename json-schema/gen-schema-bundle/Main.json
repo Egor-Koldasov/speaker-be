@@ -1,0 +1,247 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "Main",
+  "title": "GenJsonSchema",
+  "type": "object",
+  "properties": {
+    "model": {
+      "type": "object",
+      "properties": {
+        "MessageBase": {
+          "type": "object",
+          "properties": {
+            "input": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "$schema": "http://json-schema.org/draft-07/schema",
+                  "$id": "Id",
+                  "title": "Id",
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {},
+                  "additionalProperties": true
+                }
+              },
+              "required": [
+                "id",
+                "data",
+                "name"
+              ]
+            },
+            "output": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "$ref": "#/properties/model/properties/MessageBase/properties/input/properties/id"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {},
+                  "additionalProperties": true
+                },
+                "errors": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "description": "The code name of the error.",
+                        "type": "string",
+                        "enum": [
+                          "Unknown",
+                          "Internal",
+                          "Ai_CreateCompletion",
+                          "AI_ResponseUnmarshal",
+                          "JsonSchema_MessageInput",
+                          "JsonSchema_MessageOutput",
+                          "NotFound_MessageName",
+                          "FromAi_Critical"
+                        ],
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "$id": "ErrorName",
+                        "title": "ErrorName"
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "message",
+                      "name"
+                    ],
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                    "$id": "AppError",
+                    "title": "AppError"
+                  }
+                }
+              },
+              "required": [
+                "id",
+                "data",
+                "errors",
+                "name"
+              ]
+            }
+          },
+          "required": [
+            "input",
+            "output"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "$id": "MessageBase",
+          "title": "MessageBase"
+        },
+        "messages": {
+          "type": "object",
+          "properties": {
+            "ParseTextFromForeign": {
+              "type": "object",
+              "properties": {
+                "input": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "$ref": "#/properties/model/properties/MessageBase/properties/input/properties/id"
+                    },
+                    "name": {
+                      "type": "string",
+                      "enum": [
+                        "ParseTextFromForeign"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "text": {
+                          "type": "string"
+                        },
+                        "originalLanguages": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "translationLanguage": {
+                          "description": "The BCP 47 language tag of the language that the user wants to translate the text to.",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "originalLanguages",
+                        "text",
+                        "translationLanguage"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "name"
+                  ]
+                },
+                "output": {
+                  "description": "The result of parsing the text for futher translation.",
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "$ref": "#/properties/model/properties/MessageBase/properties/input/properties/id"
+                    },
+                    "name": {
+                      "type": "string",
+                      "enum": [
+                        "ParseTextFromForeign"
+                      ]
+                    },
+                    "data": {
+                      "description": "Split the text into grammatical parts. A part should be a dictionary entry like a single word or a famous phrase, it is something that can be defined or translated. Do not include symbols, unless they are the integral part of a phrase.",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "definitionParts": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "text": {
+                                "description": "The text of the part split. Keep this part small, it should not be longer than a typical dictionary entry point. Usualy a single word or sometimes a single word or a famous phrase. Do not include any punctuation symbols, enclosing parentheses or apostrophes an so on.",
+                                "type": "string"
+                              },
+                              "translation": {
+                                "description": "A short translation of the definition part without additional formatting. Among several translation choices, choose the one that is the best fitting the original context from the user input text that was sent for this parsing.",
+                                "type": "string"
+                              },
+                              "languageOriginal": {
+                                "description": "The BCP 47 language tag of the language of that part. Null for unknown",
+                                "type": "string"
+                              },
+                              "languageTranslated": {
+                                "description": "The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'",
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "text"
+                            ]
+                          }
+                        },
+                        "translation": {
+                          "description": "The full translation of the text to the requested language.",
+                          "type": "object",
+                          "properties": {
+                            "text": {
+                              "type": "string"
+                            },
+                            "language": {
+                              "description": "The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "language",
+                            "text"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "definitionParts",
+                        "translation"
+                      ]
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/properties/model/properties/MessageBase/properties/output/properties/errors/items"
+                      }
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "errors",
+                    "name"
+                  ]
+                }
+              },
+              "required": [
+                "input",
+                "output"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "$id": "MessageParseTextFromForeign",
+              "title": "MessageParseTextFromForeign"
+            }
+          }
+        }
+      }
+    }
+  }
+}

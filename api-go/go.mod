@@ -14,6 +14,7 @@ require (
 	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/neo4j/neo4j-go-driver/v5 v5.20.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/santhosh-tekuri/jsonschema/v5 v5.3.1 // indirect
 	github.com/sashabaranov/go-openai v1.23.0 // indirect

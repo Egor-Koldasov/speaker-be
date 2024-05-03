@@ -1,0 +1,93 @@
+{
+  "type": "object",
+  "properties": {
+    "input": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "Id",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "id",
+        "data",
+        "name"
+      ]
+    },
+    "output": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/properties/input/properties/id"
+        },
+        "name": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": true
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "description": "The code name of the error.",
+                "type": "string",
+                "enum": [
+                  "Unknown",
+                  "Internal",
+                  "Ai_CreateCompletion",
+                  "AI_ResponseUnmarshal",
+                  "JsonSchema_MessageInput",
+                  "JsonSchema_MessageOutput",
+                  "NotFound_MessageName",
+                  "FromAi_Critical"
+                ],
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "$id": "ErrorName",
+                "title": "ErrorName"
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "message",
+              "name"
+            ],
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "$id": "AppError",
+            "title": "AppError"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "data",
+        "errors",
+        "name"
+      ]
+    }
+  },
+  "required": [
+    "input",
+    "output"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "MessageBase",
+  "title": "MessageBase"
+}

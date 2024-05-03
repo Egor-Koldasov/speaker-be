@@ -25,7 +25,7 @@ const handleSubmit = async () => {
   dataStore.sendMessage({
     name: 'ParseTextFromForeign',
     data: {
-      // text: form.phrase,
+      text: form.phrase,
       invalid: 'error',
       originalLanguages: uisSettings.originalLanguages,
       translationLanguage: uisSettings.translationLanguage ?? 'en',

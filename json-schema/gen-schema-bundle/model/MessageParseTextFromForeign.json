@@ -5,11 +5,16 @@
       "type": "object",
       "properties": {
         "id": {
-          "$ref": "../property/Id.json"
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "Id",
+          "title": "Id",
+          "type": "string"
         },
         "name": {
           "type": "string",
-          "enum": ["ParseTextFromForeign"]
+          "enum": [
+            "ParseTextFromForeign"
+          ]
         },
         "data": {
           "type": "object",
@@ -28,25 +33,37 @@
               "type": "string"
             }
           },
-          "required": ["originalLanguages", "text", "translationLanguage"]
+          "required": [
+            "originalLanguages",
+            "text",
+            "translationLanguage"
+          ]
         }
       },
-      "required": ["data", "name"]
+      "required": [
+        "data",
+        "name"
+      ]
     },
     "output": {
       "description": "The result of parsing the text for futher translation.",
       "type": "object",
       "properties": {
         "id": {
-          "$ref": "../property/Id.json"
+          "$ref": "#/properties/input/properties/id"
         },
         "name": {
           "type": "string",
-          "enum": ["ParseTextFromForeign"]
+          "enum": [
+            "ParseTextFromForeign"
+          ]
         },
         "data": {
           "description": "Split the text into grammatical parts. A part should be a dictionary entry like a single word or a famous phrase, it is something that can be defined or translated. Do not include symbols, unless they are the integral part of a phrase.",
-          "type": ["object", "null"],
+          "type": [
+            "object",
+            "null"
+          ],
           "properties": {
             "definitionParts": {
               "type": "array",
@@ -70,7 +87,9 @@
                     "type": "string"
                   }
                 },
-                "required": ["text"]
+                "required": [
+                  "text"
+                ]
               }
             },
             "translation": {
@@ -85,22 +104,64 @@
                   "type": "string"
                 }
               },
-              "required": ["language", "text"]
+              "required": [
+                "language",
+                "text"
+              ]
             }
           },
-          "required": ["definitionParts", "translation"]
+          "required": [
+            "definitionParts",
+            "translation"
+          ]
         },
         "errors": {
           "type": "array",
           "items": {
-            "$ref": "../property/AppError.json"
+            "type": "object",
+            "properties": {
+              "name": {
+                "description": "The code name of the error.",
+                "type": "string",
+                "enum": [
+                  "Unknown",
+                  "Internal",
+                  "Ai_CreateCompletion",
+                  "AI_ResponseUnmarshal",
+                  "JsonSchema_MessageInput",
+                  "JsonSchema_MessageOutput",
+                  "NotFound_MessageName",
+                  "FromAi_Critical"
+                ],
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "$id": "ErrorName",
+                "title": "ErrorName"
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "message",
+              "name"
+            ],
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "$id": "AppError",
+            "title": "AppError"
           }
         }
       },
-      "required": ["data", "errors", "name"]
+      "required": [
+        "data",
+        "errors",
+        "name"
+      ]
     }
   },
-  "required": ["input", "output"],
+  "required": [
+    "input",
+    "output"
+  ],
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "MessageParseTextFromForeign",
   "title": "MessageParseTextFromForeign"

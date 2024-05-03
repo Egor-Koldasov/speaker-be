@@ -1,9 +1,9 @@
 package httpapp
 
 import (
-	"api-go/pkg/apimessage"
+	"api-go/pkg/apimessagehandler"
 	"api-go/pkg/config"
-	"api-go/pkg/jsonschema"
+	"api-go/pkg/genjsonschema"
 	"api-go/pkg/utilerror"
 	"fmt"
 	"io"
@@ -20,7 +20,7 @@ func Init() {
 		// userInfo, err := pgdb.Queries.GetUserInfo(ctx.Request().Context(), "admin")
 		// utilerror.LogError("Failed to get user info", err)
 		// log.Printf("User info: %v", userInfo)
-		var message = jsonschema.MessageBaseInput{}
+		var message = genjsonschema.MessageBaseInput{}
 		body, err := io.ReadAll(ctx.Request().Body)
 		if utilerror.LogError("Failed to read body", err) {
 			return ctx.JSON(400, "Failed to read body")
@@ -30,7 +30,7 @@ func Init() {
 			return ctx.JSON(400, "Failed to parse body json")
 		}
 
-		output := apimessage.HandleMessage(message)
+		output := apimessagehandler.HandleMessage(message)
 		status := 500
 		if len(output.Errors) == 0 {
 			status = 200

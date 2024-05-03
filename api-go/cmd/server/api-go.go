@@ -2,6 +2,7 @@ package main
 
 import (
 	"api-go/pkg/httpapp"
+	"api-go/pkg/neo4jdb"
 	"api-go/pkg/pgdb"
 	"context"
 	"log"
@@ -13,8 +14,9 @@ var waitGroup sync.WaitGroup
 
 func init() {
 	// Connect to the database
-	waitGroup.Add(1)
+	waitGroup.Add(2)
 	go pgdb.Init(ctx, &waitGroup)
+	go neo4jdb.Init(ctx, &waitGroup)
 	httpapp.Init()
 }
 

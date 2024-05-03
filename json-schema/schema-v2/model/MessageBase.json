@@ -4,6 +4,9 @@
     "input": {
       "type": "object",
       "properties": {
+        "id": {
+          "$ref": "../property/Id.json"
+        },
         "name": {
           "type": "string"
         },
@@ -13,11 +16,14 @@
           "additionalProperties": true
         }
       },
-      "required": ["data", "name"]
+      "required": ["id", "data", "name"]
     },
     "output": {
       "type": "object",
       "properties": {
+        "id": {
+          "$ref": "../property/Id.json"
+        },
         "name": {
           "type": "string"
         },
@@ -33,7 +39,7 @@
           }
         }
       },
-      "required": ["data", "errors", "name"]
+      "required": ["id", "data", "errors", "name"]
     }
   },
   "required": ["input", "output"],

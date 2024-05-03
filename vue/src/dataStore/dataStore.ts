@@ -3,6 +3,7 @@ import type { MessageName } from '../types/MessageName'
 import type { MessageOutputByName } from '../types/MessageOutputByName'
 import type { MessageInputByName } from '../types/MessageInputByName'
 import { speakerUrl } from '../util/useSpeakerHealth'
+import { uuidv7 } from '@kripod/uuidv7'
 
 type DataStateItem<Data, Name extends string> = {
   name: Name
@@ -38,6 +39,7 @@ export const useDataStore = defineStore('dataStore', {
       input: MessageInputByName<Name>,
     ) {
       this[input.name].loading = true
+      input.id = uuidv7()
       try {
         const res = await fetch(`${speakerUrl}/message`, {
           method: 'POST',
@@ -46,8 +48,8 @@ export const useDataStore = defineStore('dataStore', {
           },
           body: JSON.stringify(input),
         })
-        const data = (await res.json()) as MessageOutputByName<Name>
-        this[input.name].data = data
+        const data = (await res.json()) as { data: MessageOutputByName<Name> }
+        this[input.name].data = data.data
       } catch (err) {
         console.error(err)
         this[input.name].errors = [String(err)]
