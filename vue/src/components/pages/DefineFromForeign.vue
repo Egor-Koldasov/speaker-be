@@ -5,32 +5,49 @@ import { useToasts } from '../../uiStore/useToasts'
 import DefinitionItem from '../DefinitionItem/DefinitionItem.vue'
 import LanguageSelector from '../LanguageSelector.vue'
 import { useSettings } from '../../uiStore/useSettings'
-import { useDataStore } from '../../dataStore/dataStore'
+import {
+  useMessageStore,
+  type MessageInputParams,
+} from '../../dataStore/messageStore'
 import Page from '../layout/Page.vue'
 import PageHeader from '../layout/PageHeader.vue'
 import LanguageBar from '../LanguageBar.vue'
+import { useMessage } from '../../dataStore/messageStore'
 
 const { healthData, checkHealth } = useSpeakerHealth()
 const uisToasts = useToasts()
-const form = reactive({
-  phrase: '',
-})
+
 const uiState = reactive({
   selectedWordIndex: -1,
 })
 const uisSettings = useSettings()
-const dataStore = useDataStore()
+const form = reactive({
+  phrase: '',
+  messageParams: {
+    inputParams: {
+      name: 'ParseTextFromForeign',
+      data: {
+        text: '',
+        originalLanguages: uisSettings.originalLanguages,
+        translationLanguage: uisSettings.translationLanguage ?? 'en',
+      },
+    } satisfies MessageInputParams<'ParseTextFromForeign'>,
+  },
+})
+const messageStore = useMessageStore()
+
+const messageQuery = useMessage(form.messageParams)
+const messageResult = computed(
+  () => messageQuery.value.data?.output?.data ?? null,
+)
 
 const handleSubmit = async () => {
-  dataStore.sendMessage({
-    name: 'ParseTextFromForeign',
-    data: {
-      text: form.phrase,
-      invalid: 'error',
-      originalLanguages: uisSettings.originalLanguages,
-      translationLanguage: uisSettings.translationLanguage ?? 'en',
-    },
-  })
+  form.messageParams.inputParams.data.text = form.phrase
+  form.messageParams.inputParams.data.originalLanguages =
+    uisSettings.originalLanguages
+  form.messageParams.inputParams.data.translationLanguage =
+    uisSettings.translationLanguage ?? 'en'
+  messageStore.sendMessage(form.messageParams.inputParams)
 }
 watch(healthData, (newVal) => {
   console.log(newVal)
@@ -41,9 +58,7 @@ watch(healthData, (newVal) => {
 })
 
 const selectedWord = computed(() => {
-  return dataStore.ParseTextFromForeign.data?.definitionParts[
-    uiState.selectedWordIndex
-  ]
+  return messageResult.value?.definitionParts[uiState.selectedWordIndex]
 })
 </script>
 
@@ -86,9 +101,9 @@ const selectedWord = computed(() => {
             class="part"
             :class="{ selected: uiState.selectedWordIndex === index }"
             @click="uiState.selectedWordIndex = index"
-            v-for="(part, index) in dataStore.ParseTextFromForeign.data
-              ?.definitionParts ?? []"
-            :key="part.text"
+            v-for="(part, index) in messageResult?.definitionParts ?? []"
+            :key="index"
+            :data-index="index"
           >
             <div class="part-text">
               <!-- {{ part.languageOriginal }} -->
@@ -100,8 +115,8 @@ const selectedWord = computed(() => {
             </div>
           </button>
         </div>
-        <div v-if="dataStore.ParseTextFromForeign.data?.translation">
-          {{ dataStore.ParseTextFromForeign.data.translation.text }}
+        <div v-if="messageResult?.translation">
+          {{ messageResult.translation.text }}
         </div>
         <textarea
           type="text"
@@ -112,11 +127,11 @@ const selectedWord = computed(() => {
         <button
           type="submit"
           class="submit-btn"
-          :disabled="dataStore.ParseTextFromForeign.loading"
+          :disabled="messageQuery.refreshing"
         >
           Learn
         </button>
-        <progress v-if="dataStore.ParseTextFromForeign.loading" />
+        <progress v-if="messageQuery.refreshing" />
       </form>
       <DefinitionItem
         v-if="!!selectedWord"

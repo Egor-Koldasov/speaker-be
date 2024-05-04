@@ -80,7 +80,9 @@ func validateMessage(messageName string, messageInput interface{}, validatorName
 	res, err := validator.Validate(messageLoader)
 	if err != nil {
 		log.Printf("Error validating message %v %v: %v", validatorName, messageName, err)
-		return &AppErrorsEmpty
+		return &[]genjsonschema.AppError{
+			apperrors.Internal,
+		}
 	}
 	if res.Valid() {
 		return &AppErrorsEmpty
@@ -96,7 +98,6 @@ func validateMessage(messageName string, messageInput interface{}, validatorName
 }
 
 func ValidateMessageInput(messageName string, messageInput interface{}) *[]genjsonschema.AppError {
-	validateMessage(messageName, messageInput, "Output")
 	return validateMessage(messageName, messageInput, "Input")
 }
 

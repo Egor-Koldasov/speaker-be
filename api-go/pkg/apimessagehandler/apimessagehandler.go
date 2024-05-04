@@ -2,6 +2,7 @@ package apimessagehandler
 
 import (
 	"api-go/pkg/apimessage"
+	"api-go/pkg/apperrors"
 	"api-go/pkg/genjsonschema"
 	"api-go/pkg/jsonvalidate"
 	"api-go/pkg/utilerror"
@@ -26,10 +27,7 @@ func makeHandler[InputData interface{}, OutputData interface{}](handler HandlerF
 				Name: messageBase.Name,
 				Data: nil,
 				Errors: []genjsonschema.AppError{
-					{
-						Name:    genjsonschema.ErrorNameInternal,
-						Message: fmt.Sprintf("Message output name is incorrect: %v", output.Name),
-					},
+					apperrors.Internal,
 				},
 			}
 		}
@@ -56,14 +54,6 @@ func HandleMessage(message genjsonschema.MessageBaseInput) *apimessage.MessageOu
 		}
 	}
 	handler := MessageHandlerMap[message.Name]
-	appErrors = jsonvalidate.ValidateMessageOutput(message.Name, handler)
-	if utilerror.LogErrorIf(fmt.Sprintf("Error validating message output %v: %v", message.Name, appErrors), len(*appErrors) > 0) {
-		return &apimessage.MessageOutput[interface{}]{
-			Name:   message.Name,
-			Errors: *appErrors,
-			Data:   nil,
-		}
-	}
 
 	if utilerror.LogErrorIf("Message handler not found", handler == nil) {
 		return &apimessage.MessageOutput[interface{}]{
@@ -77,6 +67,15 @@ func HandleMessage(message genjsonschema.MessageBaseInput) *apimessage.MessageOu
 		}
 	}
 	output := handler(message)
+
+	appErrors = jsonvalidate.ValidateMessageOutput(message.Name, output)
+	if utilerror.LogErrorIf(fmt.Sprintf("Error validating message output %v: %v", message.Name, appErrors), len(*appErrors) > 0) {
+		return &apimessage.MessageOutput[interface{}]{
+			Name:   message.Name,
+			Errors: *appErrors,
+			Data:   nil,
+		}
+	}
 	log.Printf("Message output: %v", output)
 	return output
 }

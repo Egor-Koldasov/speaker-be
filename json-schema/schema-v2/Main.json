@@ -3,20 +3,31 @@
   "$id": "Main",
   "title": "GenJsonSchema",
   "type": "object",
+  "additionalProperties": false,
   "properties": {
     "model": {
+      "$ref": "#/definitions/Models"
+    }
+  },
+  "definitions": {
+    "MessageMap": {
       "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ParseTextFromForeign": {
+          "$ref": "./model/MessageParseTextFromForeign.json"
+        }
+      }
+    },
+    "Models": {
+      "type": "object",
+      "additionalProperties": false,
       "properties": {
         "MessageBase": {
           "$ref": "./model/MessageBase.json"
         },
         "messages": {
-          "type": "object",
-          "properties": {
-            "ParseTextFromForeign": {
-              "$ref": "./model/MessageParseTextFromForeign.json"
-            }
-          }
+          "$ref": "#/definitions/MessageMap"
         }
       }
     }

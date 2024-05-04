@@ -5,10 +5,12 @@
   "author": "Egor Koldasov",
   "license": "MIT",
   "scripts": {
-    "run-ts": "nodemon --delay 2 -w ./ -i ./dist -x 'npx tsc && node $1'",
+    "generate": "npx tsc && node ./dist/export-schemas.js",
+    "run-ts": "nodemon --delay 2 -w ./ -i ./dist -i ./gen* -x 'npx tsc && node $1'",
     "dev": "yarn run-ts -- ./dist/export-schemas.js"
   },
   "devDependencies": {
+    "@types/json-schema": "^7.0.15",
     "json-schema-to-typescript": "^13.1.2",
     "nodemon": "^3.1.0",
     "ts-json-schema-generator": "^2.1.0",

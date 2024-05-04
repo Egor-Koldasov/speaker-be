@@ -31,7 +31,7 @@
           "required": ["originalLanguages", "text", "translationLanguage"]
         }
       },
-      "required": ["data", "name"]
+      "required": ["data", "name", "id"]
     },
     "output": {
       "description": "The result of parsing the text for futher translation.",
@@ -45,7 +45,7 @@
           "enum": ["ParseTextFromForeign"]
         },
         "data": {
-          "description": "Split the text into grammatical parts. A part should be a dictionary entry like a single word or a famous phrase, it is something that can be defined or translated. Do not include symbols, unless they are the integral part of a phrase.",
+          "description": "Split the text into individual words. Do not include any punctuation and only include symbols, if they are the integral part of a phrase.",
           "type": ["object", "null"],
           "properties": {
             "definitionParts": {
@@ -54,15 +54,15 @@
                 "type": "object",
                 "properties": {
                   "text": {
-                    "description": "The text of the part split. Keep this part small, it should not be longer than a typical dictionary entry point. Usualy a single word or sometimes a single word or a famous phrase. Do not include any punctuation symbols, enclosing parentheses or apostrophes an so on.",
+                    "description": "The text of word extracted. Keep this part small, it should not be longer than a typical dictionary entry point. Include only the word itself without any extra symbols. Do not include any punctuation symbols, enclosing parentheses or apostrophes an so on.",
                     "type": "string"
                   },
                   "translation": {
-                    "description": "A short translation of the definition part without additional formatting. Among several translation choices, choose the one that is the best fitting the original context from the user input text that was sent for this parsing.",
+                    "description": "A short translation of the word without additional formatting. Among several translation choices, choose the one that is the best fitting the original context from the user input text that was sent for this parsing.",
                     "type": "string"
                   },
                   "languageOriginal": {
-                    "description": "The BCP 47 language tag of the language of that part. Null for unknown",
+                    "description": "The BCP 47 language tag of the language of that word. Null for unknown",
                     "type": "string"
                   },
                   "languageTranslated": {
@@ -97,7 +97,7 @@
           }
         }
       },
-      "required": ["data", "errors", "name"]
+      "required": ["data", "errors", "name", "id"]
     }
   },
   "required": ["input", "output"],

@@ -5,6 +5,9 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
+/**
+ * The unique identifier of the entity in uuid-v7 format
+ */
 export type Id = string;
 /**
  * The code name of the error.
@@ -20,15 +23,11 @@ export type ErrorName =
   | "FromAi_Critical";
 
 export interface GenJsonSchema {
-  model?: {
-    MessageBase?: MessageBase;
-    messages?: {
-      ParseTextFromForeign?: MessageParseTextFromForeign;
-      [k: string]: unknown;
-    };
-    [k: string]: unknown;
-  };
-  [k: string]: unknown;
+  model: Models;
+}
+export interface Models {
+  MessageBase: MessageBase;
+  messages: MessageMap;
 }
 export interface MessageBase {
   input: {
@@ -37,27 +36,29 @@ export interface MessageBase {
     data: {
       [k: string]: unknown;
     };
-    [k: string]: unknown;
   };
   output: {
     id: Id;
     name: string;
     data: {
       [k: string]: unknown;
-    };
+    } | null;
     errors: AppError[];
-    [k: string]: unknown;
   };
-  [k: string]: unknown;
 }
+/**
+ * An application typed error.
+ */
 export interface AppError {
   name: ErrorName;
   message: string;
-  [k: string]: unknown;
+}
+export interface MessageMap {
+  ParseTextFromForeign: MessageParseTextFromForeign;
 }
 export interface MessageParseTextFromForeign {
   input: {
-    id?: Id;
+    id: Id;
     name: "ParseTextFromForeign";
     data: {
       text: string;
@@ -66,38 +67,29 @@ export interface MessageParseTextFromForeign {
        * The BCP 47 language tag of the language that the user wants to translate the text to.
        */
       translationLanguage: string;
-      [k: string]: unknown;
     };
-    [k: string]: unknown;
   };
-  /**
-   * The result of parsing the text for futher translation.
-   */
   output: {
-    id?: Id;
+    id: Id;
     name: "ParseTextFromForeign";
-    /**
-     * Split the text into grammatical parts. A part should be a dictionary entry like a single word or a famous phrase, it is something that can be defined or translated. Do not include symbols, unless they are the integral part of a phrase.
-     */
     data: {
       definitionParts: {
         /**
-         * The text of the part split. Keep this part small, it should not be longer than a typical dictionary entry point. Usualy a single word or sometimes a single word or a famous phrase. Do not include any punctuation symbols, enclosing parentheses or apostrophes an so on.
+         * The text of word extracted. Keep this part small, it should not be longer than a typical dictionary entry point. Include only the word itself without any extra symbols. Do not include any punctuation symbols, enclosing parentheses or apostrophes an so on.
          */
         text: string;
         /**
-         * A short translation of the definition part without additional formatting. Among several translation choices, choose the one that is the best fitting the original context from the user input text that was sent for this parsing.
+         * A short translation of the word without additional formatting. Among several translation choices, choose the one that is the best fitting the original context from the user input text that was sent for this parsing.
          */
-        translation?: string;
+        translation: string;
         /**
-         * The BCP 47 language tag of the language of that part. Null for unknown
+         * The BCP 47 language tag of the language of that word. Null for unknown
          */
-        languageOriginal?: string;
+        languageOriginal: string;
         /**
          * The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'
          */
-        languageTranslated?: string;
-        [k: string]: unknown;
+        languageTranslated: string;
       }[];
       /**
        * The full translation of the text to the requested language.
@@ -108,12 +100,8 @@ export interface MessageParseTextFromForeign {
          * The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'
          */
         language: string;
-        [k: string]: unknown;
       };
-      [k: string]: unknown;
     } | null;
-    errors: AppError[];
-    [k: string]: unknown;
+    errors?: AppError[];
   };
-  [k: string]: unknown;
 }

@@ -1,0 +1,67 @@
+{
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "MessageBase",
+  "additionalProperties": false,
+  "title": "MessageBase",
+  "properties": {
+    "input": {
+      "type": "object",
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "../property/Id.json"
+        },
+        "name": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "data"
+      ]
+    },
+    "output": {
+      "type": "object",
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "../property/Id.json"
+        },
+        "name": {
+          "type": "string"
+        },
+        "data": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": true
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "../property/AppError.json"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "data",
+        "errors"
+      ]
+    }
+  },
+  "required": [
+    "input",
+    "output"
+  ]
+}

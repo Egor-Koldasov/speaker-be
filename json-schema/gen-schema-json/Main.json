@@ -1,0 +1,47 @@
+{
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "GenJsonSchema",
+  "additionalProperties": false,
+  "title": "GenJsonSchema",
+  "definitions": {
+    "MessageMap": {
+      "type": "object",
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "additionalProperties": false,
+      "properties": {
+        "ParseTextFromForeign": {
+          "$ref": "./model/MessageParseTextFromForeign.json"
+        }
+      },
+      "required": [
+        "ParseTextFromForeign"
+      ]
+    },
+    "Models": {
+      "type": "object",
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "additionalProperties": false,
+      "properties": {
+        "MessageBase": {
+          "$ref": "./model/MessageBase.json"
+        },
+        "messages": {
+          "$ref": "#/definitions/MessageMap"
+        }
+      },
+      "required": [
+        "MessageBase",
+        "messages"
+      ]
+    }
+  },
+  "properties": {
+    "model": {
+      "$ref": "#/definitions/Models"
+    }
+  },
+  "required": [
+    "model"
+  ]
+}

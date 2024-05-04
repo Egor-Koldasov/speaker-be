@@ -1,14 +1,21 @@
 {
   "type": "object",
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "MessageParseTextFromForeign",
+  "additionalProperties": false,
+  "title": "MessageParseTextFromForeign",
   "properties": {
     "input": {
       "type": "object",
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "additionalProperties": false,
       "properties": {
         "id": {
+          "type": "string",
           "$schema": "http://json-schema.org/draft-07/schema",
           "$id": "Id",
           "title": "Id",
-          "type": "string"
+          "description": "The unique identifier of the entity in uuid-v7 format"
         },
         "name": {
           "type": "string",
@@ -18,6 +25,8 @@
         },
         "data": {
           "type": "object",
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "additionalProperties": false,
           "properties": {
             "text": {
               "type": "string"
@@ -34,20 +43,22 @@
             }
           },
           "required": [
-            "originalLanguages",
             "text",
+            "originalLanguages",
             "translationLanguage"
           ]
         }
       },
       "required": [
-        "data",
-        "name"
+        "id",
+        "name",
+        "data"
       ]
     },
     "output": {
-      "description": "The result of parsing the text for futher translation.",
       "type": "object",
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "additionalProperties": false,
       "properties": {
         "id": {
           "$ref": "#/properties/input/properties/id"
@@ -59,27 +70,30 @@
           ]
         },
         "data": {
-          "description": "Split the text into grammatical parts. A part should be a dictionary entry like a single word or a famous phrase, it is something that can be defined or translated. Do not include symbols, unless they are the integral part of a phrase.",
           "type": [
             "object",
             "null"
           ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "additionalProperties": false,
           "properties": {
             "definitionParts": {
               "type": "array",
               "items": {
                 "type": "object",
+                "$schema": "http://json-schema.org/draft-07/schema",
+                "additionalProperties": false,
                 "properties": {
                   "text": {
-                    "description": "The text of the part split. Keep this part small, it should not be longer than a typical dictionary entry point. Usualy a single word or sometimes a single word or a famous phrase. Do not include any punctuation symbols, enclosing parentheses or apostrophes an so on.",
+                    "description": "The text of word extracted. Keep this part small, it should not be longer than a typical dictionary entry point. Include only the word itself without any extra symbols. Do not include any punctuation symbols, enclosing parentheses or apostrophes an so on.",
                     "type": "string"
                   },
                   "translation": {
-                    "description": "A short translation of the definition part without additional formatting. Among several translation choices, choose the one that is the best fitting the original context from the user input text that was sent for this parsing.",
+                    "description": "A short translation of the word without additional formatting. Among several translation choices, choose the one that is the best fitting the original context from the user input text that was sent for this parsing.",
                     "type": "string"
                   },
                   "languageOriginal": {
-                    "description": "The BCP 47 language tag of the language of that part. Null for unknown",
+                    "description": "The BCP 47 language tag of the language of that word. Null for unknown",
                     "type": "string"
                   },
                   "languageTranslated": {
@@ -88,13 +102,18 @@
                   }
                 },
                 "required": [
-                  "text"
+                  "text",
+                  "translation",
+                  "languageOriginal",
+                  "languageTranslated"
                 ]
               }
             },
             "translation": {
-              "description": "The full translation of the text to the requested language.",
               "type": "object",
+              "$schema": "http://json-schema.org/draft-07/schema",
+              "additionalProperties": false,
+              "description": "The full translation of the text to the requested language.",
               "properties": {
                 "text": {
                   "type": "string"
@@ -105,8 +124,8 @@
                 }
               },
               "required": [
-                "language",
-                "text"
+                "text",
+                "language"
               ]
             }
           },
@@ -119,10 +138,18 @@
           "type": "array",
           "items": {
             "type": "object",
+            "$schema": "http://json-schema.org/draft-07/schema",
+            "$id": "AppError",
+            "additionalProperties": false,
+            "title": "AppError",
+            "description": "An application typed error.",
             "properties": {
               "name": {
-                "description": "The code name of the error.",
                 "type": "string",
+                "$schema": "http://json-schema.org/draft-07/schema",
+                "$id": "ErrorName",
+                "title": "ErrorName",
+                "description": "The code name of the error.",
                 "enum": [
                   "Unknown",
                   "Internal",
@@ -132,37 +159,28 @@
                   "JsonSchema_MessageOutput",
                   "NotFound_MessageName",
                   "FromAi_Critical"
-                ],
-                "$schema": "http://json-schema.org/draft-07/schema#",
-                "$id": "ErrorName",
-                "title": "ErrorName"
+                ]
               },
               "message": {
                 "type": "string"
               }
             },
             "required": [
-              "message",
-              "name"
-            ],
-            "$schema": "http://json-schema.org/draft-07/schema#",
-            "$id": "AppError",
-            "title": "AppError"
+              "name",
+              "message"
+            ]
           }
         }
       },
       "required": [
-        "data",
-        "errors",
-        "name"
+        "id",
+        "name",
+        "data"
       ]
     }
   },
   "required": [
     "input",
     "output"
-  ],
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "MessageParseTextFromForeign",
-  "title": "MessageParseTextFromForeign"
+  ]
 }

@@ -1,6 +1,9 @@
 {
-  "description": "The code name of the error.",
   "type": "string",
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "ErrorName",
+  "title": "ErrorName",
+  "description": "The code name of the error.",
   "enum": [
     "Unknown",
     "Internal",
@@ -10,8 +13,5 @@
     "JsonSchema_MessageOutput",
     "NotFound_MessageName",
     "FromAi_Critical"
-  ],
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "ErrorName",
-  "title": "ErrorName"
+  ]
 }

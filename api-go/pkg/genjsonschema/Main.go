@@ -4,19 +4,19 @@ package genjsonschema
 
 type GenJsonSchema struct {
 	// Model corresponds to the JSON schema field "model".
-	Model *GenJsonSchemaModel `json:"model,omitempty" yaml:"model,omitempty" mapstructure:"model,omitempty"`
+	Model *Models `json:"model,omitempty" yaml:"model,omitempty" mapstructure:"model,omitempty"`
 }
 
-type GenJsonSchemaModel struct {
+type MessageMap struct {
+	// ParseTextFromForeign corresponds to the JSON schema field
+	// "ParseTextFromForeign".
+	ParseTextFromForeign *MessageParseTextFromForeign `json:"ParseTextFromForeign,omitempty" yaml:"ParseTextFromForeign,omitempty" mapstructure:"ParseTextFromForeign,omitempty"`
+}
+
+type Models struct {
 	// MessageBase corresponds to the JSON schema field "MessageBase".
 	MessageBase *MessageBase `json:"MessageBase,omitempty" yaml:"MessageBase,omitempty" mapstructure:"MessageBase,omitempty"`
 
 	// Messages corresponds to the JSON schema field "messages".
-	Messages *GenJsonSchemaModelMessages `json:"messages,omitempty" yaml:"messages,omitempty" mapstructure:"messages,omitempty"`
-}
-
-type GenJsonSchemaModelMessages struct {
-	// ParseTextFromForeign corresponds to the JSON schema field
-	// "ParseTextFromForeign".
-	ParseTextFromForeign *MessageParseTextFromForeign `json:"ParseTextFromForeign,omitempty" yaml:"ParseTextFromForeign,omitempty" mapstructure:"ParseTextFromForeign,omitempty"`
+	Messages *MessageMap `json:"messages,omitempty" yaml:"messages,omitempty" mapstructure:"messages,omitempty"`
 }

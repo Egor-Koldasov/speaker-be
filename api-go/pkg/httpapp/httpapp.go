@@ -36,7 +36,9 @@ func Init() {
 			status = 200
 		}
 
-		return ctx.JSON(status, output)
+		return ctx.JSON(status, map[string]interface{}{
+			"output": output,
+		})
 	})
 	echoApp.Logger.Fatal(echoApp.Start(fmt.Sprintf(":%s", config.Config.HttpPort)))
 }

@@ -1,32 +1,40 @@
 {
   "type": "object",
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "MessageBase",
+  "additionalProperties": false,
+  "title": "MessageBase",
   "properties": {
     "input": {
       "type": "object",
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "additionalProperties": false,
       "properties": {
         "id": {
+          "type": "string",
           "$schema": "http://json-schema.org/draft-07/schema",
           "$id": "Id",
           "title": "Id",
-          "type": "string"
+          "description": "The unique identifier of the entity in uuid-v7 format"
         },
         "name": {
           "type": "string"
         },
         "data": {
           "type": "object",
-          "properties": {},
           "additionalProperties": true
         }
       },
       "required": [
         "id",
-        "data",
-        "name"
+        "name",
+        "data"
       ]
     },
     "output": {
       "type": "object",
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "additionalProperties": false,
       "properties": {
         "id": {
           "$ref": "#/properties/input/properties/id"
@@ -35,18 +43,28 @@
           "type": "string"
         },
         "data": {
-          "type": "object",
-          "properties": {},
+          "type": [
+            "object",
+            "null"
+          ],
           "additionalProperties": true
         },
         "errors": {
           "type": "array",
           "items": {
             "type": "object",
+            "$schema": "http://json-schema.org/draft-07/schema",
+            "$id": "AppError",
+            "additionalProperties": false,
+            "title": "AppError",
+            "description": "An application typed error.",
             "properties": {
               "name": {
-                "description": "The code name of the error.",
                 "type": "string",
+                "$schema": "http://json-schema.org/draft-07/schema",
+                "$id": "ErrorName",
+                "title": "ErrorName",
+                "description": "The code name of the error.",
                 "enum": [
                   "Unknown",
                   "Internal",
@@ -56,38 +74,29 @@
                   "JsonSchema_MessageOutput",
                   "NotFound_MessageName",
                   "FromAi_Critical"
-                ],
-                "$schema": "http://json-schema.org/draft-07/schema#",
-                "$id": "ErrorName",
-                "title": "ErrorName"
+                ]
               },
               "message": {
                 "type": "string"
               }
             },
             "required": [
-              "message",
-              "name"
-            ],
-            "$schema": "http://json-schema.org/draft-07/schema#",
-            "$id": "AppError",
-            "title": "AppError"
+              "name",
+              "message"
+            ]
           }
         }
       },
       "required": [
         "id",
+        "name",
         "data",
-        "errors",
-        "name"
+        "errors"
       ]
     }
   },
   "required": [
     "input",
     "output"
-  ],
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "MessageBase",
-  "title": "MessageBase"
+  ]
 }

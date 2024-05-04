@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import tags from 'language-tags'
 import { onMounted, watch } from 'vue'
-import { useDataStore } from '../../dataStore/dataStore'
+import { useMessageStore } from '../../dataStore/messageStore'
 import { useSettings } from '../../uiStore/useSettings'
 
 // # Props, State
@@ -12,7 +12,7 @@ const props = defineProps<{
 
 // # Hooks
 const uisSettings = useSettings()
-const dataStore = useDataStore()
+const dataStore = useMessageStore()
 // # Computed
 // # Callbacks
 const loadDefinition = async () => {

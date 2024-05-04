@@ -19,7 +19,7 @@ type MessageParseTextFromForeignInput struct {
 	Data MessageParseTextFromForeignInputData `json:"data" yaml:"data" mapstructure:"data"`
 
 	// Id corresponds to the JSON schema field "id".
-	Id *Id `json:"id,omitempty" yaml:"id,omitempty" mapstructure:"id,omitempty"`
+	Id Id `json:"id" yaml:"id" mapstructure:"id"`
 
 	// Name corresponds to the JSON schema field "name".
 	Name MessageParseTextFromForeignInputName `json:"name" yaml:"name" mapstructure:"name"`
@@ -43,26 +43,22 @@ const MessageParseTextFromForeignInputNameParseTextFromForeign MessageParseTextF
 
 // The result of parsing the text for futher translation.
 type MessageParseTextFromForeignOutput struct {
-	// Split the text into grammatical parts. A part should be a dictionary entry like
-	// a single word or a famous phrase, it is something that can be defined or
-	// translated. Do not include symbols, unless they are the integral part of a
-	// phrase.
+	// Split the text into individual words. Do not include any punctuation and only
+	// include symbols, if they are the integral part of a phrase.
 	Data MessageParseTextFromForeignOutputData `json:"data" yaml:"data" mapstructure:"data"`
 
 	// Errors corresponds to the JSON schema field "errors".
 	Errors []AppError `json:"errors" yaml:"errors" mapstructure:"errors"`
 
 	// Id corresponds to the JSON schema field "id".
-	Id *Id `json:"id,omitempty" yaml:"id,omitempty" mapstructure:"id,omitempty"`
+	Id Id `json:"id" yaml:"id" mapstructure:"id"`
 
 	// Name corresponds to the JSON schema field "name".
 	Name MessageParseTextFromForeignOutputName `json:"name" yaml:"name" mapstructure:"name"`
 }
 
-// Split the text into grammatical parts. A part should be a dictionary entry like
-// a single word or a famous phrase, it is something that can be defined or
-// translated. Do not include symbols, unless they are the integral part of a
-// phrase.
+// Split the text into individual words. Do not include any punctuation and only
+// include symbols, if they are the integral part of a phrase.
 type MessageParseTextFromForeignOutputData struct {
 	// DefinitionParts corresponds to the JSON schema field "definitionParts".
 	DefinitionParts []MessageParseTextFromForeignOutputDataDefinitionPartsElem `json:"definitionParts" yaml:"definitionParts" mapstructure:"definitionParts"`
@@ -72,22 +68,22 @@ type MessageParseTextFromForeignOutputData struct {
 }
 
 type MessageParseTextFromForeignOutputDataDefinitionPartsElem struct {
-	// The BCP 47 language tag of the language of that part. Null for unknown
+	// The BCP 47 language tag of the language of that word. Null for unknown
 	LanguageOriginal *string `json:"languageOriginal,omitempty" yaml:"languageOriginal,omitempty" mapstructure:"languageOriginal,omitempty"`
 
 	// The BCP 47 language tag of the language of the translation. It should match the
 	// requested 'translationLanguage'
 	LanguageTranslated *string `json:"languageTranslated,omitempty" yaml:"languageTranslated,omitempty" mapstructure:"languageTranslated,omitempty"`
 
-	// The text of the part split. Keep this part small, it should not be longer than
-	// a typical dictionary entry point. Usualy a single word or sometimes a single
-	// word or a famous phrase. Do not include any punctuation symbols, enclosing
-	// parentheses or apostrophes an so on.
+	// The text of word extracted. Keep this part small, it should not be longer than
+	// a typical dictionary entry point. Include only the word itself without any
+	// extra symbols. Do not include any punctuation symbols, enclosing parentheses or
+	// apostrophes an so on.
 	Text string `json:"text" yaml:"text" mapstructure:"text"`
 
-	// A short translation of the definition part without additional formatting. Among
-	// several translation choices, choose the one that is the best fitting the
-	// original context from the user input text that was sent for this parsing.
+	// A short translation of the word without additional formatting. Among several
+	// translation choices, choose the one that is the best fitting the original
+	// context from the user input text that was sent for this parsing.
 	Translation *string `json:"translation,omitempty" yaml:"translation,omitempty" mapstructure:"translation,omitempty"`
 }
 
@@ -204,6 +200,9 @@ func (j *MessageParseTextFromForeignInput) UnmarshalJSON(b []byte) error {
 	if v, ok := raw["data"]; !ok || v == nil {
 		return fmt.Errorf("field data in MessageParseTextFromForeignInput: required")
 	}
+	if v, ok := raw["id"]; !ok || v == nil {
+		return fmt.Errorf("field id in MessageParseTextFromForeignInput: required")
+	}
 	if v, ok := raw["name"]; !ok || v == nil {
 		return fmt.Errorf("field name in MessageParseTextFromForeignInput: required")
 	}
@@ -245,6 +244,9 @@ func (j *MessageParseTextFromForeignOutput) UnmarshalJSON(b []byte) error {
 	}
 	if v, ok := raw["errors"]; !ok || v == nil {
 		return fmt.Errorf("field errors in MessageParseTextFromForeignOutput: required")
+	}
+	if v, ok := raw["id"]; !ok || v == nil {
+		return fmt.Errorf("field id in MessageParseTextFromForeignOutput: required")
 	}
 	if v, ok := raw["name"]; !ok || v == nil {
 		return fmt.Errorf("field name in MessageParseTextFromForeignOutput: required")

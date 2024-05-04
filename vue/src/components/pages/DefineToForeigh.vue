@@ -5,7 +5,7 @@ import LanguageBar from '../LanguageBar.vue'
 import LanguageSelector from '../LanguageSelector.vue'
 import Page from '../layout/Page.vue'
 import PageHeader from '../layout/PageHeader.vue'
-import { useDataStore } from '../../dataStore/dataStore'
+import { useMessageStore } from '../../dataStore/messageStore'
 
 // # Props, State
 const form = reactive({
@@ -16,11 +16,11 @@ const uiState = reactive({
 })
 // # Hooks
 const uisSettings = useSettings()
-const dataStore = useDataStore()
+const messageStore = useMessageStore()
 // # Computed
 // # Callbacks
 const handleSubmit = async () => {
-  dataStore.sendMessage({
+  messageStore.sendMessage({
     name: 'parseTextToForeign',
     data: {
       text: form.text,
@@ -65,7 +65,7 @@ const handleSubmit = async () => {
             class="part"
             :class="{ selected: uiState.selectedWordIndex === index }"
             @click="uiState.selectedWordIndex = index"
-            v-for="(part, index) in dataStore.parseTextToForeign.data
+            v-for="(part, index) in messageStore.parseTextToForeign.data
               ?.translationChoices[0]?.definitionParts ?? []"
             :key="part.text"
           >
@@ -79,9 +79,9 @@ const handleSubmit = async () => {
             </div>
           </button>
         </div>
-        <div v-if="dataStore.ParseTextFromForeign.data?.translation">
+        <div v-if="messageStore.ParseTextFromForeign.data?.translation">
           {{
-            dataStore.parseTextToForeign.data?.translationChoices[0]
+            messageStore.parseTextToForeign.data?.translationChoices[0]
               ?.translation.text
           }}
         </div>
@@ -94,11 +94,11 @@ const handleSubmit = async () => {
         <button
           type="submit"
           class="submit-btn"
-          :disabled="dataStore.parseTextToForeign.loading"
+          :disabled="messageStore.parseTextToForeign.loading"
         >
           Translate
         </button>
-        <progress v-if="dataStore.parseTextToForeign.loading" />
+        <progress v-if="messageStore.parseTextToForeign.loading" />
       </form>
     </div>
   </Page>
