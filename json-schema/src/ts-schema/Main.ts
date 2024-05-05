@@ -8,6 +8,7 @@ export default schemaObject(
   },
   {
     title: "GenJsonSchema",
+    $id: "Main",
     definitions: {
       MessageMap: schemaObject({
         ParseTextFromForeign: {

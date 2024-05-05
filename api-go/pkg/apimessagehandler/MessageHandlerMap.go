@@ -37,6 +37,41 @@ var ParseTextFromForeign = makeHandler(
 		})
 		ctx := context.Background()
 		output := aichat.ParseTextFromForeign(&ctx, &input)
+		neo4jdb.ExecuteQuery(fmt.Sprintf(`
+			MATCH (input:MessageInput {id: $id})
+			CREATE (output:MessageOutput {name: $name, id: $id, created_at: datetime()})
+			CREATE (data:MessageOutputData:%v {
+				created_at: datetime()
+			})
+			CREATE (output)-[:HAS]->(data)
+			CREATE (input)-[:OUTPUTS]->(output)
+			CREATE (translation:LanguageText {language: $language, text: $text, created_at: datetime()})
+			CREATE (data)-[:HAS]->(translation)
+		`, genjsonschema.MessageParseTextFromForeignOutputNameParseTextFromForeign), map[string]any{
+			"id":       output.Id,
+			"name":     output.Name,
+			"language": output.Data.Translation.Language,
+			"text":     output.Data.Translation.Text,
+		})
+		for _, definitionPart := range output.Data.DefinitionParts {
+			neo4jdb.ExecuteQuery(`
+				MATCH (output:MessageOutput {id: $id})-[:HAS]->(data:MessageOutputData)
+				CREATE (definition_part:DefinitionPart {
+					language_original: $language_original,
+					language_translated: $language_translated,
+					text: $text,
+					translation: $translation,
+					created_at: datetime()
+				})
+				CREATE (data)-[:HAS]->(definition_part)
+			`, map[string]any{
+				"id":                  output.Id,
+				"language_original":   definitionPart.LanguageOriginal,
+				"language_translated": definitionPart.LanguageTranslated,
+				"text":                definitionPart.Text,
+				"translation":         definitionPart.Translation,
+			})
+		}
 		outputWrapped := utilstruct.TranslateStruct[apimessage.MessageOutput[genjsonschema.MessageParseTextFromForeignOutputData]](output)
 		return &outputWrapped
 	})

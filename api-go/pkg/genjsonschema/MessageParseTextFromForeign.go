@@ -10,7 +10,7 @@ type MessageParseTextFromForeign struct {
 	// Input corresponds to the JSON schema field "input".
 	Input MessageParseTextFromForeignInput `json:"input" yaml:"input" mapstructure:"input"`
 
-	// The result of parsing the text for futher translation.
+	// Output corresponds to the JSON schema field "output".
 	Output MessageParseTextFromForeignOutput `json:"output" yaml:"output" mapstructure:"output"`
 }
 
@@ -41,10 +41,8 @@ type MessageParseTextFromForeignInputName string
 
 const MessageParseTextFromForeignInputNameParseTextFromForeign MessageParseTextFromForeignInputName = "ParseTextFromForeign"
 
-// The result of parsing the text for futher translation.
 type MessageParseTextFromForeignOutput struct {
-	// Split the text into individual words. Do not include any punctuation and only
-	// include symbols, if they are the integral part of a phrase.
+	// Data corresponds to the JSON schema field "data".
 	Data MessageParseTextFromForeignOutputData `json:"data" yaml:"data" mapstructure:"data"`
 
 	// Errors corresponds to the JSON schema field "errors".
@@ -57,8 +55,6 @@ type MessageParseTextFromForeignOutput struct {
 	Name MessageParseTextFromForeignOutputName `json:"name" yaml:"name" mapstructure:"name"`
 }
 
-// Split the text into individual words. Do not include any punctuation and only
-// include symbols, if they are the integral part of a phrase.
 type MessageParseTextFromForeignOutputData struct {
 	// DefinitionParts corresponds to the JSON schema field "definitionParts".
 	DefinitionParts []MessageParseTextFromForeignOutputDataDefinitionPartsElem `json:"definitionParts" yaml:"definitionParts" mapstructure:"definitionParts"`
@@ -69,11 +65,11 @@ type MessageParseTextFromForeignOutputData struct {
 
 type MessageParseTextFromForeignOutputDataDefinitionPartsElem struct {
 	// The BCP 47 language tag of the language of that word. Null for unknown
-	LanguageOriginal *string `json:"languageOriginal,omitempty" yaml:"languageOriginal,omitempty" mapstructure:"languageOriginal,omitempty"`
+	LanguageOriginal string `json:"languageOriginal" yaml:"languageOriginal" mapstructure:"languageOriginal"`
 
 	// The BCP 47 language tag of the language of the translation. It should match the
 	// requested 'translationLanguage'
-	LanguageTranslated *string `json:"languageTranslated,omitempty" yaml:"languageTranslated,omitempty" mapstructure:"languageTranslated,omitempty"`
+	LanguageTranslated string `json:"languageTranslated" yaml:"languageTranslated" mapstructure:"languageTranslated"`
 
 	// The text of word extracted. Keep this part small, it should not be longer than
 	// a typical dictionary entry point. Include only the word itself without any
@@ -84,7 +80,7 @@ type MessageParseTextFromForeignOutputDataDefinitionPartsElem struct {
 	// A short translation of the word without additional formatting. Among several
 	// translation choices, choose the one that is the best fitting the original
 	// context from the user input text that was sent for this parsing.
-	Translation *string `json:"translation,omitempty" yaml:"translation,omitempty" mapstructure:"translation,omitempty"`
+	Translation string `json:"translation" yaml:"translation" mapstructure:"translation"`
 }
 
 // The full translation of the text to the requested language.
@@ -221,8 +217,17 @@ func (j *MessageParseTextFromForeignOutputDataDefinitionPartsElem) UnmarshalJSON
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
+	if v, ok := raw["languageOriginal"]; !ok || v == nil {
+		return fmt.Errorf("field languageOriginal in MessageParseTextFromForeignOutputDataDefinitionPartsElem: required")
+	}
+	if v, ok := raw["languageTranslated"]; !ok || v == nil {
+		return fmt.Errorf("field languageTranslated in MessageParseTextFromForeignOutputDataDefinitionPartsElem: required")
+	}
 	if v, ok := raw["text"]; !ok || v == nil {
 		return fmt.Errorf("field text in MessageParseTextFromForeignOutputDataDefinitionPartsElem: required")
+	}
+	if v, ok := raw["translation"]; !ok || v == nil {
+		return fmt.Errorf("field translation in MessageParseTextFromForeignOutputDataDefinitionPartsElem: required")
 	}
 	type Plain MessageParseTextFromForeignOutputDataDefinitionPartsElem
 	var plain Plain

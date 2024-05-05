@@ -2,21 +2,81 @@
 
 package genjsonschema
 
-type GenJsonSchema struct {
-	// Model corresponds to the JSON schema field "model".
-	Model *Models `json:"model,omitempty" yaml:"model,omitempty" mapstructure:"model,omitempty"`
-}
+import "encoding/json"
+import "fmt"
 
 type MessageMap struct {
 	// ParseTextFromForeign corresponds to the JSON schema field
 	// "ParseTextFromForeign".
-	ParseTextFromForeign *MessageParseTextFromForeign `json:"ParseTextFromForeign,omitempty" yaml:"ParseTextFromForeign,omitempty" mapstructure:"ParseTextFromForeign,omitempty"`
+	ParseTextFromForeign MessageParseTextFromForeign `json:"ParseTextFromForeign" yaml:"ParseTextFromForeign" mapstructure:"ParseTextFromForeign"`
+}
+
+// UnmarshalJSON implements json.Unmarshaler.
+func (j *MessageMap) UnmarshalJSON(b []byte) error {
+	var raw map[string]interface{}
+	if err := json.Unmarshal(b, &raw); err != nil {
+		return err
+	}
+	if v, ok := raw["ParseTextFromForeign"]; !ok || v == nil {
+		return fmt.Errorf("field ParseTextFromForeign in MessageMap: required")
+	}
+	type Plain MessageMap
+	var plain Plain
+	if err := json.Unmarshal(b, &plain); err != nil {
+		return err
+	}
+	*j = MessageMap(plain)
+	return nil
 }
 
 type Models struct {
 	// MessageBase corresponds to the JSON schema field "MessageBase".
-	MessageBase *MessageBase `json:"MessageBase,omitempty" yaml:"MessageBase,omitempty" mapstructure:"MessageBase,omitempty"`
+	MessageBase MessageBase `json:"MessageBase" yaml:"MessageBase" mapstructure:"MessageBase"`
 
 	// Messages corresponds to the JSON schema field "messages".
-	Messages *MessageMap `json:"messages,omitempty" yaml:"messages,omitempty" mapstructure:"messages,omitempty"`
+	Messages MessageMap `json:"messages" yaml:"messages" mapstructure:"messages"`
+}
+
+// UnmarshalJSON implements json.Unmarshaler.
+func (j *Models) UnmarshalJSON(b []byte) error {
+	var raw map[string]interface{}
+	if err := json.Unmarshal(b, &raw); err != nil {
+		return err
+	}
+	if v, ok := raw["MessageBase"]; !ok || v == nil {
+		return fmt.Errorf("field MessageBase in Models: required")
+	}
+	if v, ok := raw["messages"]; !ok || v == nil {
+		return fmt.Errorf("field messages in Models: required")
+	}
+	type Plain Models
+	var plain Plain
+	if err := json.Unmarshal(b, &plain); err != nil {
+		return err
+	}
+	*j = Models(plain)
+	return nil
+}
+
+type GenJsonSchema struct {
+	// Model corresponds to the JSON schema field "model".
+	Model Models `json:"model" yaml:"model" mapstructure:"model"`
+}
+
+// UnmarshalJSON implements json.Unmarshaler.
+func (j *GenJsonSchema) UnmarshalJSON(b []byte) error {
+	var raw map[string]interface{}
+	if err := json.Unmarshal(b, &raw); err != nil {
+		return err
+	}
+	if v, ok := raw["model"]; !ok || v == nil {
+		return fmt.Errorf("field model in GenJsonSchema: required")
+	}
+	type Plain GenJsonSchema
+	var plain Plain
+	if err := json.Unmarshal(b, &plain); err != nil {
+		return err
+	}
+	*j = GenJsonSchema(plain)
+	return nil
 }

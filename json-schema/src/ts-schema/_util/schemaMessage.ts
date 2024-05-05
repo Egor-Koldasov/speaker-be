@@ -52,7 +52,7 @@ export const schemaMessage = <Input extends MessageInput>(input: Input) =>
           ...MessageBase.properties.output.properties,
           ...input.properties.output.properties,
         },
-        required: MessageBase.properties.input.required,
+        required: MessageBase.properties.output.required,
       },
     },
   } satisfies JSONSchema7);

@@ -5,6 +5,7 @@ package genjsonschema
 import "encoding/json"
 import "fmt"
 
+// An application typed error.
 type AppError struct {
 	// Message corresponds to the JSON schema field "message".
 	Message string `json:"message" yaml:"message" mapstructure:"message"`

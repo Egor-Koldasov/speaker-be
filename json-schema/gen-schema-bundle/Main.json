@@ -1,7 +1,7 @@
 {
   "type": "object",
   "$schema": "http://json-schema.org/draft-07/schema",
-  "$id": "GenJsonSchema",
+  "$id": "Main",
   "additionalProperties": false,
   "title": "GenJsonSchema",
   "definitions": {
@@ -152,7 +152,8 @@
               "required": [
                 "id",
                 "name",
-                "data"
+                "data",
+                "errors"
               ]
             }
           },

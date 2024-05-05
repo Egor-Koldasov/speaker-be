@@ -2,4 +2,5 @@
 
 package genjsonschema
 
+// The unique identifier of the entity in uuid-v7 format
 type Id string

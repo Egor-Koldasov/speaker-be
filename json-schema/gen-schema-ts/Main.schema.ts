@@ -102,6 +102,6 @@ export interface MessageParseTextFromForeign {
         language: string;
       };
     } | null;
-    errors?: AppError[];
+    errors: AppError[];
   };
 }

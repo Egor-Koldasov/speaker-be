@@ -175,7 +175,8 @@
       "required": [
         "id",
         "name",
-        "data"
+        "data",
+        "errors"
       ]
     }
   },
