@@ -14,6 +14,9 @@ export default schemaObject(
         ParseTextFromForeign: {
           $ref: "./model/MessageParseTextFromForeign.json",
         },
+        DefineTerm: {
+          $ref: "./model/MessageDefineTerm.json",
+        },
       }),
       Models: schemaObject({
         MessageBase: {

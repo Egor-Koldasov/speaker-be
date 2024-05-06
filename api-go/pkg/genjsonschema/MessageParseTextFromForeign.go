@@ -27,14 +27,13 @@ type MessageParseTextFromForeignInput struct {
 
 type MessageParseTextFromForeignInputData struct {
 	// OriginalLanguages corresponds to the JSON schema field "originalLanguages".
-	OriginalLanguages []string `json:"originalLanguages" yaml:"originalLanguages" mapstructure:"originalLanguages"`
+	OriginalLanguages ForeignLanguages `json:"originalLanguages" yaml:"originalLanguages" mapstructure:"originalLanguages"`
 
 	// Text corresponds to the JSON schema field "text".
 	Text string `json:"text" yaml:"text" mapstructure:"text"`
 
-	// The BCP 47 language tag of the language that the user wants to translate the
-	// text to.
-	TranslationLanguage string `json:"translationLanguage" yaml:"translationLanguage" mapstructure:"translationLanguage"`
+	// TranslationLanguage corresponds to the JSON schema field "translationLanguage".
+	TranslationLanguage ForeignLanguages `json:"translationLanguage" yaml:"translationLanguage" mapstructure:"translationLanguage"`
 }
 
 type MessageParseTextFromForeignInputName string

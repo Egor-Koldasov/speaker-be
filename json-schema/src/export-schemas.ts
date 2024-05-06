@@ -36,6 +36,10 @@ const exportJsonSchemaBundles = async () => {
     schemaFiles.map(async (schemaPath): Promise<string> => {
       const schema = require(join(tsSchemaDir, schemaPath)).default;
       const schemaString = JSON.stringify(schema, null, 2);
+      if (!schemaString) {
+        console.warn(`Empty schema: ${schemaPath}`);
+        return "";
+      }
       const schemaPathJson = schemaPath.replace(/\.[^\.]+$/, ".json");
       const schemaJsonPath = path.resolve(jsonSchemaDir, schemaPathJson);
       await mkdir(path.dirname(schemaJsonPath), { recursive: true });
@@ -45,14 +49,16 @@ const exportJsonSchemaBundles = async () => {
     })
   );
   await Promise.all(
-    jsonSchemaPathList.map(async (schemaPath): Promise<void> => {
-      const schemaBundled = await $RefParser.bundle(
-        join(jsonSchemaDir, schemaPath)
-      );
-      const bundlePath = path.resolve(genBundleDir, schemaPath);
-      await mkdir(path.dirname(bundlePath), { recursive: true });
-      await writeFile(bundlePath, JSON.stringify(schemaBundled, null, 2));
-    })
+    jsonSchemaPathList
+      .filter(Boolean)
+      .map(async (schemaPath): Promise<void> => {
+        const schemaBundled = await $RefParser.bundle(
+          join(jsonSchemaDir, schemaPath)
+        );
+        const bundlePath = path.resolve(genBundleDir, schemaPath);
+        await mkdir(path.dirname(bundlePath), { recursive: true });
+        await writeFile(bundlePath, JSON.stringify(schemaBundled, null, 2));
+      })
   );
 };
 
@@ -63,7 +69,7 @@ const exportSchemas = async () => {
       cwd: path.resolve(jsonSchemaDir),
     }
   );
-  console.log(types);
+  // console.log(types);
   // await writeFile(
   //   path.resolve(__dirname, "../../src/schema/Main.schema.ts"),
   //   types

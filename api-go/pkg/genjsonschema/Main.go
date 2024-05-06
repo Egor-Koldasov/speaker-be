@@ -6,6 +6,9 @@ import "encoding/json"
 import "fmt"
 
 type MessageMap struct {
+	// DefineTerm corresponds to the JSON schema field "DefineTerm".
+	DefineTerm MessageDefineTerm `json:"DefineTerm" yaml:"DefineTerm" mapstructure:"DefineTerm"`
+
 	// ParseTextFromForeign corresponds to the JSON schema field
 	// "ParseTextFromForeign".
 	ParseTextFromForeign MessageParseTextFromForeign `json:"ParseTextFromForeign" yaml:"ParseTextFromForeign" mapstructure:"ParseTextFromForeign"`
@@ -16,6 +19,9 @@ func (j *MessageMap) UnmarshalJSON(b []byte) error {
 	var raw map[string]interface{}
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
+	}
+	if v, ok := raw["DefineTerm"]; !ok || v == nil {
+		return fmt.Errorf("field DefineTerm in MessageMap: required")
 	}
 	if v, ok := raw["ParseTextFromForeign"]; !ok || v == nil {
 		return fmt.Errorf("field ParseTextFromForeign in MessageMap: required")

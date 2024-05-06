@@ -14,15 +14,10 @@ export default schemaMessage(
             type: "string",
           },
           originalLanguages: {
-            type: "array",
-            items: {
-              type: "string",
-            },
+            $ref: "./UserSettings.json#/definitions/foreignLanguages",
           },
           translationLanguage: {
-            description:
-              "The BCP 47 language tag of the language that the user wants to translate the text to.",
-            type: "string",
+            $ref: "./UserSettings.json#/definitions/foreignLanguages",
           },
         }),
       }),

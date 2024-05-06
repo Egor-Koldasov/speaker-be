@@ -75,3 +75,8 @@ var ParseTextFromForeign = makeHandler(
 		outputWrapped := utilstruct.TranslateStruct[apimessage.MessageOutput[genjsonschema.MessageParseTextFromForeignOutputData]](output)
 		return &outputWrapped
 	})
+
+// var DefinePart = makeHandler(
+// 	func(mi *apimessage.MessageInput[genjsonschema.Message]) *apimessage.MessageOutput[OutputData] {
+
+// 	})

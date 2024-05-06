@@ -12,10 +12,14 @@
       "properties": {
         "ParseTextFromForeign": {
           "$ref": "./model/MessageParseTextFromForeign.json"
+        },
+        "DefineTerm": {
+          "$ref": "./model/MessageDefineTerm.json"
         }
       },
       "required": [
-        "ParseTextFromForeign"
+        "ParseTextFromForeign",
+        "DefineTerm"
       ]
     },
     "Models": {
