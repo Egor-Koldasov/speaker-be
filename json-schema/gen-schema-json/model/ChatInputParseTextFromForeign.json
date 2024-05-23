@@ -1,0 +1,23 @@
+{
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "ChatInputParseTextFromForeign",
+  "additionalProperties": false,
+  "title": "ChatInputParseTextFromForeign",
+  "properties": {
+    "text": {
+      "type": "string"
+    },
+    "originalLanguages": {
+      "$ref": "./UserSettings.json#/definitions/foreignLanguages"
+    },
+    "translationLanguage": {
+      "$ref": "./UserSettings.json#/definitions/translationLanguage"
+    }
+  },
+  "required": [
+    "text",
+    "originalLanguages",
+    "translationLanguage"
+  ]
+}

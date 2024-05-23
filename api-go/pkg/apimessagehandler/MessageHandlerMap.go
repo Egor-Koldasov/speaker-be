@@ -16,7 +16,7 @@ var MessageHandlerMap = map[string]func(genjsonschema.MessageBaseInput) *apimess
 }
 
 var ParseTextFromForeign = makeHandler(
-	func(inputArg *apimessage.MessageInput[genjsonschema.MessageParseTextFromForeignInputData]) *apimessage.MessageOutput[genjsonschema.MessageParseTextFromForeignOutputData] {
+	func(inputArg *apimessage.MessageInput[genjsonschema.ChatInputParseTextFromForeign]) *apimessage.MessageOutput[genjsonschema.ChatOutputDataParseTextFromForeign] {
 		input := utilstruct.TranslateStruct[genjsonschema.MessageParseTextFromForeignInput](inputArg)
 		log.Printf("Message received: %v", input.Data)
 		neo4jdb.ExecuteQuery(fmt.Sprintf(`
@@ -36,7 +36,28 @@ var ParseTextFromForeign = makeHandler(
 			"translation_language": input.Data.TranslationLanguage,
 		})
 		ctx := context.Background()
-		output := aichat.ParseTextFromForeign(&ctx, &input)
+		chatInput := genjsonschema.ChatInputParseTextFromForeign{
+			OriginalLanguages:   input.Data.OriginalLanguages,
+			Text:                input.Data.Text,
+			TranslationLanguage: input.Data.TranslationLanguage,
+		}
+		aiOutputData, err := aichat.ParseTextFromForeign(&ctx, &chatInput)
+		appErrors := []genjsonschema.AppError{}
+		if err != nil {
+			appErrors = append(appErrors, *err)
+		}
+
+		output := genjsonschema.MessageParseTextFromForeignOutput{
+			Id:     input.Id,
+			Name:   genjsonschema.MessageParseTextFromForeignOutputName(input.Name),
+			Errors: appErrors,
+			Data:   *aiOutputData,
+		}
+		if err != nil {
+			output.Errors = append(output.Errors, genjsonschema.AppError{
+				Name: genjsonschema.ErrorNameChatAiError,
+			})
+		}
 		neo4jdb.ExecuteQuery(fmt.Sprintf(`
 			MATCH (input:MessageInput {id: $id})
 			CREATE (output:MessageOutput {name: $name, id: $id, created_at: datetime()})
@@ -72,11 +93,31 @@ var ParseTextFromForeign = makeHandler(
 				"translation":         definitionPart.Translation,
 			})
 		}
-		outputWrapped := utilstruct.TranslateStruct[apimessage.MessageOutput[genjsonschema.MessageParseTextFromForeignOutputData]](output)
+		outputWrapped := utilstruct.TranslateStruct[apimessage.MessageOutput[genjsonschema.ChatOutputDataParseTextFromForeign]](output)
 		return &outputWrapped
 	})
 
-// var DefinePart = makeHandler(
-// 	func(mi *apimessage.MessageInput[genjsonschema.Message]) *apimessage.MessageOutput[OutputData] {
+var DefineTerm = makeHandler(
+	func(mi *apimessage.MessageInput[genjsonschema.MessageDefineTermInputData]) *apimessage.MessageOutput[genjsonschema.MessageDefineTermOutputData] {
+		input := utilstruct.TranslateStruct[genjsonschema.MessageDefineTermInput](mi)
 
-// 	})
+		neo4jdb.ExecuteQuery(fmt.Sprintf(`
+			CREATE (input:MessageInput {name: $name, id: $id, created_at: datetime()})
+			CREATE (data:MessageInputData:%v {
+				term: $term,
+				context: $context,
+				original_languages: $original_languages,
+				translation_language: $translation_language,
+				created_at: datetime()
+			})
+			CREATE (input)-[:HAS]->(data)
+		`, genjsonschema.MessageDefineTermInputNameDefineTerm), map[string]any{
+			"id":                   input.Id,
+			"name":                 input.Name,
+			"term":                 input.Data.Term,
+			"context":              input.Data.Context,
+			"original_languages":   input.Data.OriginalLanguages,
+			"translation_language": input.Data.TranslationLanguage,
+		})
+		return nil
+	})

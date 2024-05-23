@@ -73,7 +73,8 @@
                   "JsonSchema_MessageInput",
                   "JsonSchema_MessageOutput",
                   "NotFound_MessageName",
-                  "FromAi_Critical"
+                  "FromAi_Critical",
+                  "ChatAiError"
                 ]
               },
               "message": {

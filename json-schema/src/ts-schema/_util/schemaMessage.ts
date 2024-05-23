@@ -6,16 +6,20 @@ type MessageInput = SchemaInput & {
   title: string;
   properties: {
     input: {
-      properties: {
-        name: {
-          type: "string";
-          enum: [string];
-        };
-        data: {
-          type: "object";
-          properties: JSONSchema7["properties"];
-        };
-      };
+      properties:
+        | {
+            name: {
+              type: "string";
+              enum: [string];
+            };
+            data:
+              | {
+                  type: "object";
+                  properties: JSONSchema7["properties"];
+                }
+              | { $ref: string };
+          }
+        | { $ref: string };
     };
     output: {
       properties: JSONSchema7["properties"] & {
@@ -23,10 +27,12 @@ type MessageInput = SchemaInput & {
           type: "string";
           enum: [string];
         };
-        data: {
-          type: "object";
-          properties: JSONSchema7["properties"];
-        };
+        data:
+          | {
+              type: "object";
+              properties: JSONSchema7["properties"];
+            }
+          | { $ref: string };
       };
     };
   };

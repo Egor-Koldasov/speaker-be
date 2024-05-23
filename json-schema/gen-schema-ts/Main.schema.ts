@@ -20,11 +20,43 @@ export type ErrorName =
   | "JsonSchema_MessageInput"
   | "JsonSchema_MessageOutput"
   | "NotFound_MessageName"
-  | "FromAi_Critical";
+  | "FromAi_Critical"
+  | "ChatAiError";
 /**
  * The list of BCP 47 language tags of the languages foreign to the user that are most commonly used in the learning process. Take this list as a priority when you try to detect the text language of the text foreign to the user. Although it is not guaranteed to completely match the text languages
  */
 export type ForeignLanguages = string[];
+export type Othertitle = Othertitle1 & Othertitle2;
+export type Othertitle2 = {
+  definitionParts: {
+    /**
+     * The text of word extracted. Keep this part small, it should not be longer than a typical dictionary entry point. Include only the word itself without any extra symbols. Do not include any punctuation symbols, enclosing parentheses or apostrophes an so on.
+     */
+    text: string;
+    /**
+     * A short translation of the word without additional formatting. Among several translation choices, choose the one that is the best fitting the original context from the user input text that was sent for this parsing.
+     */
+    translation: string;
+    /**
+     * The BCP 47 language tag of the language of that word. Null for unknown
+     */
+    languageOriginal: string;
+    /**
+     * The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'
+     */
+    languageTranslated: string;
+  }[];
+  /**
+   * The full translation of the text to the requested language.
+   */
+  translation: {
+    text: string;
+    /**
+     * The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'
+     */
+    language: string;
+  };
+} | null;
 
 export interface GenJsonSchema {
   model: Models;
@@ -65,46 +97,51 @@ export interface MessageParseTextFromForeign {
   input: {
     id: Id;
     name: "ParseTextFromForeign";
-    data: {
-      text: string;
-      originalLanguages: ForeignLanguages;
-      translationLanguage: ForeignLanguages;
-    };
+    data: ChatInputParseTextFromForeign;
   };
   output: {
     id: Id;
     name: "ParseTextFromForeign";
-    data: {
-      definitionParts: {
-        /**
-         * The text of word extracted. Keep this part small, it should not be longer than a typical dictionary entry point. Include only the word itself without any extra symbols. Do not include any punctuation symbols, enclosing parentheses or apostrophes an so on.
-         */
-        text: string;
-        /**
-         * A short translation of the word without additional formatting. Among several translation choices, choose the one that is the best fitting the original context from the user input text that was sent for this parsing.
-         */
-        translation: string;
-        /**
-         * The BCP 47 language tag of the language of that word. Null for unknown
-         */
-        languageOriginal: string;
-        /**
-         * The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'
-         */
-        languageTranslated: string;
-      }[];
-      /**
-       * The full translation of the text to the requested language.
-       */
-      translation: {
-        text: string;
-        /**
-         * The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'
-         */
-        language: string;
-      };
-    } | null;
+    data: Othertitle;
     errors: AppError[];
+  };
+}
+export interface ChatInputParseTextFromForeign {
+  text: string;
+  originalLanguages: ForeignLanguages;
+  /**
+   * The BCP 47 language tag of the language that the user wants to translate the foreign text to.
+   */
+  translationLanguage: string;
+}
+export interface Othertitle1 {
+  definitionParts: {
+    /**
+     * The text of word extracted. Keep this part small, it should not be longer than a typical dictionary entry point. Include only the word itself without any extra symbols. Do not include any punctuation symbols, enclosing parentheses or apostrophes an so on.
+     */
+    text: string;
+    /**
+     * A short translation of the word without additional formatting. Among several translation choices, choose the one that is the best fitting the original context from the user input text that was sent for this parsing.
+     */
+    translation: string;
+    /**
+     * The BCP 47 language tag of the language of that word. Null for unknown
+     */
+    languageOriginal: string;
+    /**
+     * The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'
+     */
+    languageTranslated: string;
+  }[];
+  /**
+   * The full translation of the text to the requested language.
+   */
+  translation: {
+    text: string;
+    /**
+     * The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'
+     */
+    language: string;
   };
 }
 export interface MessageDefineTerm {
@@ -113,11 +150,11 @@ export interface MessageDefineTerm {
     name: "DefineTerm";
     data: {
       /**
-       * A word or a common phrase to define
+       * A term to define
        */
-      wordString: string;
+      term: string;
       /**
-       * A context from which the word or phrase is taken
+       * A context from which the term is taken
        */
       context: string;
       originalLanguages: ForeignLanguages;

@@ -28,6 +28,6 @@ func init() {
 	if Config.JsonSchemaPath == "" {
 		pwd, err := os.Getwd()
 		utilerror.FatalError("Error getting current working directory", err)
-		Config.JsonSchemaPath = filepath.Join(pwd, "../json-schema/schema-v2")
+		Config.JsonSchemaPath = filepath.Join(pwd, "../json-schema/gen-schema-bundle")
 	}
 }

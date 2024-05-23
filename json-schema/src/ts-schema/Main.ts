@@ -18,6 +18,16 @@ export default schemaObject(
           $ref: "./model/MessageDefineTerm.json",
         },
       }),
+      ChatGroupMap: schemaObject({
+        ParseTextFromForeign: schemaObject({
+          input: {
+            $ref: "./model/ChatInputParseTextFromForeign.json",
+          },
+          output: {
+            $ref: "./model/ChatOutputParseTextFromForeign.json",
+          },
+        }),
+      }),
       Models: schemaObject({
         MessageBase: {
           $ref: "./model/MessageBase.json",

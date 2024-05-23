@@ -10,13 +10,13 @@ export default schemaMessage(
           enum: ["DefineTerm"],
         },
         data: schemaObject({
-          wordString: {
+          term: {
             type: "string",
-            description: "A word or a common phrase to define",
+            description: "A term to define",
           },
           context: {
             type: "string",
-            description: "A context from which the word or phrase is taken",
+            description: "A context from which the term is taken",
           },
           originalLanguages: {
             $ref: "./UserSettings.json#/definitions/foreignLanguages",

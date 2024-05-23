@@ -13,5 +13,6 @@ export default schema({
     "JsonSchema_MessageOutput",
     "NotFound_MessageName",
     "FromAi_Critical",
+    "ChatAiError",
   ],
 });

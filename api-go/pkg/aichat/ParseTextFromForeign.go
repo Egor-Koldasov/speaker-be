@@ -3,8 +3,10 @@ package aichat
 import (
 	"api-go/pkg/genjsonschema"
 	"api-go/pkg/utiljson"
+	"api-go/pkg/utilstruct"
 	"context"
 	"log"
+	"strings"
 
 	"github.com/sashabaranov/go-openai"
 )
@@ -14,8 +16,8 @@ var parseTextFromForeignInstruction = `
 	Do not include any punctuation marks or special characters in the output.
 `
 
-func ParseTextFromForeign(ctx *context.Context, input *genjsonschema.MessageParseTextFromForeignInput) genjsonschema.MessageParseTextFromForeignOutput {
-	schema := JsonSchemas["MessageParseTextFromForeign"]
+func ParseTextFromForeign(ctx *context.Context, input *genjsonschema.ChatInputParseTextFromForeign) (*genjsonschema.ChatOutputDataParseTextFromForeign, *genjsonschema.AppError) {
+	schema := ChatSchemas.ParseTextFromForeign
 	prompt := AiChatPrompt(parseTextFromForeignInstruction, schema.Input, schema.Output, utiljson.MarshalIndent(*input))
 	log.Printf("Schema output: %v", schema.Output)
 
@@ -27,18 +29,27 @@ func ParseTextFromForeign(ctx *context.Context, input *genjsonschema.MessagePars
 		},
 		Messages: prompt,
 	})
-	var output = genjsonschema.MessageParseTextFromForeignOutput{
-		Name: genjsonschema.MessageParseTextFromForeignOutputName(input.Name),
-	}
 	if err != nil {
-		output.Errors = append(output.Errors, genjsonschema.AppError{
+		return nil, &genjsonschema.AppError{
 			Name:    genjsonschema.ErrorNameAiCreateCompletion,
 			Message: err.Error(),
-		})
-		return output
+		}
 	}
 	message := resp.Choices[0].Message.Content
-	output = utiljson.ParseJson[genjsonschema.MessageParseTextFromForeignOutput](message)
+	output := utiljson.ParseJson[genjsonschema.ChatOutputParseTextFromForeign](message)
 
-	return output
+	messageData := utilstruct.TranslateStruct[genjsonschema.ChatOutputDataParseTextFromForeign](output.Data)
+
+	if len(output.Errors) > 0 {
+		errorMessages := []string{}
+		for _, e := range output.Errors {
+			errorMessages = append(errorMessages, e.Message)
+		}
+		return nil, &genjsonschema.AppError{
+			Name:    genjsonschema.ErrorNameChatAiError,
+			Message: strings.Join(errorMessages, ", "),
+		}
+	}
+
+	return &messageData, nil
 }

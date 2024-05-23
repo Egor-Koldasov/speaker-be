@@ -26,17 +26,17 @@ type MessageDefineTermInput struct {
 }
 
 type MessageDefineTermInputData struct {
-	// A context from which the word or phrase is taken
+	// A context from which the term is taken
 	Context string `json:"context" yaml:"context" mapstructure:"context"`
 
 	// OriginalLanguages corresponds to the JSON schema field "originalLanguages".
 	OriginalLanguages ForeignLanguages `json:"originalLanguages" yaml:"originalLanguages" mapstructure:"originalLanguages"`
 
+	// A term to define
+	Term string `json:"term" yaml:"term" mapstructure:"term"`
+
 	// TranslationLanguage corresponds to the JSON schema field "translationLanguage".
 	TranslationLanguage TranslationLanguage `json:"translationLanguage" yaml:"translationLanguage" mapstructure:"translationLanguage"`
-
-	// A word or a common phrase to define
-	WordString string `json:"wordString" yaml:"wordString" mapstructure:"wordString"`
 }
 
 type MessageDefineTermInputName string
@@ -195,11 +195,11 @@ func (j *MessageDefineTermInputData) UnmarshalJSON(b []byte) error {
 	if v, ok := raw["originalLanguages"]; !ok || v == nil {
 		return fmt.Errorf("field originalLanguages in MessageDefineTermInputData: required")
 	}
+	if v, ok := raw["term"]; !ok || v == nil {
+		return fmt.Errorf("field term in MessageDefineTermInputData: required")
+	}
 	if v, ok := raw["translationLanguage"]; !ok || v == nil {
 		return fmt.Errorf("field translationLanguage in MessageDefineTermInputData: required")
-	}
-	if v, ok := raw["wordString"]; !ok || v == nil {
-		return fmt.Errorf("field wordString in MessageDefineTermInputData: required")
 	}
 	type Plain MessageDefineTermInputData
 	var plain Plain

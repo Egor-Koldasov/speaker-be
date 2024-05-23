@@ -3,9 +3,10 @@ package aichat
 import (
 	"api-go/pkg/config"
 	"api-go/pkg/utilerror"
-	"api-go/pkg/utiljson"
+	"fmt"
 	"os"
 	"path/filepath"
+	"reflect"
 
 	"github.com/sashabaranov/go-openai"
 )
@@ -34,22 +35,41 @@ type JsonSchemaGroup struct {
 	Output string
 }
 
-var JsonSchemas = map[string]*JsonSchemaGroup{}
+// var JsonSchemas = map[string]*JsonSchemaGroup{}
 
-func loadAiChatJsonSchemas() {
-	schemaParseTextFromForeign, err := os.ReadFile(filepath.Join(config.Config.JsonSchemaPath, "model", "MessageParseTextFromForeign.json"))
-	utilerror.FatalError("Failed to read file", err)
-	json := utiljson.ParseJson[map[string]any](string(schemaParseTextFromForeign))
-	input := json["properties"].(map[string]any)["input"].(map[string]any)
-	output := json["properties"].(map[string]any)["output"].(map[string]any)
-	input["$schema"] = json["$schema"]
-	output["$schema"] = json["$schema"]
-	JsonSchemas["MessageParseTextFromForeign"] = &JsonSchemaGroup{
-		Input:  utiljson.MarshalIndent(json["properties"].(map[string]any)["input"]),
-		Output: utiljson.MarshalIndent(json["properties"].(map[string]any)["output"]),
+type ChatSchemaMap struct {
+	ParseTextFromForeign *JsonSchemaGroup
+}
+
+var ChatSchemas = ChatSchemaMap{}
+
+func loadSchemaMap() {
+	// load the keys of the struct "ChatSchemaMap" into a string list using reflection
+	// then iterate over the list and load the json schemas
+	chatSchemasPtrReflectVal := reflect.ValueOf(&ChatSchemas)
+	chatSchemasReflectVal := chatSchemasPtrReflectVal.Elem()
+	numFields := chatSchemasReflectVal.NumField()
+	for i := 0; i < numFields; i++ {
+		fieldType := chatSchemasReflectVal.Type().Field(i)
+		field := chatSchemasReflectVal.Field(i)
+		fmt.Printf(" %v %v", field.CanSet(), field.CanAddr())
+		schemaNameBase := fieldType.Name
+		inputStringified, err := os.ReadFile(filepath.Join(config.Config.JsonSchemaPath, "model", "ChatInput"+schemaNameBase+".json"))
+		if utilerror.LogError("Failed to read chat schema input", err) {
+			continue
+		}
+		outputStringified, err := os.ReadFile(filepath.Join(config.Config.JsonSchemaPath, "model", "ChatOutput"+schemaNameBase+".json"))
+		if utilerror.LogError("Failed to read chat schema output", err) {
+			continue
+		}
+		schemaGroup := JsonSchemaGroup{
+			Input:  string(inputStringified),
+			Output: string(outputStringified),
+		}
+		field.Set(reflect.ValueOf(&schemaGroup))
 	}
 }
 
 func init() {
-	loadAiChatJsonSchemas()
+	loadSchemaMap()
 }

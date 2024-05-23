@@ -17,6 +17,7 @@ var enumValues_ErrorName = []interface{}{
 	"JsonSchema_MessageOutput",
 	"NotFound_MessageName",
 	"FromAi_Critical",
+	"ChatAiError",
 }
 
 // UnmarshalJSON implements json.Unmarshaler.
@@ -41,6 +42,7 @@ func (j *ErrorName) UnmarshalJSON(b []byte) error {
 
 const ErrorNameAIResponseUnmarshal ErrorName = "AI_ResponseUnmarshal"
 const ErrorNameAiCreateCompletion ErrorName = "Ai_CreateCompletion"
+const ErrorNameChatAiError ErrorName = "ChatAiError"
 const ErrorNameFromAiCritical ErrorName = "FromAi_Critical"
 const ErrorNameInternal ErrorName = "Internal"
 const ErrorNameJsonSchemaMessageInput ErrorName = "JsonSchema_MessageInput"

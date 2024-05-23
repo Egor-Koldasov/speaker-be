@@ -1,5 +1,5 @@
 import $RefParser from "@apidevtools/json-schema-ref-parser";
-import { mkdir, readdir, writeFile } from "fs/promises";
+import { mkdir, readdir, rmdir, unlink, writeFile } from "fs/promises";
 import { compileFromFile } from "json-schema-to-typescript";
 import path, { join } from "path";
 
@@ -30,8 +30,33 @@ export const getSchemaFiles = async (dir = ""): Promise<string[]> => {
   ];
 };
 
+const emptyDir = async (dir: string) => {
+  const files = await readdir(dir, {
+    withFileTypes: true,
+  });
+  await Promise.all(
+    files.map(async (file) => {
+      if (file.isDirectory()) {
+        await emptyDir(join(dir, file.name));
+        await rmdir(join(dir, file.name));
+      } else {
+        await unlink(join(dir, file.name));
+      }
+    })
+  );
+};
+
 const exportJsonSchemaBundles = async () => {
   const schemaFiles = await getSchemaFiles();
+  // delete previous files
+  await Promise.all([
+    mkdir(jsonSchemaDir, { recursive: true }),
+    mkdir(genBundleDir, { recursive: true }),
+  ]);
+
+  await emptyDir(jsonSchemaDir);
+  await emptyDir(genBundleDir);
+
   const jsonSchemaPathList = await Promise.all(
     schemaFiles.map(async (schemaPath): Promise<string> => {
       const schema = require(join(tsSchemaDir, schemaPath)).default;

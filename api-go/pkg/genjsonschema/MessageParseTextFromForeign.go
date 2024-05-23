@@ -33,7 +33,7 @@ type MessageParseTextFromForeignInputData struct {
 	Text string `json:"text" yaml:"text" mapstructure:"text"`
 
 	// TranslationLanguage corresponds to the JSON schema field "translationLanguage".
-	TranslationLanguage ForeignLanguages `json:"translationLanguage" yaml:"translationLanguage" mapstructure:"translationLanguage"`
+	TranslationLanguage TranslationLanguage `json:"translationLanguage" yaml:"translationLanguage" mapstructure:"translationLanguage"`
 }
 
 type MessageParseTextFromForeignInputName string
@@ -42,7 +42,7 @@ const MessageParseTextFromForeignInputNameParseTextFromForeign MessageParseTextF
 
 type MessageParseTextFromForeignOutput struct {
 	// Data corresponds to the JSON schema field "data".
-	Data MessageParseTextFromForeignOutputData `json:"data" yaml:"data" mapstructure:"data"`
+	Data ChatOutputDataParseTextFromForeign `json:"data" yaml:"data" mapstructure:"data"`
 
 	// Errors corresponds to the JSON schema field "errors".
 	Errors []AppError `json:"errors" yaml:"errors" mapstructure:"errors"`
@@ -52,52 +52,6 @@ type MessageParseTextFromForeignOutput struct {
 
 	// Name corresponds to the JSON schema field "name".
 	Name MessageParseTextFromForeignOutputName `json:"name" yaml:"name" mapstructure:"name"`
-}
-
-type MessageParseTextFromForeignOutputData struct {
-	// DefinitionParts corresponds to the JSON schema field "definitionParts".
-	DefinitionParts []MessageParseTextFromForeignOutputDataDefinitionPartsElem `json:"definitionParts" yaml:"definitionParts" mapstructure:"definitionParts"`
-
-	// The full translation of the text to the requested language.
-	Translation MessageParseTextFromForeignOutputDataTranslation `json:"translation" yaml:"translation" mapstructure:"translation"`
-}
-
-type MessageParseTextFromForeignOutputDataDefinitionPartsElem struct {
-	// The BCP 47 language tag of the language of that word. Null for unknown
-	LanguageOriginal string `json:"languageOriginal" yaml:"languageOriginal" mapstructure:"languageOriginal"`
-
-	// The BCP 47 language tag of the language of the translation. It should match the
-	// requested 'translationLanguage'
-	LanguageTranslated string `json:"languageTranslated" yaml:"languageTranslated" mapstructure:"languageTranslated"`
-
-	// The text of word extracted. Keep this part small, it should not be longer than
-	// a typical dictionary entry point. Include only the word itself without any
-	// extra symbols. Do not include any punctuation symbols, enclosing parentheses or
-	// apostrophes an so on.
-	Text string `json:"text" yaml:"text" mapstructure:"text"`
-
-	// A short translation of the word without additional formatting. Among several
-	// translation choices, choose the one that is the best fitting the original
-	// context from the user input text that was sent for this parsing.
-	Translation string `json:"translation" yaml:"translation" mapstructure:"translation"`
-}
-
-// The full translation of the text to the requested language.
-type MessageParseTextFromForeignOutputDataTranslation struct {
-	// The BCP 47 language tag of the language of the translation. It should match the
-	// requested 'translationLanguage'
-	Language string `json:"language" yaml:"language" mapstructure:"language"`
-
-	// Text corresponds to the JSON schema field "text".
-	Text string `json:"text" yaml:"text" mapstructure:"text"`
-}
-
-type MessageParseTextFromForeignOutputName string
-
-const MessageParseTextFromForeignOutputNameParseTextFromForeign MessageParseTextFromForeignOutputName = "ParseTextFromForeign"
-
-var enumValues_MessageParseTextFromForeignInputName = []interface{}{
-	"ParseTextFromForeign",
 }
 
 // UnmarshalJSON implements json.Unmarshaler.
@@ -117,72 +71,6 @@ func (j *MessageParseTextFromForeignInputName) UnmarshalJSON(b []byte) error {
 		return fmt.Errorf("invalid value (expected one of %#v): %#v", enumValues_MessageParseTextFromForeignInputName, v)
 	}
 	*j = MessageParseTextFromForeignInputName(v)
-	return nil
-}
-
-// UnmarshalJSON implements json.Unmarshaler.
-func (j *MessageParseTextFromForeignOutputData) UnmarshalJSON(b []byte) error {
-	var raw map[string]interface{}
-	if err := json.Unmarshal(b, &raw); err != nil {
-		return err
-	}
-	if v, ok := raw["definitionParts"]; !ok || v == nil {
-		return fmt.Errorf("field definitionParts in MessageParseTextFromForeignOutputData: required")
-	}
-	if v, ok := raw["translation"]; !ok || v == nil {
-		return fmt.Errorf("field translation in MessageParseTextFromForeignOutputData: required")
-	}
-	type Plain MessageParseTextFromForeignOutputData
-	var plain Plain
-	if err := json.Unmarshal(b, &plain); err != nil {
-		return err
-	}
-	*j = MessageParseTextFromForeignOutputData(plain)
-	return nil
-}
-
-// UnmarshalJSON implements json.Unmarshaler.
-func (j *MessageParseTextFromForeignOutputDataTranslation) UnmarshalJSON(b []byte) error {
-	var raw map[string]interface{}
-	if err := json.Unmarshal(b, &raw); err != nil {
-		return err
-	}
-	if v, ok := raw["language"]; !ok || v == nil {
-		return fmt.Errorf("field language in MessageParseTextFromForeignOutputDataTranslation: required")
-	}
-	if v, ok := raw["text"]; !ok || v == nil {
-		return fmt.Errorf("field text in MessageParseTextFromForeignOutputDataTranslation: required")
-	}
-	type Plain MessageParseTextFromForeignOutputDataTranslation
-	var plain Plain
-	if err := json.Unmarshal(b, &plain); err != nil {
-		return err
-	}
-	*j = MessageParseTextFromForeignOutputDataTranslation(plain)
-	return nil
-}
-
-var enumValues_MessageParseTextFromForeignOutputName = []interface{}{
-	"ParseTextFromForeign",
-}
-
-// UnmarshalJSON implements json.Unmarshaler.
-func (j *MessageParseTextFromForeignOutputName) UnmarshalJSON(b []byte) error {
-	var v string
-	if err := json.Unmarshal(b, &v); err != nil {
-		return err
-	}
-	var ok bool
-	for _, expected := range enumValues_MessageParseTextFromForeignOutputName {
-		if reflect.DeepEqual(v, expected) {
-			ok = true
-			break
-		}
-	}
-	if !ok {
-		return fmt.Errorf("invalid value (expected one of %#v): %#v", enumValues_MessageParseTextFromForeignOutputName, v)
-	}
-	*j = MessageParseTextFromForeignOutputName(v)
 	return nil
 }
 
@@ -210,31 +98,36 @@ func (j *MessageParseTextFromForeignInput) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+type MessageParseTextFromForeignOutputName string
+
+var enumValues_MessageParseTextFromForeignOutputName = []interface{}{
+	"ParseTextFromForeign",
+}
+
 // UnmarshalJSON implements json.Unmarshaler.
-func (j *MessageParseTextFromForeignOutputDataDefinitionPartsElem) UnmarshalJSON(b []byte) error {
-	var raw map[string]interface{}
-	if err := json.Unmarshal(b, &raw); err != nil {
+func (j *MessageParseTextFromForeignOutputName) UnmarshalJSON(b []byte) error {
+	var v string
+	if err := json.Unmarshal(b, &v); err != nil {
 		return err
 	}
-	if v, ok := raw["languageOriginal"]; !ok || v == nil {
-		return fmt.Errorf("field languageOriginal in MessageParseTextFromForeignOutputDataDefinitionPartsElem: required")
+	var ok bool
+	for _, expected := range enumValues_MessageParseTextFromForeignOutputName {
+		if reflect.DeepEqual(v, expected) {
+			ok = true
+			break
+		}
 	}
-	if v, ok := raw["languageTranslated"]; !ok || v == nil {
-		return fmt.Errorf("field languageTranslated in MessageParseTextFromForeignOutputDataDefinitionPartsElem: required")
+	if !ok {
+		return fmt.Errorf("invalid value (expected one of %#v): %#v", enumValues_MessageParseTextFromForeignOutputName, v)
 	}
-	if v, ok := raw["text"]; !ok || v == nil {
-		return fmt.Errorf("field text in MessageParseTextFromForeignOutputDataDefinitionPartsElem: required")
-	}
-	if v, ok := raw["translation"]; !ok || v == nil {
-		return fmt.Errorf("field translation in MessageParseTextFromForeignOutputDataDefinitionPartsElem: required")
-	}
-	type Plain MessageParseTextFromForeignOutputDataDefinitionPartsElem
-	var plain Plain
-	if err := json.Unmarshal(b, &plain); err != nil {
-		return err
-	}
-	*j = MessageParseTextFromForeignOutputDataDefinitionPartsElem(plain)
+	*j = MessageParseTextFromForeignOutputName(v)
 	return nil
+}
+
+const MessageParseTextFromForeignOutputNameParseTextFromForeign MessageParseTextFromForeignOutputName = "ParseTextFromForeign"
+
+var enumValues_MessageParseTextFromForeignInputName = []interface{}{
+	"ParseTextFromForeign",
 }
 
 // UnmarshalJSON implements json.Unmarshaler.

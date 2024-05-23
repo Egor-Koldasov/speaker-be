@@ -69,7 +69,7 @@ func HandleMessage(message genjsonschema.MessageBaseInput) *apimessage.MessageOu
 	output := handler(message)
 
 	appErrors = jsonvalidate.ValidateMessageOutput(message.Name, output)
-	if utilerror.LogErrorIf(fmt.Sprintf("Error validating message output %v: %v", message.Name, appErrors), len(*appErrors) > 0) {
+	if utilerror.LogErrorIf(fmt.Sprintf("Error validating message output %v: %v.\n %v", message.Name, appErrors, output), len(*appErrors) > 0) {
 		return &apimessage.MessageOutput[interface{}]{
 			Name:   message.Name,
 			Errors: *appErrors,

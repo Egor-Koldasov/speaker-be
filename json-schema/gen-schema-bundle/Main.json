@@ -34,16 +34,18 @@
                 "data": {
                   "type": "object",
                   "$schema": "http://json-schema.org/draft-07/schema",
+                  "$id": "ChatInputParseTextFromForeign",
                   "additionalProperties": false,
+                  "title": "ChatInputParseTextFromForeign",
                   "properties": {
                     "text": {
                       "type": "string"
                     },
                     "originalLanguages": {
-                      "$ref": "#/definitions/MessageMap/properties/DefineTerm/properties/input/properties/data/properties/originalLanguages"
+                      "$ref": "#/definitions/ChatGroupMap/properties/ParseTextFromForeign/properties/input/properties/originalLanguages"
                     },
                     "translationLanguage": {
-                      "$ref": "#/definitions/MessageMap/properties/DefineTerm/properties/input/properties/data/properties/originalLanguages"
+                      "$ref": "#/definitions/ChatGroupMap/properties/ParseTextFromForeign/properties/input/properties/translationLanguage"
                     }
                   },
                   "required": [
@@ -74,69 +76,8 @@
                   ]
                 },
                 "data": {
-                  "type": [
-                    "object",
-                    "null"
-                  ],
-                  "$schema": "http://json-schema.org/draft-07/schema",
-                  "additionalProperties": false,
-                  "properties": {
-                    "definitionParts": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "$schema": "http://json-schema.org/draft-07/schema",
-                        "additionalProperties": false,
-                        "properties": {
-                          "text": {
-                            "description": "The text of word extracted. Keep this part small, it should not be longer than a typical dictionary entry point. Include only the word itself without any extra symbols. Do not include any punctuation symbols, enclosing parentheses or apostrophes an so on.",
-                            "type": "string"
-                          },
-                          "translation": {
-                            "description": "A short translation of the word without additional formatting. Among several translation choices, choose the one that is the best fitting the original context from the user input text that was sent for this parsing.",
-                            "type": "string"
-                          },
-                          "languageOriginal": {
-                            "description": "The BCP 47 language tag of the language of that word. Null for unknown",
-                            "type": "string"
-                          },
-                          "languageTranslated": {
-                            "description": "The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'",
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "text",
-                          "translation",
-                          "languageOriginal",
-                          "languageTranslated"
-                        ]
-                      }
-                    },
-                    "translation": {
-                      "type": "object",
-                      "$schema": "http://json-schema.org/draft-07/schema",
-                      "additionalProperties": false,
-                      "description": "The full translation of the text to the requested language.",
-                      "properties": {
-                        "text": {
-                          "type": "string"
-                        },
-                        "language": {
-                          "description": "The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'",
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "text",
-                        "language"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "definitionParts",
-                    "translation"
-                  ]
+                  "$ref": "#/definitions/ChatGroupMap/properties/ParseTextFromForeign/properties/output/definitions/outputData",
+                  "title": "Othertitle"
                 },
                 "errors": {
                   "type": "array",
@@ -184,28 +125,23 @@
                   "$schema": "http://json-schema.org/draft-07/schema",
                   "additionalProperties": false,
                   "properties": {
-                    "wordString": {
+                    "term": {
                       "type": "string",
-                      "description": "A word or a common phrase to define"
+                      "description": "A term to define"
                     },
                     "context": {
                       "type": "string",
-                      "description": "A context from which the word or phrase is taken"
+                      "description": "A context from which the term is taken"
                     },
                     "originalLanguages": {
-                      "type": "array",
-                      "description": "The list of BCP 47 language tags of the languages foreign to the user that are most commonly used in the learning process. Take this list as a priority when you try to detect the text language of the text foreign to the user. Although it is not guaranteed to completely match the text languages",
-                      "items": {
-                        "type": "string"
-                      }
+                      "$ref": "#/definitions/ChatGroupMap/properties/ParseTextFromForeign/properties/input/properties/originalLanguages"
                     },
                     "translationLanguage": {
-                      "type": "string",
-                      "description": "The BCP 47 language tag of the language that the user wants to translate the foreign text to."
+                      "$ref": "#/definitions/ChatGroupMap/properties/ParseTextFromForeign/properties/input/properties/translationLanguage"
                     }
                   },
                   "required": [
-                    "wordString",
+                    "term",
                     "context",
                     "originalLanguages",
                     "translationLanguage"
@@ -414,6 +350,168 @@
         "DefineTerm"
       ]
     },
+    "ChatGroupMap": {
+      "type": "object",
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "additionalProperties": false,
+      "properties": {
+        "ParseTextFromForeign": {
+          "type": "object",
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "additionalProperties": false,
+          "properties": {
+            "input": {
+              "type": "object",
+              "$schema": "http://json-schema.org/draft-07/schema",
+              "$id": "ChatInputParseTextFromForeign",
+              "additionalProperties": false,
+              "title": "ChatInputParseTextFromForeign",
+              "properties": {
+                "text": {
+                  "type": "string"
+                },
+                "originalLanguages": {
+                  "type": "array",
+                  "description": "The list of BCP 47 language tags of the languages foreign to the user that are most commonly used in the learning process. Take this list as a priority when you try to detect the text language of the text foreign to the user. Although it is not guaranteed to completely match the text languages",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "translationLanguage": {
+                  "type": "string",
+                  "description": "The BCP 47 language tag of the language that the user wants to translate the foreign text to."
+                }
+              },
+              "required": [
+                "text",
+                "originalLanguages",
+                "translationLanguage"
+              ]
+            },
+            "output": {
+              "type": "object",
+              "$schema": "http://json-schema.org/draft-07/schema",
+              "$id": "ChatOutputParseTextFromForeign",
+              "additionalProperties": false,
+              "definitions": {
+                "outputData": {
+                  "title": "ChatOutputParseTextFromForeignOutputData",
+                  "description": "The output data of the Chat AI. Null value indicates the error state.",
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "$schema": "http://json-schema.org/draft-07/schema",
+                  "$id": "ChatOutputDataParseTextFromForeign",
+                  "additionalProperties": false,
+                  "properties": {
+                    "definitionParts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$schema": "http://json-schema.org/draft-07/schema",
+                        "additionalProperties": false,
+                        "properties": {
+                          "text": {
+                            "description": "The text of word extracted. Keep this part small, it should not be longer than a typical dictionary entry point. Include only the word itself without any extra symbols. Do not include any punctuation symbols, enclosing parentheses or apostrophes an so on.",
+                            "type": "string"
+                          },
+                          "translation": {
+                            "description": "A short translation of the word without additional formatting. Among several translation choices, choose the one that is the best fitting the original context from the user input text that was sent for this parsing.",
+                            "type": "string"
+                          },
+                          "languageOriginal": {
+                            "description": "The BCP 47 language tag of the language of that word. Null for unknown",
+                            "type": "string"
+                          },
+                          "languageTranslated": {
+                            "description": "The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "text",
+                          "translation",
+                          "languageOriginal",
+                          "languageTranslated"
+                        ]
+                      }
+                    },
+                    "translation": {
+                      "type": "object",
+                      "$schema": "http://json-schema.org/draft-07/schema",
+                      "additionalProperties": false,
+                      "description": "The full translation of the text to the requested language.",
+                      "properties": {
+                        "text": {
+                          "type": "string"
+                        },
+                        "language": {
+                          "description": "The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "text",
+                        "language"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "definitionParts",
+                    "translation"
+                  ]
+                }
+              },
+              "title": "ChatOutputParseTextFromForeign",
+              "properties": {
+                "data": {
+                  "$ref": "#/definitions/ChatGroupMap/properties/ParseTextFromForeign/properties/output/definitions/outputData"
+                },
+                "errors": {
+                  "title": "ChatOutputParseTextFromForeignErrors",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "$schema": "http://json-schema.org/draft-07/schema",
+                    "$id": "ChatAiError",
+                    "additionalProperties": false,
+                    "title": "ChatAiError",
+                    "description": "An error that can be returned by the Chat AI.",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "The name of the error.",
+                        "const": "ChatAiError"
+                      },
+                      "message": {
+                        "type": "string",
+                        "description": "The message of the error from AI"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "message"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "data",
+                "errors"
+              ]
+            }
+          },
+          "required": [
+            "input",
+            "output"
+          ]
+        }
+      },
+      "required": [
+        "ParseTextFromForeign"
+      ]
+    },
     "Models": {
       "type": "object",
       "$schema": "http://json-schema.org/draft-07/schema",
@@ -494,7 +592,8 @@
                           "JsonSchema_MessageInput",
                           "JsonSchema_MessageOutput",
                           "NotFound_MessageName",
-                          "FromAi_Critical"
+                          "FromAi_Critical",
+                          "ChatAiError"
                         ]
                       },
                       "message": {

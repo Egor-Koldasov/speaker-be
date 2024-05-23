@@ -5,6 +5,59 @@ package genjsonschema
 import "encoding/json"
 import "fmt"
 
+type ChatGroupMapParseTextFromForeign struct {
+	// Input corresponds to the JSON schema field "input".
+	Input ChatInputParseTextFromForeign `json:"input" yaml:"input" mapstructure:"input"`
+
+	// Output corresponds to the JSON schema field "output".
+	Output ChatOutputParseTextFromForeign `json:"output" yaml:"output" mapstructure:"output"`
+}
+
+// UnmarshalJSON implements json.Unmarshaler.
+func (j *ChatGroupMapParseTextFromForeign) UnmarshalJSON(b []byte) error {
+	var raw map[string]interface{}
+	if err := json.Unmarshal(b, &raw); err != nil {
+		return err
+	}
+	if v, ok := raw["input"]; !ok || v == nil {
+		return fmt.Errorf("field input in ChatGroupMapParseTextFromForeign: required")
+	}
+	if v, ok := raw["output"]; !ok || v == nil {
+		return fmt.Errorf("field output in ChatGroupMapParseTextFromForeign: required")
+	}
+	type Plain ChatGroupMapParseTextFromForeign
+	var plain Plain
+	if err := json.Unmarshal(b, &plain); err != nil {
+		return err
+	}
+	*j = ChatGroupMapParseTextFromForeign(plain)
+	return nil
+}
+
+type ChatGroupMap struct {
+	// ParseTextFromForeign corresponds to the JSON schema field
+	// "ParseTextFromForeign".
+	ParseTextFromForeign ChatGroupMapParseTextFromForeign `json:"ParseTextFromForeign" yaml:"ParseTextFromForeign" mapstructure:"ParseTextFromForeign"`
+}
+
+// UnmarshalJSON implements json.Unmarshaler.
+func (j *ChatGroupMap) UnmarshalJSON(b []byte) error {
+	var raw map[string]interface{}
+	if err := json.Unmarshal(b, &raw); err != nil {
+		return err
+	}
+	if v, ok := raw["ParseTextFromForeign"]; !ok || v == nil {
+		return fmt.Errorf("field ParseTextFromForeign in ChatGroupMap: required")
+	}
+	type Plain ChatGroupMap
+	var plain Plain
+	if err := json.Unmarshal(b, &plain); err != nil {
+		return err
+	}
+	*j = ChatGroupMap(plain)
+	return nil
+}
+
 type MessageMap struct {
 	// DefineTerm corresponds to the JSON schema field "DefineTerm".
 	DefineTerm MessageDefineTerm `json:"DefineTerm" yaml:"DefineTerm" mapstructure:"DefineTerm"`

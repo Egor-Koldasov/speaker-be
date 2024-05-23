@@ -22,6 +22,33 @@
         "DefineTerm"
       ]
     },
+    "ChatGroupMap": {
+      "type": "object",
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "additionalProperties": false,
+      "properties": {
+        "ParseTextFromForeign": {
+          "type": "object",
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "additionalProperties": false,
+          "properties": {
+            "input": {
+              "$ref": "./model/ChatInputParseTextFromForeign.json"
+            },
+            "output": {
+              "$ref": "./model/ChatOutputParseTextFromForeign.json"
+            }
+          },
+          "required": [
+            "input",
+            "output"
+          ]
+        }
+      },
+      "required": [
+        "ParseTextFromForeign"
+      ]
+    },
     "Models": {
       "type": "object",
       "$schema": "http://json-schema.org/draft-07/schema",

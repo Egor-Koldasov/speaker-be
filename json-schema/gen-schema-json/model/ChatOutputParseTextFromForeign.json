@@ -1,0 +1,30 @@
+{
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "ChatOutputParseTextFromForeign",
+  "additionalProperties": false,
+  "definitions": {
+    "outputData": {
+      "title": "ChatOutputParseTextFromForeignOutputData",
+      "$ref": "./ChatOutputDataParseTextFromForeign.json",
+      "description": "The output data of the Chat AI. Null value indicates the error state."
+    }
+  },
+  "title": "ChatOutputParseTextFromForeign",
+  "properties": {
+    "data": {
+      "$ref": "#/definitions/outputData"
+    },
+    "errors": {
+      "title": "ChatOutputParseTextFromForeignErrors",
+      "type": "array",
+      "items": {
+        "$ref": "../property/ChatAiError.json"
+      }
+    }
+  },
+  "required": [
+    "data",
+    "errors"
+  ]
+}

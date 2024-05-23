@@ -28,13 +28,13 @@
           "$schema": "http://json-schema.org/draft-07/schema",
           "additionalProperties": false,
           "properties": {
-            "wordString": {
+            "term": {
               "type": "string",
-              "description": "A word or a common phrase to define"
+              "description": "A term to define"
             },
             "context": {
               "type": "string",
-              "description": "A context from which the word or phrase is taken"
+              "description": "A context from which the term is taken"
             },
             "originalLanguages": {
               "type": "array",
@@ -49,7 +49,7 @@
             }
           },
           "required": [
-            "wordString",
+            "term",
             "context",
             "originalLanguages",
             "translationLanguage"
@@ -256,7 +256,8 @@
                   "JsonSchema_MessageInput",
                   "JsonSchema_MessageOutput",
                   "NotFound_MessageName",
-                  "FromAi_Critical"
+                  "FromAi_Critical",
+                  "ChatAiError"
                 ]
               },
               "message": {
