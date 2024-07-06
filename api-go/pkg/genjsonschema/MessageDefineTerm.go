@@ -45,7 +45,7 @@ const MessageDefineTermInputNameDefineTerm MessageDefineTermInputName = "DefineT
 
 type MessageDefineTermOutput struct {
 	// Data corresponds to the JSON schema field "data".
-	Data MessageDefineTermOutputData `json:"data" yaml:"data" mapstructure:"data"`
+	Data ChatOutputDataDefineTerm `json:"data" yaml:"data" mapstructure:"data"`
 
 	// Errors corresponds to the JSON schema field "errors".
 	Errors []AppError `json:"errors" yaml:"errors" mapstructure:"errors"`
@@ -55,35 +55,6 @@ type MessageDefineTermOutput struct {
 
 	// Name corresponds to the JSON schema field "name".
 	Name MessageDefineTermOutputName `json:"name" yaml:"name" mapstructure:"name"`
-}
-
-type MessageDefineTermOutputData struct {
-	// Definition corresponds to the JSON schema field "definition".
-	Definition Definition `json:"definition" yaml:"definition" mapstructure:"definition"`
-}
-
-// UnmarshalJSON implements json.Unmarshaler.
-func (j *MessageDefineTermInput) UnmarshalJSON(b []byte) error {
-	var raw map[string]interface{}
-	if err := json.Unmarshal(b, &raw); err != nil {
-		return err
-	}
-	if v, ok := raw["data"]; !ok || v == nil {
-		return fmt.Errorf("field data in MessageDefineTermInput: required")
-	}
-	if v, ok := raw["id"]; !ok || v == nil {
-		return fmt.Errorf("field id in MessageDefineTermInput: required")
-	}
-	if v, ok := raw["name"]; !ok || v == nil {
-		return fmt.Errorf("field name in MessageDefineTermInput: required")
-	}
-	type Plain MessageDefineTermInput
-	var plain Plain
-	if err := json.Unmarshal(b, &plain); err != nil {
-		return err
-	}
-	*j = MessageDefineTermInput(plain)
-	return nil
 }
 
 // UnmarshalJSON implements json.Unmarshaler.
@@ -107,20 +78,26 @@ func (j *MessageDefineTermInputName) UnmarshalJSON(b []byte) error {
 }
 
 // UnmarshalJSON implements json.Unmarshaler.
-func (j *MessageDefineTermOutputData) UnmarshalJSON(b []byte) error {
+func (j *MessageDefineTermInput) UnmarshalJSON(b []byte) error {
 	var raw map[string]interface{}
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
-	if v, ok := raw["definition"]; !ok || v == nil {
-		return fmt.Errorf("field definition in MessageDefineTermOutputData: required")
+	if v, ok := raw["data"]; !ok || v == nil {
+		return fmt.Errorf("field data in MessageDefineTermInput: required")
 	}
-	type Plain MessageDefineTermOutputData
+	if v, ok := raw["id"]; !ok || v == nil {
+		return fmt.Errorf("field id in MessageDefineTermInput: required")
+	}
+	if v, ok := raw["name"]; !ok || v == nil {
+		return fmt.Errorf("field name in MessageDefineTermInput: required")
+	}
+	type Plain MessageDefineTermInput
 	var plain Plain
 	if err := json.Unmarshal(b, &plain); err != nil {
 		return err
 	}
-	*j = MessageDefineTermOutputData(plain)
+	*j = MessageDefineTermInput(plain)
 	return nil
 }
 

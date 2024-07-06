@@ -3,6 +3,7 @@ import { schemaObject } from "../_util/schemaObject";
 export default schemaObject(
   {
     languageOriginal: {
+      type: "string",
       description: "The original language of the word in a BCP 47 format.",
     },
     languageTranslated: {

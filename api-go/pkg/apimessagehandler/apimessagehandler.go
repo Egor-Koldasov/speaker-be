@@ -5,7 +5,9 @@ import (
 	"api-go/pkg/apperrors"
 	"api-go/pkg/genjsonschema"
 	"api-go/pkg/jsonvalidate"
+	"api-go/pkg/neo4jdb"
 	"api-go/pkg/utilerror"
+	"api-go/pkg/utilneo4jdb"
 	"api-go/pkg/utilstruct"
 	"fmt"
 	"log"
@@ -20,7 +22,27 @@ func outputDataDefinedToUnknown[OutputData interface{}](output *apimessage.Messa
 func makeHandler[InputData interface{}, OutputData interface{}](handler HandlerFn[InputData, OutputData]) func(genjsonschema.MessageBaseInput) *apimessage.MessageOutput[interface{}] {
 	return func(messageBase genjsonschema.MessageBaseInput) *apimessage.MessageOutput[interface{}] {
 		input := utilstruct.TranslateStruct[apimessage.MessageInput[InputData]](messageBase)
+		inputQueryConfig := utilneo4jdb.Join(
+			utilneo4jdb.CreateNodeDefinition("input", []string{"MessageInput"}, input, nil),
+		)
+		_, err := neo4jdb.ExecuteQuery(inputQueryConfig.Query, inputQueryConfig.Params)
+		utilerror.LogError("Error executing input query", err)
 		output := outputDataDefinedToUnknown(handler(&input))
+		outputQueryConfig := utilneo4jdb.Join(
+			utilneo4jdb.NodeDefinition{
+				Query: "MATCH (input:MessageInput { Id: $inputId })",
+				Params: map[string]any{
+					"inputId": input.Id,
+				},
+			},
+			utilneo4jdb.CreateNodeDefinition("output", []string{"MessageOutput"}, *output, nil),
+			utilneo4jdb.NodeDefinition{
+				Query: utilneo4jdb.Relation("input", "output", "OUTPUTS"),
+			},
+		)
+		_, err = neo4jdb.ExecuteQuery(outputQueryConfig.Query, outputQueryConfig.Params)
+		utilerror.LogError("Error executing input query", err)
+
 		log.Printf("Message received: %v", output)
 		if utilerror.LogErrorIf("Message output name is incorrect", messageBase.Name != output.Name) {
 			return &apimessage.MessageOutput[interface{}]{

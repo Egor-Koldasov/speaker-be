@@ -21,22 +21,24 @@ const uiState = reactive({
   selectedWordIndex: -1,
 })
 const uisSettings = useSettings()
+const parseTextFromForeignInputParams: MessageInputParams<'ParseTextFromForeign'> =
+  {
+    name: 'ParseTextFromForeign',
+    data: {
+      text: '',
+      originalLanguages: uisSettings.originalLanguages,
+      translationLanguage: uisSettings.translationLanguage ?? 'en',
+    },
+  }
 const form = reactive({
   phrase: '',
   messageParams: {
-    inputParams: {
-      name: 'ParseTextFromForeign',
-      data: {
-        text: '',
-        originalLanguages: uisSettings.originalLanguages,
-        translationLanguage: uisSettings.translationLanguage ?? 'en',
-      },
-    } satisfies MessageInputParams<'ParseTextFromForeign'>,
-  },
+    inputParams: parseTextFromForeignInputParams,
+  } as const,
 })
 const messageStore = useMessageStore()
 
-const messageQuery = useMessage(form.messageParams)
+const messageQuery = useMessage<'ParseTextFromForeign'>(form.messageParams)
 const messageResult = computed(
   () => messageQuery.value.data?.output?.data ?? null,
 )
@@ -60,6 +62,14 @@ watch(healthData, (newVal) => {
 const selectedWord = computed(() => {
   return messageResult.value?.definitionParts[uiState.selectedWordIndex]
 })
+const selectedWordParams = {
+  word: computed(() => {
+    return selectedWord.value?.text ?? ''
+  }),
+  context: computed(() => {
+    return form.phrase
+  }),
+}
 </script>
 
 <template>
@@ -135,8 +145,8 @@ const selectedWord = computed(() => {
       </form>
       <DefinitionItem
         v-if="!!selectedWord"
-        :word="selectedWord.text"
-        :context="form.phrase"
+        :word="selectedWordParams.word"
+        :context="selectedWordParams.context"
       />
     </div>
   </Page>
@@ -188,6 +198,8 @@ const selectedWord = computed(() => {
     width: 100%;
     height: 100%;
     resize: none;
+    background-color: #1c161e;
+    border: none;
   }
 
   .submit-btn {
@@ -205,13 +217,13 @@ const selectedWord = computed(() => {
   .part {
     display: flex;
     flex-direction: column;
-    border: 1px solid #89147f;
+    border: 1px solid #251f28;
     border-radius: 0.5rem;
     cursor: pointer;
     background-color: transparent;
     padding: 0;
     .part-text {
-      border-bottom: 1px solid #89147f;
+      border-bottom: 1px solid #251f28;
       width: 100%;
       padding: 0 1rem;
       text-wrap: nowrap;
@@ -226,14 +238,25 @@ const selectedWord = computed(() => {
     }
 
     &.selected {
-      background-color: #148954;
+      background-color: #1c161e;
+      border-color: #251f28;
+      outline: none;
+      box-shadow: none;
+      .part-text,
+      .part-translation {
+        border-color: #251f28;
+      }
     }
   }
 }
 .col2 {
   display: flex;
   width: 100%;
-  height: 100%;
+  height: 1px;
+  flex-grow: 1;
   justify-content: space-around;
+  padding: 32px;
+  padding-top: 0;
+  gap: 32px;
 }
 </style>

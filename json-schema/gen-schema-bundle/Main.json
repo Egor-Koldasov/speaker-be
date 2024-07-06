@@ -42,10 +42,10 @@
                       "type": "string"
                     },
                     "originalLanguages": {
-                      "$ref": "#/definitions/ChatGroupMap/properties/ParseTextFromForeign/properties/input/properties/originalLanguages"
+                      "$ref": "#/definitions/ChatGroupMap/properties/DefineTerm/properties/input/properties/originalLanguages"
                     },
                     "translationLanguage": {
-                      "$ref": "#/definitions/ChatGroupMap/properties/ParseTextFromForeign/properties/input/properties/translationLanguage"
+                      "$ref": "#/definitions/ChatGroupMap/properties/DefineTerm/properties/input/properties/translationLanguage"
                     }
                   },
                   "required": [
@@ -76,8 +76,71 @@
                   ]
                 },
                 "data": {
-                  "$ref": "#/definitions/ChatGroupMap/properties/ParseTextFromForeign/properties/output/definitions/outputData",
-                  "title": "Othertitle"
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "$schema": "http://json-schema.org/draft-07/schema",
+                  "$id": "ChatOutputDataParseTextFromForeign",
+                  "additionalProperties": false,
+                  "title": "ChatOutputDataParseTextFromForeign",
+                  "properties": {
+                    "definitionParts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$schema": "http://json-schema.org/draft-07/schema",
+                        "additionalProperties": false,
+                        "properties": {
+                          "text": {
+                            "description": "The text of word extracted. Keep this part small, it should not be longer than a typical dictionary entry point. Include only the word itself without any extra symbols. Do not include any punctuation symbols, enclosing parentheses or apostrophes an so on.",
+                            "type": "string"
+                          },
+                          "translation": {
+                            "description": "A short translation of the word without additional formatting. Among several translation choices, choose the one that is the best fitting the original context from the user input text that was sent for this parsing.",
+                            "type": "string"
+                          },
+                          "languageOriginal": {
+                            "description": "The BCP 47 language tag of the language of that word. Null for unknown",
+                            "type": "string"
+                          },
+                          "languageTranslated": {
+                            "description": "The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "text",
+                          "translation",
+                          "languageOriginal",
+                          "languageTranslated"
+                        ]
+                      }
+                    },
+                    "translation": {
+                      "type": "object",
+                      "$schema": "http://json-schema.org/draft-07/schema",
+                      "additionalProperties": false,
+                      "description": "The full translation of the text to the requested language.",
+                      "properties": {
+                        "text": {
+                          "type": "string"
+                        },
+                        "language": {
+                          "description": "The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "text",
+                        "language"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "definitionParts",
+                    "translation"
+                  ]
                 },
                 "errors": {
                   "type": "array",
@@ -123,7 +186,9 @@
                 "data": {
                   "type": "object",
                   "$schema": "http://json-schema.org/draft-07/schema",
+                  "$id": "ChatInputDefineTerm",
                   "additionalProperties": false,
+                  "title": "ChatInputDefineTerm",
                   "properties": {
                     "term": {
                       "type": "string",
@@ -134,10 +199,10 @@
                       "description": "A context from which the term is taken"
                     },
                     "originalLanguages": {
-                      "$ref": "#/definitions/ChatGroupMap/properties/ParseTextFromForeign/properties/input/properties/originalLanguages"
+                      "$ref": "#/definitions/ChatGroupMap/properties/DefineTerm/properties/input/properties/originalLanguages"
                     },
                     "translationLanguage": {
-                      "$ref": "#/definitions/ChatGroupMap/properties/ParseTextFromForeign/properties/input/properties/translationLanguage"
+                      "$ref": "#/definitions/ChatGroupMap/properties/DefineTerm/properties/input/properties/translationLanguage"
                     }
                   },
                   "required": [
@@ -169,9 +234,14 @@
                   ]
                 },
                 "data": {
-                  "type": "object",
+                  "type": [
+                    "object",
+                    "null"
+                  ],
                   "$schema": "http://json-schema.org/draft-07/schema",
+                  "$id": "ChatOutputDataDefineTerm",
                   "additionalProperties": false,
+                  "title": "ChatOutputDataDefineTerm",
                   "properties": {
                     "definition": {
                       "type": "object",
@@ -221,6 +291,7 @@
                       ],
                       "properties": {
                         "languageOriginal": {
+                          "type": "string",
                           "description": "The original language of the word in a BCP 47 format."
                         },
                         "languageTranslated": {
@@ -371,15 +442,10 @@
                   "type": "string"
                 },
                 "originalLanguages": {
-                  "type": "array",
-                  "description": "The list of BCP 47 language tags of the languages foreign to the user that are most commonly used in the learning process. Take this list as a priority when you try to detect the text language of the text foreign to the user. Although it is not guaranteed to completely match the text languages",
-                  "items": {
-                    "type": "string"
-                  }
+                  "$ref": "#/definitions/ChatGroupMap/properties/DefineTerm/properties/input/properties/originalLanguages"
                 },
                 "translationLanguage": {
-                  "type": "string",
-                  "description": "The BCP 47 language tag of the language that the user wants to translate the foreign text to."
+                  "$ref": "#/definitions/ChatGroupMap/properties/DefineTerm/properties/input/properties/translationLanguage"
                 }
               },
               "required": [
@@ -396,71 +462,8 @@
               "definitions": {
                 "outputData": {
                   "title": "ChatOutputParseTextFromForeignOutputData",
-                  "description": "The output data of the Chat AI. Null value indicates the error state.",
-                  "type": [
-                    "object",
-                    "null"
-                  ],
-                  "$schema": "http://json-schema.org/draft-07/schema",
-                  "$id": "ChatOutputDataParseTextFromForeign",
-                  "additionalProperties": false,
-                  "properties": {
-                    "definitionParts": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "$schema": "http://json-schema.org/draft-07/schema",
-                        "additionalProperties": false,
-                        "properties": {
-                          "text": {
-                            "description": "The text of word extracted. Keep this part small, it should not be longer than a typical dictionary entry point. Include only the word itself without any extra symbols. Do not include any punctuation symbols, enclosing parentheses or apostrophes an so on.",
-                            "type": "string"
-                          },
-                          "translation": {
-                            "description": "A short translation of the word without additional formatting. Among several translation choices, choose the one that is the best fitting the original context from the user input text that was sent for this parsing.",
-                            "type": "string"
-                          },
-                          "languageOriginal": {
-                            "description": "The BCP 47 language tag of the language of that word. Null for unknown",
-                            "type": "string"
-                          },
-                          "languageTranslated": {
-                            "description": "The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'",
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "text",
-                          "translation",
-                          "languageOriginal",
-                          "languageTranslated"
-                        ]
-                      }
-                    },
-                    "translation": {
-                      "type": "object",
-                      "$schema": "http://json-schema.org/draft-07/schema",
-                      "additionalProperties": false,
-                      "description": "The full translation of the text to the requested language.",
-                      "properties": {
-                        "text": {
-                          "type": "string"
-                        },
-                        "language": {
-                          "description": "The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'",
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "text",
-                        "language"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "definitionParts",
-                    "translation"
-                  ]
+                  "$ref": "#/definitions/MessageMap/properties/ParseTextFromForeign/properties/output/properties/data",
+                  "description": "The output data of the Chat AI. Null value indicates the error state."
                 }
               },
               "title": "ChatOutputParseTextFromForeign",
@@ -470,6 +473,81 @@
                 },
                 "errors": {
                   "title": "ChatOutputParseTextFromForeignErrors",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/ChatGroupMap/properties/DefineTerm/properties/output/properties/errors/items"
+                  }
+                }
+              },
+              "required": [
+                "data",
+                "errors"
+              ]
+            }
+          },
+          "required": [
+            "input",
+            "output"
+          ]
+        },
+        "DefineTerm": {
+          "type": "object",
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "additionalProperties": false,
+          "properties": {
+            "input": {
+              "type": "object",
+              "$schema": "http://json-schema.org/draft-07/schema",
+              "$id": "ChatInputDefineTerm",
+              "additionalProperties": false,
+              "title": "ChatInputDefineTerm",
+              "properties": {
+                "term": {
+                  "type": "string",
+                  "description": "A term to define"
+                },
+                "context": {
+                  "type": "string",
+                  "description": "A context from which the term is taken"
+                },
+                "originalLanguages": {
+                  "type": "array",
+                  "description": "The list of BCP 47 language tags of the languages foreign to the user that are most commonly used in the learning process. Take this list as a priority when you try to detect the text language of the text foreign to the user. Although it is not guaranteed to completely match the text languages",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "translationLanguage": {
+                  "type": "string",
+                  "description": "The BCP 47 language tag of the language that the user wants to translate the foreign text to."
+                }
+              },
+              "required": [
+                "term",
+                "context",
+                "originalLanguages",
+                "translationLanguage"
+              ]
+            },
+            "output": {
+              "type": "object",
+              "$schema": "http://json-schema.org/draft-07/schema",
+              "$id": "ChatOutputDefineTerm",
+              "additionalProperties": false,
+              "definitions": {
+                "outputData": {
+                  "title": "ChatOutputDefineTermOutputData",
+                  "$ref": "#/definitions/MessageMap/properties/DefineTerm/properties/output/properties/data",
+                  "description": "The output data of the Chat AI. Null value indicates the error state."
+                }
+              },
+              "title": "ChatOutputDefineTerm",
+              "properties": {
+                "data": {
+                  "$ref": "#/definitions/ChatGroupMap/properties/DefineTerm/properties/output/definitions/outputData"
+                },
+                "errors": {
+                  "title": "ChatOutputDefineTermErrors",
                   "type": "array",
                   "items": {
                     "type": "object",
@@ -509,7 +587,8 @@
         }
       },
       "required": [
-        "ParseTextFromForeign"
+        "ParseTextFromForeign",
+        "DefineTerm"
       ]
     },
     "Models": {

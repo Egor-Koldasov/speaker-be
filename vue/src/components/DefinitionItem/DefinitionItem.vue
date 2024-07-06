@@ -1,125 +1,105 @@
 <script setup lang="ts">
 import tags from 'language-tags'
-import { onMounted, watch } from 'vue'
-import { useMessageStore } from '../../dataStore/messageStore'
+import { computed, reactive, watch, type Ref } from 'vue'
+import { useMessage } from '../../dataStore/messageStore'
 import { useSettings } from '../../uiStore/useSettings'
 
 // # Props, State
 const props = defineProps<{
-  word: string
-  context: string
+  word: Ref<string>
+  context: Ref<string>
 }>()
 
 // # Hooks
 const uisSettings = useSettings()
-const dataStore = useMessageStore()
-// # Computed
-// # Callbacks
-const loadDefinition = async () => {
-  dataStore.sendMessage({
-    name: 'defineWord',
+const form = reactive({
+  inputParams: {
+    name: 'DefineTerm' as const,
     data: {
-      wordString: props.word,
-      context: props.context,
+      term: props.word.value,
+      context: props.context.value,
       originalLanguages: uisSettings.originalLanguages,
       translationLanguage: uisSettings.translationLanguage || 'en',
     },
-  })
-}
-// # Watchers
-onMounted(() => {
-  loadDefinition()
-})
-watch(
-  () => props.word,
-  () => {
-    loadDefinition()
   },
-)
+})
+const message = useMessage<'DefineTerm'>(form, {
+  runOnMount: true,
+  runOnUpdate: true,
+})
+// # Computed
+const messageData = computed(() => message.value.data?.output?.data)
+// # Callbacks
+
+// # Watchers
+
+watch([props.word, props.context], () => {
+  form.inputParams.data.term = props.word.value
+  form.inputParams.data.context = props.context.value
+})
 </script>
 <template>
   <div class="DefinitionItem">
-    <div v-if="dataStore.defineWord.loading">Loading...</div>
-    <div v-else-if="dataStore.defineWord.data">
+    <div v-if="message.refreshing">Loading...</div>
+    <div v-else-if="messageData">
       <ul>
         <li>
           <label>Language original</label>
           <textarea
-            rows="1"
+            rows="2"
             :value="
               tags
-                .language(dataStore.defineWord.data.definition.languageOriginal)
+                .language(messageData.definition.languageOriginal)
                 ?.descriptions()
                 .join(', ')
             "
-            readonly
           />
         </li>
         <li>
           <label>Original word</label>
-          <textarea
-            rows="1"
-            v-model="dataStore.defineWord.data.definition.originalWord"
-            readonly
-          />
+          <textarea rows="2" v-model="messageData.definition.originalWord" />
         </li>
         <li>
           <label>Translation</label>
-          <textarea
-            rows="1"
-            v-model="dataStore.defineWord.data.definition.translation"
-            readonly
-          />
+          <textarea rows="2" v-model="messageData.definition.translation" />
         </li>
         <li>
           <label>Neutral form</label>
-          <textarea
-            rows="1"
-            v-model="dataStore.defineWord.data.definition.neutralForm"
-            readonly
-          />
+          <textarea rows="2" v-model="messageData.definition.neutralForm" />
         </li>
         <li>
           <label>Synonyms</label>
-          <textarea
-            rows="1"
-            v-model="dataStore.defineWord.data.definition.synonyms"
-            readonly
-          />
+          <textarea rows="2" v-model="messageData.definition.synonyms" />
         </li>
         <li>
           <label>Definition translated</label>
           <textarea
-            rows="1"
-            v-model="dataStore.defineWord.data.definition.definitionTranslated"
-            readonly
+            rows="2"
+            v-model="messageData.definition.definitionTranslated"
           />
         </li>
         <li>
           <label>Definition original</label>
           <textarea
-            rows="1"
-            v-model="dataStore.defineWord.data.definition.definitionOriginal"
-            readonly
+            rows="2"
+            v-model="messageData.definition.definitionOriginal"
           />
         </li>
         <li>
           <label>Origin</label>
-          <textarea
-            rows="1"
-            v-model="dataStore.defineWord.data.definition.origin"
-            readonly
-          />
+          <textarea rows="2" v-model="messageData.definition.origin" />
         </li>
         <li>
-          <label>Examples</label>
-          <ul>
+          <ul class="example-list">
             <li
-              v-for="example in dataStore.defineWord.data.definition.examples"
+              v-for="(example, index) in messageData.definition.examples"
               :key="example.original"
+              class="example-item"
             >
-              <textarea rows="1" v-model="example.original" readonly />
-              <textarea rows="1" v-model="example.translation" readonly />
+              <label>Example #{{ index + 1 }}</label>
+
+              <textarea rows="2" v-model="example.original" />
+              <textarea rows="2" v-model="example.translation" />
             </li>
           </ul>
         </li>
@@ -135,17 +115,25 @@ watch(
   max-height: 90vh;
   overflow: auto;
   flex-shrink: 1;
+  background-color: #1c161e;
+  padding: 16px;
   ul {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
     li {
       list-style-type: none;
       label {
         font-size: 1rem;
       }
       textarea {
-        padding: 0 0.5rem;
+        padding: 0.5rem;
         height: auto;
         background: transparent;
         border: none;
+        background-color: #483848;
         border-bottom: 1px solid #483848;
 
         &:focus {
@@ -155,6 +143,15 @@ watch(
         }
       }
     }
+  }
+  .example-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .example-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
 }
 </style>

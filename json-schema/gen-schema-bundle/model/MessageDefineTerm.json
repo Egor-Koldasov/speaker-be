@@ -26,7 +26,9 @@
         "data": {
           "type": "object",
           "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "ChatInputDefineTerm",
           "additionalProperties": false,
+          "title": "ChatInputDefineTerm",
           "properties": {
             "term": {
               "type": "string",
@@ -77,9 +79,14 @@
           ]
         },
         "data": {
-          "type": "object",
+          "type": [
+            "object",
+            "null"
+          ],
           "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "ChatOutputDataDefineTerm",
           "additionalProperties": false,
+          "title": "ChatOutputDataDefineTerm",
           "properties": {
             "definition": {
               "type": "object",
@@ -129,6 +136,7 @@
               ],
               "properties": {
                 "languageOriginal": {
+                  "type": "string",
                   "description": "The original language of the word in a BCP 47 format."
                 },
                 "languageTranslated": {

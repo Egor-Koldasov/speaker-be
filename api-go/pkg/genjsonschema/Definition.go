@@ -83,7 +83,7 @@ type Definition struct {
 	Examples []DefinitionExamplesElem `json:"examples" yaml:"examples" mapstructure:"examples"`
 
 	// The original language of the word in a BCP 47 format.
-	LanguageOriginal interface{} `json:"languageOriginal" yaml:"languageOriginal" mapstructure:"languageOriginal"`
+	LanguageOriginal string `json:"languageOriginal" yaml:"languageOriginal" mapstructure:"languageOriginal"`
 
 	// The language the word is translated to in a BCP 47 format.
 	LanguageTranslated string `json:"languageTranslated" yaml:"languageTranslated" mapstructure:"languageTranslated"`

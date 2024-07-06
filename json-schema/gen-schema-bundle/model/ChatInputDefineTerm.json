@@ -1,0 +1,34 @@
+{
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "ChatInputDefineTerm",
+  "additionalProperties": false,
+  "title": "ChatInputDefineTerm",
+  "properties": {
+    "term": {
+      "type": "string",
+      "description": "A term to define"
+    },
+    "context": {
+      "type": "string",
+      "description": "A context from which the term is taken"
+    },
+    "originalLanguages": {
+      "type": "array",
+      "description": "The list of BCP 47 language tags of the languages foreign to the user that are most commonly used in the learning process. Take this list as a priority when you try to detect the text language of the text foreign to the user. Although it is not guaranteed to completely match the text languages",
+      "items": {
+        "type": "string"
+      }
+    },
+    "translationLanguage": {
+      "type": "string",
+      "description": "The BCP 47 language tag of the language that the user wants to translate the foreign text to."
+    }
+  },
+  "required": [
+    "term",
+    "context",
+    "originalLanguages",
+    "translationLanguage"
+  ]
+}

@@ -43,10 +43,28 @@
             "input",
             "output"
           ]
+        },
+        "DefineTerm": {
+          "type": "object",
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "additionalProperties": false,
+          "properties": {
+            "input": {
+              "$ref": "./model/ChatInputDefineTerm.json"
+            },
+            "output": {
+              "$ref": "./model/ChatOutputDefineTerm.json"
+            }
+          },
+          "required": [
+            "input",
+            "output"
+          ]
         }
       },
       "required": [
-        "ParseTextFromForeign"
+        "ParseTextFromForeign",
+        "DefineTerm"
       ]
     },
     "Models": {

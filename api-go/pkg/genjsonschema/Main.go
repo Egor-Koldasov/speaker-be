@@ -5,6 +5,35 @@ package genjsonschema
 import "encoding/json"
 import "fmt"
 
+type ChatGroupMapDefineTerm struct {
+	// Input corresponds to the JSON schema field "input".
+	Input ChatInputDefineTerm `json:"input" yaml:"input" mapstructure:"input"`
+
+	// Output corresponds to the JSON schema field "output".
+	Output ChatOutputDefineTerm `json:"output" yaml:"output" mapstructure:"output"`
+}
+
+// UnmarshalJSON implements json.Unmarshaler.
+func (j *ChatGroupMapDefineTerm) UnmarshalJSON(b []byte) error {
+	var raw map[string]interface{}
+	if err := json.Unmarshal(b, &raw); err != nil {
+		return err
+	}
+	if v, ok := raw["input"]; !ok || v == nil {
+		return fmt.Errorf("field input in ChatGroupMapDefineTerm: required")
+	}
+	if v, ok := raw["output"]; !ok || v == nil {
+		return fmt.Errorf("field output in ChatGroupMapDefineTerm: required")
+	}
+	type Plain ChatGroupMapDefineTerm
+	var plain Plain
+	if err := json.Unmarshal(b, &plain); err != nil {
+		return err
+	}
+	*j = ChatGroupMapDefineTerm(plain)
+	return nil
+}
+
 type ChatGroupMapParseTextFromForeign struct {
 	// Input corresponds to the JSON schema field "input".
 	Input ChatInputParseTextFromForeign `json:"input" yaml:"input" mapstructure:"input"`
@@ -35,6 +64,9 @@ func (j *ChatGroupMapParseTextFromForeign) UnmarshalJSON(b []byte) error {
 }
 
 type ChatGroupMap struct {
+	// DefineTerm corresponds to the JSON schema field "DefineTerm".
+	DefineTerm ChatGroupMapDefineTerm `json:"DefineTerm" yaml:"DefineTerm" mapstructure:"DefineTerm"`
+
 	// ParseTextFromForeign corresponds to the JSON schema field
 	// "ParseTextFromForeign".
 	ParseTextFromForeign ChatGroupMapParseTextFromForeign `json:"ParseTextFromForeign" yaml:"ParseTextFromForeign" mapstructure:"ParseTextFromForeign"`
@@ -45,6 +77,9 @@ func (j *ChatGroupMap) UnmarshalJSON(b []byte) error {
 	var raw map[string]interface{}
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
+	}
+	if v, ok := raw["DefineTerm"]; !ok || v == nil {
+		return fmt.Errorf("field DefineTerm in ChatGroupMap: required")
 	}
 	if v, ok := raw["ParseTextFromForeign"]; !ok || v == nil {
 		return fmt.Errorf("field ParseTextFromForeign in ChatGroupMap: required")

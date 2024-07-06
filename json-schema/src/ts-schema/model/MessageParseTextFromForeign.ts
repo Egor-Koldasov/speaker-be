@@ -19,7 +19,6 @@ export default schemaMessage(
         },
         data: {
           $ref: "./ChatOutputDataParseTextFromForeign.json",
-          title: "Othertitle",
         },
       }),
     },

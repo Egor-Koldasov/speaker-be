@@ -1,0 +1,30 @@
+{
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "ChatOutputDefineTerm",
+  "additionalProperties": false,
+  "definitions": {
+    "outputData": {
+      "title": "ChatOutputDefineTermOutputData",
+      "$ref": "./ChatOutputDataDefineTerm.json",
+      "description": "The output data of the Chat AI. Null value indicates the error state."
+    }
+  },
+  "title": "ChatOutputDefineTerm",
+  "properties": {
+    "data": {
+      "$ref": "#/definitions/outputData"
+    },
+    "errors": {
+      "title": "ChatOutputDefineTermErrors",
+      "type": "array",
+      "items": {
+        "$ref": "../property/ChatAiError.json"
+      }
+    }
+  },
+  "required": [
+    "data",
+    "errors"
+  ]
+}

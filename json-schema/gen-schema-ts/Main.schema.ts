@@ -26,8 +26,9 @@ export type ErrorName =
  * The list of BCP 47 language tags of the languages foreign to the user that are most commonly used in the learning process. Take this list as a priority when you try to detect the text language of the text foreign to the user. Although it is not guaranteed to completely match the text languages
  */
 export type ForeignLanguages = string[];
-export type Othertitle = Othertitle1 & Othertitle2;
-export type Othertitle2 = {
+export type ChatOutputDataParseTextFromForeign = ChatOutputDataParseTextFromForeign1 &
+  ChatOutputDataParseTextFromForeign2;
+export type ChatOutputDataParseTextFromForeign2 = {
   definitionParts: {
     /**
      * The text of word extracted. Keep this part small, it should not be longer than a typical dictionary entry point. Include only the word itself without any extra symbols. Do not include any punctuation symbols, enclosing parentheses or apostrophes an so on.
@@ -56,6 +57,10 @@ export type Othertitle2 = {
      */
     language: string;
   };
+} | null;
+export type ChatOutputDataDefineTerm = ChatOutputDataDefineTerm1 & ChatOutputDataDefineTerm2;
+export type ChatOutputDataDefineTerm2 = {
+  definition: Definition;
 } | null;
 
 export interface GenJsonSchema {
@@ -102,7 +107,7 @@ export interface MessageParseTextFromForeign {
   output: {
     id: Id;
     name: "ParseTextFromForeign";
-    data: Othertitle;
+    data: ChatOutputDataParseTextFromForeign;
     errors: AppError[];
   };
 }
@@ -114,7 +119,7 @@ export interface ChatInputParseTextFromForeign {
    */
   translationLanguage: string;
 }
-export interface Othertitle1 {
+export interface ChatOutputDataParseTextFromForeign1 {
   definitionParts: {
     /**
      * The text of word extracted. Keep this part small, it should not be longer than a typical dictionary entry point. Include only the word itself without any extra symbols. Do not include any punctuation symbols, enclosing parentheses or apostrophes an so on.
@@ -148,30 +153,32 @@ export interface MessageDefineTerm {
   input: {
     id: Id;
     name: "DefineTerm";
-    data: {
-      /**
-       * A term to define
-       */
-      term: string;
-      /**
-       * A context from which the term is taken
-       */
-      context: string;
-      originalLanguages: ForeignLanguages;
-      /**
-       * The BCP 47 language tag of the language that the user wants to translate the foreign text to.
-       */
-      translationLanguage: string;
-    };
+    data: ChatInputDefineTerm;
   };
   output: {
     id: Id;
     name: "DefineTerm";
-    data: {
-      definition: Definition;
-    };
+    data: ChatOutputDataDefineTerm;
     errors: AppError[];
   };
+}
+export interface ChatInputDefineTerm {
+  /**
+   * A term to define
+   */
+  term: string;
+  /**
+   * A context from which the term is taken
+   */
+  context: string;
+  originalLanguages: ForeignLanguages;
+  /**
+   * The BCP 47 language tag of the language that the user wants to translate the foreign text to.
+   */
+  translationLanguage: string;
+}
+export interface ChatOutputDataDefineTerm1 {
+  definition: Definition;
 }
 /**
  * A detailed representation of a definition, including its original and neutral forms, pronunciations, translations, definitions, origin, and usage examples.
@@ -180,9 +187,7 @@ export interface Definition {
   /**
    * The original language of the word in a BCP 47 format.
    */
-  languageOriginal: {
-    [k: string]: unknown;
-  };
+  languageOriginal: string;
   /**
    * The language the word is translated to in a BCP 47 format.
    */

@@ -22,7 +22,9 @@
         "data": {
           "type": "object",
           "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "ChatInputDefineTerm",
           "additionalProperties": false,
+          "title": "ChatInputDefineTerm",
           "properties": {
             "term": {
               "type": "string",
@@ -68,17 +70,7 @@
           ]
         },
         "data": {
-          "type": "object",
-          "$schema": "http://json-schema.org/draft-07/schema",
-          "additionalProperties": false,
-          "properties": {
-            "definition": {
-              "$ref": "./Definition.json"
-            }
-          },
-          "required": [
-            "definition"
-          ]
+          "$ref": "./ChatOutputDataDefineTerm.json"
         },
         "errors": {
           "type": "array",

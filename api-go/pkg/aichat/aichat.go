@@ -39,6 +39,7 @@ type JsonSchemaGroup struct {
 
 type ChatSchemaMap struct {
 	ParseTextFromForeign *JsonSchemaGroup
+	DefineTerm           *JsonSchemaGroup
 }
 
 var ChatSchemas = ChatSchemaMap{}

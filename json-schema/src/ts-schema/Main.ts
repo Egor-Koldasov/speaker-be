@@ -27,6 +27,14 @@ export default schemaObject(
             $ref: "./model/ChatOutputParseTextFromForeign.json",
           },
         }),
+        DefineTerm: schemaObject({
+          input: {
+            $ref: "./model/ChatInputDefineTerm.json",
+          },
+          output: {
+            $ref: "./model/ChatOutputDefineTerm.json",
+          },
+        }),
       }),
       Models: schemaObject({
         MessageBase: {
