@@ -20,10 +20,10 @@ func (j *ChatAiError) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
-	if v, ok := raw["message"]; !ok || v == nil {
+	if _, ok := raw["message"]; raw != nil && !ok {
 		return fmt.Errorf("field message in ChatAiError: required")
 	}
-	if v, ok := raw["name"]; !ok || v == nil {
+	if _, ok := raw["name"]; raw != nil && !ok {
 		return fmt.Errorf("field name in ChatAiError: required")
 	}
 	type Plain ChatAiError

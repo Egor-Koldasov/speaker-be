@@ -5,65 +5,6 @@ package genjsonschema
 import "encoding/json"
 import "fmt"
 
-type DefinitionExamplesElem struct {
-	// An example sentence in the original language using the word.
-	Original string `json:"original" yaml:"original" mapstructure:"original"`
-
-	// The translation of the example sentence in the language defined by a
-	// `languageTranslated` property.
-	Translation string `json:"translation" yaml:"translation" mapstructure:"translation"`
-}
-
-// UnmarshalJSON implements json.Unmarshaler.
-func (j *DefinitionExamplesElem) UnmarshalJSON(b []byte) error {
-	var raw map[string]interface{}
-	if err := json.Unmarshal(b, &raw); err != nil {
-		return err
-	}
-	if v, ok := raw["original"]; !ok || v == nil {
-		return fmt.Errorf("field original in DefinitionExamplesElem: required")
-	}
-	if v, ok := raw["translation"]; !ok || v == nil {
-		return fmt.Errorf("field translation in DefinitionExamplesElem: required")
-	}
-	type Plain DefinitionExamplesElem
-	var plain Plain
-	if err := json.Unmarshal(b, &plain); err != nil {
-		return err
-	}
-	*j = DefinitionExamplesElem(plain)
-	return nil
-}
-
-type DefinitionPronounciationsElem struct {
-	// A description of the pronunciation. Like the area where it is commonly used.
-	Description string `json:"description" yaml:"description" mapstructure:"description"`
-
-	// A pronunciation of the original word given.
-	Transcription string `json:"transcription" yaml:"transcription" mapstructure:"transcription"`
-}
-
-// UnmarshalJSON implements json.Unmarshaler.
-func (j *DefinitionPronounciationsElem) UnmarshalJSON(b []byte) error {
-	var raw map[string]interface{}
-	if err := json.Unmarshal(b, &raw); err != nil {
-		return err
-	}
-	if v, ok := raw["description"]; !ok || v == nil {
-		return fmt.Errorf("field description in DefinitionPronounciationsElem: required")
-	}
-	if v, ok := raw["transcription"]; !ok || v == nil {
-		return fmt.Errorf("field transcription in DefinitionPronounciationsElem: required")
-	}
-	type Plain DefinitionPronounciationsElem
-	var plain Plain
-	if err := json.Unmarshal(b, &plain); err != nil {
-		return err
-	}
-	*j = DefinitionPronounciationsElem(plain)
-	return nil
-}
-
 // A detailed representation of a definition, including its original and neutral
 // forms, pronunciations, translations, definitions, origin, and usage examples.
 type Definition struct {
@@ -112,43 +53,102 @@ type Definition struct {
 	Translation string `json:"translation" yaml:"translation" mapstructure:"translation"`
 }
 
+type DefinitionExamplesElem struct {
+	// An example sentence in the original language using the word.
+	Original string `json:"original" yaml:"original" mapstructure:"original"`
+
+	// The translation of the example sentence in the language defined by a
+	// `languageTranslated` property.
+	Translation string `json:"translation" yaml:"translation" mapstructure:"translation"`
+}
+
+// UnmarshalJSON implements json.Unmarshaler.
+func (j *DefinitionExamplesElem) UnmarshalJSON(b []byte) error {
+	var raw map[string]interface{}
+	if err := json.Unmarshal(b, &raw); err != nil {
+		return err
+	}
+	if _, ok := raw["original"]; raw != nil && !ok {
+		return fmt.Errorf("field original in DefinitionExamplesElem: required")
+	}
+	if _, ok := raw["translation"]; raw != nil && !ok {
+		return fmt.Errorf("field translation in DefinitionExamplesElem: required")
+	}
+	type Plain DefinitionExamplesElem
+	var plain Plain
+	if err := json.Unmarshal(b, &plain); err != nil {
+		return err
+	}
+	*j = DefinitionExamplesElem(plain)
+	return nil
+}
+
+type DefinitionPronounciationsElem struct {
+	// A description of the pronunciation. Like the area where it is commonly used.
+	Description string `json:"description" yaml:"description" mapstructure:"description"`
+
+	// A pronunciation of the original word given.
+	Transcription string `json:"transcription" yaml:"transcription" mapstructure:"transcription"`
+}
+
+// UnmarshalJSON implements json.Unmarshaler.
+func (j *DefinitionPronounciationsElem) UnmarshalJSON(b []byte) error {
+	var raw map[string]interface{}
+	if err := json.Unmarshal(b, &raw); err != nil {
+		return err
+	}
+	if _, ok := raw["description"]; raw != nil && !ok {
+		return fmt.Errorf("field description in DefinitionPronounciationsElem: required")
+	}
+	if _, ok := raw["transcription"]; raw != nil && !ok {
+		return fmt.Errorf("field transcription in DefinitionPronounciationsElem: required")
+	}
+	type Plain DefinitionPronounciationsElem
+	var plain Plain
+	if err := json.Unmarshal(b, &plain); err != nil {
+		return err
+	}
+	*j = DefinitionPronounciationsElem(plain)
+	return nil
+}
+
 // UnmarshalJSON implements json.Unmarshaler.
 func (j *Definition) UnmarshalJSON(b []byte) error {
 	var raw map[string]interface{}
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
-	if v, ok := raw["definitionOriginal"]; !ok || v == nil {
+	if _, ok := raw["definitionOriginal"]; raw != nil && !ok {
 		return fmt.Errorf("field definitionOriginal in Definition: required")
 	}
-	if v, ok := raw["definitionTranslated"]; !ok || v == nil {
+	if _, ok := raw["definitionTranslated"]; raw != nil && !ok {
 		return fmt.Errorf("field definitionTranslated in Definition: required")
 	}
-	if v, ok := raw["examples"]; !ok || v == nil {
+	if _, ok := raw["examples"]; raw != nil && !ok {
 		return fmt.Errorf("field examples in Definition: required")
 	}
-	if v, ok := raw["languageOriginal"]; !ok || v == nil {
+	if _, ok := raw["languageOriginal"]; raw != nil && !ok {
 		return fmt.Errorf("field languageOriginal in Definition: required")
 	}
-	if v, ok := raw["languageTranslated"]; !ok || v == nil {
+	if _, ok := raw["languageTranslated"]; raw != nil && !ok {
 		return fmt.Errorf("field languageTranslated in Definition: required")
 	}
-	if v, ok := raw["neutralForm"]; !ok || v == nil {
+	if _, ok := raw["neutralForm"]; raw != nil && !ok {
 		return fmt.Errorf("field neutralForm in Definition: required")
 	}
-	if v, ok := raw["origin"]; !ok || v == nil {
+	if _, ok := raw["origin"]; raw != nil && !ok {
 		return fmt.Errorf("field origin in Definition: required")
 	}
-	if v, ok := raw["originalWord"]; !ok || v == nil {
+	if _, ok := raw["originalWord"]; raw != nil && !ok {
 		return fmt.Errorf("field originalWord in Definition: required")
 	}
-	if v, ok := raw["pronounciations"]; !ok || v == nil {
+	if _, ok := raw["pronounciations"]; raw != nil && !ok {
 		return fmt.Errorf("field pronounciations in Definition: required")
 	}
-	if v, ok := raw["synonyms"]; !ok || v == nil {
+	if _, ok := raw["synonyms"]; raw != nil && !ok {
 		return fmt.Errorf("field synonyms in Definition: required")
 	}
-	if v, ok := raw["translation"]; !ok || v == nil {
+	if _, ok := raw["translation"]; raw != nil && !ok {
 		return fmt.Errorf("field translation in Definition: required")
 	}
 	type Plain Definition

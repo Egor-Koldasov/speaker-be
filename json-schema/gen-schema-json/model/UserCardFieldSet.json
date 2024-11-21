@@ -1,0 +1,25 @@
+{
+  "type": [
+    "object"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "UserCardFieldSet",
+  "additionalProperties": false,
+  "title": "UserCardFieldSet",
+  "properties": {
+    "id": {
+      "description": "uuid-v7",
+      "type": "string"
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "$ref": "./UserCardField.json"
+      }
+    }
+  },
+  "required": [
+    "id",
+    "fields"
+  ]
+}

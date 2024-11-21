@@ -38,7 +38,7 @@ func ParseTextFromForeign(ctx *context.Context, input *genjsonschema.ChatInputPa
 	message := resp.Choices[0].Message.Content
 	output := utiljson.ParseJson[genjsonschema.ChatOutputParseTextFromForeign](message)
 
-	messageData := utilstruct.TranslateStruct[genjsonschema.ChatOutputDataParseTextFromForeign](output.Data)
+	messageData := utilstruct.TranslateStructNil[genjsonschema.ChatOutputDataParseTextFromForeign](output.Data)
 
 	if len(output.Errors) > 0 {
 		errorMessages := []string{}
@@ -51,5 +51,5 @@ func ParseTextFromForeign(ctx *context.Context, input *genjsonschema.ChatInputPa
 		}
 	}
 
-	return &messageData, nil
+	return messageData, nil
 }

@@ -1,0 +1,96 @@
+{
+  "type": [
+    "object"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "MessageGetAuthInfo",
+  "additionalProperties": false,
+  "title": "MessageGetAuthInfo",
+  "properties": {
+    "input": {
+      "type": [
+        "object"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "../property/Id.json"
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "GetAuthInfo"
+          ]
+        },
+        "data": {
+          "type": [
+            "object"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "additionalProperties": false,
+          "properties": {},
+          "required": []
+        },
+        "authToken": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "data",
+        "authToken"
+      ]
+    },
+    "output": {
+      "type": [
+        "object"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "../property/Id.json"
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "GetAuthInfo"
+          ]
+        },
+        "data": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "additionalProperties": false,
+          "properties": {
+            "authInfo": {
+              "$ref": "./AuthInfo.json"
+            }
+          },
+          "required": [
+            "authInfo"
+          ]
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "../property/AppError.json"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "errors"
+      ]
+    }
+  },
+  "required": [
+    "input",
+    "output"
+  ]
+}

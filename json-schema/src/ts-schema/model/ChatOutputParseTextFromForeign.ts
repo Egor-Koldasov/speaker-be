@@ -8,5 +8,6 @@ export default schemaChatOutput(
   },
   {
     title: "ChatOutputParseTextFromForeign",
+    optional: ["outputData"],
   }
 );

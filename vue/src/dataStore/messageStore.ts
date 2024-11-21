@@ -39,12 +39,19 @@ export const useMessageStore = defineStore('messageStore', {
   state: () => ({
     ...initMessageDataItem('ParseTextFromForeign'),
     ...initMessageDataItem('DefineTerm'),
+    ...initMessageDataItem('GetAuthInfo'),
+    ...initMessageDataItem('GetDecks'),
+    ...initMessageDataItem('AddCard'),
+    ...initMessageDataItem('GetCards'),
     // defineWord: initMessageDataItem('defineWord'),
     // parseTextToForeign: initMessageDataItem('parseTextToForeign'),
     // textToSpeech: initDataStateItem<
     //   MessageOutputByName<'textToSpeech'>,
     //   'textToSpeech'
     // >('textToSpeech'),
+    auth: {
+      authToken: String(window.localStorage.getItem('authToken') || ''),
+    },
   }),
   actions: {
     async sendMessage<Name extends MessageName>(
@@ -53,6 +60,7 @@ export const useMessageStore = defineStore('messageStore', {
       const input: MessageInputByName<Name> = {
         ...inputParams,
         id: uuidv7(),
+        authToken: this.auth.authToken,
       } as MessageInputByName<Name>
       const messageGroup = this[input.name]
       messageGroup.messageById[input.id] = {
@@ -91,6 +99,10 @@ export const useMessageStore = defineStore('messageStore', {
   },
 })
 
+const authToken = Promise.resolve('').then(() => {
+  return String(window.localStorage.getItem('authToken') || '')
+})
+
 type UseMessageOpts = {
   runOnMount?: boolean
   runOnUpdate?: boolean
@@ -103,13 +115,13 @@ export const useMessage = <const Name extends MessageName>(
   const messageStore = useMessageStore()
   const messageState = computed(
     () => {
-      const inputParams = reactiveParams.inputParams
       const messageGroup = messageStore[
         reactiveParams.inputParams.name
       ] as MessageGroupState<MessageByName<Name>>
       const input: MessageInputByName<Name> = {
         ...reactiveParams.inputParams,
         id: uuidv7(),
+        authToken: messageStore.auth.authToken,
       } as MessageInputByName<Name>
 
       const pendingRequests: MessageState<MessageByName<Name>>[] = []

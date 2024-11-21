@@ -1,0 +1,15 @@
+{
+  "type": [
+    "string"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "WsMessageType",
+  "title": "WsMessageType",
+  "enum": [
+    "QueryToServer",
+    "QueryFromServer",
+    "EventToServer",
+    "EventFromServer"
+  ],
+  "description": "Type of message"
+}

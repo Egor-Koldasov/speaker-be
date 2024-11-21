@@ -1,12 +1,16 @@
 {
-  "type": "object",
+  "type": [
+    "object"
+  ],
   "$schema": "http://json-schema.org/draft-07/schema",
   "$id": "MessageParseTextFromForeign",
   "additionalProperties": false,
   "title": "MessageParseTextFromForeign",
   "properties": {
     "input": {
-      "type": "object",
+      "type": [
+        "object"
+      ],
       "$schema": "http://json-schema.org/draft-07/schema",
       "additionalProperties": false,
       "properties": {
@@ -20,37 +24,35 @@
           ]
         },
         "data": {
-          "type": "object",
+          "type": [
+            "object"
+          ],
           "$schema": "http://json-schema.org/draft-07/schema",
-          "$id": "ChatInputParseTextFromForeign",
           "additionalProperties": false,
-          "title": "ChatInputParseTextFromForeign",
           "properties": {
-            "text": {
-              "type": "string"
-            },
-            "originalLanguages": {
-              "$ref": "./UserSettings.json#/definitions/foreignLanguages"
-            },
-            "translationLanguage": {
-              "$ref": "./UserSettings.json#/definitions/translationLanguage"
+            "chatInput": {
+              "$ref": "./ChatInputParseTextFromForeign.json"
             }
           },
           "required": [
-            "text",
-            "originalLanguages",
-            "translationLanguage"
+            "chatInput"
           ]
+        },
+        "authToken": {
+          "type": "string"
         }
       },
       "required": [
         "id",
         "name",
-        "data"
+        "data",
+        "authToken"
       ]
     },
     "output": {
-      "type": "object",
+      "type": [
+        "object"
+      ],
       "$schema": "http://json-schema.org/draft-07/schema",
       "additionalProperties": false,
       "properties": {
@@ -64,7 +66,20 @@
           ]
         },
         "data": {
-          "$ref": "./ChatOutputDataParseTextFromForeign.json"
+          "type": [
+            "object",
+            "null"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "additionalProperties": false,
+          "properties": {
+            "chatOutput": {
+              "$ref": "./ChatOutputDataParseTextFromForeign.json"
+            }
+          },
+          "required": [
+            "chatOutput"
+          ]
         },
         "errors": {
           "type": "array",
@@ -76,7 +91,6 @@
       "required": [
         "id",
         "name",
-        "data",
         "errors"
       ]
     }

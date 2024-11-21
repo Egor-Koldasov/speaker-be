@@ -22,13 +22,13 @@ func (j *ChatInputParseTextFromForeign) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
-	if v, ok := raw["originalLanguages"]; !ok || v == nil {
+	if _, ok := raw["originalLanguages"]; raw != nil && !ok {
 		return fmt.Errorf("field originalLanguages in ChatInputParseTextFromForeign: required")
 	}
-	if v, ok := raw["text"]; !ok || v == nil {
+	if _, ok := raw["text"]; raw != nil && !ok {
 		return fmt.Errorf("field text in ChatInputParseTextFromForeign: required")
 	}
-	if v, ok := raw["translationLanguage"]; !ok || v == nil {
+	if _, ok := raw["translationLanguage"]; raw != nil && !ok {
 		return fmt.Errorf("field translationLanguage in ChatInputParseTextFromForeign: required")
 	}
 	type Plain ChatInputParseTextFromForeign

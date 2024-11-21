@@ -1,0 +1,10 @@
+{
+  "type": "string",
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "WsMessageName",
+  "title": "WsMessageName",
+  "enum": [
+    "LenseQuery",
+    "Mutation"
+  ]
+}

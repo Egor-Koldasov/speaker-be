@@ -7,7 +7,8 @@ export default schemaObject(
         $ref: "../property/Id.json",
       },
       name: { type: "string" },
-      data: { type: "object", additionalProperties: true },
+      data: { type: ["object"], additionalProperties: true },
+      authToken: { type: "string" },
     }),
     output: schemaObject({
       id: {

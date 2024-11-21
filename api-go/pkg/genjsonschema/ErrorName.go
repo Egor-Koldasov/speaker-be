@@ -8,6 +8,17 @@ import "reflect"
 
 type ErrorName string
 
+const ErrorNameAIResponseUnmarshal ErrorName = "AI_ResponseUnmarshal"
+const ErrorNameAiCreateCompletion ErrorName = "Ai_CreateCompletion"
+const ErrorNameAuthRequired ErrorName = "AuthRequired"
+const ErrorNameChatAiError ErrorName = "ChatAiError"
+const ErrorNameFromAiCritical ErrorName = "FromAi_Critical"
+const ErrorNameInternal ErrorName = "Internal"
+const ErrorNameJsonSchemaMessageInput ErrorName = "JsonSchema_MessageInput"
+const ErrorNameJsonSchemaMessageOutput ErrorName = "JsonSchema_MessageOutput"
+const ErrorNameNotFoundMessageName ErrorName = "NotFound_MessageName"
+const ErrorNameUnknown ErrorName = "Unknown"
+
 var enumValues_ErrorName = []interface{}{
 	"Unknown",
 	"Internal",
@@ -18,6 +29,7 @@ var enumValues_ErrorName = []interface{}{
 	"NotFound_MessageName",
 	"FromAi_Critical",
 	"ChatAiError",
+	"AuthRequired",
 }
 
 // UnmarshalJSON implements json.Unmarshaler.
@@ -39,13 +51,3 @@ func (j *ErrorName) UnmarshalJSON(b []byte) error {
 	*j = ErrorName(v)
 	return nil
 }
-
-const ErrorNameAIResponseUnmarshal ErrorName = "AI_ResponseUnmarshal"
-const ErrorNameAiCreateCompletion ErrorName = "Ai_CreateCompletion"
-const ErrorNameChatAiError ErrorName = "ChatAiError"
-const ErrorNameFromAiCritical ErrorName = "FromAi_Critical"
-const ErrorNameInternal ErrorName = "Internal"
-const ErrorNameJsonSchemaMessageInput ErrorName = "JsonSchema_MessageInput"
-const ErrorNameJsonSchemaMessageOutput ErrorName = "JsonSchema_MessageOutput"
-const ErrorNameNotFoundMessageName ErrorName = "NotFound_MessageName"
-const ErrorNameUnknown ErrorName = "Unknown"

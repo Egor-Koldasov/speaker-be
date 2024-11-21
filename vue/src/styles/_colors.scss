@@ -3,7 +3,7 @@
 );
 
 // # Colors raw
-$primary-500: #e91e63;
+$primary-500: #c1208b;
 $primary-600: #d81b60;
 $primary-700: #c2185b;
 $grey-600: rgb(57 34 67);
@@ -21,4 +21,12 @@ $nodeBg: #191d21;
 $nodeFolderLine: $nodeBg;
 
 $mainBg: #0d0111;
+$mainBgSub100: #1c161e;
+$mainBgSub200: #483848;
+$inputBg1: $mainBgSub100;
+$inputBg1AutoFill: $mainBgSub200;
+
+$textLink: #7a97ff;
+
+$textForDark: #a093a5;
 // $mainBg: #f0f0f0;

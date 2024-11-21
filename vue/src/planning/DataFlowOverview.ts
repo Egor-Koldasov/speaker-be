@@ -1,0 +1,32 @@
+import type { LenseModels } from 'speaker-json-schema/gen-schema-ts/Main.schema'
+import type { LenseModelConfigMap } from './LenseModelConfig'
+import type { idb } from '../idb/idb'
+import { UserLensQuery } from './LenseStore'
+
+const LenseQueries = {
+  User: UserLensQuery,
+}
+
+type ImportantEntities = {
+  LenseModels: LenseModels
+  LenseModelConfigMap: typeof LenseModelConfigMap
+  idb: ReturnType<typeof idb>
+  LenseQueries: typeof LenseQueries
+}
+
+/**
+ * Lense model adding algorithm
+ * 1. Create new lense backend model in `json-schema/src/ts-schema/LenseModels.ts`
+ *  `ImportantEntities.LenseModels`
+ * 2. Create a lense config map, specifying an empty state
+ *  and possible Idb-specific fields
+ * `ImportantEntities.LenseModelConfigMap`
+ * */
+
+/**
+ * Lense query adding algorithm
+ * 1. Add a lense model if necessary following "Lense model adding algorithm"
+ * 2. Create a new lense query
+ *  `ImportantEntities.LenseQueries`
+ * 3. Add the handler endpoint on the backend
+ * */

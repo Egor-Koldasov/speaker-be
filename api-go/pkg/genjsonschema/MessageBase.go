@@ -5,7 +5,18 @@ package genjsonschema
 import "encoding/json"
 import "fmt"
 
+type MessageBase struct {
+	// Input corresponds to the JSON schema field "input".
+	Input MessageBaseInput `json:"input" yaml:"input" mapstructure:"input"`
+
+	// Output corresponds to the JSON schema field "output".
+	Output MessageBaseOutput `json:"output" yaml:"output" mapstructure:"output"`
+}
+
 type MessageBaseInput struct {
+	// AuthToken corresponds to the JSON schema field "authToken".
+	AuthToken string `json:"authToken" yaml:"authToken" mapstructure:"authToken"`
+
 	// Data corresponds to the JSON schema field "data".
 	Data MessageBaseInputData `json:"data" yaml:"data" mapstructure:"data"`
 
@@ -24,13 +35,16 @@ func (j *MessageBaseInput) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
-	if v, ok := raw["data"]; !ok || v == nil {
+	if _, ok := raw["authToken"]; raw != nil && !ok {
+		return fmt.Errorf("field authToken in MessageBaseInput: required")
+	}
+	if _, ok := raw["data"]; raw != nil && !ok {
 		return fmt.Errorf("field data in MessageBaseInput: required")
 	}
-	if v, ok := raw["id"]; !ok || v == nil {
+	if _, ok := raw["id"]; raw != nil && !ok {
 		return fmt.Errorf("field id in MessageBaseInput: required")
 	}
-	if v, ok := raw["name"]; !ok || v == nil {
+	if _, ok := raw["name"]; raw != nil && !ok {
 		return fmt.Errorf("field name in MessageBaseInput: required")
 	}
 	type Plain MessageBaseInput
@@ -64,16 +78,16 @@ func (j *MessageBaseOutput) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
-	if v, ok := raw["data"]; !ok || v == nil {
+	if _, ok := raw["data"]; raw != nil && !ok {
 		return fmt.Errorf("field data in MessageBaseOutput: required")
 	}
-	if v, ok := raw["errors"]; !ok || v == nil {
+	if _, ok := raw["errors"]; raw != nil && !ok {
 		return fmt.Errorf("field errors in MessageBaseOutput: required")
 	}
-	if v, ok := raw["id"]; !ok || v == nil {
+	if _, ok := raw["id"]; raw != nil && !ok {
 		return fmt.Errorf("field id in MessageBaseOutput: required")
 	}
-	if v, ok := raw["name"]; !ok || v == nil {
+	if _, ok := raw["name"]; raw != nil && !ok {
 		return fmt.Errorf("field name in MessageBaseOutput: required")
 	}
 	type Plain MessageBaseOutput
@@ -85,24 +99,16 @@ func (j *MessageBaseOutput) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-type MessageBase struct {
-	// Input corresponds to the JSON schema field "input".
-	Input MessageBaseInput `json:"input" yaml:"input" mapstructure:"input"`
-
-	// Output corresponds to the JSON schema field "output".
-	Output MessageBaseOutput `json:"output" yaml:"output" mapstructure:"output"`
-}
-
 // UnmarshalJSON implements json.Unmarshaler.
 func (j *MessageBase) UnmarshalJSON(b []byte) error {
 	var raw map[string]interface{}
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
-	if v, ok := raw["input"]; !ok || v == nil {
+	if _, ok := raw["input"]; raw != nil && !ok {
 		return fmt.Errorf("field input in MessageBase: required")
 	}
-	if v, ok := raw["output"]; !ok || v == nil {
+	if _, ok := raw["output"]; raw != nil && !ok {
 		return fmt.Errorf("field output in MessageBase: required")
 	}
 	type Plain MessageBase

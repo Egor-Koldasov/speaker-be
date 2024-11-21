@@ -1,8 +1,8 @@
 package main
 
 import (
-	"api-go/pkg/httpapp"
 	"api-go/pkg/neo4jdb"
+	"api-go/pkg/wsapp"
 	"context"
 	"log"
 	"sync"
@@ -16,7 +16,8 @@ func init() {
 	waitGroup.Add(2)
 	// go pgdb.Init(ctx, &waitGroup)
 	go neo4jdb.Init(ctx, &waitGroup)
-	httpapp.Init()
+	// httpapp.Init()
+	wsapp.Init()
 }
 
 func main() {

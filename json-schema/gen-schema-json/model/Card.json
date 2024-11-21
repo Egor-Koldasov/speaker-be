@@ -1,0 +1,29 @@
+{
+  "type": [
+    "object"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "Card",
+  "additionalProperties": false,
+  "title": "Card",
+  "properties": {
+    "id": {
+      "description": "uuid-v7",
+      "type": "string"
+    },
+    "definition": {
+      "$ref": "./Definition.json"
+    },
+    "fieldAnswers": {
+      "type": "array",
+      "items": {
+        "$ref": "./UserCardFieldAnswer.json"
+      }
+    }
+  },
+  "required": [
+    "id",
+    "definition",
+    "fieldAnswers"
+  ]
+}

@@ -18,6 +18,21 @@ const router = createRouter({
       name: 'define-to-foreign',
       component: () => import('../components/pages/DefineToForeigh.vue'),
     },
+    {
+      path: '/auth',
+      name: 'auth',
+      component: () => import('../components/pages/Auth.vue'),
+    },
+    {
+      path: '/decks',
+      name: 'decks',
+      component: () => import('../components/pages/Decks.vue'),
+    },
+    {
+      path: '/user',
+      name: 'user',
+      component: () => import('../components/pages/User.vue'),
+    },
   ],
 })
 

@@ -4,7 +4,7 @@ import { getLocalData, setLocalData } from '../util/localData'
 
 const initState = {
   originalLanguages: [] as string[],
-  translationLanguage: '',
+  translationLanguage: 'EN',
   primaryForeignLanguage: 'TH',
   nativeLanguages: [] as string[],
 }
@@ -21,6 +21,9 @@ export const useSettings = () => {
     const settings = getLocalData<Settings>('uisSettings')
     if (settings) {
       Object.assign(uisSettings, settings)
+      if (!settings.translationLanguage) {
+        uisSettings.translationLanguage = 'EN'
+      }
     }
   })
 

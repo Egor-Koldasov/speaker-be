@@ -1,5 +1,7 @@
 {
-  "type": "object",
+  "type": [
+    "object"
+  ],
   "$schema": "http://json-schema.org/draft-07/schema",
   "$id": "ChatInputParseTextFromForeign",
   "additionalProperties": false,
@@ -9,10 +11,10 @@
       "type": "string"
     },
     "originalLanguages": {
-      "$ref": "./UserSettings.json#/definitions/foreignLanguages"
+      "$ref": "../lense-models/UserSettings.json#/definitions/foreignLanguages"
     },
     "translationLanguage": {
-      "$ref": "./UserSettings.json#/definitions/translationLanguage"
+      "$ref": "../lense-models/UserSettings.json#/definitions/translationLanguage"
     }
   },
   "required": [

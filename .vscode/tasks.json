@@ -1,0 +1,18 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "command": "npx",
+      "type": "shell",
+      "label": "TS project check",
+      "options": {
+        "cwd": "${workspaceFolder}/vue"
+      },
+      "args": ["tsc", "-p", "tsconfig.app.json"],
+      "presentation": {
+        "reveal": "silent"
+      },
+      "problemMatcher": "$tsc"
+    }
+  ]
+}

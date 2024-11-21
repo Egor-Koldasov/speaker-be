@@ -25,8 +25,17 @@ type PrimaryForeignLanguage string
 type TranslationLanguage string
 
 type UserSettings struct {
+	// ISO 8601 date string
+	CreatedAt string `json:"createdAt" yaml:"createdAt" mapstructure:"createdAt"`
+
+	// ISO 8601 date string or null
+	DeletedAt *string `json:"deletedAt" yaml:"deletedAt" mapstructure:"deletedAt"`
+
 	// ForeignLanguages corresponds to the JSON schema field "foreignLanguages".
 	ForeignLanguages ForeignLanguages `json:"foreignLanguages" yaml:"foreignLanguages" mapstructure:"foreignLanguages"`
+
+	// UUID v7 string
+	Id string `json:"id" yaml:"id" mapstructure:"id"`
 
 	// NativeLanguages corresponds to the JSON schema field "nativeLanguages".
 	NativeLanguages NativeLanguages `json:"nativeLanguages" yaml:"nativeLanguages" mapstructure:"nativeLanguages"`
@@ -37,6 +46,9 @@ type UserSettings struct {
 
 	// TranslationLanguage corresponds to the JSON schema field "translationLanguage".
 	TranslationLanguage TranslationLanguage `json:"translationLanguage" yaml:"translationLanguage" mapstructure:"translationLanguage"`
+
+	// ISO 8601 date string
+	UpdatedAt string `json:"updatedAt" yaml:"updatedAt" mapstructure:"updatedAt"`
 }
 
 // UnmarshalJSON implements json.Unmarshaler.
@@ -45,17 +57,29 @@ func (j *UserSettings) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
-	if v, ok := raw["foreignLanguages"]; !ok || v == nil {
+	if _, ok := raw["createdAt"]; raw != nil && !ok {
+		return fmt.Errorf("field createdAt in UserSettings: required")
+	}
+	if _, ok := raw["deletedAt"]; raw != nil && !ok {
+		return fmt.Errorf("field deletedAt in UserSettings: required")
+	}
+	if _, ok := raw["foreignLanguages"]; raw != nil && !ok {
 		return fmt.Errorf("field foreignLanguages in UserSettings: required")
 	}
-	if v, ok := raw["nativeLanguages"]; !ok || v == nil {
+	if _, ok := raw["id"]; raw != nil && !ok {
+		return fmt.Errorf("field id in UserSettings: required")
+	}
+	if _, ok := raw["nativeLanguages"]; raw != nil && !ok {
 		return fmt.Errorf("field nativeLanguages in UserSettings: required")
 	}
-	if v, ok := raw["primaryForeignLanguage"]; !ok || v == nil {
+	if _, ok := raw["primaryForeignLanguage"]; raw != nil && !ok {
 		return fmt.Errorf("field primaryForeignLanguage in UserSettings: required")
 	}
-	if v, ok := raw["translationLanguage"]; !ok || v == nil {
+	if _, ok := raw["translationLanguage"]; raw != nil && !ok {
 		return fmt.Errorf("field translationLanguage in UserSettings: required")
+	}
+	if _, ok := raw["updatedAt"]; raw != nil && !ok {
+		return fmt.Errorf("field updatedAt in UserSettings: required")
 	}
 	type Plain UserSettings
 	var plain Plain

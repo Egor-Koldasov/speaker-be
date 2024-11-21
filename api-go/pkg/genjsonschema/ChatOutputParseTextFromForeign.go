@@ -7,7 +7,7 @@ import "fmt"
 
 type ChatOutputParseTextFromForeign struct {
 	// Data corresponds to the JSON schema field "data".
-	Data ChatOutputParseTextFromForeignData `json:"data" yaml:"data" mapstructure:"data"`
+	Data ChatOutputParseTextFromForeignData `json:"data,omitempty" yaml:"data,omitempty" mapstructure:"data,omitempty"`
 
 	// Errors corresponds to the JSON schema field "errors".
 	Errors []ChatAiError `json:"errors" yaml:"errors" mapstructure:"errors"`
@@ -21,10 +21,7 @@ func (j *ChatOutputParseTextFromForeign) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
-	if v, ok := raw["data"]; !ok || v == nil {
-		return fmt.Errorf("field data in ChatOutputParseTextFromForeign: required")
-	}
-	if v, ok := raw["errors"]; !ok || v == nil {
+	if _, ok := raw["errors"]; raw != nil && !ok {
 		return fmt.Errorf("field errors in ChatOutputParseTextFromForeign: required")
 	}
 	type Plain ChatOutputParseTextFromForeign

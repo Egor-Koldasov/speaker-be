@@ -5,6 +5,14 @@ package genjsonschema
 import "encoding/json"
 import "fmt"
 
+type ChatOutputDataParseTextFromForeign struct {
+	// DefinitionParts corresponds to the JSON schema field "definitionParts".
+	DefinitionParts []ChatOutputDataParseTextFromForeignDefinitionPartsElem `json:"definitionParts" yaml:"definitionParts" mapstructure:"definitionParts"`
+
+	// The full translation of the text to the requested language.
+	Translation ChatOutputDataParseTextFromForeignTranslation `json:"translation" yaml:"translation" mapstructure:"translation"`
+}
+
 type ChatOutputDataParseTextFromForeignDefinitionPartsElem struct {
 	// The BCP 47 language tag of the language of that word. Null for unknown
 	LanguageOriginal string `json:"languageOriginal" yaml:"languageOriginal" mapstructure:"languageOriginal"`
@@ -31,16 +39,16 @@ func (j *ChatOutputDataParseTextFromForeignDefinitionPartsElem) UnmarshalJSON(b 
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
-	if v, ok := raw["languageOriginal"]; !ok || v == nil {
+	if _, ok := raw["languageOriginal"]; raw != nil && !ok {
 		return fmt.Errorf("field languageOriginal in ChatOutputDataParseTextFromForeignDefinitionPartsElem: required")
 	}
-	if v, ok := raw["languageTranslated"]; !ok || v == nil {
+	if _, ok := raw["languageTranslated"]; raw != nil && !ok {
 		return fmt.Errorf("field languageTranslated in ChatOutputDataParseTextFromForeignDefinitionPartsElem: required")
 	}
-	if v, ok := raw["text"]; !ok || v == nil {
+	if _, ok := raw["text"]; raw != nil && !ok {
 		return fmt.Errorf("field text in ChatOutputDataParseTextFromForeignDefinitionPartsElem: required")
 	}
-	if v, ok := raw["translation"]; !ok || v == nil {
+	if _, ok := raw["translation"]; raw != nil && !ok {
 		return fmt.Errorf("field translation in ChatOutputDataParseTextFromForeignDefinitionPartsElem: required")
 	}
 	type Plain ChatOutputDataParseTextFromForeignDefinitionPartsElem
@@ -68,10 +76,10 @@ func (j *ChatOutputDataParseTextFromForeignTranslation) UnmarshalJSON(b []byte) 
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
-	if v, ok := raw["language"]; !ok || v == nil {
+	if _, ok := raw["language"]; raw != nil && !ok {
 		return fmt.Errorf("field language in ChatOutputDataParseTextFromForeignTranslation: required")
 	}
-	if v, ok := raw["text"]; !ok || v == nil {
+	if _, ok := raw["text"]; raw != nil && !ok {
 		return fmt.Errorf("field text in ChatOutputDataParseTextFromForeignTranslation: required")
 	}
 	type Plain ChatOutputDataParseTextFromForeignTranslation
@@ -83,24 +91,16 @@ func (j *ChatOutputDataParseTextFromForeignTranslation) UnmarshalJSON(b []byte) 
 	return nil
 }
 
-type ChatOutputDataParseTextFromForeign struct {
-	// DefinitionParts corresponds to the JSON schema field "definitionParts".
-	DefinitionParts []ChatOutputDataParseTextFromForeignDefinitionPartsElem `json:"definitionParts" yaml:"definitionParts" mapstructure:"definitionParts"`
-
-	// The full translation of the text to the requested language.
-	Translation ChatOutputDataParseTextFromForeignTranslation `json:"translation" yaml:"translation" mapstructure:"translation"`
-}
-
 // UnmarshalJSON implements json.Unmarshaler.
 func (j *ChatOutputDataParseTextFromForeign) UnmarshalJSON(b []byte) error {
 	var raw map[string]interface{}
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
-	if v, ok := raw["definitionParts"]; !ok || v == nil {
+	if _, ok := raw["definitionParts"]; raw != nil && !ok {
 		return fmt.Errorf("field definitionParts in ChatOutputDataParseTextFromForeign: required")
 	}
-	if v, ok := raw["translation"]; !ok || v == nil {
+	if _, ok := raw["translation"]; raw != nil && !ok {
 		return fmt.Errorf("field translation in ChatOutputDataParseTextFromForeign: required")
 	}
 	type Plain ChatOutputDataParseTextFromForeign

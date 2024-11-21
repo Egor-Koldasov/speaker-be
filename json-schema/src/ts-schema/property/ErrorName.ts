@@ -14,5 +14,6 @@ export default schema({
     "NotFound_MessageName",
     "FromAi_Critical",
     "ChatAiError",
+    "AuthRequired",
   ],
 });

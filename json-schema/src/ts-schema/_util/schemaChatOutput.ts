@@ -32,5 +32,6 @@ export const schemaChatOutput = <
         },
       },
       ...opts,
+      optional: ["data"],
     }
   );

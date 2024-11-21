@@ -1,8 +1,9 @@
 import { JSONSchema7 } from "json-schema";
 import MessageBase from "../model/MessageBase";
-import { SchemaInput, schema } from "./schema";
+import { schema } from "./schema";
+import { schemaObject } from "./schemaObject";
 
-type MessageInput = SchemaInput & {
+type MessageInput = ReturnType<typeof schemaObject> & {
   title: string;
   properties: {
     input: {
@@ -14,7 +15,6 @@ type MessageInput = SchemaInput & {
             };
             data:
               | {
-                  type: "object";
                   properties: JSONSchema7["properties"];
                 }
               | { $ref: string };
@@ -29,7 +29,6 @@ type MessageInput = SchemaInput & {
         };
         data:
           | {
-              type: "object";
               properties: JSONSchema7["properties"];
             }
           | { $ref: string };
@@ -57,8 +56,13 @@ export const schemaMessage = <Input extends MessageInput>(input: Input) =>
         properties: {
           ...MessageBase.properties.output.properties,
           ...input.properties.output.properties,
+          data: {
+            ...input.properties.output.properties.data,
+            type: ["object", "null"],
+          },
         },
-        required: MessageBase.properties.output.required,
+        required: ["id", "name", "errors"],
+        // required: MessageBase.properties.output.required,
       },
     },
   } satisfies JSONSchema7);

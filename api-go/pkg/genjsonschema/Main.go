@@ -5,6 +5,15 @@ package genjsonschema
 import "encoding/json"
 import "fmt"
 
+type ChatGroupMap struct {
+	// DefineTerm corresponds to the JSON schema field "DefineTerm".
+	DefineTerm ChatGroupMapDefineTerm `json:"DefineTerm" yaml:"DefineTerm" mapstructure:"DefineTerm"`
+
+	// ParseTextFromForeign corresponds to the JSON schema field
+	// "ParseTextFromForeign".
+	ParseTextFromForeign ChatGroupMapParseTextFromForeign `json:"ParseTextFromForeign" yaml:"ParseTextFromForeign" mapstructure:"ParseTextFromForeign"`
+}
+
 type ChatGroupMapDefineTerm struct {
 	// Input corresponds to the JSON schema field "input".
 	Input ChatInputDefineTerm `json:"input" yaml:"input" mapstructure:"input"`
@@ -19,10 +28,10 @@ func (j *ChatGroupMapDefineTerm) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
-	if v, ok := raw["input"]; !ok || v == nil {
+	if _, ok := raw["input"]; raw != nil && !ok {
 		return fmt.Errorf("field input in ChatGroupMapDefineTerm: required")
 	}
-	if v, ok := raw["output"]; !ok || v == nil {
+	if _, ok := raw["output"]; raw != nil && !ok {
 		return fmt.Errorf("field output in ChatGroupMapDefineTerm: required")
 	}
 	type Plain ChatGroupMapDefineTerm
@@ -48,10 +57,10 @@ func (j *ChatGroupMapParseTextFromForeign) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
-	if v, ok := raw["input"]; !ok || v == nil {
+	if _, ok := raw["input"]; raw != nil && !ok {
 		return fmt.Errorf("field input in ChatGroupMapParseTextFromForeign: required")
 	}
-	if v, ok := raw["output"]; !ok || v == nil {
+	if _, ok := raw["output"]; raw != nil && !ok {
 		return fmt.Errorf("field output in ChatGroupMapParseTextFromForeign: required")
 	}
 	type Plain ChatGroupMapParseTextFromForeign
@@ -63,25 +72,16 @@ func (j *ChatGroupMapParseTextFromForeign) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-type ChatGroupMap struct {
-	// DefineTerm corresponds to the JSON schema field "DefineTerm".
-	DefineTerm ChatGroupMapDefineTerm `json:"DefineTerm" yaml:"DefineTerm" mapstructure:"DefineTerm"`
-
-	// ParseTextFromForeign corresponds to the JSON schema field
-	// "ParseTextFromForeign".
-	ParseTextFromForeign ChatGroupMapParseTextFromForeign `json:"ParseTextFromForeign" yaml:"ParseTextFromForeign" mapstructure:"ParseTextFromForeign"`
-}
-
 // UnmarshalJSON implements json.Unmarshaler.
 func (j *ChatGroupMap) UnmarshalJSON(b []byte) error {
 	var raw map[string]interface{}
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
-	if v, ok := raw["DefineTerm"]; !ok || v == nil {
+	if _, ok := raw["DefineTerm"]; raw != nil && !ok {
 		return fmt.Errorf("field DefineTerm in ChatGroupMap: required")
 	}
-	if v, ok := raw["ParseTextFromForeign"]; !ok || v == nil {
+	if _, ok := raw["ParseTextFromForeign"]; raw != nil && !ok {
 		return fmt.Errorf("field ParseTextFromForeign in ChatGroupMap: required")
 	}
 	type Plain ChatGroupMap
@@ -93,9 +93,84 @@ func (j *ChatGroupMap) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+type Main struct {
+	// WsMessageBase corresponds to the JSON schema field "WsMessageBase".
+	WsMessageBase WsMessageBase `json:"WsMessageBase" yaml:"WsMessageBase" mapstructure:"WsMessageBase"`
+
+	// WsMessageName corresponds to the JSON schema field "WsMessageName".
+	WsMessageName WsMessageName `json:"WsMessageName" yaml:"WsMessageName" mapstructure:"WsMessageName"`
+
+	// WsMessageNameEventToServer corresponds to the JSON schema field
+	// "WsMessageNameEventToServer".
+	WsMessageNameEventToServer WsMessageNameEventToServer `json:"WsMessageNameEventToServer" yaml:"WsMessageNameEventToServer" mapstructure:"WsMessageNameEventToServer"`
+
+	// WsMessageNameRequestToServer corresponds to the JSON schema field
+	// "WsMessageNameRequestToServer".
+	WsMessageNameRequestToServer WsMessageNameRequestToServer `json:"WsMessageNameRequestToServer" yaml:"WsMessageNameRequestToServer" mapstructure:"WsMessageNameRequestToServer"`
+
+	// WsMessageType corresponds to the JSON schema field "WsMessageType".
+	WsMessageType WsMessageType `json:"WsMessageType" yaml:"WsMessageType" mapstructure:"WsMessageType"`
+
+	// LensModel corresponds to the JSON schema field "lensModel".
+	LensModel MainLensModel `json:"lensModel" yaml:"lensModel" mapstructure:"lensModel"`
+
+	// Model corresponds to the JSON schema field "model".
+	Model Models `json:"model" yaml:"model" mapstructure:"model"`
+}
+
+type MainLensModel interface{}
+
+// UnmarshalJSON implements json.Unmarshaler.
+func (j *Main) UnmarshalJSON(b []byte) error {
+	var raw map[string]interface{}
+	if err := json.Unmarshal(b, &raw); err != nil {
+		return err
+	}
+	if _, ok := raw["WsMessageBase"]; raw != nil && !ok {
+		return fmt.Errorf("field WsMessageBase in Main: required")
+	}
+	if _, ok := raw["WsMessageName"]; raw != nil && !ok {
+		return fmt.Errorf("field WsMessageName in Main: required")
+	}
+	if _, ok := raw["WsMessageNameEventToServer"]; raw != nil && !ok {
+		return fmt.Errorf("field WsMessageNameEventToServer in Main: required")
+	}
+	if _, ok := raw["WsMessageNameRequestToServer"]; raw != nil && !ok {
+		return fmt.Errorf("field WsMessageNameRequestToServer in Main: required")
+	}
+	if _, ok := raw["WsMessageType"]; raw != nil && !ok {
+		return fmt.Errorf("field WsMessageType in Main: required")
+	}
+	if _, ok := raw["lensModel"]; raw != nil && !ok {
+		return fmt.Errorf("field lensModel in Main: required")
+	}
+	if _, ok := raw["model"]; raw != nil && !ok {
+		return fmt.Errorf("field model in Main: required")
+	}
+	type Plain Main
+	var plain Plain
+	if err := json.Unmarshal(b, &plain); err != nil {
+		return err
+	}
+	*j = Main(plain)
+	return nil
+}
+
 type MessageMap struct {
+	// AddCard corresponds to the JSON schema field "AddCard".
+	AddCard MessageAddCard `json:"AddCard" yaml:"AddCard" mapstructure:"AddCard"`
+
 	// DefineTerm corresponds to the JSON schema field "DefineTerm".
 	DefineTerm MessageDefineTerm `json:"DefineTerm" yaml:"DefineTerm" mapstructure:"DefineTerm"`
+
+	// GetAuthInfo corresponds to the JSON schema field "GetAuthInfo".
+	GetAuthInfo MessageGetAuthInfo `json:"GetAuthInfo" yaml:"GetAuthInfo" mapstructure:"GetAuthInfo"`
+
+	// GetCards corresponds to the JSON schema field "GetCards".
+	GetCards MessageGetCards `json:"GetCards" yaml:"GetCards" mapstructure:"GetCards"`
+
+	// GetDecks corresponds to the JSON schema field "GetDecks".
+	GetDecks MessageGetDecks `json:"GetDecks" yaml:"GetDecks" mapstructure:"GetDecks"`
 
 	// ParseTextFromForeign corresponds to the JSON schema field
 	// "ParseTextFromForeign".
@@ -108,10 +183,22 @@ func (j *MessageMap) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
-	if v, ok := raw["DefineTerm"]; !ok || v == nil {
+	if _, ok := raw["AddCard"]; raw != nil && !ok {
+		return fmt.Errorf("field AddCard in MessageMap: required")
+	}
+	if _, ok := raw["DefineTerm"]; raw != nil && !ok {
 		return fmt.Errorf("field DefineTerm in MessageMap: required")
 	}
-	if v, ok := raw["ParseTextFromForeign"]; !ok || v == nil {
+	if _, ok := raw["GetAuthInfo"]; raw != nil && !ok {
+		return fmt.Errorf("field GetAuthInfo in MessageMap: required")
+	}
+	if _, ok := raw["GetCards"]; raw != nil && !ok {
+		return fmt.Errorf("field GetCards in MessageMap: required")
+	}
+	if _, ok := raw["GetDecks"]; raw != nil && !ok {
+		return fmt.Errorf("field GetDecks in MessageMap: required")
+	}
+	if _, ok := raw["ParseTextFromForeign"]; raw != nil && !ok {
 		return fmt.Errorf("field ParseTextFromForeign in MessageMap: required")
 	}
 	type Plain MessageMap
@@ -124,6 +211,15 @@ func (j *MessageMap) UnmarshalJSON(b []byte) error {
 }
 
 type Models struct {
+	// AuthInfo corresponds to the JSON schema field "AuthInfo".
+	AuthInfo AuthInfo `json:"AuthInfo" yaml:"AuthInfo" mapstructure:"AuthInfo"`
+
+	// AuthSession corresponds to the JSON schema field "AuthSession".
+	AuthSession AuthSession `json:"AuthSession" yaml:"AuthSession" mapstructure:"AuthSession"`
+
+	// Card corresponds to the JSON schema field "Card".
+	Card Card `json:"Card" yaml:"Card" mapstructure:"Card"`
+
 	// MessageBase corresponds to the JSON schema field "MessageBase".
 	MessageBase MessageBase `json:"MessageBase" yaml:"MessageBase" mapstructure:"MessageBase"`
 
@@ -137,10 +233,19 @@ func (j *Models) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
-	if v, ok := raw["MessageBase"]; !ok || v == nil {
+	if _, ok := raw["AuthInfo"]; raw != nil && !ok {
+		return fmt.Errorf("field AuthInfo in Models: required")
+	}
+	if _, ok := raw["AuthSession"]; raw != nil && !ok {
+		return fmt.Errorf("field AuthSession in Models: required")
+	}
+	if _, ok := raw["Card"]; raw != nil && !ok {
+		return fmt.Errorf("field Card in Models: required")
+	}
+	if _, ok := raw["MessageBase"]; raw != nil && !ok {
 		return fmt.Errorf("field MessageBase in Models: required")
 	}
-	if v, ok := raw["messages"]; !ok || v == nil {
+	if _, ok := raw["messages"]; raw != nil && !ok {
 		return fmt.Errorf("field messages in Models: required")
 	}
 	type Plain Models
@@ -149,28 +254,5 @@ func (j *Models) UnmarshalJSON(b []byte) error {
 		return err
 	}
 	*j = Models(plain)
-	return nil
-}
-
-type GenJsonSchema struct {
-	// Model corresponds to the JSON schema field "model".
-	Model Models `json:"model" yaml:"model" mapstructure:"model"`
-}
-
-// UnmarshalJSON implements json.Unmarshaler.
-func (j *GenJsonSchema) UnmarshalJSON(b []byte) error {
-	var raw map[string]interface{}
-	if err := json.Unmarshal(b, &raw); err != nil {
-		return err
-	}
-	if v, ok := raw["model"]; !ok || v == nil {
-		return fmt.Errorf("field model in GenJsonSchema: required")
-	}
-	type Plain GenJsonSchema
-	var plain Plain
-	if err := json.Unmarshal(b, &plain); err != nil {
-		return err
-	}
-	*j = GenJsonSchema(plain)
 	return nil
 }

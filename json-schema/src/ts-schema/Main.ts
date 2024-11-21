@@ -5,9 +5,33 @@ export default schemaObject(
     model: {
       $ref: "#/definitions/Models",
     },
+    lensModel: {
+      $ref: "#/definitions/LenseModels",
+    },
+    WsMessageType: {
+      $ref: "./ws-message/WsMessageType.json",
+    },
+    WsMessageNameRequestToServer: {
+      $ref: "./ws-message/WsMessageNameRequestToServer.json",
+    },
+    // WsMessageNameRequestFromServer: {
+    //   $ref: "./ws-message/WsMessageNameRequestFromServer.json",
+    // },
+    WsMessageNameEventToServer: {
+      $ref: "./ws-message/WsMessageNameEventToServer.json",
+    },
+    // WsMessageNameEventFromServer: {
+    //   $ref: "./ws-message/WsMessageNameEventFromServer.json",
+    // },
+    WsMessageName: {
+      $ref: "./ws-message/WsMessageName.json",
+    },
+    WsMessageBase: {
+      $ref: "./ws-message/WsMessageBase.json",
+    },
   },
   {
-    title: "GenJsonSchema",
+    title: "Main",
     $id: "Main",
     definitions: {
       MessageMap: schemaObject({
@@ -16,6 +40,18 @@ export default schemaObject(
         },
         DefineTerm: {
           $ref: "./model/MessageDefineTerm.json",
+        },
+        GetAuthInfo: {
+          $ref: "./model/MessageGetAuthInfo.json",
+        },
+        GetDecks: {
+          $ref: "./model/MessageGetDecks.json",
+        },
+        AddCard: {
+          $ref: "./model/MessageAddCard.json",
+        },
+        GetCards: {
+          $ref: "./model/MessageGetCards.json",
         },
       }),
       ChatGroupMap: schemaObject({
@@ -36,6 +72,9 @@ export default schemaObject(
           },
         }),
       }),
+      LenseModels: {
+        $ref: "./LenseModels.json",
+      },
       Models: schemaObject({
         MessageBase: {
           $ref: "./model/MessageBase.json",
@@ -43,6 +82,18 @@ export default schemaObject(
         messages: {
           $ref: "#/definitions/MessageMap",
         },
+        AuthSession: {
+          $ref: "./model/AuthSession.json",
+        },
+        AuthInfo: {
+          $ref: "./model/AuthInfo.json",
+        },
+        Card: {
+          $ref: "./model/Card.json",
+        },
+        // CardType: {
+        //   $ref: "./model/CardType.json",
+        // },
       }),
     },
   }

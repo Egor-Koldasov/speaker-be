@@ -15,6 +15,9 @@ type MessageParseTextFromForeign struct {
 }
 
 type MessageParseTextFromForeignInput struct {
+	// AuthToken corresponds to the JSON schema field "authToken".
+	AuthToken string `json:"authToken" yaml:"authToken" mapstructure:"authToken"`
+
 	// Data corresponds to the JSON schema field "data".
 	Data MessageParseTextFromForeignInputData `json:"data" yaml:"data" mapstructure:"data"`
 
@@ -26,32 +29,34 @@ type MessageParseTextFromForeignInput struct {
 }
 
 type MessageParseTextFromForeignInputData struct {
-	// OriginalLanguages corresponds to the JSON schema field "originalLanguages".
-	OriginalLanguages ForeignLanguages `json:"originalLanguages" yaml:"originalLanguages" mapstructure:"originalLanguages"`
+	// ChatInput corresponds to the JSON schema field "chatInput".
+	ChatInput ChatInputParseTextFromForeign `json:"chatInput" yaml:"chatInput" mapstructure:"chatInput"`
+}
 
-	// Text corresponds to the JSON schema field "text".
-	Text string `json:"text" yaml:"text" mapstructure:"text"`
-
-	// TranslationLanguage corresponds to the JSON schema field "translationLanguage".
-	TranslationLanguage TranslationLanguage `json:"translationLanguage" yaml:"translationLanguage" mapstructure:"translationLanguage"`
+// UnmarshalJSON implements json.Unmarshaler.
+func (j *MessageParseTextFromForeignInputData) UnmarshalJSON(b []byte) error {
+	var raw map[string]interface{}
+	if err := json.Unmarshal(b, &raw); err != nil {
+		return err
+	}
+	if _, ok := raw["chatInput"]; raw != nil && !ok {
+		return fmt.Errorf("field chatInput in MessageParseTextFromForeignInputData: required")
+	}
+	type Plain MessageParseTextFromForeignInputData
+	var plain Plain
+	if err := json.Unmarshal(b, &plain); err != nil {
+		return err
+	}
+	*j = MessageParseTextFromForeignInputData(plain)
+	return nil
 }
 
 type MessageParseTextFromForeignInputName string
 
 const MessageParseTextFromForeignInputNameParseTextFromForeign MessageParseTextFromForeignInputName = "ParseTextFromForeign"
 
-type MessageParseTextFromForeignOutput struct {
-	// Data corresponds to the JSON schema field "data".
-	Data ChatOutputDataParseTextFromForeign `json:"data" yaml:"data" mapstructure:"data"`
-
-	// Errors corresponds to the JSON schema field "errors".
-	Errors []AppError `json:"errors" yaml:"errors" mapstructure:"errors"`
-
-	// Id corresponds to the JSON schema field "id".
-	Id Id `json:"id" yaml:"id" mapstructure:"id"`
-
-	// Name corresponds to the JSON schema field "name".
-	Name MessageParseTextFromForeignOutputName `json:"name" yaml:"name" mapstructure:"name"`
+var enumValues_MessageParseTextFromForeignInputName = []interface{}{
+	"ParseTextFromForeign",
 }
 
 // UnmarshalJSON implements json.Unmarshaler.
@@ -80,13 +85,16 @@ func (j *MessageParseTextFromForeignInput) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
-	if v, ok := raw["data"]; !ok || v == nil {
+	if _, ok := raw["authToken"]; raw != nil && !ok {
+		return fmt.Errorf("field authToken in MessageParseTextFromForeignInput: required")
+	}
+	if _, ok := raw["data"]; raw != nil && !ok {
 		return fmt.Errorf("field data in MessageParseTextFromForeignInput: required")
 	}
-	if v, ok := raw["id"]; !ok || v == nil {
+	if _, ok := raw["id"]; raw != nil && !ok {
 		return fmt.Errorf("field id in MessageParseTextFromForeignInput: required")
 	}
-	if v, ok := raw["name"]; !ok || v == nil {
+	if _, ok := raw["name"]; raw != nil && !ok {
 		return fmt.Errorf("field name in MessageParseTextFromForeignInput: required")
 	}
 	type Plain MessageParseTextFromForeignInput
@@ -98,7 +106,46 @@ func (j *MessageParseTextFromForeignInput) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+type MessageParseTextFromForeignOutput struct {
+	// Data corresponds to the JSON schema field "data".
+	Data *MessageParseTextFromForeignOutputData `json:"data,omitempty" yaml:"data,omitempty" mapstructure:"data,omitempty"`
+
+	// Errors corresponds to the JSON schema field "errors".
+	Errors []AppError `json:"errors" yaml:"errors" mapstructure:"errors"`
+
+	// Id corresponds to the JSON schema field "id".
+	Id Id `json:"id" yaml:"id" mapstructure:"id"`
+
+	// Name corresponds to the JSON schema field "name".
+	Name MessageParseTextFromForeignOutputName `json:"name" yaml:"name" mapstructure:"name"`
+}
+
+type MessageParseTextFromForeignOutputData struct {
+	// ChatOutput corresponds to the JSON schema field "chatOutput".
+	ChatOutput ChatOutputDataParseTextFromForeign `json:"chatOutput" yaml:"chatOutput" mapstructure:"chatOutput"`
+}
+
+// UnmarshalJSON implements json.Unmarshaler.
+func (j *MessageParseTextFromForeignOutputData) UnmarshalJSON(b []byte) error {
+	var raw map[string]interface{}
+	if err := json.Unmarshal(b, &raw); err != nil {
+		return err
+	}
+	if _, ok := raw["chatOutput"]; raw != nil && !ok {
+		return fmt.Errorf("field chatOutput in MessageParseTextFromForeignOutputData: required")
+	}
+	type Plain MessageParseTextFromForeignOutputData
+	var plain Plain
+	if err := json.Unmarshal(b, &plain); err != nil {
+		return err
+	}
+	*j = MessageParseTextFromForeignOutputData(plain)
+	return nil
+}
+
 type MessageParseTextFromForeignOutputName string
+
+const MessageParseTextFromForeignOutputNameParseTextFromForeign MessageParseTextFromForeignOutputName = "ParseTextFromForeign"
 
 var enumValues_MessageParseTextFromForeignOutputName = []interface{}{
 	"ParseTextFromForeign",
@@ -124,28 +171,19 @@ func (j *MessageParseTextFromForeignOutputName) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-const MessageParseTextFromForeignOutputNameParseTextFromForeign MessageParseTextFromForeignOutputName = "ParseTextFromForeign"
-
-var enumValues_MessageParseTextFromForeignInputName = []interface{}{
-	"ParseTextFromForeign",
-}
-
 // UnmarshalJSON implements json.Unmarshaler.
 func (j *MessageParseTextFromForeignOutput) UnmarshalJSON(b []byte) error {
 	var raw map[string]interface{}
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
-	if v, ok := raw["data"]; !ok || v == nil {
-		return fmt.Errorf("field data in MessageParseTextFromForeignOutput: required")
-	}
-	if v, ok := raw["errors"]; !ok || v == nil {
+	if _, ok := raw["errors"]; raw != nil && !ok {
 		return fmt.Errorf("field errors in MessageParseTextFromForeignOutput: required")
 	}
-	if v, ok := raw["id"]; !ok || v == nil {
+	if _, ok := raw["id"]; raw != nil && !ok {
 		return fmt.Errorf("field id in MessageParseTextFromForeignOutput: required")
 	}
-	if v, ok := raw["name"]; !ok || v == nil {
+	if _, ok := raw["name"]; raw != nil && !ok {
 		return fmt.Errorf("field name in MessageParseTextFromForeignOutput: required")
 	}
 	type Plain MessageParseTextFromForeignOutput
@@ -158,39 +196,15 @@ func (j *MessageParseTextFromForeignOutput) UnmarshalJSON(b []byte) error {
 }
 
 // UnmarshalJSON implements json.Unmarshaler.
-func (j *MessageParseTextFromForeignInputData) UnmarshalJSON(b []byte) error {
-	var raw map[string]interface{}
-	if err := json.Unmarshal(b, &raw); err != nil {
-		return err
-	}
-	if v, ok := raw["originalLanguages"]; !ok || v == nil {
-		return fmt.Errorf("field originalLanguages in MessageParseTextFromForeignInputData: required")
-	}
-	if v, ok := raw["text"]; !ok || v == nil {
-		return fmt.Errorf("field text in MessageParseTextFromForeignInputData: required")
-	}
-	if v, ok := raw["translationLanguage"]; !ok || v == nil {
-		return fmt.Errorf("field translationLanguage in MessageParseTextFromForeignInputData: required")
-	}
-	type Plain MessageParseTextFromForeignInputData
-	var plain Plain
-	if err := json.Unmarshal(b, &plain); err != nil {
-		return err
-	}
-	*j = MessageParseTextFromForeignInputData(plain)
-	return nil
-}
-
-// UnmarshalJSON implements json.Unmarshaler.
 func (j *MessageParseTextFromForeign) UnmarshalJSON(b []byte) error {
 	var raw map[string]interface{}
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
-	if v, ok := raw["input"]; !ok || v == nil {
+	if _, ok := raw["input"]; raw != nil && !ok {
 		return fmt.Errorf("field input in MessageParseTextFromForeign: required")
 	}
-	if v, ok := raw["output"]; !ok || v == nil {
+	if _, ok := raw["output"]; raw != nil && !ok {
 		return fmt.Errorf("field output in MessageParseTextFromForeign: required")
 	}
 	type Plain MessageParseTextFromForeign

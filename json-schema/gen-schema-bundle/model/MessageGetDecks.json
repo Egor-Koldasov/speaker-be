@@ -1,0 +1,156 @@
+{
+  "type": [
+    "object"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "MessageGetDecks",
+  "additionalProperties": false,
+  "title": "MessageGetDecks",
+  "properties": {
+    "input": {
+      "type": [
+        "object"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "Id",
+          "title": "Id",
+          "description": "The unique identifier of the entity in uuid-v7 format"
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "GetDecks"
+          ]
+        },
+        "data": {
+          "type": [
+            "object"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "additionalProperties": false,
+          "properties": {},
+          "required": []
+        },
+        "authToken": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "data",
+        "authToken"
+      ]
+    },
+    "output": {
+      "type": [
+        "object"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/properties/input/properties/id"
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "GetDecks"
+          ]
+        },
+        "data": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "additionalProperties": false,
+          "properties": {
+            "decks": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "object"
+                ],
+                "$schema": "http://json-schema.org/draft-07/schema",
+                "$id": "Deck",
+                "additionalProperties": false,
+                "title": "Deck",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "name"
+                ]
+              }
+            }
+          },
+          "required": [
+            "decks"
+          ]
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": [
+              "object"
+            ],
+            "$schema": "http://json-schema.org/draft-07/schema",
+            "$id": "AppError",
+            "additionalProperties": false,
+            "title": "AppError",
+            "description": "An application typed error.",
+            "properties": {
+              "name": {
+                "type": "string",
+                "$schema": "http://json-schema.org/draft-07/schema",
+                "$id": "ErrorName",
+                "title": "ErrorName",
+                "description": "The code name of the error.",
+                "enum": [
+                  "Unknown",
+                  "Internal",
+                  "Ai_CreateCompletion",
+                  "AI_ResponseUnmarshal",
+                  "JsonSchema_MessageInput",
+                  "JsonSchema_MessageOutput",
+                  "NotFound_MessageName",
+                  "FromAi_Critical",
+                  "ChatAiError",
+                  "AuthRequired"
+                ]
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "message"
+            ]
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "errors"
+      ]
+    }
+  },
+  "required": [
+    "input",
+    "output"
+  ]
+}

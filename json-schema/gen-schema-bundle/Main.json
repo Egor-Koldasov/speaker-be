@@ -1,24 +1,32 @@
 {
-  "type": "object",
+  "type": [
+    "object"
+  ],
   "$schema": "http://json-schema.org/draft-07/schema",
   "$id": "Main",
   "additionalProperties": false,
-  "title": "GenJsonSchema",
+  "title": "Main",
   "definitions": {
     "MessageMap": {
-      "type": "object",
+      "type": [
+        "object"
+      ],
       "$schema": "http://json-schema.org/draft-07/schema",
       "additionalProperties": false,
       "properties": {
         "ParseTextFromForeign": {
-          "type": "object",
+          "type": [
+            "object"
+          ],
           "$schema": "http://json-schema.org/draft-07/schema",
           "$id": "MessageParseTextFromForeign",
           "additionalProperties": false,
           "title": "MessageParseTextFromForeign",
           "properties": {
             "input": {
-              "type": "object",
+              "type": [
+                "object"
+              ],
               "$schema": "http://json-schema.org/draft-07/schema",
               "additionalProperties": false,
               "properties": {
@@ -32,37 +40,35 @@
                   ]
                 },
                 "data": {
-                  "type": "object",
+                  "type": [
+                    "object"
+                  ],
                   "$schema": "http://json-schema.org/draft-07/schema",
-                  "$id": "ChatInputParseTextFromForeign",
                   "additionalProperties": false,
-                  "title": "ChatInputParseTextFromForeign",
                   "properties": {
-                    "text": {
-                      "type": "string"
-                    },
-                    "originalLanguages": {
-                      "$ref": "#/definitions/ChatGroupMap/properties/DefineTerm/properties/input/properties/originalLanguages"
-                    },
-                    "translationLanguage": {
-                      "$ref": "#/definitions/ChatGroupMap/properties/DefineTerm/properties/input/properties/translationLanguage"
+                    "chatInput": {
+                      "$ref": "#/definitions/ChatGroupMap/properties/ParseTextFromForeign/properties/input"
                     }
                   },
                   "required": [
-                    "text",
-                    "originalLanguages",
-                    "translationLanguage"
+                    "chatInput"
                   ]
+                },
+                "authToken": {
+                  "type": "string"
                 }
               },
               "required": [
                 "id",
                 "name",
-                "data"
+                "data",
+                "authToken"
               ]
             },
             "output": {
-              "type": "object",
+              "type": [
+                "object"
+              ],
               "$schema": "http://json-schema.org/draft-07/schema",
               "additionalProperties": false,
               "properties": {
@@ -81,65 +87,82 @@
                     "null"
                   ],
                   "$schema": "http://json-schema.org/draft-07/schema",
-                  "$id": "ChatOutputDataParseTextFromForeign",
                   "additionalProperties": false,
-                  "title": "ChatOutputDataParseTextFromForeign",
                   "properties": {
-                    "definitionParts": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "$schema": "http://json-schema.org/draft-07/schema",
-                        "additionalProperties": false,
-                        "properties": {
-                          "text": {
-                            "description": "The text of word extracted. Keep this part small, it should not be longer than a typical dictionary entry point. Include only the word itself without any extra symbols. Do not include any punctuation symbols, enclosing parentheses or apostrophes an so on.",
-                            "type": "string"
-                          },
-                          "translation": {
-                            "description": "A short translation of the word without additional formatting. Among several translation choices, choose the one that is the best fitting the original context from the user input text that was sent for this parsing.",
-                            "type": "string"
-                          },
-                          "languageOriginal": {
-                            "description": "The BCP 47 language tag of the language of that word. Null for unknown",
-                            "type": "string"
-                          },
-                          "languageTranslated": {
-                            "description": "The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'",
-                            "type": "string"
+                    "chatOutput": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "$schema": "http://json-schema.org/draft-07/schema",
+                      "$id": "ChatOutputDataParseTextFromForeign",
+                      "additionalProperties": false,
+                      "title": "ChatOutputDataParseTextFromForeign",
+                      "properties": {
+                        "definitionParts": {
+                          "type": "array",
+                          "items": {
+                            "type": [
+                              "object"
+                            ],
+                            "$schema": "http://json-schema.org/draft-07/schema",
+                            "additionalProperties": false,
+                            "properties": {
+                              "text": {
+                                "description": "The text of word extracted. Keep this part small, it should not be longer than a typical dictionary entry point. Include only the word itself without any extra symbols. Do not include any punctuation symbols, enclosing parentheses or apostrophes an so on.",
+                                "type": "string"
+                              },
+                              "translation": {
+                                "description": "A short translation of the word without additional formatting. Among several translation choices, choose the one that is the best fitting the original context from the user input text that was sent for this parsing.",
+                                "type": "string"
+                              },
+                              "languageOriginal": {
+                                "description": "The BCP 47 language tag of the language of that word. Null for unknown",
+                                "type": "string"
+                              },
+                              "languageTranslated": {
+                                "description": "The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'",
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "text",
+                              "translation",
+                              "languageOriginal",
+                              "languageTranslated"
+                            ]
                           }
                         },
-                        "required": [
-                          "text",
-                          "translation",
-                          "languageOriginal",
-                          "languageTranslated"
-                        ]
-                      }
-                    },
-                    "translation": {
-                      "type": "object",
-                      "$schema": "http://json-schema.org/draft-07/schema",
-                      "additionalProperties": false,
-                      "description": "The full translation of the text to the requested language.",
-                      "properties": {
-                        "text": {
-                          "type": "string"
-                        },
-                        "language": {
-                          "description": "The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'",
-                          "type": "string"
+                        "translation": {
+                          "type": [
+                            "object"
+                          ],
+                          "$schema": "http://json-schema.org/draft-07/schema",
+                          "additionalProperties": false,
+                          "description": "The full translation of the text to the requested language.",
+                          "properties": {
+                            "text": {
+                              "type": "string"
+                            },
+                            "language": {
+                              "description": "The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "text",
+                            "language"
+                          ]
                         }
                       },
                       "required": [
-                        "text",
-                        "language"
+                        "definitionParts",
+                        "translation"
                       ]
                     }
                   },
                   "required": [
-                    "definitionParts",
-                    "translation"
+                    "chatOutput"
                   ]
                 },
                 "errors": {
@@ -152,7 +175,6 @@
               "required": [
                 "id",
                 "name",
-                "data",
                 "errors"
               ]
             }
@@ -163,14 +185,18 @@
           ]
         },
         "DefineTerm": {
-          "type": "object",
+          "type": [
+            "object"
+          ],
           "$schema": "http://json-schema.org/draft-07/schema",
           "$id": "MessageDefineTerm",
           "additionalProperties": false,
           "title": "MessageDefineTerm",
           "properties": {
             "input": {
-              "type": "object",
+              "type": [
+                "object"
+              ],
               "$schema": "http://json-schema.org/draft-07/schema",
               "additionalProperties": false,
               "properties": {
@@ -184,43 +210,35 @@
                   ]
                 },
                 "data": {
-                  "type": "object",
+                  "type": [
+                    "object"
+                  ],
                   "$schema": "http://json-schema.org/draft-07/schema",
-                  "$id": "ChatInputDefineTerm",
                   "additionalProperties": false,
-                  "title": "ChatInputDefineTerm",
                   "properties": {
-                    "term": {
-                      "type": "string",
-                      "description": "A term to define"
-                    },
-                    "context": {
-                      "type": "string",
-                      "description": "A context from which the term is taken"
-                    },
-                    "originalLanguages": {
-                      "$ref": "#/definitions/ChatGroupMap/properties/DefineTerm/properties/input/properties/originalLanguages"
-                    },
-                    "translationLanguage": {
-                      "$ref": "#/definitions/ChatGroupMap/properties/DefineTerm/properties/input/properties/translationLanguage"
+                    "chatInput": {
+                      "$ref": "#/definitions/ChatGroupMap/properties/DefineTerm/properties/input"
                     }
                   },
                   "required": [
-                    "term",
-                    "context",
-                    "originalLanguages",
-                    "translationLanguage"
+                    "chatInput"
                   ]
+                },
+                "authToken": {
+                  "type": "string"
                 }
               },
               "required": [
                 "id",
                 "name",
-                "data"
+                "data",
+                "authToken"
               ]
             },
             "output": {
-              "type": "object",
+              "type": [
+                "object"
+              ],
               "$schema": "http://json-schema.org/draft-07/schema",
               "additionalProperties": false,
               "properties": {
@@ -239,160 +257,21 @@
                     "null"
                   ],
                   "$schema": "http://json-schema.org/draft-07/schema",
-                  "$id": "ChatOutputDataDefineTerm",
                   "additionalProperties": false,
-                  "title": "ChatOutputDataDefineTerm",
                   "properties": {
                     "definition": {
-                      "type": "object",
-                      "$schema": "http://json-schema.org/draft-07/schema",
-                      "$id": "Definition",
-                      "additionalProperties": false,
-                      "title": "Definition",
-                      "description": "A detailed representation of a definition, including its original and neutral forms, pronunciations, translations, definitions, origin, and usage examples.",
-                      "examples": [
-                        {
-                          "originalWord": "Esperanzamos",
-                          "neutralForm": "Esperanzar",
-                          "pronounciations": [
-                            {
-                              "transcription": "es.pe.ɾanˈθa.mos",
-                              "description": "Spain"
-                            },
-                            {
-                              "transcription": "es.pe.ɾanˈsa.mos",
-                              "description": "Latin America"
-                            }
-                          ],
-                          "translation": "To fill with hope, to become hopeful, to start to hope, to hold onto hope.",
-                          "synonyms": [
-                            "Ilusionar",
-                            "tener esperanza",
-                            "confiar"
-                          ],
-                          "definitionOriginal": "Acción de hacerse llevar por la esperanza o comenzar a tener esperanza frente a una situación, a pesar de las circunstancias que pueden sugerir lo contrario.",
-                          "definitionTranslated": "The action of being guided by or starting to have hope in a situation, despite circumstances that might suggest the contrary.",
-                          "origin": "The verb \"esperanzar\" is derived from the noun \"esperanza,\" meaning hope. The suffix \"-ar\" indicates that it's an infinitive verb. In this context, \"esperanzamos\" is the first person plural of the present indicative, meaning \"we hope\" or \"we become hopeful.\" The transition from the neutral form \"esperanzar\" to \"esperanzamos\" changes the verb from its infinitive form to a specific tense and subject, indicating the action of hoping being performed by us in the present.",
-                          "examples": [
-                            {
-                              "original": "Y nos esperanzamos contra toda lógica, contra todo lo que nos dice la experiencia.",
-                              "translation": "And we become hopeful against all logic, against everything our experience tells us."
-                            },
-                            {
-                              "original": "Cada vez que sale el sol, nos esperanzamos pensando que será un mejor día.",
-                              "translation": "Every time the sun rises, we become hopeful thinking it will be a better day."
-                            },
-                            {
-                              "original": "A pesar de las dificultades, nos esperanzamos al ver la solidaridad de la gente.",
-                              "translation": "Despite the difficulties, we become hopeful upon seeing people's solidarity."
-                            }
-                          ]
-                        }
-                      ],
-                      "properties": {
-                        "languageOriginal": {
-                          "type": "string",
-                          "description": "The original language of the word in a BCP 47 format."
-                        },
-                        "languageTranslated": {
-                          "type": "string",
-                          "description": "The language the word is translated to in a BCP 47 format."
-                        },
-                        "originalWord": {
-                          "type": "string",
-                          "description": "The original word given, in the exact same grammatic form, capitalized."
-                        },
-                        "neutralForm": {
-                          "type": "string",
-                          "description": "The word in a neutral grammatic form."
-                        },
-                        "pronounciations": {
-                          "type": "array",
-                          "minItems": 1,
-                          "items": {
-                            "type": "object",
-                            "$schema": "http://json-schema.org/draft-07/schema",
-                            "additionalProperties": false,
-                            "properties": {
-                              "transcription": {
-                                "type": "string",
-                                "description": "A pronunciation of the original word given."
-                              },
-                              "description": {
-                                "type": "string",
-                                "description": "A description of the pronunciation. Like the area where it is commonly used."
-                              }
-                            },
-                            "required": [
-                              "transcription",
-                              "description"
-                            ]
-                          }
-                        },
-                        "translation": {
-                          "type": "string",
-                          "description": "An extensive translation to the language defined by a `languageTranslated` property, the more words the better. In case of multiple meanings, include all of them."
-                        },
-                        "synonyms": {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          },
-                          "description": "Common synonyms in the original language."
-                        },
-                        "definitionOriginal": {
-                          "type": "string",
-                          "description": "An extensive definition in the original language."
-                        },
-                        "definitionTranslated": {
-                          "type": "string",
-                          "description": "An extensive definition in the language defined by a `languageTranslated` property."
-                        },
-                        "origin": {
-                          "type": "string",
-                          "description": "The root parts of the word and the origin in the language defined by a `languageTranslated` property. If the original form from Part 1 is different from the neutral grammatic form from Part 2, explain that difference including all the details."
-                        },
-                        "examples": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "$schema": "http://json-schema.org/draft-07/schema",
-                            "additionalProperties": false,
-                            "properties": {
-                              "original": {
-                                "type": "string",
-                                "description": "An example sentence in the original language using the word."
-                              },
-                              "translation": {
-                                "type": "string",
-                                "description": "The translation of the example sentence in the language defined by a `languageTranslated` property."
-                              }
-                            },
-                            "required": [
-                              "original",
-                              "translation"
-                            ]
-                          },
-                          "description": "Three sentence examples of the usage of the original word in the same grammatic form followed by an translation in the language defined by a `languageTranslated` property. The sentence and the translation should be separated by one new line, while the examples themselves should be separated by three new lines. If there was a context from which that word was taken, include a phrase from that context in examples, replacing the first example."
-                        }
-                      },
-                      "required": [
-                        "languageOriginal",
-                        "languageTranslated",
-                        "originalWord",
-                        "neutralForm",
-                        "pronounciations",
-                        "translation",
-                        "synonyms",
-                        "definitionOriginal",
-                        "definitionTranslated",
-                        "origin",
-                        "examples"
-                      ]
+                      "$ref": "#/definitions/Models/properties/Card/properties/definition"
+                    },
+                    "decks": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/MessageMap/properties/GetDecks/properties/output/properties/data/properties/decks/items"
+                      }
                     }
                   },
                   "required": [
-                    "definition"
+                    "definition",
+                    "decks"
                   ]
                 },
                 "errors": {
@@ -405,7 +284,424 @@
               "required": [
                 "id",
                 "name",
+                "errors"
+              ]
+            }
+          },
+          "required": [
+            "input",
+            "output"
+          ]
+        },
+        "GetAuthInfo": {
+          "type": [
+            "object"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "MessageGetAuthInfo",
+          "additionalProperties": false,
+          "title": "MessageGetAuthInfo",
+          "properties": {
+            "input": {
+              "type": [
+                "object"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema",
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "$ref": "#/definitions/Models/properties/MessageBase/properties/input/properties/id"
+                },
+                "name": {
+                  "type": "string",
+                  "enum": [
+                    "GetAuthInfo"
+                  ]
+                },
+                "data": {
+                  "type": [
+                    "object"
+                  ],
+                  "$schema": "http://json-schema.org/draft-07/schema",
+                  "additionalProperties": false,
+                  "properties": {},
+                  "required": []
+                },
+                "authToken": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "name",
                 "data",
+                "authToken"
+              ]
+            },
+            "output": {
+              "type": [
+                "object"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema",
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "$ref": "#/definitions/Models/properties/MessageBase/properties/input/properties/id"
+                },
+                "name": {
+                  "type": "string",
+                  "enum": [
+                    "GetAuthInfo"
+                  ]
+                },
+                "data": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "$schema": "http://json-schema.org/draft-07/schema",
+                  "additionalProperties": false,
+                  "properties": {
+                    "authInfo": {
+                      "$ref": "#/definitions/Models/properties/AuthInfo"
+                    }
+                  },
+                  "required": [
+                    "authInfo"
+                  ]
+                },
+                "errors": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Models/properties/MessageBase/properties/output/properties/errors/items"
+                  }
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "errors"
+              ]
+            }
+          },
+          "required": [
+            "input",
+            "output"
+          ]
+        },
+        "GetDecks": {
+          "type": [
+            "object"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "MessageGetDecks",
+          "additionalProperties": false,
+          "title": "MessageGetDecks",
+          "properties": {
+            "input": {
+              "type": [
+                "object"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema",
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "$ref": "#/definitions/Models/properties/MessageBase/properties/input/properties/id"
+                },
+                "name": {
+                  "type": "string",
+                  "enum": [
+                    "GetDecks"
+                  ]
+                },
+                "data": {
+                  "type": [
+                    "object"
+                  ],
+                  "$schema": "http://json-schema.org/draft-07/schema",
+                  "additionalProperties": false,
+                  "properties": {},
+                  "required": []
+                },
+                "authToken": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "data",
+                "authToken"
+              ]
+            },
+            "output": {
+              "type": [
+                "object"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema",
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "$ref": "#/definitions/Models/properties/MessageBase/properties/input/properties/id"
+                },
+                "name": {
+                  "type": "string",
+                  "enum": [
+                    "GetDecks"
+                  ]
+                },
+                "data": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "$schema": "http://json-schema.org/draft-07/schema",
+                  "additionalProperties": false,
+                  "properties": {
+                    "decks": {
+                      "type": "array",
+                      "items": {
+                        "type": [
+                          "object"
+                        ],
+                        "$schema": "http://json-schema.org/draft-07/schema",
+                        "$id": "Deck",
+                        "additionalProperties": false,
+                        "title": "Deck",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "decks"
+                  ]
+                },
+                "errors": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Models/properties/MessageBase/properties/output/properties/errors/items"
+                  }
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "errors"
+              ]
+            }
+          },
+          "required": [
+            "input",
+            "output"
+          ]
+        },
+        "AddCard": {
+          "type": [
+            "object"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "MessageAddCard",
+          "additionalProperties": false,
+          "title": "MessageAddCard",
+          "properties": {
+            "input": {
+              "type": [
+                "object"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema",
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "$ref": "#/definitions/Models/properties/MessageBase/properties/input/properties/id"
+                },
+                "name": {
+                  "type": "string",
+                  "enum": [
+                    "AddCard"
+                  ]
+                },
+                "data": {
+                  "type": [
+                    "object"
+                  ],
+                  "$schema": "http://json-schema.org/draft-07/schema",
+                  "additionalProperties": false,
+                  "properties": {
+                    "card": {
+                      "$ref": "#/definitions/Models/properties/Card"
+                    },
+                    "deckId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "card",
+                    "deckId"
+                  ]
+                },
+                "authToken": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "data",
+                "authToken"
+              ]
+            },
+            "output": {
+              "type": [
+                "object"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema",
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "$ref": "#/definitions/Models/properties/MessageBase/properties/input/properties/id"
+                },
+                "name": {
+                  "type": "string",
+                  "enum": [
+                    "AddCard"
+                  ]
+                },
+                "data": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "$schema": "http://json-schema.org/draft-07/schema",
+                  "additionalProperties": false,
+                  "properties": {},
+                  "required": []
+                },
+                "errors": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Models/properties/MessageBase/properties/output/properties/errors/items"
+                  }
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "errors"
+              ]
+            }
+          },
+          "required": [
+            "input",
+            "output"
+          ]
+        },
+        "GetCards": {
+          "type": [
+            "object"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "MessageGetCards",
+          "additionalProperties": false,
+          "title": "MessageGetCards",
+          "properties": {
+            "input": {
+              "type": [
+                "object"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema",
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "$ref": "#/definitions/Models/properties/MessageBase/properties/input/properties/id"
+                },
+                "name": {
+                  "type": "string",
+                  "enum": [
+                    "GetCards"
+                  ]
+                },
+                "data": {
+                  "type": [
+                    "object"
+                  ],
+                  "$schema": "http://json-schema.org/draft-07/schema",
+                  "additionalProperties": false,
+                  "properties": {
+                    "deckId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "deckId"
+                  ]
+                },
+                "authToken": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "data",
+                "authToken"
+              ]
+            },
+            "output": {
+              "type": [
+                "object"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema",
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "$ref": "#/definitions/Models/properties/MessageBase/properties/input/properties/id"
+                },
+                "name": {
+                  "type": "string",
+                  "enum": [
+                    "GetCards"
+                  ]
+                },
+                "data": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "$schema": "http://json-schema.org/draft-07/schema",
+                  "additionalProperties": false,
+                  "properties": {
+                    "cards": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/Models/properties/Card"
+                      }
+                    }
+                  },
+                  "required": [
+                    "cards"
+                  ]
+                },
+                "errors": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Models/properties/MessageBase/properties/output/properties/errors/items"
+                  }
+                }
+              },
+              "required": [
+                "id",
+                "name",
                 "errors"
               ]
             }
@@ -418,21 +714,31 @@
       },
       "required": [
         "ParseTextFromForeign",
-        "DefineTerm"
+        "DefineTerm",
+        "GetAuthInfo",
+        "GetDecks",
+        "AddCard",
+        "GetCards"
       ]
     },
     "ChatGroupMap": {
-      "type": "object",
+      "type": [
+        "object"
+      ],
       "$schema": "http://json-schema.org/draft-07/schema",
       "additionalProperties": false,
       "properties": {
         "ParseTextFromForeign": {
-          "type": "object",
+          "type": [
+            "object"
+          ],
           "$schema": "http://json-schema.org/draft-07/schema",
           "additionalProperties": false,
           "properties": {
             "input": {
-              "type": "object",
+              "type": [
+                "object"
+              ],
               "$schema": "http://json-schema.org/draft-07/schema",
               "$id": "ChatInputParseTextFromForeign",
               "additionalProperties": false,
@@ -442,10 +748,10 @@
                   "type": "string"
                 },
                 "originalLanguages": {
-                  "$ref": "#/definitions/ChatGroupMap/properties/DefineTerm/properties/input/properties/originalLanguages"
+                  "$ref": "#/definitions/LenseModels/properties/UserSettings/definitions/foreignLanguages"
                 },
                 "translationLanguage": {
-                  "$ref": "#/definitions/ChatGroupMap/properties/DefineTerm/properties/input/properties/translationLanguage"
+                  "$ref": "#/definitions/LenseModels/properties/UserSettings/definitions/translationLanguage"
                 }
               },
               "required": [
@@ -455,14 +761,16 @@
               ]
             },
             "output": {
-              "type": "object",
+              "type": [
+                "object"
+              ],
               "$schema": "http://json-schema.org/draft-07/schema",
               "$id": "ChatOutputParseTextFromForeign",
               "additionalProperties": false,
               "definitions": {
                 "outputData": {
                   "title": "ChatOutputParseTextFromForeignOutputData",
-                  "$ref": "#/definitions/MessageMap/properties/ParseTextFromForeign/properties/output/properties/data",
+                  "$ref": "#/definitions/MessageMap/properties/ParseTextFromForeign/properties/output/properties/data/properties/chatOutput",
                   "description": "The output data of the Chat AI. Null value indicates the error state."
                 }
               },
@@ -480,7 +788,6 @@
                 }
               },
               "required": [
-                "data",
                 "errors"
               ]
             }
@@ -491,12 +798,16 @@
           ]
         },
         "DefineTerm": {
-          "type": "object",
+          "type": [
+            "object"
+          ],
           "$schema": "http://json-schema.org/draft-07/schema",
           "additionalProperties": false,
           "properties": {
             "input": {
-              "type": "object",
+              "type": [
+                "object"
+              ],
               "$schema": "http://json-schema.org/draft-07/schema",
               "$id": "ChatInputDefineTerm",
               "additionalProperties": false,
@@ -511,15 +822,10 @@
                   "description": "A context from which the term is taken"
                 },
                 "originalLanguages": {
-                  "type": "array",
-                  "description": "The list of BCP 47 language tags of the languages foreign to the user that are most commonly used in the learning process. Take this list as a priority when you try to detect the text language of the text foreign to the user. Although it is not guaranteed to completely match the text languages",
-                  "items": {
-                    "type": "string"
-                  }
+                  "$ref": "#/definitions/LenseModels/properties/UserSettings/definitions/foreignLanguages"
                 },
                 "translationLanguage": {
-                  "type": "string",
-                  "description": "The BCP 47 language tag of the language that the user wants to translate the foreign text to."
+                  "$ref": "#/definitions/LenseModels/properties/UserSettings/definitions/translationLanguage"
                 }
               },
               "required": [
@@ -530,15 +836,31 @@
               ]
             },
             "output": {
-              "type": "object",
+              "type": [
+                "object"
+              ],
               "$schema": "http://json-schema.org/draft-07/schema",
               "$id": "ChatOutputDefineTerm",
               "additionalProperties": false,
               "definitions": {
                 "outputData": {
                   "title": "ChatOutputDefineTermOutputData",
-                  "$ref": "#/definitions/MessageMap/properties/DefineTerm/properties/output/properties/data",
-                  "description": "The output data of the Chat AI. Null value indicates the error state."
+                  "description": "The output data of the Chat AI. Null value indicates the error state.",
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "$schema": "http://json-schema.org/draft-07/schema",
+                  "$id": "ChatOutputDataDefineTerm",
+                  "additionalProperties": false,
+                  "properties": {
+                    "definition": {
+                      "$ref": "#/definitions/Models/properties/Card/properties/definition"
+                    }
+                  },
+                  "required": [
+                    "definition"
+                  ]
                 }
               },
               "title": "ChatOutputDefineTerm",
@@ -550,7 +872,9 @@
                   "title": "ChatOutputDefineTermErrors",
                   "type": "array",
                   "items": {
-                    "type": "object",
+                    "type": [
+                      "object"
+                    ],
                     "$schema": "http://json-schema.org/draft-07/schema",
                     "$id": "ChatAiError",
                     "additionalProperties": false,
@@ -575,7 +899,6 @@
                 }
               },
               "required": [
-                "data",
                 "errors"
               ]
             }
@@ -591,20 +914,158 @@
         "DefineTerm"
       ]
     },
+    "LenseModels": {
+      "type": [
+        "object"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "$id": "LenseModels",
+      "additionalProperties": false,
+      "title": "LenseModels",
+      "properties": {
+        "User": {
+          "type": [
+            "object"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "User",
+          "additionalProperties": false,
+          "title": "User",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "UUID v7 string"
+            },
+            "createdAt": {
+              "type": "string",
+              "description": "ISO 8601 date string"
+            },
+            "updatedAt": {
+              "type": "string",
+              "description": "ISO 8601 date string"
+            },
+            "deletedAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ISO 8601 date string or null"
+            },
+            "email": {
+              "type": "string",
+              "format": "email"
+            }
+          },
+          "required": [
+            "id",
+            "createdAt",
+            "updatedAt",
+            "deletedAt",
+            "email"
+          ]
+        },
+        "UserSettings": {
+          "type": [
+            "object"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "UserSettings",
+          "additionalProperties": false,
+          "title": "UserSettings",
+          "definitions": {
+            "foreignLanguages": {
+              "type": "array",
+              "description": "The list of BCP 47 language tags of the languages foreign to the user that are most commonly used in the learning process. Take this list as a priority when you try to detect the text language of the text foreign to the user. Although it is not guaranteed to completely match the text languages",
+              "items": {
+                "type": "string"
+              }
+            },
+            "translationLanguage": {
+              "type": "string",
+              "description": "The BCP 47 language tag of the language that the user wants to translate the foreign text to."
+            },
+            "nativeLanguages": {
+              "type": "array",
+              "description": "The list of BCP 47 language tags of the languages native to the user. Take this list as a priority when you try to detect the text language. Although it is not guaranteed to completely match the text languages",
+              "items": {
+                "type": "string"
+              }
+            },
+            "primaryForeignLanguage": {
+              "type": "string",
+              "description": "The BCP 47 language tag of the language that the user wants to translate the text to."
+            }
+          },
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "UUID v7 string"
+            },
+            "createdAt": {
+              "type": "string",
+              "description": "ISO 8601 date string"
+            },
+            "updatedAt": {
+              "type": "string",
+              "description": "ISO 8601 date string"
+            },
+            "deletedAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ISO 8601 date string or null"
+            },
+            "foreignLanguages": {
+              "$ref": "#/definitions/LenseModels/properties/UserSettings/definitions/foreignLanguages"
+            },
+            "translationLanguage": {
+              "$ref": "#/definitions/LenseModels/properties/UserSettings/definitions/translationLanguage"
+            },
+            "nativeLanguages": {
+              "$ref": "#/definitions/LenseModels/properties/UserSettings/definitions/nativeLanguages"
+            },
+            "primaryForeignLanguage": {
+              "$ref": "#/definitions/LenseModels/properties/UserSettings/definitions/primaryForeignLanguage"
+            }
+          },
+          "required": [
+            "id",
+            "createdAt",
+            "updatedAt",
+            "deletedAt",
+            "foreignLanguages",
+            "translationLanguage",
+            "nativeLanguages",
+            "primaryForeignLanguage"
+          ]
+        }
+      },
+      "required": [
+        "User",
+        "UserSettings"
+      ]
+    },
     "Models": {
-      "type": "object",
+      "type": [
+        "object"
+      ],
       "$schema": "http://json-schema.org/draft-07/schema",
       "additionalProperties": false,
       "properties": {
         "MessageBase": {
-          "type": "object",
+          "type": [
+            "object"
+          ],
           "$schema": "http://json-schema.org/draft-07/schema",
           "$id": "MessageBase",
           "additionalProperties": false,
           "title": "MessageBase",
           "properties": {
             "input": {
-              "type": "object",
+              "type": [
+                "object"
+              ],
               "$schema": "http://json-schema.org/draft-07/schema",
               "additionalProperties": false,
               "properties": {
@@ -619,18 +1080,26 @@
                   "type": "string"
                 },
                 "data": {
-                  "type": "object",
+                  "type": [
+                    "object"
+                  ],
                   "additionalProperties": true
+                },
+                "authToken": {
+                  "type": "string"
                 }
               },
               "required": [
                 "id",
                 "name",
-                "data"
+                "data",
+                "authToken"
               ]
             },
             "output": {
-              "type": "object",
+              "type": [
+                "object"
+              ],
               "$schema": "http://json-schema.org/draft-07/schema",
               "additionalProperties": false,
               "properties": {
@@ -650,7 +1119,9 @@
                 "errors": {
                   "type": "array",
                   "items": {
-                    "type": "object",
+                    "type": [
+                      "object"
+                    ],
                     "$schema": "http://json-schema.org/draft-07/schema",
                     "$id": "AppError",
                     "additionalProperties": false,
@@ -672,7 +1143,8 @@
                           "JsonSchema_MessageOutput",
                           "NotFound_MessageName",
                           "FromAi_Critical",
-                          "ChatAiError"
+                          "ChatAiError",
+                          "AuthRequired"
                         ]
                       },
                       "message": {
@@ -701,20 +1173,338 @@
         },
         "messages": {
           "$ref": "#/definitions/MessageMap"
+        },
+        "AuthSession": {
+          "type": [
+            "object"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "AuthSession",
+          "additionalProperties": false,
+          "title": "AuthSession",
+          "properties": {
+            "authToken": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "authToken"
+          ]
+        },
+        "AuthInfo": {
+          "type": [
+            "object"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "AuthInfo",
+          "additionalProperties": false,
+          "title": "AuthInfo",
+          "properties": {
+            "user": {
+              "$ref": "#/definitions/LenseModels/properties/User"
+            },
+            "userSettings": {
+              "$ref": "#/definitions/LenseModels/properties/UserSettings"
+            }
+          },
+          "required": [
+            "user",
+            "userSettings"
+          ]
+        },
+        "Card": {
+          "type": [
+            "object"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "Card",
+          "additionalProperties": false,
+          "title": "Card",
+          "properties": {
+            "id": {
+              "description": "uuid-v7",
+              "type": "string"
+            },
+            "definition": {
+              "type": [
+                "object"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema",
+              "$id": "Definition",
+              "additionalProperties": false,
+              "title": "Definition",
+              "description": "A detailed representation of a definition, including its original and neutral forms, pronunciations, translations, definitions, origin, and usage examples.",
+              "examples": [
+                {
+                  "originalWord": "Esperanzamos",
+                  "neutralForm": "Esperanzar",
+                  "pronounciations": [
+                    {
+                      "transcription": "es.pe.ɾanˈθa.mos",
+                      "description": "Spain"
+                    },
+                    {
+                      "transcription": "es.pe.ɾanˈsa.mos",
+                      "description": "Latin America"
+                    }
+                  ],
+                  "translation": "To fill with hope, to become hopeful, to start to hope, to hold onto hope.",
+                  "synonyms": [
+                    "Ilusionar",
+                    "tener esperanza",
+                    "confiar"
+                  ],
+                  "definitionOriginal": "Acción de hacerse llevar por la esperanza o comenzar a tener esperanza frente a una situación, a pesar de las circunstancias que pueden sugerir lo contrario.",
+                  "definitionTranslated": "The action of being guided by or starting to have hope in a situation, despite circumstances that might suggest the contrary.",
+                  "origin": "The verb \"esperanzar\" is derived from the noun \"esperanza,\" meaning hope. The suffix \"-ar\" indicates that it's an infinitive verb. In this context, \"esperanzamos\" is the first person plural of the present indicative, meaning \"we hope\" or \"we become hopeful.\" The transition from the neutral form \"esperanzar\" to \"esperanzamos\" changes the verb from its infinitive form to a specific tense and subject, indicating the action of hoping being performed by us in the present.",
+                  "examples": [
+                    {
+                      "original": "Y nos esperanzamos contra toda lógica, contra todo lo que nos dice la experiencia.",
+                      "translation": "And we become hopeful against all logic, against everything our experience tells us."
+                    },
+                    {
+                      "original": "Cada vez que sale el sol, nos esperanzamos pensando que será un mejor día.",
+                      "translation": "Every time the sun rises, we become hopeful thinking it will be a better day."
+                    },
+                    {
+                      "original": "A pesar de las dificultades, nos esperanzamos al ver la solidaridad de la gente.",
+                      "translation": "Despite the difficulties, we become hopeful upon seeing people's solidarity."
+                    }
+                  ]
+                }
+              ],
+              "properties": {
+                "languageOriginal": {
+                  "type": "string",
+                  "description": "The original language of the word in a BCP 47 format."
+                },
+                "languageTranslated": {
+                  "type": "string",
+                  "description": "The language the word is translated to in a BCP 47 format."
+                },
+                "originalWord": {
+                  "type": "string",
+                  "description": "The original word given, in the exact same grammatic form, capitalized."
+                },
+                "neutralForm": {
+                  "type": "string",
+                  "description": "The word in a neutral grammatic form."
+                },
+                "pronounciations": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": [
+                      "object"
+                    ],
+                    "$schema": "http://json-schema.org/draft-07/schema",
+                    "additionalProperties": false,
+                    "properties": {
+                      "transcription": {
+                        "type": "string",
+                        "description": "A pronunciation of the original word given."
+                      },
+                      "description": {
+                        "type": "string",
+                        "description": "A description of the pronunciation. Like the area where it is commonly used."
+                      }
+                    },
+                    "required": [
+                      "transcription",
+                      "description"
+                    ]
+                  }
+                },
+                "translation": {
+                  "type": "string",
+                  "description": "An extensive translation to the language defined by a `languageTranslated` property, the more words the better. In case of multiple meanings, include all of them."
+                },
+                "synonyms": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Common synonyms in the original language."
+                },
+                "definitionOriginal": {
+                  "type": "string",
+                  "description": "An extensive definition in the original language."
+                },
+                "definitionTranslated": {
+                  "type": "string",
+                  "description": "An extensive definition in the language defined by a `languageTranslated` property."
+                },
+                "origin": {
+                  "type": "string",
+                  "description": "The root parts of the word and the origin in the language defined by a `languageTranslated` property. If the original form from Part 1 is different from the neutral grammatic form from Part 2, explain that difference including all the details."
+                },
+                "examples": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "object"
+                    ],
+                    "$schema": "http://json-schema.org/draft-07/schema",
+                    "additionalProperties": false,
+                    "properties": {
+                      "original": {
+                        "type": "string",
+                        "description": "An example sentence in the original language using the word."
+                      },
+                      "translation": {
+                        "type": "string",
+                        "description": "The translation of the example sentence in the language defined by a `languageTranslated` property."
+                      }
+                    },
+                    "required": [
+                      "original",
+                      "translation"
+                    ]
+                  },
+                  "description": "Three sentence examples of the usage of the original word in the same grammatic form followed by an translation in the language defined by a `languageTranslated` property. The sentence and the translation should be separated by one new line, while the examples themselves should be separated by three new lines. If there was a context from which that word was taken, include a phrase from that context in examples, replacing the first example."
+                }
+              },
+              "required": [
+                "languageOriginal",
+                "languageTranslated",
+                "originalWord",
+                "neutralForm",
+                "pronounciations",
+                "translation",
+                "synonyms",
+                "definitionOriginal",
+                "definitionTranslated",
+                "origin",
+                "examples"
+              ]
+            },
+            "fieldAnswers": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "object"
+                ],
+                "$schema": "http://json-schema.org/draft-07/schema",
+                "$id": "UserCardFieldAnswer",
+                "additionalProperties": false,
+                "title": "UserCardFieldAnswer",
+                "properties": {
+                  "userCardFieldName": {
+                    "type": "string"
+                  },
+                  "text": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "userCardFieldName",
+                  "text"
+                ]
+              }
+            }
+          },
+          "required": [
+            "id",
+            "definition",
+            "fieldAnswers"
+          ]
         }
       },
       "required": [
         "MessageBase",
-        "messages"
+        "messages",
+        "AuthSession",
+        "AuthInfo",
+        "Card"
       ]
     }
   },
   "properties": {
     "model": {
       "$ref": "#/definitions/Models"
+    },
+    "lensModel": {
+      "$ref": "#/definitions/LenseModels"
+    },
+    "WsMessageType": {
+      "type": [
+        "string"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "$id": "WsMessageType",
+      "title": "WsMessageType",
+      "enum": [
+        "QueryToServer",
+        "QueryFromServer",
+        "EventToServer",
+        "EventFromServer"
+      ],
+      "description": "Type of message"
+    },
+    "WsMessageNameRequestToServer": {
+      "type": "string",
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "$id": "WsMessageNameRequestToServer",
+      "title": "WsMessageNameRequestToServer",
+      "enum": [
+        "LenseQuery"
+      ]
+    },
+    "WsMessageNameEventToServer": {
+      "type": "string",
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "$id": "WsMessageNameEventToServer",
+      "title": "WsMessageNameEventToServer",
+      "enum": [
+        "Mutation"
+      ]
+    },
+    "WsMessageName": {
+      "type": "string",
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "$id": "WsMessageName",
+      "title": "WsMessageName",
+      "enum": [
+        "LenseQuery",
+        "Mutation"
+      ]
+    },
+    "WsMessageBase": {
+      "type": [
+        "object"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "$id": "WsMessageBase",
+      "additionalProperties": false,
+      "title": "WsMessageBase",
+      "properties": {
+        "name": {
+          "$ref": "#/properties/WsMessageName"
+        },
+        "id": {
+          "type": "string"
+        },
+        "responseForId": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "name",
+        "id",
+        "data"
+      ]
     }
   },
   "required": [
-    "model"
+    "model",
+    "lensModel",
+    "WsMessageType",
+    "WsMessageNameRequestToServer",
+    "WsMessageNameEventToServer",
+    "WsMessageName",
+    "WsMessageBase"
   ]
 }

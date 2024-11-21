@@ -8,7 +8,6 @@ require (
 )
 
 require (
-	github.com/atombender/go-jsonschema v0.15.0 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/goccy/go-yaml v1.11.2 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect

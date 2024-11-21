@@ -1,0 +1,105 @@
+{
+  "type": [
+    "object"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "MessageGetCards",
+  "additionalProperties": false,
+  "title": "MessageGetCards",
+  "properties": {
+    "input": {
+      "type": [
+        "object"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "../property/Id.json"
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "GetCards"
+          ]
+        },
+        "data": {
+          "type": [
+            "object"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "additionalProperties": false,
+          "properties": {
+            "deckId": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "deckId"
+          ]
+        },
+        "authToken": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "data",
+        "authToken"
+      ]
+    },
+    "output": {
+      "type": [
+        "object"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "../property/Id.json"
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "GetCards"
+          ]
+        },
+        "data": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "additionalProperties": false,
+          "properties": {
+            "cards": {
+              "type": "array",
+              "items": {
+                "$ref": "./Card.json"
+              }
+            }
+          },
+          "required": [
+            "cards"
+          ]
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "../property/AppError.json"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "errors"
+      ]
+    }
+  },
+  "required": [
+    "input",
+    "output"
+  ]
+}

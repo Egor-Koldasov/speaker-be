@@ -1,12 +1,16 @@
 {
-  "type": "object",
+  "type": [
+    "object"
+  ],
   "$schema": "http://json-schema.org/draft-07/schema",
   "$id": "Main",
   "additionalProperties": false,
-  "title": "GenJsonSchema",
+  "title": "Main",
   "definitions": {
     "MessageMap": {
-      "type": "object",
+      "type": [
+        "object"
+      ],
       "$schema": "http://json-schema.org/draft-07/schema",
       "additionalProperties": false,
       "properties": {
@@ -15,20 +19,40 @@
         },
         "DefineTerm": {
           "$ref": "./model/MessageDefineTerm.json"
+        },
+        "GetAuthInfo": {
+          "$ref": "./model/MessageGetAuthInfo.json"
+        },
+        "GetDecks": {
+          "$ref": "./model/MessageGetDecks.json"
+        },
+        "AddCard": {
+          "$ref": "./model/MessageAddCard.json"
+        },
+        "GetCards": {
+          "$ref": "./model/MessageGetCards.json"
         }
       },
       "required": [
         "ParseTextFromForeign",
-        "DefineTerm"
+        "DefineTerm",
+        "GetAuthInfo",
+        "GetDecks",
+        "AddCard",
+        "GetCards"
       ]
     },
     "ChatGroupMap": {
-      "type": "object",
+      "type": [
+        "object"
+      ],
       "$schema": "http://json-schema.org/draft-07/schema",
       "additionalProperties": false,
       "properties": {
         "ParseTextFromForeign": {
-          "type": "object",
+          "type": [
+            "object"
+          ],
           "$schema": "http://json-schema.org/draft-07/schema",
           "additionalProperties": false,
           "properties": {
@@ -45,7 +69,9 @@
           ]
         },
         "DefineTerm": {
-          "type": "object",
+          "type": [
+            "object"
+          ],
           "$schema": "http://json-schema.org/draft-07/schema",
           "additionalProperties": false,
           "properties": {
@@ -67,8 +93,13 @@
         "DefineTerm"
       ]
     },
+    "LenseModels": {
+      "$ref": "./LenseModels.json"
+    },
     "Models": {
-      "type": "object",
+      "type": [
+        "object"
+      ],
       "$schema": "http://json-schema.org/draft-07/schema",
       "additionalProperties": false,
       "properties": {
@@ -77,20 +108,56 @@
         },
         "messages": {
           "$ref": "#/definitions/MessageMap"
+        },
+        "AuthSession": {
+          "$ref": "./model/AuthSession.json"
+        },
+        "AuthInfo": {
+          "$ref": "./model/AuthInfo.json"
+        },
+        "Card": {
+          "$ref": "./model/Card.json"
         }
       },
       "required": [
         "MessageBase",
-        "messages"
+        "messages",
+        "AuthSession",
+        "AuthInfo",
+        "Card"
       ]
     }
   },
   "properties": {
     "model": {
       "$ref": "#/definitions/Models"
+    },
+    "lensModel": {
+      "$ref": "#/definitions/LenseModels"
+    },
+    "WsMessageType": {
+      "$ref": "./ws-message/WsMessageType.json"
+    },
+    "WsMessageNameRequestToServer": {
+      "$ref": "./ws-message/WsMessageNameRequestToServer.json"
+    },
+    "WsMessageNameEventToServer": {
+      "$ref": "./ws-message/WsMessageNameEventToServer.json"
+    },
+    "WsMessageName": {
+      "$ref": "./ws-message/WsMessageName.json"
+    },
+    "WsMessageBase": {
+      "$ref": "./ws-message/WsMessageBase.json"
     }
   },
   "required": [
-    "model"
+    "model",
+    "lensModel",
+    "WsMessageType",
+    "WsMessageNameRequestToServer",
+    "WsMessageNameEventToServer",
+    "WsMessageName",
+    "WsMessageBase"
   ]
 }

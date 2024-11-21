@@ -92,6 +92,8 @@ const exportSchemas = async () => {
     path.resolve(jsonSchemaDir, "./Main.json"),
     {
       cwd: path.resolve(jsonSchemaDir),
+      inferStringEnumKeysFromValues: true,
+      enableConstEnums: false,
     }
   );
   // console.log(types);
@@ -101,6 +103,17 @@ const exportSchemas = async () => {
   // );
   await writeFile(path.resolve(genTsDir, "./Main.schema.ts"), types);
 };
+
+// const exportLensStore = async () => {
+//   const types = await compileFromFile(
+//     path.resolve(jsonSchemaDir, "./LensStore.json"),
+//     {
+//       cwd: path.resolve(jsonSchemaDir),
+//     }
+//   );
+
+//   await writeFile(path.resolve(genTsDir, "./Main.schema.ts"), types);
+// }
 
 const main = async () => {
   await exportJsonSchemaBundles();

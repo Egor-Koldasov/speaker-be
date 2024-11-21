@@ -25,16 +25,16 @@ func (j *ChatInputDefineTerm) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
-	if v, ok := raw["context"]; !ok || v == nil {
+	if _, ok := raw["context"]; raw != nil && !ok {
 		return fmt.Errorf("field context in ChatInputDefineTerm: required")
 	}
-	if v, ok := raw["originalLanguages"]; !ok || v == nil {
+	if _, ok := raw["originalLanguages"]; raw != nil && !ok {
 		return fmt.Errorf("field originalLanguages in ChatInputDefineTerm: required")
 	}
-	if v, ok := raw["term"]; !ok || v == nil {
+	if _, ok := raw["term"]; raw != nil && !ok {
 		return fmt.Errorf("field term in ChatInputDefineTerm: required")
 	}
-	if v, ok := raw["translationLanguage"]; !ok || v == nil {
+	if _, ok := raw["translationLanguage"]; raw != nil && !ok {
 		return fmt.Errorf("field translationLanguage in ChatInputDefineTerm: required")
 	}
 	type Plain ChatInputDefineTerm

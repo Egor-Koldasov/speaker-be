@@ -10,25 +10,10 @@
  */
 export type Id = string;
 /**
- * The code name of the error.
- */
-export type ErrorName =
-  | "Unknown"
-  | "Internal"
-  | "Ai_CreateCompletion"
-  | "AI_ResponseUnmarshal"
-  | "JsonSchema_MessageInput"
-  | "JsonSchema_MessageOutput"
-  | "NotFound_MessageName"
-  | "FromAi_Critical"
-  | "ChatAiError";
-/**
  * The list of BCP 47 language tags of the languages foreign to the user that are most commonly used in the learning process. Take this list as a priority when you try to detect the text language of the text foreign to the user. Although it is not guaranteed to completely match the text languages
  */
 export type ForeignLanguages = string[];
-export type ChatOutputDataParseTextFromForeign = ChatOutputDataParseTextFromForeign1 &
-  ChatOutputDataParseTextFromForeign2;
-export type ChatOutputDataParseTextFromForeign2 = {
+export type ChatOutputDataParseTextFromForeign = {
   definitionParts: {
     /**
      * The text of word extracted. Keep this part small, it should not be longer than a typical dictionary entry point. Include only the word itself without any extra symbols. Do not include any punctuation symbols, enclosing parentheses or apostrophes an so on.
@@ -57,18 +42,56 @@ export type ChatOutputDataParseTextFromForeign2 = {
      */
     language: string;
   };
-} | null;
-export type ChatOutputDataDefineTerm = ChatOutputDataDefineTerm1 & ChatOutputDataDefineTerm2;
-export type ChatOutputDataDefineTerm2 = {
-  definition: Definition;
-} | null;
+} & ({
+  definitionParts: {
+    /**
+     * The text of word extracted. Keep this part small, it should not be longer than a typical dictionary entry point. Include only the word itself without any extra symbols. Do not include any punctuation symbols, enclosing parentheses or apostrophes an so on.
+     */
+    text: string;
+    /**
+     * A short translation of the word without additional formatting. Among several translation choices, choose the one that is the best fitting the original context from the user input text that was sent for this parsing.
+     */
+    translation: string;
+    /**
+     * The BCP 47 language tag of the language of that word. Null for unknown
+     */
+    languageOriginal: string;
+    /**
+     * The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'
+     */
+    languageTranslated: string;
+  }[];
+  /**
+   * The full translation of the text to the requested language.
+   */
+  translation: {
+    text: string;
+    /**
+     * The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'
+     */
+    language: string;
+  };
+} | null);
+/**
+ * The list of BCP 47 language tags of the languages native to the user. Take this list as a priority when you try to detect the text language. Although it is not guaranteed to completely match the text languages
+ */
+export type NativeLanguages = string[];
 
-export interface GenJsonSchema {
+export interface Main {
   model: Models;
+  lensModel: LenseModels;
+  WsMessageType: WsMessageType;
+  WsMessageNameRequestToServer: WsMessageNameRequestToServer;
+  WsMessageNameEventToServer: WsMessageNameEventToServer;
+  WsMessageName: WsMessageName;
+  WsMessageBase: WsMessageBase;
 }
 export interface Models {
   MessageBase: MessageBase;
   messages: MessageMap;
+  AuthSession: AuthSession;
+  AuthInfo: AuthInfo;
+  Card: Card;
 }
 export interface MessageBase {
   input: {
@@ -77,6 +100,7 @@ export interface MessageBase {
     data: {
       [k: string]: unknown;
     };
+    authToken: string;
   };
   output: {
     id: Id;
@@ -97,17 +121,26 @@ export interface AppError {
 export interface MessageMap {
   ParseTextFromForeign: MessageParseTextFromForeign;
   DefineTerm: MessageDefineTerm;
+  GetAuthInfo: MessageGetAuthInfo;
+  GetDecks: MessageGetDecks;
+  AddCard: MessageAddCard;
+  GetCards: MessageGetCards;
 }
 export interface MessageParseTextFromForeign {
   input: {
     id: Id;
-    name: "ParseTextFromForeign";
-    data: ChatInputParseTextFromForeign;
+    name: Name;
+    data: {
+      chatInput: ChatInputParseTextFromForeign;
+    };
+    authToken: string;
   };
   output: {
     id: Id;
-    name: "ParseTextFromForeign";
-    data: ChatOutputDataParseTextFromForeign;
+    name: Name1;
+    data?: {
+      chatOutput: ChatOutputDataParseTextFromForeign;
+    } | null;
     errors: AppError[];
   };
 }
@@ -119,46 +152,22 @@ export interface ChatInputParseTextFromForeign {
    */
   translationLanguage: string;
 }
-export interface ChatOutputDataParseTextFromForeign1 {
-  definitionParts: {
-    /**
-     * The text of word extracted. Keep this part small, it should not be longer than a typical dictionary entry point. Include only the word itself without any extra symbols. Do not include any punctuation symbols, enclosing parentheses or apostrophes an so on.
-     */
-    text: string;
-    /**
-     * A short translation of the word without additional formatting. Among several translation choices, choose the one that is the best fitting the original context from the user input text that was sent for this parsing.
-     */
-    translation: string;
-    /**
-     * The BCP 47 language tag of the language of that word. Null for unknown
-     */
-    languageOriginal: string;
-    /**
-     * The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'
-     */
-    languageTranslated: string;
-  }[];
-  /**
-   * The full translation of the text to the requested language.
-   */
-  translation: {
-    text: string;
-    /**
-     * The BCP 47 language tag of the language of the translation. It should match the requested 'translationLanguage'
-     */
-    language: string;
-  };
-}
 export interface MessageDefineTerm {
   input: {
     id: Id;
-    name: "DefineTerm";
-    data: ChatInputDefineTerm;
+    name: Name2;
+    data: {
+      chatInput: ChatInputDefineTerm;
+    };
+    authToken: string;
   };
   output: {
     id: Id;
-    name: "DefineTerm";
-    data: ChatOutputDataDefineTerm;
+    name: Name3;
+    data?: {
+      definition: Definition;
+      decks: Deck[];
+    } | null;
     errors: AppError[];
   };
 }
@@ -176,9 +185,6 @@ export interface ChatInputDefineTerm {
    * The BCP 47 language tag of the language that the user wants to translate the foreign text to.
    */
   translationLanguage: string;
-}
-export interface ChatOutputDataDefineTerm1 {
-  definition: Definition;
 }
 /**
  * A detailed representation of a definition, including its original and neutral forms, pronunciations, translations, definitions, origin, and usage examples.
@@ -258,4 +264,224 @@ export interface Definition {
      */
     translation: string;
   }[];
+}
+export interface Deck {
+  id: string;
+  name: string;
+}
+export interface MessageGetAuthInfo {
+  input: {
+    id: Id;
+    name: Name4;
+    data: {};
+    authToken: string;
+  };
+  output: {
+    id: Id;
+    name: Name5;
+    data?: {
+      authInfo: AuthInfo;
+    } | null;
+    errors: AppError[];
+  };
+}
+export interface AuthInfo {
+  user: User;
+  userSettings: UserSettings;
+}
+export interface User {
+  /**
+   * UUID v7 string
+   */
+  id: string;
+  /**
+   * ISO 8601 date string
+   */
+  createdAt: string;
+  /**
+   * ISO 8601 date string
+   */
+  updatedAt: string;
+  /**
+   * ISO 8601 date string or null
+   */
+  deletedAt: string | null;
+  email: string;
+}
+export interface UserSettings {
+  /**
+   * UUID v7 string
+   */
+  id: string;
+  /**
+   * ISO 8601 date string
+   */
+  createdAt: string;
+  /**
+   * ISO 8601 date string
+   */
+  updatedAt: string;
+  /**
+   * ISO 8601 date string or null
+   */
+  deletedAt: string | null;
+  foreignLanguages: ForeignLanguages;
+  /**
+   * The BCP 47 language tag of the language that the user wants to translate the foreign text to.
+   */
+  translationLanguage: string;
+  nativeLanguages: NativeLanguages;
+  /**
+   * The BCP 47 language tag of the language that the user wants to translate the text to.
+   */
+  primaryForeignLanguage: string;
+}
+export interface MessageGetDecks {
+  input: {
+    id: Id;
+    name: Name6;
+    data: {};
+    authToken: string;
+  };
+  output: {
+    id: Id;
+    name: Name7;
+    data?: {
+      decks: Deck[];
+    } | null;
+    errors: AppError[];
+  };
+}
+export interface MessageAddCard {
+  input: {
+    id: Id;
+    name: Name8;
+    data: {
+      card: Card;
+      deckId: string;
+    };
+    authToken: string;
+  };
+  output: {
+    id: Id;
+    name: Name9;
+    data?: {} | null;
+    errors: AppError[];
+  };
+}
+export interface Card {
+  /**
+   * uuid-v7
+   */
+  id: string;
+  definition: Definition;
+  fieldAnswers: UserCardFieldAnswer[];
+}
+export interface UserCardFieldAnswer {
+  userCardFieldName: string;
+  text: string;
+}
+export interface MessageGetCards {
+  input: {
+    id: Id;
+    name: Name10;
+    data: {
+      deckId: string;
+    };
+    authToken: string;
+  };
+  output: {
+    id: Id;
+    name: Name11;
+    data?: {
+      cards: Card[];
+    } | null;
+    errors: AppError[];
+  };
+}
+export interface AuthSession {
+  authToken: string;
+}
+export interface LenseModels {
+  User: User;
+  UserSettings: UserSettings;
+}
+export interface WsMessageBase {
+  name: WsMessageName;
+  id: string;
+  responseForId?: string;
+  data: {
+    [k: string]: unknown;
+  };
+}
+
+/**
+ * The code name of the error.
+ */
+export enum ErrorName {
+  Unknown = "Unknown",
+  Internal = "Internal",
+  Ai_CreateCompletion = "Ai_CreateCompletion",
+  AI_ResponseUnmarshal = "AI_ResponseUnmarshal",
+  JsonSchema_MessageInput = "JsonSchema_MessageInput",
+  JsonSchema_MessageOutput = "JsonSchema_MessageOutput",
+  NotFound_MessageName = "NotFound_MessageName",
+  FromAi_Critical = "FromAi_Critical",
+  ChatAiError = "ChatAiError",
+  AuthRequired = "AuthRequired"
+}
+export enum Name {
+  ParseTextFromForeign = "ParseTextFromForeign"
+}
+export enum Name1 {
+  ParseTextFromForeign = "ParseTextFromForeign"
+}
+export enum Name2 {
+  DefineTerm = "DefineTerm"
+}
+export enum Name3 {
+  DefineTerm = "DefineTerm"
+}
+export enum Name4 {
+  GetAuthInfo = "GetAuthInfo"
+}
+export enum Name5 {
+  GetAuthInfo = "GetAuthInfo"
+}
+export enum Name6 {
+  GetDecks = "GetDecks"
+}
+export enum Name7 {
+  GetDecks = "GetDecks"
+}
+export enum Name8 {
+  AddCard = "AddCard"
+}
+export enum Name9 {
+  AddCard = "AddCard"
+}
+export enum Name10 {
+  GetCards = "GetCards"
+}
+export enum Name11 {
+  GetCards = "GetCards"
+}
+/**
+ * Type of message
+ */
+export enum WsMessageType {
+  QueryToServer = "QueryToServer",
+  QueryFromServer = "QueryFromServer",
+  EventToServer = "EventToServer",
+  EventFromServer = "EventFromServer"
+}
+export enum WsMessageNameRequestToServer {
+  LenseQuery = "LenseQuery"
+}
+export enum WsMessageNameEventToServer {
+  Mutation = "Mutation"
+}
+export enum WsMessageName {
+  LenseQuery = "LenseQuery",
+  Mutation = "Mutation"
 }

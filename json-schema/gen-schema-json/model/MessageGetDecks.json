@@ -1,0 +1,99 @@
+{
+  "type": [
+    "object"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "MessageGetDecks",
+  "additionalProperties": false,
+  "title": "MessageGetDecks",
+  "properties": {
+    "input": {
+      "type": [
+        "object"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "../property/Id.json"
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "GetDecks"
+          ]
+        },
+        "data": {
+          "type": [
+            "object"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "additionalProperties": false,
+          "properties": {},
+          "required": []
+        },
+        "authToken": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "data",
+        "authToken"
+      ]
+    },
+    "output": {
+      "type": [
+        "object"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "../property/Id.json"
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "GetDecks"
+          ]
+        },
+        "data": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "additionalProperties": false,
+          "properties": {
+            "decks": {
+              "type": "array",
+              "items": {
+                "$ref": "./Deck.json"
+              }
+            }
+          },
+          "required": [
+            "decks"
+          ]
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "../property/AppError.json"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "errors"
+      ]
+    }
+  },
+  "required": [
+    "input",
+    "output"
+  ]
+}

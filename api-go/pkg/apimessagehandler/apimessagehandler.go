@@ -6,12 +6,18 @@ import (
 	"api-go/pkg/genjsonschema"
 	"api-go/pkg/jsonvalidate"
 	"api-go/pkg/neo4jdb"
+	"api-go/pkg/neo4jqueries"
+	"api-go/pkg/utilarray"
 	"api-go/pkg/utilerror"
 	"api-go/pkg/utilneo4jdb"
 	"api-go/pkg/utilstruct"
 	"fmt"
 	"log"
 )
+
+var unauthRoutes = []string{
+	"Auth",
+}
 
 type HandlerFn[InputData interface{}, OutputData interface{}] func(*apimessage.MessageInput[InputData]) *apimessage.MessageOutput[OutputData]
 
@@ -27,7 +33,36 @@ func makeHandler[InputData interface{}, OutputData interface{}](handler HandlerF
 		)
 		_, err := neo4jdb.ExecuteQuery(inputQueryConfig.Query, inputQueryConfig.Params)
 		utilerror.LogError("Error executing input query", err)
+		// Check authentication
+		if !utilarray.Contains(unauthRoutes, messageBase.Name) {
+			authToken := input.AuthToken
+			if utilerror.LogErrorIf("Auth token not found", authToken == "") {
+				return &apimessage.MessageOutput[interface{}]{
+					Name: messageBase.Name,
+					Errors: []genjsonschema.AppError{
+						{
+							Name:    genjsonschema.ErrorNameAuthRequired,
+							Message: "Auth token required",
+						},
+					},
+				}
+			}
+			user := neo4jqueries.FindUserByAuthToken(authToken)
+			if utilerror.LogErrorIf("User not found", user == nil) {
+				return &apimessage.MessageOutput[interface{}]{
+					Name: messageBase.Name,
+					Errors: []genjsonschema.AppError{
+						{
+							Name:    genjsonschema.ErrorNameAuthRequired,
+							Message: "Auth token invalid",
+						},
+					},
+				}
+			}
+
+		}
 		output := outputDataDefinedToUnknown(handler(&input))
+		outputNodeDefinition := utilneo4jdb.CreateNodeDefinition("output", []string{"MessageOutput"}, *output, nil)
 		outputQueryConfig := utilneo4jdb.Join(
 			utilneo4jdb.NodeDefinition{
 				Query: "MATCH (input:MessageInput { Id: $inputId })",
@@ -35,13 +70,15 @@ func makeHandler[InputData interface{}, OutputData interface{}](handler HandlerF
 					"inputId": input.Id,
 				},
 			},
-			utilneo4jdb.CreateNodeDefinition("output", []string{"MessageOutput"}, *output, nil),
+			outputNodeDefinition,
 			utilneo4jdb.NodeDefinition{
-				Query: utilneo4jdb.Relation("input", "output", "OUTPUTS"),
+				Query: utilneo4jdb.CreateRelation("input", "output", "OUTPUTS"),
 			},
 		)
 		_, err = neo4jdb.ExecuteQuery(outputQueryConfig.Query, outputQueryConfig.Params)
-		utilerror.LogError("Error executing input query", err)
+		if utilerror.LogError("Error executing input query", err) {
+			fmt.Printf("%v", outputQueryConfig.Query)
+		}
 
 		log.Printf("Message received: %v", output)
 		if utilerror.LogErrorIf("Message output name is incorrect", messageBase.Name != output.Name) {
@@ -62,6 +99,7 @@ func HandleMessage(message genjsonschema.MessageBaseInput) *apimessage.MessageOu
 	appErrors := jsonvalidate.ValidateMessageInput("Base", message)
 	if utilerror.LogErrorIf(fmt.Sprintf("Error validating message: %v", appErrors), len(*appErrors) > 0) {
 		return &apimessage.MessageOutput[interface{}]{
+			Id:     string(message.Id),
 			Name:   message.Name,
 			Errors: *appErrors,
 			Data:   nil,
@@ -70,6 +108,7 @@ func HandleMessage(message genjsonschema.MessageBaseInput) *apimessage.MessageOu
 	appErrors = jsonvalidate.ValidateMessageInput(message.Name, message)
 	if utilerror.LogErrorIf(fmt.Sprintf("Error validating message %v: %v", message.Name, appErrors), len(*appErrors) > 0) {
 		return &apimessage.MessageOutput[interface{}]{
+			Id:     string(message.Id),
 			Name:   message.Name,
 			Errors: *appErrors,
 			Data:   nil,
@@ -79,6 +118,7 @@ func HandleMessage(message genjsonschema.MessageBaseInput) *apimessage.MessageOu
 
 	if utilerror.LogErrorIf("Message handler not found", handler == nil) {
 		return &apimessage.MessageOutput[interface{}]{
+			Id:   string(message.Id),
 			Name: message.Name,
 			Errors: []genjsonschema.AppError{
 				{
@@ -93,6 +133,7 @@ func HandleMessage(message genjsonschema.MessageBaseInput) *apimessage.MessageOu
 	appErrors = jsonvalidate.ValidateMessageOutput(message.Name, output)
 	if utilerror.LogErrorIf(fmt.Sprintf("Error validating message output %v: %v.\n %v", message.Name, appErrors, output), len(*appErrors) > 0) {
 		return &apimessage.MessageOutput[interface{}]{
+			Id:     string(message.Id),
 			Name:   message.Name,
 			Errors: *appErrors,
 			Data:   nil,

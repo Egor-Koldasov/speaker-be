@@ -11,10 +11,10 @@ export default schemaObject(
       description: "A context from which the term is taken",
     },
     originalLanguages: {
-      $ref: "./UserSettings.json#/definitions/foreignLanguages",
+      $ref: "../lense-models/UserSettings.json#/definitions/foreignLanguages",
     },
     translationLanguage: {
-      $ref: "./UserSettings.json#/definitions/translationLanguage",
+      $ref: "../lense-models/UserSettings.json#/definitions/translationLanguage",
     },
   },
   {

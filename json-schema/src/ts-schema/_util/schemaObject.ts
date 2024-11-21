@@ -1,7 +1,11 @@
-import { JSONSchema7 } from "json-schema";
+import { JSONSchema7, JSONSchema7Definition } from "json-schema";
 import { SchemaInput, schema } from "./schema";
 
-export type SchemaObjectInput = NonNullable<JSONSchema7["properties"]>;
+export type SchemaObjectInput = {
+  [key: string]: Omit<JSONSchema7Definition, "type"> & {
+    type?: string[] | string;
+  };
+};
 export type SchemaObjectOpts = SchemaInput & {
   optional?: string[];
 };
@@ -12,13 +16,21 @@ export const schemaObject = <
 >(
   input: Input,
   optsPassed?: Opts
-): Omit<Opts, "optional"> & { properties: Input; type: "object" } => {
+): Omit<Opts, "optional" | "type"> & {
+  properties: Input;
+  type?: ["object"];
+} => {
   const { optional, ...opts } = optsPassed || {};
+  const required = Object.keys(input).filter((key) => !optional?.includes(key));
+
   return schema({
     additionalProperties: false,
-    type: "object",
+    type: ["object"],
     ...opts,
-    properties: input,
-    required: Object.keys(input).filter((key) => !optional?.includes(key)),
-  }) as Omit<Opts, "optional"> & { properties: Input; type: "object" };
+    properties: input as JSONSchema7["properties"],
+    required,
+  }) as Omit<Opts, "optional" | "type"> & {
+    properties: Input;
+    type: ["object"];
+  };
 };

@@ -6,10 +6,10 @@ export default schemaObject(
       type: "string",
     },
     originalLanguages: {
-      $ref: "./UserSettings.json#/definitions/foreignLanguages",
+      $ref: "../lense-models/UserSettings.json#/definitions/foreignLanguages",
     },
     translationLanguage: {
-      $ref: "./UserSettings.json#/definitions/translationLanguage",
+      $ref: "../lense-models/UserSettings.json#/definitions/translationLanguage",
     },
   },
   {

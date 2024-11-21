@@ -15,6 +15,9 @@ type MessageDefineTerm struct {
 }
 
 type MessageDefineTermInput struct {
+	// AuthToken corresponds to the JSON schema field "authToken".
+	AuthToken string `json:"authToken" yaml:"authToken" mapstructure:"authToken"`
+
 	// Data corresponds to the JSON schema field "data".
 	Data MessageDefineTermInputData `json:"data" yaml:"data" mapstructure:"data"`
 
@@ -26,35 +29,34 @@ type MessageDefineTermInput struct {
 }
 
 type MessageDefineTermInputData struct {
-	// A context from which the term is taken
-	Context string `json:"context" yaml:"context" mapstructure:"context"`
+	// ChatInput corresponds to the JSON schema field "chatInput".
+	ChatInput ChatInputDefineTerm `json:"chatInput" yaml:"chatInput" mapstructure:"chatInput"`
+}
 
-	// OriginalLanguages corresponds to the JSON schema field "originalLanguages".
-	OriginalLanguages ForeignLanguages `json:"originalLanguages" yaml:"originalLanguages" mapstructure:"originalLanguages"`
-
-	// A term to define
-	Term string `json:"term" yaml:"term" mapstructure:"term"`
-
-	// TranslationLanguage corresponds to the JSON schema field "translationLanguage".
-	TranslationLanguage TranslationLanguage `json:"translationLanguage" yaml:"translationLanguage" mapstructure:"translationLanguage"`
+// UnmarshalJSON implements json.Unmarshaler.
+func (j *MessageDefineTermInputData) UnmarshalJSON(b []byte) error {
+	var raw map[string]interface{}
+	if err := json.Unmarshal(b, &raw); err != nil {
+		return err
+	}
+	if _, ok := raw["chatInput"]; raw != nil && !ok {
+		return fmt.Errorf("field chatInput in MessageDefineTermInputData: required")
+	}
+	type Plain MessageDefineTermInputData
+	var plain Plain
+	if err := json.Unmarshal(b, &plain); err != nil {
+		return err
+	}
+	*j = MessageDefineTermInputData(plain)
+	return nil
 }
 
 type MessageDefineTermInputName string
 
 const MessageDefineTermInputNameDefineTerm MessageDefineTermInputName = "DefineTerm"
 
-type MessageDefineTermOutput struct {
-	// Data corresponds to the JSON schema field "data".
-	Data ChatOutputDataDefineTerm `json:"data" yaml:"data" mapstructure:"data"`
-
-	// Errors corresponds to the JSON schema field "errors".
-	Errors []AppError `json:"errors" yaml:"errors" mapstructure:"errors"`
-
-	// Id corresponds to the JSON schema field "id".
-	Id Id `json:"id" yaml:"id" mapstructure:"id"`
-
-	// Name corresponds to the JSON schema field "name".
-	Name MessageDefineTermOutputName `json:"name" yaml:"name" mapstructure:"name"`
+var enumValues_MessageDefineTermInputName = []interface{}{
+	"DefineTerm",
 }
 
 // UnmarshalJSON implements json.Unmarshaler.
@@ -83,13 +85,16 @@ func (j *MessageDefineTermInput) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
-	if v, ok := raw["data"]; !ok || v == nil {
+	if _, ok := raw["authToken"]; raw != nil && !ok {
+		return fmt.Errorf("field authToken in MessageDefineTermInput: required")
+	}
+	if _, ok := raw["data"]; raw != nil && !ok {
 		return fmt.Errorf("field data in MessageDefineTermInput: required")
 	}
-	if v, ok := raw["id"]; !ok || v == nil {
+	if _, ok := raw["id"]; raw != nil && !ok {
 		return fmt.Errorf("field id in MessageDefineTermInput: required")
 	}
-	if v, ok := raw["name"]; !ok || v == nil {
+	if _, ok := raw["name"]; raw != nil && !ok {
 		return fmt.Errorf("field name in MessageDefineTermInput: required")
 	}
 	type Plain MessageDefineTermInput
@@ -101,7 +106,52 @@ func (j *MessageDefineTermInput) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+type MessageDefineTermOutput struct {
+	// Data corresponds to the JSON schema field "data".
+	Data *MessageDefineTermOutputData `json:"data,omitempty" yaml:"data,omitempty" mapstructure:"data,omitempty"`
+
+	// Errors corresponds to the JSON schema field "errors".
+	Errors []AppError `json:"errors" yaml:"errors" mapstructure:"errors"`
+
+	// Id corresponds to the JSON schema field "id".
+	Id Id `json:"id" yaml:"id" mapstructure:"id"`
+
+	// Name corresponds to the JSON schema field "name".
+	Name MessageDefineTermOutputName `json:"name" yaml:"name" mapstructure:"name"`
+}
+
+type MessageDefineTermOutputData struct {
+	// Decks corresponds to the JSON schema field "decks".
+	Decks []Deck `json:"decks" yaml:"decks" mapstructure:"decks"`
+
+	// Definition corresponds to the JSON schema field "definition".
+	Definition Definition `json:"definition" yaml:"definition" mapstructure:"definition"`
+}
+
+// UnmarshalJSON implements json.Unmarshaler.
+func (j *MessageDefineTermOutputData) UnmarshalJSON(b []byte) error {
+	var raw map[string]interface{}
+	if err := json.Unmarshal(b, &raw); err != nil {
+		return err
+	}
+	if _, ok := raw["decks"]; raw != nil && !ok {
+		return fmt.Errorf("field decks in MessageDefineTermOutputData: required")
+	}
+	if _, ok := raw["definition"]; raw != nil && !ok {
+		return fmt.Errorf("field definition in MessageDefineTermOutputData: required")
+	}
+	type Plain MessageDefineTermOutputData
+	var plain Plain
+	if err := json.Unmarshal(b, &plain); err != nil {
+		return err
+	}
+	*j = MessageDefineTermOutputData(plain)
+	return nil
+}
+
 type MessageDefineTermOutputName string
+
+const MessageDefineTermOutputNameDefineTerm MessageDefineTermOutputName = "DefineTerm"
 
 var enumValues_MessageDefineTermOutputName = []interface{}{
 	"DefineTerm",
@@ -127,28 +177,19 @@ func (j *MessageDefineTermOutputName) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-const MessageDefineTermOutputNameDefineTerm MessageDefineTermOutputName = "DefineTerm"
-
-var enumValues_MessageDefineTermInputName = []interface{}{
-	"DefineTerm",
-}
-
 // UnmarshalJSON implements json.Unmarshaler.
 func (j *MessageDefineTermOutput) UnmarshalJSON(b []byte) error {
 	var raw map[string]interface{}
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
-	if v, ok := raw["data"]; !ok || v == nil {
-		return fmt.Errorf("field data in MessageDefineTermOutput: required")
-	}
-	if v, ok := raw["errors"]; !ok || v == nil {
+	if _, ok := raw["errors"]; raw != nil && !ok {
 		return fmt.Errorf("field errors in MessageDefineTermOutput: required")
 	}
-	if v, ok := raw["id"]; !ok || v == nil {
+	if _, ok := raw["id"]; raw != nil && !ok {
 		return fmt.Errorf("field id in MessageDefineTermOutput: required")
 	}
-	if v, ok := raw["name"]; !ok || v == nil {
+	if _, ok := raw["name"]; raw != nil && !ok {
 		return fmt.Errorf("field name in MessageDefineTermOutput: required")
 	}
 	type Plain MessageDefineTermOutput
@@ -161,42 +202,15 @@ func (j *MessageDefineTermOutput) UnmarshalJSON(b []byte) error {
 }
 
 // UnmarshalJSON implements json.Unmarshaler.
-func (j *MessageDefineTermInputData) UnmarshalJSON(b []byte) error {
-	var raw map[string]interface{}
-	if err := json.Unmarshal(b, &raw); err != nil {
-		return err
-	}
-	if v, ok := raw["context"]; !ok || v == nil {
-		return fmt.Errorf("field context in MessageDefineTermInputData: required")
-	}
-	if v, ok := raw["originalLanguages"]; !ok || v == nil {
-		return fmt.Errorf("field originalLanguages in MessageDefineTermInputData: required")
-	}
-	if v, ok := raw["term"]; !ok || v == nil {
-		return fmt.Errorf("field term in MessageDefineTermInputData: required")
-	}
-	if v, ok := raw["translationLanguage"]; !ok || v == nil {
-		return fmt.Errorf("field translationLanguage in MessageDefineTermInputData: required")
-	}
-	type Plain MessageDefineTermInputData
-	var plain Plain
-	if err := json.Unmarshal(b, &plain); err != nil {
-		return err
-	}
-	*j = MessageDefineTermInputData(plain)
-	return nil
-}
-
-// UnmarshalJSON implements json.Unmarshaler.
 func (j *MessageDefineTerm) UnmarshalJSON(b []byte) error {
 	var raw map[string]interface{}
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
-	if v, ok := raw["input"]; !ok || v == nil {
+	if _, ok := raw["input"]; raw != nil && !ok {
 		return fmt.Errorf("field input in MessageDefineTerm: required")
 	}
-	if v, ok := raw["output"]; !ok || v == nil {
+	if _, ok := raw["output"]; raw != nil && !ok {
 		return fmt.Errorf("field output in MessageDefineTerm: required")
 	}
 	type Plain MessageDefineTerm

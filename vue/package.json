@@ -27,13 +27,14 @@
     "map-obj": "^5.0.2",
     "openai": "^4.33.0",
     "pinia": "^2.1.7",
+    "pino": "^9.5.0",
     "speaker-json-schema": "../json-schema",
     "sysend": "^1.16.3",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
-    "@playwright/test": "^1.39.0",
+    "@playwright/test": "^1.48.2",
     "@rushstack/eslint-patch": "^1.3.3",
     "@tsconfig/node18": "^18.2.2",
     "@types/jsdom": "^21.1.3",

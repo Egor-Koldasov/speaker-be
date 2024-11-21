@@ -16,7 +16,7 @@ func (j *ChatOutputDataDefineTerm) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
-	if v, ok := raw["definition"]; !ok || v == nil {
+	if _, ok := raw["definition"]; raw != nil && !ok {
 		return fmt.Errorf("field definition in ChatOutputDataDefineTerm: required")
 	}
 	type Plain ChatOutputDataDefineTerm

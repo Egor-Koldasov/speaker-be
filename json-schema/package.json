@@ -5,19 +5,19 @@
   "author": "Egor Koldasov",
   "license": "MIT",
   "scripts": {
-    "generate": "npx tsc --build && node ./dist/export-schemas.js",
+    "generate": "rm -rf ./dist && npx tsc --build && node ./dist/export-schemas.js",
     "run-ts": "nodemon --delay 2 -w ./ -i ./dist -i ./gen* -x 'npx tsc && node $1'",
     "dev": "yarn run-ts -- ./dist/export-schemas.js"
   },
   "devDependencies": {
     "@types/json-schema": "^7.0.15",
-    "json-schema-to-typescript": "^13.1.2",
+    "json-schema-to-typescript": "^15.0.2",
     "nodemon": "^3.1.0",
     "ts-json-schema-generator": "^2.1.0",
     "typescript": "^5.4.4",
     "typescript-json-schema": "^0.63.0"
   },
   "dependencies": {
-    "@apidevtools/json-schema-ref-parser": "^11.5.4"
+    "@apidevtools/json-schema-ref-parser": "^11.7.2"
   }
 }

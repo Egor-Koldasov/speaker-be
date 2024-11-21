@@ -1,6 +1,5 @@
 import { schemaMessage } from "../_util/schemaMessage";
 import { schemaObject } from "../_util/schemaObject";
-import ChatInputDefineTerm from "./ChatInputDefineTerm";
 
 export default schemaMessage(
   schemaObject(
@@ -10,16 +9,28 @@ export default schemaMessage(
           type: "string",
           enum: ["DefineTerm"],
         },
-        data: ChatInputDefineTerm,
+        data: schemaObject({
+          chatInput: {
+            $ref: "./ChatInputDefineTerm.json",
+          },
+        }),
       }),
       output: schemaObject({
         name: {
           type: "string",
           enum: ["DefineTerm"],
         },
-        data: {
-          $ref: "./ChatOutputDataDefineTerm.json",
-        },
+        data: schemaObject({
+          definition: {
+            $ref: "./Definition.json",
+          },
+          decks: {
+            type: "array",
+            items: {
+              $ref: "./Deck.json",
+            },
+          },
+        }),
       }),
     },
     {

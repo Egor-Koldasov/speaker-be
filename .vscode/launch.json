@@ -5,12 +5,75 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch api-go",
+      "name": "api-go",
       "type": "go",
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceFolder}/api-go/cmd/server/api-go.go",
       "cwd": "${workspaceFolder}/api-go"
+    },
+    {
+      "name": "go-jsonschema",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/api-go/third_party/go-jsonschema/main.go",
+      "args": [
+        "-t",
+        "-p",
+        "genjsonschema",
+        "--schema-output=User=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/User.go",
+        "--schema-output=AuthInfo=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/AuthInfo.go",
+        "--schema-output=AuthSession=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/AuthSession.go",
+        "--schema-output=Card=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/Card.go",
+        "--schema-output=ChatInputDefineTerm=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/ChatInputDefineTerm.go",
+        "--schema-output=ChatInputParseTextFromForeign=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/ChatInputParseTextFromForeign.go",
+        "--schema-output=ChatOutputDataDefineTerm=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/ChatOutputDataDefineTerm.go",
+        "--schema-output=ChatOutputDataParseTextFromForeign=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/ChatOutputDataParseTextFromForeign.go",
+        "--schema-output=ChatOutputDefineTerm=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/ChatOutputDefineTerm.go",
+        "--schema-output=ChatOutputParseTextFromForeign=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/ChatOutputParseTextFromForeign.go",
+        "--schema-output=Deck=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/Deck.go",
+        "--schema-output=Definition=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/Definition.go",
+        "--schema-output=MessageAddCard=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/MessageAddCard.go",
+        "--schema-output=MessageBase=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/MessageBase.go",
+        "--schema-output=MessageDefineTerm=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/MessageDefineTerm.go",
+        "--schema-output=MessageGetAuthInfo=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/MessageGetAuthInfo.go",
+        "--schema-output=MessageGetCards=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/MessageGetCards.go",
+        "--schema-output=MessageGetDecks=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/MessageGetDecks.go",
+        "--schema-output=MessageParseTextFromForeign=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/MessageParseTextFromForeign.go",
+        "--schema-output=UserCardField=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/UserCardField.go",
+        "--schema-output=UserCardFieldAnswer=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/UserCardFieldAnswer.go",
+        "--schema-output=UserCardFieldSet=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/UserCardFieldSet.go",
+        "--schema-output=UserSettings=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/UserSettings.go",
+        "--schema-output=LenseModels=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/LenseModels.go",
+        "--schema-output=Main=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/Main.go",
+        "--schema-output=AppError=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/AppError.go",
+        "--schema-output=ChatAiError=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/ChatAiError.go",
+        "--schema-output=ErrorName=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/ErrorName.go",
+        "--schema-output=Id=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/Id.go",
+        "/Users/egorkolds/code/speaker-be/api-go/scripts/../../json-schema/gen-schema-json/Main.json"
+      ],
+      "cwd": "${workspaceFolder}/api-go/third_party/go-jsonschema"
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Launch Chrome against localhost",
+      "url": "http://localhost:3001",
+      "webRoot": "${workspaceFolder}/vue"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch vue dev server",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run-script", "dev"]
+    },
+    {
+      "name": "JSON-schema shell script watcher",
+      "type": "f5anything",
+      "request": "launch",
+      "command": "${workspaceFolder}/scripts/watch-json-schema.sh"
     },
     {
       "name": "Goose Debug up-by-one",

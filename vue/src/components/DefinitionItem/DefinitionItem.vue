@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import tags from 'language-tags'
 import { computed, reactive, watch, type Ref } from 'vue'
-import { useMessage } from '../../dataStore/messageStore'
+import { useMessage, useMessageStore } from '../../dataStore/messageStore'
+import { useMessageGetDecks } from '../../dataStore/messages/useMessageGetDecks'
+import { useMessageAddCard } from '../../dataStore/messages/useMessageAddCard'
 import { useSettings } from '../../uiStore/useSettings'
+import type { Definition } from 'speaker-json-schema/gen-schema-ts/Main.schema'
+import { uuidv7 } from 'uuidv7'
 
 // # Props, State
 const props = defineProps<{
@@ -27,9 +31,26 @@ const message = useMessage<'DefineTerm'>(form, {
   runOnMount: true,
   runOnUpdate: true,
 })
+const messageStore = useMessageStore()
+
+// const messageAddCard = useMessageAddCard()
+
+const messageDecks = useMessageGetDecks()
 // # Computed
 const messageData = computed(() => message.value.data?.output?.data)
 // # Callbacks
+const addCard = (definition: Definition) => {
+  messageStore.sendMessage({
+    name: 'AddCard',
+    data: {
+      deckId: '',
+      card: {
+        id: uuidv7(),
+        definition,
+      },
+    },
+  })
+}
 
 // # Watchers
 
@@ -41,7 +62,38 @@ watch([props.word, props.context], () => {
 <template>
   <div class="DefinitionItem">
     <div v-if="message.refreshing">Loading...</div>
-    <div v-else-if="messageData">
+    <div v-else-if="messageData" class="message-data">
+      <div class="button-bar">
+        <button
+          @click="
+            () => messageData?.definition && addCard(messageData.definition)
+          "
+        >
+          Add
+        </button>
+      </div>
+      <div class="decks" v-if="messageDecks.data?.output?.data">
+        <label>Decks</label>
+        <ul>
+          <li
+            v-for="deck in messageDecks.data.output.data.decks"
+            :key="deck.id"
+            class="deck"
+          >
+            <input
+              type="checkbox"
+              :id="deck.id"
+              class="deck-input"
+              :checked="
+                !!messageData.decks.find(
+                  (ownerDeck) => ownerDeck.id === deck.id,
+                )
+              "
+            />
+            <label :for="deck.id" class="deck-label">{{ deck.name }}</label>
+          </li>
+        </ul>
+      </div>
       <ul>
         <li>
           <label>Language original</label>
@@ -110,13 +162,16 @@ watch([props.word, props.context], () => {
 </template>
 <style scoped lang="scss">
 .DefinitionItem {
-  width: 70vw;
+  width: 40vw;
   max-width: 1000px;
   max-height: 90vh;
   overflow: auto;
-  flex-shrink: 1;
+  flex-shrink: 0;
   background-color: #1c161e;
   padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   ul {
     padding: 0;
     display: flex;
@@ -153,5 +208,19 @@ watch([props.word, props.context], () => {
     flex-direction: column;
     gap: 8px;
   }
+}
+.button-bar {
+  display: flex;
+}
+.message-data {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.deck {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }
 </style>

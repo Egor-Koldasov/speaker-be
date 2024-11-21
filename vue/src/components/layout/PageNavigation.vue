@@ -19,6 +19,9 @@ import { RouterLink } from 'vue-router'
       <li class="nav-item">
         <RouterLink to="/define-to-foreign">How to say</RouterLink>
       </li>
+      <li class="nav-item">
+        <RouterLink to="/decks">Decks</RouterLink>
+      </li>
     </ol>
   </nav>
 </template>

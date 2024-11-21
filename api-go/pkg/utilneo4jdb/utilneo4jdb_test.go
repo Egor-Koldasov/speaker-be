@@ -11,7 +11,7 @@ func TestCreateNodeDefinition(t *testing.T) {
 		Id:     "Test1",
 		Name:   genjsonschema.MessageDefineTermOutputNameDefineTerm,
 		Errors: []genjsonschema.AppError{},
-		Data: genjsonschema.ChatOutputDataDefineTerm{
+		Data: &genjsonschema.MessageDefineTermOutputData{
 			Definition: genjsonschema.Definition{
 				DefinitionOriginal:   "DefinitionOriginal1",
 				DefinitionTranslated: "DefinitionTranslated1",
@@ -20,7 +20,7 @@ func TestCreateNodeDefinition(t *testing.T) {
 	}
 
 	nodeDefinition := Join(
-		CreateNodeDefinition("output", []string{"MessageOutput"}, output),
+		CreateNodeDefinition("output", []string{"MessageOutput"}, output, nil),
 		CreateNodeDefinition(
 			"data",
 			[]string{
@@ -28,6 +28,7 @@ func TestCreateNodeDefinition(t *testing.T) {
 				string(genjsonschema.MessageDefineTermInputNameDefineTerm),
 			},
 			output,
+			nil,
 		),
 	)
 

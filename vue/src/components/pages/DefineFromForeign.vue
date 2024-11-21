@@ -110,7 +110,10 @@ const selectedWordParams = {
             type="button"
             class="part"
             :class="{ selected: uiState.selectedWordIndex === index }"
-            @click="uiState.selectedWordIndex = index"
+            @click="
+              uiState.selectedWordIndex =
+                uiState.selectedWordIndex === index ? -1 : index
+            "
             v-for="(part, index) in messageResult?.definitionParts ?? []"
             :key="index"
             :data-index="index"
@@ -190,9 +193,11 @@ const selectedWordParams = {
   flex-direction: column;
   gap: 1rem;
   height: 100%;
-  width: 100%;
   max-width: 1000px;
   max-height: 500px;
+  flex-shrink: 1;
+  width: 1px;
+  flex-grow: 1;
 
   textarea {
     width: 100%;
@@ -213,6 +218,7 @@ const selectedWordParams = {
   overflow-x: auto;
   flex-grow: 1;
   flex-shrink: 0;
+  padding: 0.5rem 0;
 
   .part {
     display: flex;
@@ -258,5 +264,6 @@ const selectedWordParams = {
   padding: 32px;
   padding-top: 0;
   gap: 32px;
+  overflow: clip;
 }
 </style>

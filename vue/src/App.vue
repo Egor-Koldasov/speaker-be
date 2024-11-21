@@ -35,6 +35,7 @@ html {
 }
 body {
   background-color: $mainBg;
+  color: $textForDark;
   height: 100svh;
   opacity: 0;
   transform: scale(0.94);
@@ -82,5 +83,9 @@ button {
 article {
   margin: 0;
   padding: 8px;
+}
+
+h2 {
+  color: inherit;
 }
 </style>

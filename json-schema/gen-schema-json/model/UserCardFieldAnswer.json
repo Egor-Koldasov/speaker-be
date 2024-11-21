@@ -1,0 +1,21 @@
+{
+  "type": [
+    "object"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "UserCardFieldAnswer",
+  "additionalProperties": false,
+  "title": "UserCardFieldAnswer",
+  "properties": {
+    "userCardFieldName": {
+      "type": "string"
+    },
+    "text": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "userCardFieldName",
+    "text"
+  ]
+}
