@@ -17,10 +17,12 @@ import { WsService, type WsMessage, type WsMessageBase } from './WsService'
 type LensQueryResponseMessage<
   Data extends object,
   Name extends LenseQueryName,
-> = WsMessage<ValueOf<WsMessageNameRequestToServer>, Data> & {
-  responseForId: string
-  lenseQueryName: Name
-}
+> = WsMessage<
+  ValueOf<WsMessageNameRequestToServer>,
+  Data & {
+    lenseQueryName: Name
+  }
+>
 type LensQueryRequestMessage<
   LensArgs extends object,
   Name extends LenseQueryName,
@@ -28,10 +30,10 @@ type LensQueryRequestMessage<
   WsMessageNameRequestToServer,
   {
     lensArgs: LensArgs
+  } & {
+    lenseQueryName: Name
   }
-> & {
-  lenseQueryName: Name
-}
+>
 export const isLenseQueryMessage = (
   message: WsMessageBase,
 ): message is LensQueryResponseMessage<object, LenseQueryName> =>
@@ -72,11 +74,11 @@ export const defineUseLens = <
       async requestMainDb() {
         const wsMessage: LensQueryRequestMessage<LensArgs, Name> = {
           name: WsMessageNameRequestToServer.LenseQuery,
-          id: uuidv7(),
+          // id: uuidv7(),
           data: {
             lensArgs: this.memDataArgs as LensArgs,
+            lenseQueryName: this.name as Name,
           },
-          lenseQueryName: this.name as Name,
         }
         void WsService.send(wsMessage)
         this.$state.waitingMainDbId = wsMessage.id
@@ -87,7 +89,7 @@ export const defineUseLens = <
       },
       async onResponseForLensQuery(message: WsMessageBase) {
         if (!isLenseQueryMessage(message)) return
-        if (message.lenseQueryName !== name) return
+        if (message.data.lenseQueryName !== name) return
 
         const messageData = message.data as LensData
         await receiveMainDb(messageData)
