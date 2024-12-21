@@ -413,6 +413,7 @@ export interface WsMessageBase {
   data: {
     [k: string]: unknown;
   };
+  errors: AppError[];
 }
 
 /**

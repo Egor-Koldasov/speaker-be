@@ -14,6 +14,12 @@ export default schemaObject(
     data: {
       type: "object",
     },
+    errors: {
+      type: "array",
+      items: {
+        $ref: "../property/AppError.json",
+      },
+    },
   },
   {
     title: "WsMessageBase",

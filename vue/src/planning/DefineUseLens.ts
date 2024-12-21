@@ -74,7 +74,7 @@ export const defineUseLens = <
       async requestMainDb() {
         const wsMessage: LensQueryRequestMessage<LensArgs, Name> = {
           name: WsMessageNameRequestToServer.LenseQuery,
-          // id: uuidv7(),
+          id: uuidv7(),
           data: {
             lensArgs: this.memDataArgs as LensArgs,
             lenseQueryName: this.name as Name,

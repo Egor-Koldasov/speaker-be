@@ -3,10 +3,13 @@ import EventEmitter from 'events'
 import {
   WsMessageName,
   WsMessageNameRequestToServer,
+  type AppError,
+  type WsMessageBase,
   type WsMessageNameEventToServer,
 } from 'speaker-json-schema/gen-schema-ts/Main.schema'
 import type { ValueOf } from 'type-fest'
 import { wsLogger } from '../loggers/wsLogger'
+import type { IsType } from '../types/util/IsType'
 
 enum WsMessageType {
   /**
@@ -48,17 +51,19 @@ type MessageConfigs = {
     WsMessageNameRequestToServer.LenseQuery
   >
 }
-
 export type WsMessage<
-  Name extends ValueOf<WsMessageName>,
-  Data extends object,
-> = {
-  name: Name
-  id: string
-  responseForId?: string
-  data: Data
-}
-export type WsMessageBase = WsMessage<ValueOf<WsMessageName>, object>
+  Name extends WsMessageName,
+  Data extends { [k: string]: unknown },
+> = IsType<
+  WsMessageBase,
+  {
+    name: Name
+    id: string
+    responseForId?: string
+    data: Data
+    errors: AppError[]
+  }
+>
 
 const isWsMessage = (message: unknown): message is WsMessageBase => true
 
@@ -80,6 +85,7 @@ export class WsServiceType extends EventEmitter {
   pendingQueryToServerMap: WsPendingQueryToServerMap = {}
   init() {
     console.log('init')
+    this.ws?.close()
     this.ws = new WebSocket(`ws://localhost:6969/ws`)
 
     this.ws.addEventListener('open', () => {
@@ -123,7 +129,7 @@ export class WsServiceType extends EventEmitter {
       }
     })
   }
-  async send<Name extends ValueOf<WsMessageName>, Data extends object>(
+  async send<Name extends WsMessageName, Data extends { [k: string]: unknown }>(
     message: WsMessage<Name, Data>,
   ) {
     if (!this.ws) {
@@ -147,4 +153,4 @@ export class WsServiceType extends EventEmitter {
 }
 
 export const WsService = new WsServiceType()
-WsService.init()
+if (process.env.NODE_ENV !== 'test') WsService.init()

@@ -18,11 +18,18 @@
     },
     "data": {
       "type": "object"
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "$ref": "../property/AppError.json"
+      }
     }
   },
   "required": [
     "name",
     "id",
-    "data"
+    "data",
+    "errors"
   ]
 }

@@ -5,6 +5,18 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Test Go",
+      "type": "go",
+      "request": "launch",
+      "mode": "test",
+      // Indicate the target here
+      // "program": "./...",
+      // or just use "The current opened file"
+      "program": "${file}",
+      "env": {},
+      "args": ["-test.v", "--", "arg1", "arg2", "arg3"]
+    },
+    {
       "name": "api-go",
       "type": "go",
       "request": "launch",

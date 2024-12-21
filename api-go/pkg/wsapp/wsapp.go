@@ -1,17 +1,12 @@
 package wsapp
 
 import (
-	"api-go/pkg/genjsonschema"
-	"api-go/pkg/jsonvalidate"
 	"api-go/pkg/router"
-	"api-go/pkg/utiljson"
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
 	"github.com/lxzan/gws"
-	"github.com/xeipuuv/gojsonschema"
 )
 
 const (
@@ -59,22 +54,9 @@ func (c *Handler) OnMessage(socket *gws.Conn, message *gws.Message) {
 
 	buffer := message.Bytes()
 
-	messageBufferLoader := gojsonschema.NewBytesLoader(buffer)
+	responseBytes := router.HandleWsMessageBytes(buffer)
 
-	appErrors := jsonvalidate.ValidateJson(jsonvalidate.SchemaPathWsMessageBase, messageBufferLoader, genjsonschema.ErrorNameInternal)
-
-	log.Printf("Errors: %v\n", appErrors)
-
-	if len(*appErrors) > 0 {
-		return
+	if buffer != nil {
+		socket.WriteMessage(message.Opcode, *responseBytes)
 	}
-	messageStruct := utiljson.ParseJson[genjsonschema.WsMessageBase](string(buffer[:]))
-
-	fmt.Printf("Received message: %v\n", messageStruct)
-
-	response := router.HandleWsMessage(&messageStruct)
-
-	buffer = []byte(utiljson.Marshal(response))
-
-	socket.WriteMessage(message.Opcode, buffer)
 }

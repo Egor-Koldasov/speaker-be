@@ -9,6 +9,9 @@ type WsMessageBase struct {
 	// Data corresponds to the JSON schema field "data".
 	Data WsMessageBaseData `json:"data" yaml:"data" mapstructure:"data"`
 
+	// Errors corresponds to the JSON schema field "errors".
+	Errors []AppError `json:"errors" yaml:"errors" mapstructure:"errors"`
+
 	// Id corresponds to the JSON schema field "id".
 	Id string `json:"id" yaml:"id" mapstructure:"id"`
 
@@ -29,6 +32,9 @@ func (j *WsMessageBase) UnmarshalJSON(b []byte) error {
 	}
 	if _, ok := raw["data"]; raw != nil && !ok {
 		return fmt.Errorf("field data in WsMessageBase: required")
+	}
+	if _, ok := raw["errors"]; raw != nil && !ok {
+		return fmt.Errorf("field errors in WsMessageBase: required")
 	}
 	if _, ok := raw["id"]; raw != nil && !ok {
 		return fmt.Errorf("field id in WsMessageBase: required")

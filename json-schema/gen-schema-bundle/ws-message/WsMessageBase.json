@@ -25,11 +25,53 @@
     },
     "data": {
       "type": "object"
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": [
+          "object"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema",
+        "$id": "AppError",
+        "additionalProperties": false,
+        "title": "AppError",
+        "description": "An application typed error.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "$schema": "http://json-schema.org/draft-07/schema",
+            "$id": "ErrorName",
+            "title": "ErrorName",
+            "description": "The code name of the error.",
+            "enum": [
+              "Unknown",
+              "Internal",
+              "Ai_CreateCompletion",
+              "AI_ResponseUnmarshal",
+              "JsonSchema_MessageInput",
+              "JsonSchema_MessageOutput",
+              "NotFound_MessageName",
+              "FromAi_Critical",
+              "ChatAiError",
+              "AuthRequired"
+            ]
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "message"
+        ]
+      }
     }
   },
   "required": [
     "name",
     "id",
-    "data"
+    "data",
+    "errors"
   ]
 }

@@ -22,10 +22,10 @@ func loadJsonLoader(relPath string) {
 	jsonPathToSchema[relPath] = schema
 }
 
-var SchemaPathWsMessageBase = filepath.Join("ws-message", "WsMessageBase.json")
+var SchemaPath_WsMessageBase = filepath.Join("ws-message", "WsMessageBase.json")
 
 func init() {
-	loadJsonLoader(SchemaPathWsMessageBase)
+	loadJsonLoader(SchemaPath_WsMessageBase)
 }
 
 func ValidateJson(schemaPath string, loader gojsonschema.JSONLoader, validationErrorName genjsonschema.ErrorName) *[]genjsonschema.AppError {

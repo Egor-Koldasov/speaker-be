@@ -14,7 +14,7 @@ const slotRef = ref<HTMLElement | null>(null)
 // # Hooks
 // # Computed
 onMounted(async () => {
-  await timeout(500)
+  await timeout(500).promise
   requestAnimationFrame(() => {
     document.body.classList.add('ready')
   })
