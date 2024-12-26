@@ -79,7 +79,7 @@ export type NativeLanguages = string[];
 
 export interface Main {
   model: Models;
-  lensModel: LenseModels;
+  LensModel: LensModels;
   WsMessageType: WsMessageType;
   WsMessageNameRequestToServer: WsMessageNameRequestToServer;
   WsMessageNameEventToServer: WsMessageNameEventToServer;
@@ -92,6 +92,8 @@ export interface Main {
         ActionName: ActionName;
         SignUpByEmail: ActionSignUpByEmail;
         SignUpByEmailResponse: ActionSignUpByEmailResponse;
+        SignUpByEmailCode: ActionSignUpByEmailCode;
+        SignUpByEmailCodeResponse: ActionSignUpByEmailCodeResponse;
       };
     };
   };
@@ -412,9 +414,28 @@ export interface MessageGetCards {
 export interface AuthSession {
   authToken: string;
 }
-export interface LenseModels {
+export interface LensModels {
   User: User;
   UserSettings: UserSettings;
+  ModelBase: LensModelBase;
+}
+export interface LensModelBase {
+  /**
+   * UUID v7 string
+   */
+  id: string;
+  /**
+   * ISO 8601 date string
+   */
+  createdAt: string;
+  /**
+   * ISO 8601 date string
+   */
+  updatedAt: string;
+  /**
+   * ISO 8601 date string or null
+   */
+  deletedAt: string | null;
 }
 export interface WsMessageBase {
   name: WsMessageName;
@@ -456,7 +477,30 @@ export interface ActionSignUpByEmailResponse {
     actionParams: {
       [k: string]: unknown;
     };
-    actionName: "SignUp";
+    actionName: "SignUpByEmail";
+  };
+  errors: AppError[];
+}
+export interface ActionSignUpByEmailCode {
+  name: "Action";
+  id: string;
+  data: {
+    actionParams: {
+      code: string;
+    };
+    actionName: "SignUpByEmailCode";
+  };
+  errors: AppError[];
+}
+export interface ActionSignUpByEmailCodeResponse {
+  name: "Action";
+  id: string;
+  responseForId: string;
+  data: {
+    actionParams: {
+      sessionToken: string;
+    };
+    actionName: "SignUpByEmailCode";
   };
   errors: AppError[];
 }
@@ -534,5 +578,6 @@ export enum WsMessageName {
   Mutation = "Mutation"
 }
 export enum ActionName {
-  SignUpByEmail = "SignUpByEmail"
+  SignUpByEmail = "SignUpByEmail",
+  SignUpByEmailCode = "SignUpByEmailCode"
 }

@@ -907,9 +907,9 @@
         "object"
       ],
       "$schema": "http://json-schema.org/draft-07/schema",
-      "$id": "LenseModels",
+      "$id": "LensModels",
       "additionalProperties": false,
-      "title": "LenseModels",
+      "title": "LensModels",
       "properties": {
         "User": {
           "type": [
@@ -1027,11 +1027,48 @@
             "nativeLanguages",
             "primaryForeignLanguage"
           ]
+        },
+        "ModelBase": {
+          "type": [
+            "object"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "LensModelBase",
+          "additionalProperties": false,
+          "title": "LensModelBase",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "UUID v7 string"
+            },
+            "createdAt": {
+              "type": "string",
+              "description": "ISO 8601 date string"
+            },
+            "updatedAt": {
+              "type": "string",
+              "description": "ISO 8601 date string"
+            },
+            "deletedAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ISO 8601 date string or null"
+            }
+          },
+          "required": [
+            "id",
+            "createdAt",
+            "updatedAt",
+            "deletedAt"
+          ]
         }
       },
       "required": [
         "User",
-        "UserSettings"
+        "UserSettings",
+        "ModelBase"
       ]
     },
     "Models": {
@@ -1376,7 +1413,7 @@
     "model": {
       "$ref": "#/definitions/Models"
     },
-    "lensModel": {
+    "LensModel": {
       "$ref": "#/definitions/LenseModels"
     },
     "WsMessageType": {
@@ -1576,7 +1613,8 @@
                   "$id": "ActionName",
                   "title": "ActionName",
                   "enum": [
-                    "SignUpByEmail"
+                    "SignUpByEmail",
+                    "SignUpByEmailCode"
                   ]
                 },
                 "SignUpByEmail": {
@@ -1673,7 +1711,135 @@
                           ]
                         },
                         "actionName": {
-                          "const": "SignUp"
+                          "const": "SignUpByEmail"
+                        }
+                      },
+                      "required": [
+                        "actionParams",
+                        "actionName"
+                      ]
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/properties/WsMessageBase/properties/errors/items"
+                      }
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "id",
+                    "responseForId",
+                    "data",
+                    "errors"
+                  ]
+                },
+                "SignUpByEmailCode": {
+                  "type": [
+                    "object"
+                  ],
+                  "$schema": "http://json-schema.org/draft-07/schema",
+                  "$id": "ActionSignUpByEmailCode",
+                  "additionalProperties": false,
+                  "title": "ActionSignUpByEmailCode",
+                  "relPathToWsMessage": "../../../../_util",
+                  "properties": {
+                    "name": {
+                      "const": "Action"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": [
+                        "object"
+                      ],
+                      "$schema": "http://json-schema.org/draft-07/schema",
+                      "additionalProperties": false,
+                      "properties": {
+                        "actionParams": {
+                          "type": [
+                            "object"
+                          ],
+                          "$schema": "http://json-schema.org/draft-07/schema",
+                          "additionalProperties": false,
+                          "properties": {
+                            "code": {
+                              "type": "string",
+                              "length": 12
+                            }
+                          },
+                          "required": [
+                            "code"
+                          ]
+                        },
+                        "actionName": {
+                          "const": "SignUpByEmailCode"
+                        }
+                      },
+                      "required": [
+                        "actionParams",
+                        "actionName"
+                      ]
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/properties/WsMessageBase/properties/errors/items"
+                      }
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "id",
+                    "data",
+                    "errors"
+                  ]
+                },
+                "SignUpByEmailCodeResponse": {
+                  "type": [
+                    "object"
+                  ],
+                  "$schema": "http://json-schema.org/draft-07/schema",
+                  "$id": "ActionSignUpByEmailCodeResponse",
+                  "additionalProperties": false,
+                  "title": "ActionSignUpByEmailCodeResponse",
+                  "relPathToWsMessage": "../../../../_util",
+                  "response": true,
+                  "properties": {
+                    "name": {
+                      "const": "Action"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "responseForId": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": [
+                        "object"
+                      ],
+                      "$schema": "http://json-schema.org/draft-07/schema",
+                      "additionalProperties": false,
+                      "properties": {
+                        "actionParams": {
+                          "type": [
+                            "object"
+                          ],
+                          "$schema": "http://json-schema.org/draft-07/schema",
+                          "additionalProperties": false,
+                          "properties": {
+                            "sessionToken": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "sessionToken"
+                          ]
+                        },
+                        "actionName": {
+                          "const": "SignUpByEmailCode"
                         }
                       },
                       "required": [
@@ -1701,7 +1867,9 @@
                 "ActionBase",
                 "ActionName",
                 "SignUpByEmail",
-                "SignUpByEmailResponse"
+                "SignUpByEmailResponse",
+                "SignUpByEmailCode",
+                "SignUpByEmailCodeResponse"
               ]
             }
           },
@@ -1717,7 +1885,7 @@
   },
   "required": [
     "model",
-    "lensModel",
+    "LensModel",
     "WsMessageType",
     "WsMessageNameRequestToServer",
     "WsMessageNameEventToServer",

@@ -26,7 +26,7 @@ func HandleAction(message *genjsonschema.WsMessageBase) *genjsonschema.WsMessage
 		handlerResult.Data = genjsonschema.WsMessageBaseData{}
 		return handlerResult
 	}
-	handlerResult := handler(&actionBase)
+	handlerResult := handler.HandlerFn(&actionBase)
 	messageResult := wsmessagebaserouter.MakeWsMessageBaseResponse(message)
 	messageResult.Data = genjsonschema.WsMessageBaseData{
 		"actionName":   handlerResult.Data.ActionName,

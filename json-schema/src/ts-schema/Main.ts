@@ -5,7 +5,7 @@ export default schemaObject(
     model: {
       $ref: "#/definitions/Models",
     },
-    lensModel: {
+    LensModel: {
       $ref: "#/definitions/LenseModels",
     },
     WsMessageType: {
@@ -43,6 +43,12 @@ export default schemaObject(
           },
           SignUpByEmailResponse: {
             $ref: "./ws-message/message/RequestToServer/Action/ActionSignUpByEmailResponse.json",
+          },
+          SignUpByEmailCode: {
+            $ref: "./ws-message/message/RequestToServer/Action/ActionSignUpByEmailCode.json",
+          },
+          SignUpByEmailCodeResponse: {
+            $ref: "./ws-message/message/RequestToServer/Action/ActionSignUpByEmailCodeResponse.json",
           },
         }),
       }),
@@ -91,7 +97,7 @@ export default schemaObject(
         }),
       }),
       LenseModels: {
-        $ref: "./LenseModels.json",
+        $ref: "./LensModels.json",
       },
       Models: schemaObject({
         MessageBase: {

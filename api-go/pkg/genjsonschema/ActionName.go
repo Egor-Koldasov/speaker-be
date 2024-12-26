@@ -9,9 +9,11 @@ import "reflect"
 type ActionName string
 
 const ActionNameSignUpByEmail ActionName = "SignUpByEmail"
+const ActionNameSignUpByEmailCode ActionName = "SignUpByEmailCode"
 
 var enumValues_ActionName = []interface{}{
 	"SignUpByEmail",
+	"SignUpByEmailCode",
 }
 
 // UnmarshalJSON implements json.Unmarshaler.

@@ -1,16 +1,17 @@
-import { beforeAll, describe, expect, test } from 'vitest'
-import { WsService } from '../../planning/WsService'
-import { timeout } from '../../util/timeout'
-import { withTimeout } from '../../util/withTimeout'
 import {
   ErrorName,
   WsMessageName,
   type WsMessageBase,
 } from 'speaker-json-schema/gen-schema-ts/Main.schema'
 import { UUID, uuidv7 } from 'uuidv7'
+import { beforeAll, describe, expect, test } from 'vitest'
+import { WsService } from '../../planning/WsService'
+import { withTimeout } from '../../util/withTimeout'
+import { idbInit } from '../../idb/idb'
 
 describe(`Web Socket health`, () => {
   beforeAll(() => {
+    idbInit()
     WsService.init()
   })
   test(`should connect to the server`, async () => {

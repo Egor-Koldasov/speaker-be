@@ -94,7 +94,7 @@
       ]
     },
     "LenseModels": {
-      "$ref": "./LenseModels.json"
+      "$ref": "./LensModels.json"
     },
     "Models": {
       "type": [
@@ -132,7 +132,7 @@
     "model": {
       "$ref": "#/definitions/Models"
     },
-    "lensModel": {
+    "LensModel": {
       "$ref": "#/definitions/LenseModels"
     },
     "WsMessageType": {
@@ -182,13 +182,21 @@
                 },
                 "SignUpByEmailResponse": {
                   "$ref": "./ws-message/message/RequestToServer/Action/ActionSignUpByEmailResponse.json"
+                },
+                "SignUpByEmailCode": {
+                  "$ref": "./ws-message/message/RequestToServer/Action/ActionSignUpByEmailCode.json"
+                },
+                "SignUpByEmailCodeResponse": {
+                  "$ref": "./ws-message/message/RequestToServer/Action/ActionSignUpByEmailCodeResponse.json"
                 }
               },
               "required": [
                 "ActionBase",
                 "ActionName",
                 "SignUpByEmail",
-                "SignUpByEmailResponse"
+                "SignUpByEmailResponse",
+                "SignUpByEmailCode",
+                "SignUpByEmailCodeResponse"
               ]
             }
           },
@@ -204,7 +212,7 @@
   },
   "required": [
     "model",
-    "lensModel",
+    "LensModel",
     "WsMessageType",
     "WsMessageNameRequestToServer",
     "WsMessageNameEventToServer",

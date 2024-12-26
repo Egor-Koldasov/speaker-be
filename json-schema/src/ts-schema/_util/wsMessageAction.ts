@@ -3,6 +3,7 @@ import WsMessageBase from "../ws-message/WsMessageBase";
 import { SchemaObjectOpts, schemaObject } from "./schemaObject";
 import { wsMessage } from "./wsMessage";
 import ActionBase from "../ws-message/message/RequestToServer/Action/ActionBase";
+import { actionNames } from "../ws-message/message/RequestToServer/Action/ActionName";
 
 type WsMessageBaseJSchema = typeof WsMessageBase;
 type ActionBaseJSchema = typeof ActionBase;
@@ -22,7 +23,7 @@ type ActionDataBase = NonNullable<
   WsMessageJSchemaProps["data"]["properties"]
 > & {
   actionName: {
-    const: string;
+    const: (typeof actionNames)[number];
   };
   actionParams?: {
     type: ["object"];

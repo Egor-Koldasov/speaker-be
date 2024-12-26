@@ -25,10 +25,12 @@ func loadJsonLoader(relPath string) {
 var SchemaPath_WsMessageBase = filepath.Join("ws-message", "WsMessageBase.json")
 var SchemaPath_Action = filepath.Join("ws-message/message/RequestToServer/Action")
 var SchemaPath_Action_SignUpByEmail = filepath.Join(SchemaPath_Action, "ActionSignUpByEmail.json")
+var SchemaPath_Action_SignUpByEmailCode = filepath.Join(SchemaPath_Action, "ActionSignUpByEmailCode.json")
 
 func init() {
 	loadJsonLoader(SchemaPath_WsMessageBase)
 	loadJsonLoader(SchemaPath_Action_SignUpByEmail)
+	loadJsonLoader(SchemaPath_Action_SignUpByEmailCode)
 }
 
 func ValidateJson(schemaPath string, loader gojsonschema.JSONLoader, validationErrorName genjsonschema.ErrorName) *[]genjsonschema.AppError {

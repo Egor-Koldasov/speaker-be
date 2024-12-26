@@ -1,7 +1,9 @@
+//go:generate go get -u github.com/valyala/quicktemplate/qtc
+//go:generate ../../bin/qtc -dir=../../pkg/templatecypher
 package main
 
 import (
-	"api-go/pkg/neo4jdb"
+	"api-go/pkg/surrealdbutil"
 	"api-go/pkg/wsapp"
 	"context"
 	"log"
@@ -15,7 +17,7 @@ func init() {
 	// Connect to the database
 	waitGroup.Add(2)
 	// go pgdb.Init(ctx, &waitGroup)
-	go neo4jdb.Init(ctx, &waitGroup)
+	go surrealdbutil.Init(ctx, &waitGroup)
 	// httpapp.Init()
 	wsapp.Init()
 }

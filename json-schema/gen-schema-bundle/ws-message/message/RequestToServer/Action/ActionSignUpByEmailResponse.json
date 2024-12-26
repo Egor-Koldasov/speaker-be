@@ -31,7 +31,7 @@
           ]
         },
         "actionName": {
-          "const": "SignUp"
+          "const": "SignUpByEmail"
         }
       },
       "required": [

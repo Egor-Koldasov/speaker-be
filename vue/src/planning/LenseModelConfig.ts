@@ -1,4 +1,4 @@
-import type { LenseModels } from 'speaker-json-schema/gen-schema-ts/Main.schema'
+import type { LensModels } from 'speaker-json-schema/gen-schema-ts/Main.schema'
 import type { LenseModel, LenseModelClient } from './LenseQuery'
 import { uuidv7 } from 'uuidv7'
 import { identity, type PartialObject } from 'lodash'
@@ -6,9 +6,9 @@ import dayjs from 'dayjs'
 import type { SetOptional } from 'type-fest'
 import type { IsType } from '../types/util/IsType'
 
-export type LenseModelName = keyof LenseModels
+export type LenseModelName = keyof LensModels
 export type LenseModelByName<ModelName extends LenseModelName> =
-  LenseModels[ModelName]
+  LensModels[ModelName]
 
 // export type LenseIdbModelByName<ModelName extends LenseModelName> =
 

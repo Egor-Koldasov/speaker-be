@@ -1,3 +1,4 @@
+import '../../../util/test/mockIndexedDb'
 import { beforeAll, describe, expect, test } from 'vitest'
 import { withSetup } from '../../../util/test/withSetup'
 import { useSignUpByEmail } from '../../../planning/Action/useSignUpByEmail'
@@ -5,13 +6,19 @@ import { waitFor } from '../../../util/waitFor'
 import { WsService } from '../../../planning/WsService'
 import { readTestEmailsTo } from '../../../util/test/readTestEmails'
 import { makeTestId } from '../../../util/test/makeTestId'
+import { useSignUpByEmailCode } from '../../../planning/Action/useSignUpByEmailCode'
+import { useLensUser } from '../../../planning/lense/useLensUser'
+import { idbInit } from '../../../idb/idb'
 
 describe(`Signup`, () => {
   beforeAll(() => {
+    idbInit()
     WsService.init()
   })
   test(`Can signup`, async () => {
     const [signUpAction] = withSetup(() => useSignUpByEmail())
+    const [signUpByCodeAction] = withSetup(() => useSignUpByEmailCode())
+    const [lensUser] = withSetup(() => useLensUser())
 
     const testEmail = `signup-test-${makeTestId()}@test.com`
 
@@ -30,6 +37,15 @@ describe(`Signup`, () => {
 
       return true
     })
-    // expect(signUpAction.waitingMainDbId).toBeTruthy()
+    signUpByCodeAction.memActionParams.code = signUpCode
+    signUpByCodeAction.requestMainDb()
+    expect(signUpByCodeAction.waitingMainDbId).toBeTruthy()
+    await waitFor(() => !signUpByCodeAction.waitingMainDbId)
+    await waitFor(() => !!signUpByCodeAction.lastResponse)
+    expect(
+      signUpByCodeAction.lastResponse?.data.actionParams.sessionToken,
+    ).toHaveLength(12)
+
+    await waitFor(() => lensUser.memData.user.email === testEmail)
   })
 })

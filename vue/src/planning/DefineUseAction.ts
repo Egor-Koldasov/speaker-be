@@ -8,31 +8,42 @@ import {
   type Main,
 } from 'speaker-json-schema/gen-schema-ts/Main.schema'
 import { uuidv7 } from 'uuidv7'
-import { onBeforeMount } from 'vue'
+import { onBeforeMount, type UnwrapRef } from 'vue'
 import type { Action, ActionState } from './Action'
 import { WsService } from './WsService'
+import type { K } from 'vitest/dist/chunks/reporters.D7Jzd9GS.js'
 
 export const isActionMessage = (message: ActionBase): message is ActionBase =>
   message.name.valueOf() === WsMessageNameRequestToServer.Action.valueOf()
 
 type ActionParamsByName<Name extends ActionName> =
   Main['WsMessage']['RequestToServer']['Action'][Name]['data']['actionParams']
+type ActionResponseByName<Name extends ActionName> =
+  `${Name}Response` extends keyof Main['WsMessage']['RequestToServer']['Action']
+    ? Main['WsMessage']['RequestToServer']['Action'][`${Name}Response`]
+    : never
 
 export const defineUseAction = <
   const Name extends ActionName,
   ActionParams extends ActionParamsByName<Name>,
+  Response extends ActionResponseByName<Name>,
 >({
   name,
   initParams,
 }: Action<Name, ActionParams>) => {
+  type ResponseAction = Omit<Response, 'data'> & {
+    data: Omit<Response['data'], 'actionName'> & {
+      actionName: ActionName
+    }
+  }
   const useStoreEmpty = defineStore(name, {
-    state: () =>
-      ({
-        name,
-        memActionParams: initParams,
-        lastFetchedMainAt: '',
-        waitingMainDbId: '',
-      }) satisfies ActionState<Name, ActionParams>,
+    state: (): ActionState<Name, ActionParams, ResponseAction> => ({
+      name,
+      memActionParams: initParams,
+      lastFetchedMainAt: '',
+      waitingMainDbId: '',
+      lastResponse: null,
+    }),
     actions: {
       async requestMainDb() {
         const wsMessage: ActionBase = {
@@ -59,6 +70,7 @@ export const defineUseAction = <
 
         if (message.data.actionName !== name) return
         this.$state.lastFetchedMainAt = dayjs().toISOString()
+        this.$state.lastResponse = message as UnwrapRef<ResponseAction>
       },
     },
   })

@@ -3,7 +3,7 @@ import { wsMessageAction } from "../../../../_util/wsMessageAction";
 export default wsMessageAction(
   {
     actionName: {
-      const: "SignUp",
+      const: "SignUpByEmail",
     },
   },
   {

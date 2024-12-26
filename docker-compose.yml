@@ -6,3 +6,13 @@ services:
     ports:
       - "8025:8025"
       - "1026:1025"
+  surrealdb:
+    image: surrealdb/surrealdb:latest-dev
+    ports:
+      - "8000:8000"
+    command:
+      - start #start the SurrealDB server
+      - --log=debug #no idea what this does :(
+      - --user=root #default user
+      - --pass=root #default password
+    restart: always

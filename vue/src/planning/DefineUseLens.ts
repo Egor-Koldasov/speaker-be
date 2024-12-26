@@ -3,6 +3,8 @@ import { defineStore } from 'pinia'
 import {
   WsMessageName,
   WsMessageNameRequestToServer,
+  type ActionBase,
+  type WsMessageBase,
 } from 'speaker-json-schema/gen-schema-ts/Main.schema'
 import type { ValueOf } from 'type-fest'
 import { uuidv7 } from 'uuidv7'
@@ -10,13 +12,13 @@ import { onBeforeMount, watch } from 'vue'
 import { assignCopy } from '../util/assignCopy'
 import type { LensState, LenseQuery } from './LenseQuery'
 import type { LenseQueryName } from './LenseStore'
-import { WsService, type WsMessage, type WsMessageBase } from './WsService'
+import { WsService, type WsMessage } from './WsService'
 
 type LensQueryResponseMessage<
   Data extends object,
   Name extends LenseQueryName,
 > = WsMessage<
-  ValueOf<WsMessageNameRequestToServer>,
+  WsMessageName,
   Data & {
     lenseQueryName: Name
   }
@@ -25,7 +27,7 @@ type LensQueryRequestMessage<
   LensArgs extends object,
   Name extends LenseQueryName,
 > = WsMessage<
-  WsMessageNameRequestToServer,
+  WsMessageName,
   {
     lensArgs: LensArgs
   } & {
@@ -45,8 +47,9 @@ export const defineUseLens = <
   name,
   initData,
   initParams: initArgs,
-  fetchIdb,
+  // fetchIdb,
   receiveMainDb,
+  onActionResponse,
 }: LenseQuery<Name, LensData, LensArgs>) => {
   const useStoreEmpty = defineStore(name, {
     state: () =>
@@ -60,14 +63,14 @@ export const defineUseLens = <
       }) satisfies LensState<Name, LensData, LensArgs>,
     actions: {
       async fetchFromIdb() {
-        const { lensData } = await fetchIdb(
-          this.memDataArgs as LensArgs,
-          this.name as Name,
-        )
-        this.$patch((state) => {
-          assignCopy<LensData>(state.memData as LensData, lensData)
-          state.lastFetchedIdbAt = dayjs().toISOString()
-        })
+        // const { lensData } = await fetchIdb(
+        //   this.memDataArgs as LensArgs,
+        //   this.name as Name,
+        // )
+        // this.$patch((state) => {
+        //   assignCopy<LensData>(state.memData as LensData, lensData)
+        //   state.lastFetchedIdbAt = dayjs().toISOString()
+        // })
       },
       async requestMainDb() {
         const wsMessage: LensQueryRequestMessage<LensArgs, Name> = {
@@ -98,6 +101,9 @@ export const defineUseLens = <
         }
         await this.fetchFromIdb()
       },
+      async onActionResponse(message: ActionBase) {
+        onActionResponse(message, this)
+      },
     },
   })
   const useLens = () => {
@@ -105,8 +111,10 @@ export const defineUseLens = <
 
     onBeforeMount(() => {
       WsService.on(`responseForId:LenseQuery`, store.onResponseForLensQuery)
+      WsService.on(`responseForId:Action`, store.onActionResponse)
       return () => {
         WsService.off('responseForId:LenseQuery', store.onResponseForLensQuery)
+        WsService.off('responseForId:Action', store.onActionResponse)
       }
     })
 

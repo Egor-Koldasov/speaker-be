@@ -30,7 +30,8 @@
           "$id": "ActionName",
           "title": "ActionName",
           "enum": [
-            "SignUpByEmail"
+            "SignUpByEmail",
+            "SignUpByEmailCode"
           ]
         },
         "actionParams": {

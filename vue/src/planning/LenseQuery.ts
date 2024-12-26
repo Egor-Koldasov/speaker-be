@@ -1,3 +1,5 @@
+import type { ActionBase } from 'speaker-json-schema/gen-schema-ts/Main.schema'
+
 /**
  *
  */
@@ -6,8 +8,12 @@ export type LenseQuery<Name extends string, LensData, LensArgs> = {
   initData: LensData
   initParams: LensArgs
 
-  fetchIdb: FetchIdb<Name, LensData, LensArgs>
+  // fetchIdb: FetchIdb<Name, LensData, LensArgs>
   receiveMainDb: (lensData: LensData) => Promise<void>
+  onActionResponse: (
+    message: ActionBase,
+    helpers: { refetch: () => void },
+  ) => void
 }
 
 type FetchIdbResult<LensData> = {

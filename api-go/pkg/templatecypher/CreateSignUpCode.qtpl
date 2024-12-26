@@ -1,0 +1,11 @@
+{% import "api-go/pkg/modelcypher" %}
+
+{% func CreateSignUpCode(signUpCode modelcypher.SignUpCode) %}
+CREATE (signUpCode:SignUpCode {
+  Email: $Email,
+  Code: $Code,
+  CreatedAt: datetime(),
+  UpdatedAt: datetime(),
+  DeletedAt: null
+})
+{% endfunc %}

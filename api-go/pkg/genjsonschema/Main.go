@@ -94,6 +94,9 @@ func (j *ChatGroupMap) UnmarshalJSON(b []byte) error {
 }
 
 type Main struct {
+	// LensModel corresponds to the JSON schema field "LensModel".
+	LensModel MainLensModel `json:"LensModel" yaml:"LensModel" mapstructure:"LensModel"`
+
 	// WsMessage corresponds to the JSON schema field "WsMessage".
 	WsMessage MainWsMessage `json:"WsMessage" yaml:"WsMessage" mapstructure:"WsMessage"`
 
@@ -113,9 +116,6 @@ type Main struct {
 
 	// WsMessageType corresponds to the JSON schema field "WsMessageType".
 	WsMessageType WsMessageType `json:"WsMessageType" yaml:"WsMessageType" mapstructure:"WsMessageType"`
-
-	// LensModel corresponds to the JSON schema field "lensModel".
-	LensModel MainLensModel `json:"lensModel" yaml:"lensModel" mapstructure:"lensModel"`
 
 	// Model corresponds to the JSON schema field "model".
 	Model Models `json:"model" yaml:"model" mapstructure:"model"`
@@ -143,6 +143,13 @@ type MainWsMessageRequestToServerAction struct {
 	// SignUpByEmail corresponds to the JSON schema field "SignUpByEmail".
 	SignUpByEmail ActionSignUpByEmail `json:"SignUpByEmail" yaml:"SignUpByEmail" mapstructure:"SignUpByEmail"`
 
+	// SignUpByEmailCode corresponds to the JSON schema field "SignUpByEmailCode".
+	SignUpByEmailCode ActionSignUpByEmailCode `json:"SignUpByEmailCode" yaml:"SignUpByEmailCode" mapstructure:"SignUpByEmailCode"`
+
+	// SignUpByEmailCodeResponse corresponds to the JSON schema field
+	// "SignUpByEmailCodeResponse".
+	SignUpByEmailCodeResponse ActionSignUpByEmailCodeResponse `json:"SignUpByEmailCodeResponse" yaml:"SignUpByEmailCodeResponse" mapstructure:"SignUpByEmailCodeResponse"`
+
 	// SignUpByEmailResponse corresponds to the JSON schema field
 	// "SignUpByEmailResponse".
 	SignUpByEmailResponse ActionSignUpByEmailResponse `json:"SignUpByEmailResponse" yaml:"SignUpByEmailResponse" mapstructure:"SignUpByEmailResponse"`
@@ -162,6 +169,12 @@ func (j *MainWsMessageRequestToServerAction) UnmarshalJSON(b []byte) error {
 	}
 	if _, ok := raw["SignUpByEmail"]; raw != nil && !ok {
 		return fmt.Errorf("field SignUpByEmail in MainWsMessageRequestToServerAction: required")
+	}
+	if _, ok := raw["SignUpByEmailCode"]; raw != nil && !ok {
+		return fmt.Errorf("field SignUpByEmailCode in MainWsMessageRequestToServerAction: required")
+	}
+	if _, ok := raw["SignUpByEmailCodeResponse"]; raw != nil && !ok {
+		return fmt.Errorf("field SignUpByEmailCodeResponse in MainWsMessageRequestToServerAction: required")
 	}
 	if _, ok := raw["SignUpByEmailResponse"]; raw != nil && !ok {
 		return fmt.Errorf("field SignUpByEmailResponse in MainWsMessageRequestToServerAction: required")
@@ -217,6 +230,9 @@ func (j *Main) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
+	if _, ok := raw["LensModel"]; raw != nil && !ok {
+		return fmt.Errorf("field LensModel in Main: required")
+	}
 	if _, ok := raw["WsMessage"]; raw != nil && !ok {
 		return fmt.Errorf("field WsMessage in Main: required")
 	}
@@ -234,9 +250,6 @@ func (j *Main) UnmarshalJSON(b []byte) error {
 	}
 	if _, ok := raw["WsMessageType"]; raw != nil && !ok {
 		return fmt.Errorf("field WsMessageType in Main: required")
-	}
-	if _, ok := raw["lensModel"]; raw != nil && !ok {
-		return fmt.Errorf("field lensModel in Main: required")
 	}
 	if _, ok := raw["model"]; raw != nil && !ok {
 		return fmt.Errorf("field model in Main: required")
