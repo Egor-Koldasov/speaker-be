@@ -85,6 +85,16 @@ export interface Main {
   WsMessageNameEventToServer: WsMessageNameEventToServer;
   WsMessageName: WsMessageName;
   WsMessageBase: WsMessageBase;
+  WsMessage: {
+    RequestToServer: {
+      Action: {
+        ActionBase: ActionBase;
+        ActionName: ActionName;
+        SignUpByEmail: ActionSignUpByEmail;
+        SignUpByEmailResponse: ActionSignUpByEmailResponse;
+      };
+    };
+  };
 }
 export interface Models {
   MessageBase: MessageBase;
@@ -128,12 +138,12 @@ export interface MessageMap {
 }
 export interface MessageParseTextFromForeign {
   input: {
-    id: Id;
+    id?: Id;
     name: Name;
     data: {
       chatInput: ChatInputParseTextFromForeign;
     };
-    authToken: string;
+    authToken?: string;
   };
   output: {
     id: Id;
@@ -154,12 +164,12 @@ export interface ChatInputParseTextFromForeign {
 }
 export interface MessageDefineTerm {
   input: {
-    id: Id;
+    id?: Id;
     name: Name2;
     data: {
       chatInput: ChatInputDefineTerm;
     };
-    authToken: string;
+    authToken?: string;
   };
   output: {
     id: Id;
@@ -271,10 +281,10 @@ export interface Deck {
 }
 export interface MessageGetAuthInfo {
   input: {
-    id: Id;
+    id?: Id;
     name: Name4;
     data: {};
-    authToken: string;
+    authToken?: string;
   };
   output: {
     id: Id;
@@ -338,10 +348,10 @@ export interface UserSettings {
 }
 export interface MessageGetDecks {
   input: {
-    id: Id;
+    id?: Id;
     name: Name6;
     data: {};
-    authToken: string;
+    authToken?: string;
   };
   output: {
     id: Id;
@@ -354,13 +364,13 @@ export interface MessageGetDecks {
 }
 export interface MessageAddCard {
   input: {
-    id: Id;
+    id?: Id;
     name: Name8;
     data: {
       card: Card;
       deckId: string;
     };
-    authToken: string;
+    authToken?: string;
   };
   output: {
     id: Id;
@@ -383,12 +393,12 @@ export interface UserCardFieldAnswer {
 }
 export interface MessageGetCards {
   input: {
-    id: Id;
+    id?: Id;
     name: Name10;
     data: {
       deckId: string;
     };
-    authToken: string;
+    authToken?: string;
   };
   output: {
     id: Id;
@@ -412,6 +422,41 @@ export interface WsMessageBase {
   responseForId?: string;
   data: {
     [k: string]: unknown;
+  };
+  errors: AppError[];
+}
+export interface ActionBase {
+  name: "Action";
+  id: string;
+  responseForId?: string;
+  data: {
+    actionName: ActionName;
+    actionParams: {
+      [k: string]: unknown;
+    };
+  };
+  errors: AppError[];
+}
+export interface ActionSignUpByEmail {
+  name: "Action";
+  id: string;
+  data: {
+    actionParams: {
+      email: string;
+    };
+    actionName: "SignUpByEmail";
+  };
+  errors: AppError[];
+}
+export interface ActionSignUpByEmailResponse {
+  name: "Action";
+  id: string;
+  responseForId: string;
+  data: {
+    actionParams: {
+      [k: string]: unknown;
+    };
+    actionName: "SignUp";
   };
   errors: AppError[];
 }
@@ -477,12 +522,17 @@ export enum WsMessageType {
   EventFromServer = "EventFromServer"
 }
 export enum WsMessageNameRequestToServer {
-  LenseQuery = "LenseQuery"
+  LenseQuery = "LenseQuery",
+  Action = "Action"
 }
 export enum WsMessageNameEventToServer {
   Mutation = "Mutation"
 }
 export enum WsMessageName {
   LenseQuery = "LenseQuery",
+  Action = "Action",
   Mutation = "Mutation"
+}
+export enum ActionName {
+  SignUpByEmail = "SignUpByEmail"
 }

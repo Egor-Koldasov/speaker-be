@@ -1,3 +1,4 @@
+import { JSONSchema7, JSONSchema7TypeName } from "json-schema";
 import { schemaObject } from "../_util/schemaObject";
 
 export default schemaObject(
@@ -12,12 +13,17 @@ export default schemaObject(
       type: "string",
     },
     data: {
-      type: "object",
+      type: ["object"] as
+        | ["object"]
+        | JSONSchema7TypeName
+        | JSONSchema7TypeName[]
+        | undefined,
+      properties: {} as JSONSchema7["properties"],
     },
     errors: {
       type: "array",
       items: {
-        $ref: "../property/AppError.json",
+        $ref: "../property/AppError.json" as string,
       },
     },
   },

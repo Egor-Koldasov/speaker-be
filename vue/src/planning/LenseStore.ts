@@ -55,7 +55,7 @@ export const UserLensQuery = LenseQuery({
   initData: {
     user: null as null | LenseModels['User'],
   },
-  initArgs: {},
+  initParams: {},
   async fetchIdb(lensArgs, name) {
     return { wantSync: true, lensData: { user: null } }
   },

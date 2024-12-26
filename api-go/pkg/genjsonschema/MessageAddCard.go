@@ -16,13 +16,13 @@ type MessageAddCard struct {
 
 type MessageAddCardInput struct {
 	// AuthToken corresponds to the JSON schema field "authToken".
-	AuthToken string `json:"authToken" yaml:"authToken" mapstructure:"authToken"`
+	AuthToken *string `json:"authToken,omitempty" yaml:"authToken,omitempty" mapstructure:"authToken,omitempty"`
 
 	// Data corresponds to the JSON schema field "data".
 	Data MessageAddCardInputData `json:"data" yaml:"data" mapstructure:"data"`
 
 	// Id corresponds to the JSON schema field "id".
-	Id Id `json:"id" yaml:"id" mapstructure:"id"`
+	Id *Id `json:"id,omitempty" yaml:"id,omitempty" mapstructure:"id,omitempty"`
 
 	// Name corresponds to the JSON schema field "name".
 	Name MessageAddCardInputName `json:"name" yaml:"name" mapstructure:"name"`
@@ -91,14 +91,8 @@ func (j *MessageAddCardInput) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
-	if _, ok := raw["authToken"]; raw != nil && !ok {
-		return fmt.Errorf("field authToken in MessageAddCardInput: required")
-	}
 	if _, ok := raw["data"]; raw != nil && !ok {
 		return fmt.Errorf("field data in MessageAddCardInput: required")
-	}
-	if _, ok := raw["id"]; raw != nil && !ok {
-		return fmt.Errorf("field id in MessageAddCardInput: required")
 	}
 	if _, ok := raw["name"]; raw != nil && !ok {
 		return fmt.Errorf("field name in MessageAddCardInput: required")

@@ -74,10 +74,8 @@
         }
       },
       "required": [
-        "id",
         "name",
-        "data",
-        "authToken"
+        "data"
       ]
     },
     "output": {

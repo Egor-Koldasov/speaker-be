@@ -5,6 +5,7 @@ import (
 	"api-go/pkg/utilerror"
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -14,6 +15,11 @@ type ConfigType struct {
 	HttpPort           string
 	OpenaiApiKey       string
 	JsonSchemaPath     string
+	AuthEmailFrom      string
+	AuthSmtpHost       string
+	AuthSmtpPort       int
+	AuthSmtpUser       string
+	AuthSmtpPassword   string
 }
 
 var Config ConfigType
@@ -30,4 +36,10 @@ func init() {
 		utilerror.FatalError("Error getting current working directory", err)
 		Config.JsonSchemaPath = filepath.Join(pwd, "../json-schema/gen-schema-bundle")
 	}
+	Config.AuthEmailFrom = utilenv.GetEnv("AUTH_EMAIL_FROM", "koldasov3@gmail.com")
+	Config.AuthSmtpHost = utilenv.GetEnv("AUTH_SMTP_HOST", "127.0.0.1")
+	authSmtpPortString := utilenv.GetEnv("AUTH_SMTP_PORT", "1026")
+	authSmtpPort, err := strconv.Atoi(authSmtpPortString)
+	utilerror.FatalError("Error converting AUTH_SMTP_PORT to int", err)
+	Config.AuthSmtpPort = authSmtpPort
 }

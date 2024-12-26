@@ -20,6 +20,7 @@
     "@apidevtools/json-schema-ref-parser": "^11.5.4",
     "@fastify/cors": "^9.0.1",
     "ajv": "^8.12.0",
+    "consola": "^3.3.1",
     "csv-stringify": "^6.4.6",
     "dotenv": "^16.4.5",
     "fastify": "^4.26.2",
@@ -27,7 +28,8 @@
     "openai": "^4.33.0",
     "openapi-backend": "^5.10.6",
     "pg": "^8.11.4",
-    "uuidv7": "^0.6.3"
+    "uuidv7": "^0.6.3",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "@types/node": "^20.12.2",

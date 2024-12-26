@@ -32,10 +32,10 @@ type WsMessageNameUnionByType<Type extends WsMessageType> =
   Type extends WsMessageType.QueryToServer
     ? WsMessageNameRequestToServer
     : Type extends WsMessageType.QueryFromServer
-    ? WsMessageNameRequestFromServer
-    : Type extends WsMessageType.EventToServer
-    ? WsMessageNameEventToServer
-    : WsMessageNameEventFromServer
+      ? WsMessageNameRequestFromServer
+      : Type extends WsMessageType.EventToServer
+        ? WsMessageNameEventToServer
+        : WsMessageNameEventFromServer
 
 type WsMessageConfig<
   Type extends WsMessageType,
@@ -70,6 +70,7 @@ const isWsMessage = (message: unknown): message is WsMessageBase => true
 const wsMessageHandlers = {
   LenseQuery: (message) => {},
   Mutation: (message) => {},
+  Action: (message) => {},
 } satisfies {
   [K in WsMessageName]: (message: WsMessage<WsMessageName, any>) => void
 }
@@ -89,16 +90,20 @@ export class WsServiceType extends EventEmitter {
     this.ws = new WebSocket(`ws://localhost:6969/ws`)
 
     this.ws.addEventListener('open', () => {
-      console.log('ws connected')
+      wsLogger.info('WebSocket connection opened')
     })
 
     this.ws.addEventListener('close', () => {
-      console.log('ws closed')
+      wsLogger.info('WebSocket connection closed')
+    })
+
+    this.ws.addEventListener('error', () => {
+      wsLogger.error('WebSocket connection error')
     })
 
     this.ws.addEventListener('message', (event) => {
       const message = JSON.parse(event.data)
-      wsLogger.debug({ message }, 'WsService.onmessage')
+      wsLogger.debug('WsService.onmessage', { message })
 
       if (!isWsMessage(message)) {
         console.error('Invalid message', message)
@@ -137,7 +142,7 @@ export class WsServiceType extends EventEmitter {
       return
     }
     await this.waitForConnection()
-    wsLogger.debug({ message }, 'WsService.send')
+    wsLogger.debug('WsService.send', { message })
     this.ws.send(JSON.stringify(message))
     const waitForResponse = (
       Object.values(

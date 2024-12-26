@@ -29,6 +29,24 @@ export default schemaObject(
     WsMessageBase: {
       $ref: "./ws-message/WsMessageBase.json",
     },
+    WsMessage: schemaObject({
+      RequestToServer: schemaObject({
+        Action: schemaObject({
+          ActionBase: {
+            $ref: "./ws-message/message/RequestToServer/Action/ActionBase.json",
+          },
+          ActionName: {
+            $ref: "./ws-message/message/RequestToServer/Action/ActionName.json",
+          },
+          SignUpByEmail: {
+            $ref: "./ws-message/message/RequestToServer/Action/ActionSignUpByEmail.json",
+          },
+          SignUpByEmailResponse: {
+            $ref: "./ws-message/message/RequestToServer/Action/ActionSignUpByEmailResponse.json",
+          },
+        }),
+      }),
+    }),
   },
   {
     title: "Main",

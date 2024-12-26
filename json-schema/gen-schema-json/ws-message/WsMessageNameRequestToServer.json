@@ -4,6 +4,7 @@
   "$id": "WsMessageNameRequestToServer",
   "title": "WsMessageNameRequestToServer",
   "enum": [
-    "LenseQuery"
+    "LenseQuery",
+    "Action"
   ]
 }

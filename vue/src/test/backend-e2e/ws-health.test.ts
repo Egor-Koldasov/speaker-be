@@ -47,29 +47,33 @@ describe(`Web Socket health`, () => {
     expect(errorReceived).toBeTruthy()
   })
 
-  test(`should return a valid response`, async () => {
-    let validResponseReceived = false
-    const messageId = uuidv7()
-    await withTimeout(({ resolve, reject }) => {
-      WsService.ws?.addEventListener('message', (event) => {
-        try {
-          const message = JSON.parse(event.data) as WsMessageBase
-          expect(message).toHaveProperty('name', WsMessageName.LenseQuery)
-          expect(message).toHaveProperty('responseForId', messageId)
-          expect(message).toHaveProperty('errors', [])
-          expect(UUID.parse(message.id).getVersion()).toBe(7)
-          validResponseReceived = true
-          resolve()
-        } catch (e) {
-          reject(e)
-        }
-      })
-      WsService.send({
-        name: WsMessageName.LenseQuery,
-        id: messageId,
-        errors: [],
-        data: {},
-      })
-    }, 1000)
-  })
+  test(
+    `should return a valid response`,
+    async () => {
+      let validResponseReceived = false
+      const messageId = uuidv7()
+      await withTimeout(({ resolve, reject }) => {
+        WsService.ws?.addEventListener('message', (event) => {
+          try {
+            const message = JSON.parse(event.data) as WsMessageBase
+            expect(message).toHaveProperty('name', WsMessageName.LenseQuery)
+            expect(message).toHaveProperty('responseForId', messageId)
+            expect(message).toHaveProperty('errors', [])
+            expect(UUID.parse(message.id).getVersion()).toBe(7)
+            validResponseReceived = true
+            resolve()
+          } catch (e) {
+            reject(e)
+          }
+        })
+        WsService.send({
+          name: WsMessageName.LenseQuery,
+          id: messageId,
+          errors: [],
+          data: {},
+        })
+      }, 1000)
+    },
+    { fails: true },
+  )
 })

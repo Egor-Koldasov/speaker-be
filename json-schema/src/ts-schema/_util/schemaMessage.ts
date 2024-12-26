@@ -7,19 +7,17 @@ type MessageInput = ReturnType<typeof schemaObject> & {
   title: string;
   properties: {
     input: {
-      properties:
-        | {
-            name: {
-              type: "string";
-              enum: [string];
-            };
-            data:
-              | {
-                  properties: JSONSchema7["properties"];
-                }
-              | { $ref: string };
-          }
-        | { $ref: string };
+      properties: {
+        name: {
+          type: "string";
+          enum: [string];
+        };
+        data:
+          | {
+              properties: JSONSchema7["properties"];
+            }
+          | { $ref: string };
+      };
     };
     output: {
       properties: JSONSchema7["properties"] & {
@@ -48,7 +46,6 @@ export const schemaMessage = <Input extends MessageInput>(input: Input) =>
           ...MessageBase.properties.input.properties,
           ...input.properties.input.properties,
         },
-        required: MessageBase.properties.input.required,
       },
       output: {
         ...MessageBase.properties.output,

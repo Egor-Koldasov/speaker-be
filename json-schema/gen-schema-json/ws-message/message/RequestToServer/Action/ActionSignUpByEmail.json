@@ -1,0 +1,61 @@
+{
+  "type": [
+    "object"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "ActionSignUpByEmail",
+  "additionalProperties": false,
+  "title": "ActionSignUpByEmail",
+  "relPathToWsMessage": "../../../../_util",
+  "properties": {
+    "name": {
+      "const": "Action"
+    },
+    "id": {
+      "type": "string"
+    },
+    "data": {
+      "type": [
+        "object"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "additionalProperties": false,
+      "properties": {
+        "actionParams": {
+          "type": [
+            "object"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "additionalProperties": false,
+          "properties": {
+            "email": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "email"
+          ]
+        },
+        "actionName": {
+          "const": "SignUpByEmail"
+        }
+      },
+      "required": [
+        "actionParams",
+        "actionName"
+      ]
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "$ref": "../../../../property/AppError.json"
+      }
+    }
+  },
+  "required": [
+    "name",
+    "id",
+    "data",
+    "errors"
+  ]
+}

@@ -5,6 +5,7 @@
   "title": "WsMessageName",
   "enum": [
     "LenseQuery",
+    "Action",
     "Mutation"
   ]
 }

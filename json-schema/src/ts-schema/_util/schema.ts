@@ -1,6 +1,6 @@
 import { JSONSchema7 } from "json-schema";
 
-export type SchemaInput = JSONSchema7 & {
+export type SchemaInput = Omit<JSONSchema7, "title"> & {
   title?: string;
 };
 export const schema = <Input extends SchemaInput>(schemaInput: Input) => ({

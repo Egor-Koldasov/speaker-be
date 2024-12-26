@@ -1,7 +1,7 @@
 package wsapp
 
 import (
-	"api-go/pkg/router"
+	"api-go/pkg/wsmessagerouter"
 	"fmt"
 	"net/http"
 	"time"
@@ -54,7 +54,7 @@ func (c *Handler) OnMessage(socket *gws.Conn, message *gws.Message) {
 
 	buffer := message.Bytes()
 
-	responseBytes := router.HandleWsMessageBytes(buffer)
+	responseBytes := wsmessagerouter.HandleWsMessageBytes(buffer)
 
 	if buffer != nil {
 		socket.WriteMessage(message.Opcode, *responseBytes)

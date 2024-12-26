@@ -1,16 +1,14 @@
 import dayjs from 'dayjs'
 import { defineStore } from 'pinia'
 import {
+  WsMessageName,
   WsMessageNameRequestToServer,
-  type User,
 } from 'speaker-json-schema/gen-schema-ts/Main.schema'
 import type { ValueOf } from 'type-fest'
 import { uuidv7 } from 'uuidv7'
 import { onBeforeMount, watch } from 'vue'
-import { idb } from '../idb/idb'
 import { assignCopy } from '../util/assignCopy'
-import { LenseModelConfigMap } from './LenseModelConfig'
-import type { LensState, LenseModel, LenseQuery } from './LenseQuery'
+import type { LensState, LenseQuery } from './LenseQuery'
 import type { LenseQueryName } from './LenseStore'
 import { WsService, type WsMessage, type WsMessageBase } from './WsService'
 
@@ -46,7 +44,7 @@ export const defineUseLens = <
 >({
   name,
   initData,
-  initArgs,
+  initParams: initArgs,
   fetchIdb,
   receiveMainDb,
 }: LenseQuery<Name, LensData, LensArgs>) => {
@@ -73,12 +71,13 @@ export const defineUseLens = <
       },
       async requestMainDb() {
         const wsMessage: LensQueryRequestMessage<LensArgs, Name> = {
-          name: WsMessageNameRequestToServer.LenseQuery,
+          name: WsMessageNameRequestToServer.LenseQuery as unknown as WsMessageName,
           id: uuidv7(),
           data: {
             lensArgs: this.memDataArgs as LensArgs,
             lenseQueryName: this.name as Name,
           },
+          errors: [],
         }
         void WsService.send(wsMessage)
         this.$state.waitingMainDbId = wsMessage.id
@@ -118,27 +117,3 @@ export const defineUseLens = <
   }
   return useLens
 }
-
-const initUser = {
-  id: '',
-  email: '',
-  createdAt: '',
-  updatedAt: '',
-  deletedAt: null,
-} satisfies LenseModel<User>
-export const useLensUser = defineUseLens({
-  name: 'User',
-  initData: {
-    user: initUser,
-  },
-  initArgs: {},
-  async fetchIdb() {
-    const [userIdb] = await (await idb()).getAll('User', undefined, 1)
-    const user = !userIdb ? initUser : LenseModelConfigMap.User.fromIdb(userIdb)
-    return { lensData: { user }, wantSync: false }
-  },
-  async receiveMainDb(lensData) {
-    const userIdb = LenseModelConfigMap.User.toIdb(lensData.user)
-    await (await idb()).put('User', userIdb)
-  },
-})

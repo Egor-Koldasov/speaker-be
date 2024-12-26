@@ -8,10 +8,12 @@ import "reflect"
 
 type WsMessageNameRequestToServer string
 
+const WsMessageNameRequestToServerAction WsMessageNameRequestToServer = "Action"
 const WsMessageNameRequestToServerLenseQuery WsMessageNameRequestToServer = "LenseQuery"
 
 var enumValues_WsMessageNameRequestToServer = []interface{}{
 	"LenseQuery",
+	"Action",
 }
 
 // UnmarshalJSON implements json.Unmarshaler.

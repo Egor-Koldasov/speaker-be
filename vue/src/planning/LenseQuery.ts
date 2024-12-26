@@ -4,7 +4,7 @@
 export type LenseQuery<Name extends string, LensData, LensArgs> = {
   name: Name
   initData: LensData
-  initArgs: LensArgs
+  initParams: LensArgs
 
   fetchIdb: FetchIdb<Name, LensData, LensArgs>
   receiveMainDb: (lensData: LensData) => Promise<void>

@@ -16,7 +16,9 @@
   "dependencies": {
     "@kripod/uuidv7": "^0.3.4",
     "@picocss/pico": "^2.0.6",
+    "@vitest/coverage-v8": "^2.1.8",
     "animated-scroll-to": "^2.3.0",
+    "bs-logger": "^0.2.6",
     "color-contrast": "^1.0.0",
     "dayjs": "^1.11.13",
     "fake-indexeddb": "^6.0.0",

@@ -94,6 +94,9 @@ func (j *ChatGroupMap) UnmarshalJSON(b []byte) error {
 }
 
 type Main struct {
+	// WsMessage corresponds to the JSON schema field "WsMessage".
+	WsMessage MainWsMessage `json:"WsMessage" yaml:"WsMessage" mapstructure:"WsMessage"`
+
 	// WsMessageBase corresponds to the JSON schema field "WsMessageBase".
 	WsMessageBase WsMessageBase `json:"WsMessageBase" yaml:"WsMessageBase" mapstructure:"WsMessageBase"`
 
@@ -120,11 +123,102 @@ type Main struct {
 
 type MainLensModel interface{}
 
+type MainWsMessage struct {
+	// RequestToServer corresponds to the JSON schema field "RequestToServer".
+	RequestToServer MainWsMessageRequestToServer `json:"RequestToServer" yaml:"RequestToServer" mapstructure:"RequestToServer"`
+}
+
+type MainWsMessageRequestToServer struct {
+	// Action corresponds to the JSON schema field "Action".
+	Action MainWsMessageRequestToServerAction `json:"Action" yaml:"Action" mapstructure:"Action"`
+}
+
+type MainWsMessageRequestToServerAction struct {
+	// ActionBase corresponds to the JSON schema field "ActionBase".
+	ActionBase ActionBase `json:"ActionBase" yaml:"ActionBase" mapstructure:"ActionBase"`
+
+	// ActionName corresponds to the JSON schema field "ActionName".
+	ActionName ActionName `json:"ActionName" yaml:"ActionName" mapstructure:"ActionName"`
+
+	// SignUpByEmail corresponds to the JSON schema field "SignUpByEmail".
+	SignUpByEmail ActionSignUpByEmail `json:"SignUpByEmail" yaml:"SignUpByEmail" mapstructure:"SignUpByEmail"`
+
+	// SignUpByEmailResponse corresponds to the JSON schema field
+	// "SignUpByEmailResponse".
+	SignUpByEmailResponse ActionSignUpByEmailResponse `json:"SignUpByEmailResponse" yaml:"SignUpByEmailResponse" mapstructure:"SignUpByEmailResponse"`
+}
+
+// UnmarshalJSON implements json.Unmarshaler.
+func (j *MainWsMessageRequestToServerAction) UnmarshalJSON(b []byte) error {
+	var raw map[string]interface{}
+	if err := json.Unmarshal(b, &raw); err != nil {
+		return err
+	}
+	if _, ok := raw["ActionBase"]; raw != nil && !ok {
+		return fmt.Errorf("field ActionBase in MainWsMessageRequestToServerAction: required")
+	}
+	if _, ok := raw["ActionName"]; raw != nil && !ok {
+		return fmt.Errorf("field ActionName in MainWsMessageRequestToServerAction: required")
+	}
+	if _, ok := raw["SignUpByEmail"]; raw != nil && !ok {
+		return fmt.Errorf("field SignUpByEmail in MainWsMessageRequestToServerAction: required")
+	}
+	if _, ok := raw["SignUpByEmailResponse"]; raw != nil && !ok {
+		return fmt.Errorf("field SignUpByEmailResponse in MainWsMessageRequestToServerAction: required")
+	}
+	type Plain MainWsMessageRequestToServerAction
+	var plain Plain
+	if err := json.Unmarshal(b, &plain); err != nil {
+		return err
+	}
+	*j = MainWsMessageRequestToServerAction(plain)
+	return nil
+}
+
+// UnmarshalJSON implements json.Unmarshaler.
+func (j *MainWsMessageRequestToServer) UnmarshalJSON(b []byte) error {
+	var raw map[string]interface{}
+	if err := json.Unmarshal(b, &raw); err != nil {
+		return err
+	}
+	if _, ok := raw["Action"]; raw != nil && !ok {
+		return fmt.Errorf("field Action in MainWsMessageRequestToServer: required")
+	}
+	type Plain MainWsMessageRequestToServer
+	var plain Plain
+	if err := json.Unmarshal(b, &plain); err != nil {
+		return err
+	}
+	*j = MainWsMessageRequestToServer(plain)
+	return nil
+}
+
+// UnmarshalJSON implements json.Unmarshaler.
+func (j *MainWsMessage) UnmarshalJSON(b []byte) error {
+	var raw map[string]interface{}
+	if err := json.Unmarshal(b, &raw); err != nil {
+		return err
+	}
+	if _, ok := raw["RequestToServer"]; raw != nil && !ok {
+		return fmt.Errorf("field RequestToServer in MainWsMessage: required")
+	}
+	type Plain MainWsMessage
+	var plain Plain
+	if err := json.Unmarshal(b, &plain); err != nil {
+		return err
+	}
+	*j = MainWsMessage(plain)
+	return nil
+}
+
 // UnmarshalJSON implements json.Unmarshaler.
 func (j *Main) UnmarshalJSON(b []byte) error {
 	var raw map[string]interface{}
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
+	}
+	if _, ok := raw["WsMessage"]; raw != nil && !ok {
+		return fmt.Errorf("field WsMessage in Main: required")
 	}
 	if _, ok := raw["WsMessageBase"]; raw != nil && !ok {
 		return fmt.Errorf("field WsMessageBase in Main: required")

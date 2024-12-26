@@ -59,10 +59,8 @@
                 }
               },
               "required": [
-                "id",
                 "name",
-                "data",
-                "authToken"
+                "data"
               ]
             },
             "output": {
@@ -229,10 +227,8 @@
                 }
               },
               "required": [
-                "id",
                 "name",
-                "data",
-                "authToken"
+                "data"
               ]
             },
             "output": {
@@ -332,10 +328,8 @@
                 }
               },
               "required": [
-                "id",
                 "name",
-                "data",
-                "authToken"
+                "data"
               ]
             },
             "output": {
@@ -428,10 +422,8 @@
                 }
               },
               "required": [
-                "id",
                 "name",
-                "data",
-                "authToken"
+                "data"
               ]
             },
             "output": {
@@ -555,10 +547,8 @@
                 }
               },
               "required": [
-                "id",
                 "name",
-                "data",
-                "authToken"
+                "data"
               ]
             },
             "output": {
@@ -651,10 +641,8 @@
                 }
               },
               "required": [
-                "id",
                 "name",
-                "data",
-                "authToken"
+                "data"
               ]
             },
             "output": {
@@ -1412,7 +1400,8 @@
       "$id": "WsMessageNameRequestToServer",
       "title": "WsMessageNameRequestToServer",
       "enum": [
-        "LenseQuery"
+        "LenseQuery",
+        "Action"
       ]
     },
     "WsMessageNameEventToServer": {
@@ -1431,6 +1420,7 @@
       "title": "WsMessageName",
       "enum": [
         "LenseQuery",
+        "Action",
         "Mutation"
       ]
     },
@@ -1453,7 +1443,10 @@
           "type": "string"
         },
         "data": {
-          "type": "object"
+          "type": [
+            "object"
+          ],
+          "properties": {}
         },
         "errors": {
           "type": "array",
@@ -1503,6 +1496,223 @@
         "data",
         "errors"
       ]
+    },
+    "WsMessage": {
+      "type": [
+        "object"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "additionalProperties": false,
+      "properties": {
+        "RequestToServer": {
+          "type": [
+            "object"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "additionalProperties": false,
+          "properties": {
+            "Action": {
+              "type": [
+                "object"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema",
+              "additionalProperties": false,
+              "properties": {
+                "ActionBase": {
+                  "type": [
+                    "object"
+                  ],
+                  "$schema": "http://json-schema.org/draft-07/schema",
+                  "$id": "ActionBase",
+                  "additionalProperties": false,
+                  "title": "ActionBase",
+                  "relPathToWsMessage": "../../../../_util",
+                  "properties": {
+                    "name": {
+                      "const": "Action"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "responseForId": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": [
+                        "object"
+                      ],
+                      "$schema": "http://json-schema.org/draft-07/schema",
+                      "additionalProperties": false,
+                      "properties": {
+                        "actionName": {
+                          "$ref": "#/properties/WsMessage/properties/RequestToServer/properties/Action/properties/ActionName"
+                        },
+                        "actionParams": {
+                          "type": "object"
+                        }
+                      },
+                      "required": [
+                        "actionName",
+                        "actionParams"
+                      ]
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/properties/WsMessageBase/properties/errors/items"
+                      }
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "id",
+                    "data",
+                    "errors"
+                  ]
+                },
+                "ActionName": {
+                  "type": "string",
+                  "$schema": "http://json-schema.org/draft-07/schema",
+                  "$id": "ActionName",
+                  "title": "ActionName",
+                  "enum": [
+                    "SignUpByEmail"
+                  ]
+                },
+                "SignUpByEmail": {
+                  "type": [
+                    "object"
+                  ],
+                  "$schema": "http://json-schema.org/draft-07/schema",
+                  "$id": "ActionSignUpByEmail",
+                  "additionalProperties": false,
+                  "title": "ActionSignUpByEmail",
+                  "relPathToWsMessage": "../../../../_util",
+                  "properties": {
+                    "name": {
+                      "const": "Action"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": [
+                        "object"
+                      ],
+                      "$schema": "http://json-schema.org/draft-07/schema",
+                      "additionalProperties": false,
+                      "properties": {
+                        "actionParams": {
+                          "type": [
+                            "object"
+                          ],
+                          "$schema": "http://json-schema.org/draft-07/schema",
+                          "additionalProperties": false,
+                          "properties": {
+                            "email": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "email"
+                          ]
+                        },
+                        "actionName": {
+                          "const": "SignUpByEmail"
+                        }
+                      },
+                      "required": [
+                        "actionParams",
+                        "actionName"
+                      ]
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/properties/WsMessageBase/properties/errors/items"
+                      }
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "id",
+                    "data",
+                    "errors"
+                  ]
+                },
+                "SignUpByEmailResponse": {
+                  "type": [
+                    "object"
+                  ],
+                  "$schema": "http://json-schema.org/draft-07/schema",
+                  "$id": "ActionSignUpByEmailResponse",
+                  "additionalProperties": false,
+                  "title": "ActionSignUpByEmailResponse",
+                  "relPathToWsMessage": "../../../../_util",
+                  "response": true,
+                  "properties": {
+                    "name": {
+                      "const": "Action"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "responseForId": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": [
+                        "object"
+                      ],
+                      "$schema": "http://json-schema.org/draft-07/schema",
+                      "additionalProperties": false,
+                      "properties": {
+                        "actionParams": {
+                          "type": [
+                            "object"
+                          ]
+                        },
+                        "actionName": {
+                          "const": "SignUp"
+                        }
+                      },
+                      "required": [
+                        "actionParams",
+                        "actionName"
+                      ]
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/properties/WsMessageBase/properties/errors/items"
+                      }
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "id",
+                    "responseForId",
+                    "data",
+                    "errors"
+                  ]
+                }
+              },
+              "required": [
+                "ActionBase",
+                "ActionName",
+                "SignUpByEmail",
+                "SignUpByEmailResponse"
+              ]
+            }
+          },
+          "required": [
+            "Action"
+          ]
+        }
+      },
+      "required": [
+        "RequestToServer"
+      ]
     }
   },
   "required": [
@@ -1512,6 +1722,7 @@
     "WsMessageNameRequestToServer",
     "WsMessageNameEventToServer",
     "WsMessageName",
-    "WsMessageBase"
+    "WsMessageBase",
+    "WsMessage"
   ]
 }
