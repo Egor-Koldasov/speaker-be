@@ -10,7 +10,7 @@ export default schemaObject(
     },
     code: {
       type: "string",
-      length: 12,
+      length: 6,
     },
   },
   {

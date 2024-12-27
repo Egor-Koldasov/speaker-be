@@ -26,13 +26,19 @@ const onSubmit = async (e: Event) => {
     <div class="ConfirmAuthCode">
       <form class="auth-form" @submit="onSubmit">
         <TextFieldGroup
-          :field="{ type: 'text' }"
+          :field="{
+            type: 'text',
+            class: 'auth-code-field',
+            autofocus: true,
+            maxlength: 6,
+          }"
           label="Enter authentication code"
           v-model="form.authCode"
         />
         <button
           type="submit"
           :aria-busy="!!signUpByEmailCode.$state.waitingMainDbId"
+          :disabled="form.authCode.length !== 6"
         >
           Confirm
         </button>
@@ -44,7 +50,7 @@ const onSubmit = async (e: Event) => {
 .ConfirmAuthCode {
   height: 1px;
   flex-grow: 1;
-  justify-content: center;
+  /* justify-content: center; */
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -59,8 +65,18 @@ const onSubmit = async (e: Event) => {
     height: auto;
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 8px;
     width: 100%;
+  }
+  :deep(.TextFieldGroup) {
+    width: 100%;
+  }
+  :deep(.auth-code-field) {
+    font-size: 2rem;
+    letter-spacing: 1rem;
+    text-transform: uppercase;
+    text-align: center;
   }
 }
 </style>

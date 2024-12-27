@@ -23,7 +23,7 @@ const onSubmit = async (e: Event) => {
 <template>
   <PublicPage>
     <div class="Authorize">
-      <div class="title">Authorize {{ form.email }}</div>
+      <div class="title">Login/Register</div>
       <form class="auth-form" @submit="onSubmit">
         <TextFieldGroup
           :field="{ type: 'email' }"
@@ -36,7 +36,7 @@ const onSubmit = async (e: Event) => {
           type="submit"
           :aria-busy="!!signUpByEmail.$state.waitingMainDbId"
         >
-          Login
+          Send code
         </button>
       </form>
     </div>
@@ -46,7 +46,6 @@ const onSubmit = async (e: Event) => {
 .Authorize {
   height: 1px;
   flex-grow: 1;
-  justify-content: center;
   align-items: center;
   display: flex;
   flex-direction: column;

@@ -1098,7 +1098,7 @@
             },
             "code": {
               "type": "string",
-              "length": 12
+              "length": 6
             }
           },
           "required": [

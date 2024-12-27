@@ -12,6 +12,7 @@ import (
 	"api-go/pkg/utilerror"
 	"api-go/pkg/utilstruct"
 	"fmt"
+	"strings"
 
 	"github.com/surrealdb/surrealdb.go/pkg/models"
 	"github.com/xeipuuv/gojsonschema"
@@ -27,7 +28,7 @@ var SignUpByEmail = actionrouterutil.ActionHandlerConfig{
 		}
 		action := utilstruct.TranslateStruct[genjsonschema.ActionSignUpByEmail](message)
 		signupEmail := action.Data.ActionParams.Email
-		signUpToken := utilcrypto.GenerateSecureToken(12)
+		signUpToken := strings.ToUpper(utilcrypto.GenerateSecureToken(6))
 
 		// Save signup token to database.
 		signUpCode := lensmodel.NewLensModel[genjsonschema.SignUpCode]()

@@ -33,7 +33,7 @@ describe(`Signup`, () => {
       if (emailsData.count !== 1 || !email) return false
 
       signUpCode = email.Content.Body
-      expect(signUpCode).toHaveLength(12)
+      expect(signUpCode).toHaveLength(6)
 
       return true
     })

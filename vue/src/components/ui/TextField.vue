@@ -3,6 +3,9 @@
 const props = defineProps<{
   placeholder?: string
   type?: 'text' | 'email' | 'password'
+  class?: string
+  autofocus?: boolean
+  maxlength?: number
 }>()
 const model = defineModel()
 
@@ -14,8 +17,11 @@ const model = defineModel()
 <template>
   <input
     class="TextField"
+    :class="props.class"
     :type="props.type ?? 'text'"
     :placeholder="props.placeholder"
+    :autofocus="props.autofocus"
+    :maxlength="props.maxlength"
     v-model="model"
   />
 </template>
