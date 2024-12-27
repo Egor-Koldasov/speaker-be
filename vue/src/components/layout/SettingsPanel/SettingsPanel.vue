@@ -1,13 +1,11 @@
 <script setup lang="ts">
+import { useLensUser } from '../../../planning/Lens/useLensUser'
 import { useSettingsPanel } from '../../../uiStore/useSettingsPanel'
-import { useMessageStore } from '../../../dataStore/messageStore'
-import { useMessageGetAuthInfo } from '../../../dataStore/messages/useMessageGetAuthInfo'
 
 // # Props, State
 // # Hooks
 const settingsPanel = useSettingsPanel()
-const messageStore = useMessageStore()
-const messageAuthInfo = useMessageGetAuthInfo()
+const userLens = useLensUser()
 
 // # Computed
 // # Callbacks
@@ -16,8 +14,7 @@ const messageAuthInfo = useMessageGetAuthInfo()
 <template>
   <div class="SettingsPanel" :class="{ open: settingsPanel.open }">
     <h2>Settings</h2>
-    <!-- {{ messageStore.auth.authToken }} -->
-    {{ messageAuthInfo.data?.output?.data?.user.email }}
+    {{ userLens.memData.user.email }}
   </div>
 </template>
 <style scoped lang="scss">

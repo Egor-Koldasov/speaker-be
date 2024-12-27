@@ -119,13 +119,15 @@ export const defineUseLens = <
 
         const messageData = response.data.queryParams
         await receiveMainDb?.(messageData)
-        this.$state.lastFetchedMainAt = dayjs().toISOString()
-        if (this.$state.waitingMainDbId === response.responseForId) {
-          this.$state.waitingMainDbId = ''
-          this.$state.memData = messageData as UnwrapRef<
-            Response['data']['queryParams']
-          >
-        }
+        this.$patch((state): void => {
+          if (state.waitingMainDbId === response.responseForId) {
+            state.memData = messageData as UnwrapRef<
+              Response['data']['queryParams']
+            >
+            state.waitingMainDbId = ''
+            state.lastFetchedMainAt = dayjs().toISOString()
+          }
+        })
         await this.fetchFromIdb()
       },
       async onActionResponse(message: ActionBase) {
@@ -133,6 +135,7 @@ export const defineUseLens = <
       },
       async init() {
         this.authToken = await getAuthToken()
+        if (this.authToken) this.refetch()
         const onAuthTokenUpdate = (authToken: string) => {
           this.authToken = authToken
           if (this.authToken) this.refetch()
@@ -158,7 +161,7 @@ export const defineUseLens = <
     store.init()
 
     watch([store.memDataArgs], store.refetch, {
-      immediate: !!store.authToken,
+      immediate: false,
     })
     return store
   }

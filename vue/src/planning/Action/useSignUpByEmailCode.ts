@@ -7,7 +7,8 @@ export const useSignUpByEmailCode = defineUseAction({
   initParams: {
     code: '',
   },
-  onSuccess(response) {
-    setAuthToken(response.data.actionParams.sessionToken)
+  async onSuccess(response, store) {
+    await setAuthToken(response.data.actionParams.sessionToken)
+    store.router.push('/home')
   },
 })

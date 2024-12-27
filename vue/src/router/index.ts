@@ -5,33 +5,33 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
-      redirect: '/define-from-foreign',
+      name: 'public-home',
+      component: () => import('../components/pages/PublicHome.vue'),
     },
     {
-      path: '/define-from-foreign',
-      name: 'define-from-foreign',
-      component: () => import('../components/pages/DefineFromForeign.vue'),
-    },
-    {
-      path: '/define-to-foreign',
-      name: 'define-to-foreign',
-      component: () => import('../components/pages/DefineToForeigh.vue'),
-    },
-    {
-      path: '/auth',
-      name: 'auth',
-      component: () => import('../components/pages/Auth.vue'),
-    },
-    {
-      path: '/decks',
-      name: 'decks',
-      component: () => import('../components/pages/Decks.vue'),
+      path: '/home',
+      name: 'app-home',
+      component: () => import('../components/pages/AppHome.vue'),
     },
     {
       path: '/user',
       name: 'user',
       component: () => import('../components/pages/User.vue'),
+    },
+    {
+      path: '/authorize',
+      name: 'authorize',
+      component: () => import('../components/pages/Authorize.vue'),
+    },
+    {
+      path: '/confirm-auth-code',
+      name: 'confirm-auth-code',
+      component: () => import('../components/pages/ConfirmAuthCode.vue'),
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'page-not-found',
+      component: () => import('../components/pages/PageNotFound.vue'),
     },
   ],
 })

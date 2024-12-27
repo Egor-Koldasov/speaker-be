@@ -1,6 +1,6 @@
 import './assets/main.css'
 
-import { createApp } from 'vue'
+import { createApp, type Ref } from 'vue'
 import { createPinia } from 'pinia'
 
 import App from './App.vue'
@@ -11,6 +11,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import dayjs from 'dayjs'
 import { idbInit } from './idb/idb'
+import { useRouter, type Router } from 'vue-router'
 
 dayjs.extend(isoWeek)
 dayjs.extend(duration)
@@ -19,9 +20,22 @@ dayjs.extend(customParseFormat)
 
 idbInit()
 
+declare module 'pinia' {
+  export interface PiniaCustomProperties {
+    router: Router
+  }
+}
+
 const app = createApp(App)
 
-app.use(createPinia())
+const pinia = createPinia()
+pinia.use(() => {
+  const router = useRouter()
+  return {
+    router,
+  }
+})
+app.use(pinia)
 app.use(router)
 
 app.mount('#app')

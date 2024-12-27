@@ -82,13 +82,15 @@ type WsPendingQueryToServerMap = {
   }
 }
 
+const wsHost = window.location.hostname ?? 'localhost'
+
 export class WsServiceType extends EventEmitter {
   ws: WebSocket | null = null
   pendingQueryToServerMap: WsPendingQueryToServerMap = {}
   init() {
     console.log('init')
     this.ws?.close()
-    this.ws = new WebSocket(`ws://localhost:6969/ws`)
+    this.ws = new WebSocket(`ws://${wsHost}:6969/ws`)
 
     this.ws.addEventListener('open', () => {
       wsLogger.info('WebSocket connection opened')
@@ -96,6 +98,7 @@ export class WsServiceType extends EventEmitter {
 
     this.ws.addEventListener('close', () => {
       wsLogger.info('WebSocket connection closed')
+      this.init()
     })
 
     this.ws.addEventListener('error', () => {

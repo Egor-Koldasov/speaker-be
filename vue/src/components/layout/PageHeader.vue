@@ -1,14 +1,10 @@
 <script setup lang="ts">
-import { watch } from 'vue'
-import PageNavigation from './PageNavigation.vue'
-import { useMessageStore } from '../../dataStore/messageStore'
-import { playAudioBase64 } from '../../util/playAudioBase64'
-import { useToasts } from '../../uiStore/useToasts'
 import { useSettingsPanel } from '../../uiStore/useSettingsPanel'
+import { useToasts } from '../../uiStore/useToasts'
+import PageNavigation from './PageNavigation.vue'
 
 // # Props, State
 // # Hooks
-const dataStore = useMessageStore()
 const toasts = useToasts()
 const settingsPanel = useSettingsPanel()
 // # Computed

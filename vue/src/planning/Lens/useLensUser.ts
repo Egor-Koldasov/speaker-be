@@ -1,10 +1,7 @@
 import {
-  ActionName,
   LensQueryName,
   type User,
 } from 'speaker-json-schema/gen-schema-ts/Main.schema'
-import { idb } from '../../idb/idb'
-import { LenseModelConfigMap } from '../LensModelConfig'
 import { defineUseLens } from '../DefineUseLens'
 
 const initUser: User = {

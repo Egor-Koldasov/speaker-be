@@ -13,15 +13,15 @@ import { RouterLink } from 'vue-router'
 <template>
   <nav class="PageNavigation">
     <ol class="nav-list">
-      <li class="nav-item">
-        <RouterLink to="/define-from-foreign">Translate</RouterLink>
+      <!-- <li class="nav-item">
+        <RouterLink to="/define-from-foreign">Page 1</RouterLink>
       </li>
       <li class="nav-item">
-        <RouterLink to="/define-to-foreign">How to say</RouterLink>
+        <RouterLink to="/define-to-foreign">Page 2</RouterLink>
       </li>
       <li class="nav-item">
-        <RouterLink to="/decks">Decks</RouterLink>
-      </li>
+        <RouterLink to="/decks">Page 3</RouterLink>
+      </li> -->
     </ol>
   </nav>
 </template>

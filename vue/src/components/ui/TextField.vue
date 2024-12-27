@@ -4,6 +4,8 @@ const props = defineProps<{
   placeholder?: string
   type?: 'text' | 'email' | 'password'
 }>()
+const model = defineModel()
+
 // # Hooks
 // # Computed
 // # Callbacks
@@ -14,6 +16,7 @@ const props = defineProps<{
     class="TextField"
     :type="props.type ?? 'text'"
     :placeholder="props.placeholder"
+    v-model="model"
   />
 </template>
 <style scoped lang="scss">

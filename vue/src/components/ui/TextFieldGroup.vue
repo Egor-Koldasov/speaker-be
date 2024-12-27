@@ -6,16 +6,17 @@ const props = defineProps<{
   field: InstanceType<typeof TextField>['$props']
   label: string
 }>()
+const model = defineModel()
 // # Hooks
 // # Computed
 // # Callbacks
 // # Watchers
 </script>
 <template>
-  <div class="TextFieldGroup">
-    <label>{{ props.label }}</label>
-    <TextField v-bind="props.field" />
-  </div>
+  <label class="TextFieldGroup">
+    <span>{{ props.label }}</span>
+    <TextField v-bind="props.field" v-model="model" />
+  </label>
 </template>
 <style scoped lang="scss">
 .TextFieldGroup {

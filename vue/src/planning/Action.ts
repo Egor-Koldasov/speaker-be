@@ -4,11 +4,15 @@ import type {
   Main,
 } from 'speaker-json-schema/gen-schema-ts/Main.schema'
 import type { ActionResponseByName } from './DefineUseAction'
+import type { Router } from 'vue-router'
 
 export type Action<Name extends ActionName, ActionParams> = {
   name: Name
   initParams: ActionParams
-  onSuccess?: (response: ActionResponseByName<Name>) => void
+  onSuccess?: (
+    response: ActionResponseByName<Name>,
+    helpers: { router: Router },
+  ) => void
 }
 
 export type ActionState<

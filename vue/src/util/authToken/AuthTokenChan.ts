@@ -1,4 +1,4 @@
-import { EventEmitter } from 'stream'
+import EventEmitter from 'eventemitter3'
 
 export const AuthTokenChan = new EventEmitter()
 

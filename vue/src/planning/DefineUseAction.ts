@@ -77,7 +77,7 @@ export const defineUseAction = <
         this.$state.lastFetchedMainAt = dayjs().toISOString()
         this.$state.lastResponse = message as UnwrapRef<ResponseAction>
         if (message.errors.length === 0 && onSuccess) {
-          onSuccess(message as ActionResponseByName<Name>)
+          onSuccess(message as ActionResponseByName<Name>, this)
         }
       },
       async init() {

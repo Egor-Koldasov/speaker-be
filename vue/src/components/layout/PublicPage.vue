@@ -1,41 +1,16 @@
 <script setup lang="ts">
-import { effect, watch } from 'vue'
-import { useLensUser } from '../../planning/Lens/useLensUser'
-import { useRouter } from 'vue-router'
-import { useSettingsPanel } from '../../uiStore/useSettingsPanel'
-import SettingsPanel from './SettingsPanel/SettingsPanel.vue'
-import PageHeader from './PageHeader.vue'
-
 // # Props, State
-const userLens = useLensUser()
 // # Hooks
-const router = useRouter()
-const settingsPanel = useSettingsPanel()
-
 // # Computed
 // # Callbacks
 // # Watchers
-effect(() => {
-  console.log(
-    'userLens.$state',
-    userLens.$state.lastFetchedMainAt,
-    userLens.$state.memData.user.id,
-  )
-  const authFailed =
-    !!userLens.$state.lastFetchedMainAt && !userLens.$state.memData.user.id
-  if (authFailed) {
-    router.push('/')
-  }
-})
 </script>
 <template>
-  <main class="Page" :class="{ settingsOpen: settingsPanel.open }">
+  <main class="Page">
     <div class="settings-layout">
       <div class="page-box">
-        <PageHeader />
         <slot />
       </div>
-      <SettingsPanel />
     </div>
   </main>
 </template>
@@ -70,5 +45,6 @@ effect(() => {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  padding: 16px;
 }
 </style>

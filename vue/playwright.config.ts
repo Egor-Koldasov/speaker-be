@@ -36,10 +36,11 @@ const config: PlaywrightTestConfig = {
     baseURL: 'http://localhost:3001',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
+    trace: 'on',
+    video: 'on',
 
     /* Only on CI systems run the tests headless */
-    headless: !!process.env.CI,
+    // headless: !!process.env.CI,
   },
 
   /* Configure projects for major browsers */
@@ -96,16 +97,16 @@ const config: PlaywrightTestConfig = {
   // outputDir: 'test-results/',
 
   /* Run your local dev server before starting the tests */
-  webServer: {
-    /**
-     * Use the dev server by default for faster feedback loop.
-     * Use the preview server on CI for more realistic testing.
-    Playwright will re-use the local server if there is already a dev-server running.
-     */
-    command: process.env.CI ? 'vite preview --port 5173' : 'vite dev',
-    port: 3001,
-    reuseExistingServer: !process.env.CI,
-  },
+  // webServer: {
+  //   /**
+  //    * Use the dev server by default for faster feedback loop.
+  //    * Use the preview server on CI for more realistic testing.
+  //   Playwright will re-use the local server if there is already a dev-server running.
+  //    */
+  //   command: process.env.CI ? 'vite preview --port 5173' : 'vite dev',
+  //   port: 3001,
+  //   reuseExistingServer: !process.env.CI,
+  // },
   // globalSetup: require.resolve('./e2e/util/globalSetup.ts'),
 }
 
