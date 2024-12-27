@@ -1,5 +1,3 @@
-//go:generate go get -u github.com/valyala/quicktemplate/qtc
-//go:generate ../../bin/qtc -dir=../../pkg/templatecypher
 package main
 
 import (

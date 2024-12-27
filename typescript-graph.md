@@ -1,7 +1,7 @@
 # TypeScript Graph
 
 ```bash
-tsg vue/src/planning/LenseQuery.ts
+tsg vue/src/planning/LensQuery.ts
 ```
 
 ```mermaid

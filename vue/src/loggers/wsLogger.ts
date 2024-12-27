@@ -6,6 +6,6 @@ export const wsLogger = createLogger({
   format: winston.format.combine(
     winston.format.label({ label: 'WebSocket' }),
     winston.format.timestamp(),
-    winston.format.simple(),
+    winston.format.json({ space: 2 }),
   ),
 })

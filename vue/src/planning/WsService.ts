@@ -46,9 +46,9 @@ type WsMessageConfig<
 }
 
 type MessageConfigs = {
-  LenseQuery: WsMessageConfig<
+  LensQuery: WsMessageConfig<
     WsMessageType.QueryToServer,
-    WsMessageNameRequestToServer.LenseQuery
+    WsMessageNameRequestToServer.LensQuery
   >
 }
 export type WsMessage<
@@ -61,6 +61,7 @@ export type WsMessage<
     id: string
     responseForId?: string
     data: Data
+    authToken: string | null
     errors: AppError[]
   }
 >
@@ -68,7 +69,7 @@ export type WsMessage<
 const isWsMessage = (message: unknown): message is WsMessageBase => true
 
 const wsMessageHandlers = {
-  LenseQuery: (message) => {},
+  LensQuery: (message) => {},
   Mutation: (message) => {},
   Action: (message) => {},
 } satisfies {
@@ -115,6 +116,10 @@ export class WsServiceType extends EventEmitter {
           console.error('No pending query found for response', message)
           return
         }
+        if (message.errors.length > 0) {
+          wsLogger.error(`Message returned errors`, { wsMessage: message })
+        }
+
         this.emit('responseForId', message)
         this.emit(`responseForId:${message.name}`, message)
         delete this.pendingQueryToServerMap[message.responseForId]

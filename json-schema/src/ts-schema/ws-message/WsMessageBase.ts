@@ -20,6 +20,9 @@ export default schemaObject(
         | undefined,
       properties: {} as JSONSchema7["properties"],
     },
+    authToken: {
+      type: ["string", "null"],
+    },
     errors: {
       type: "array",
       items: {

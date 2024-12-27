@@ -1,7 +1,7 @@
 import type { LenseModels } from 'speaker-json-schema/gen-schema-ts/Main.schema'
-import type { LenseModelConfigMap } from './LenseModelConfig'
+import type { LenseModelConfigMap } from './LensModelConfig'
 import type { idb } from '../idb/idb'
-import { UserLensQuery } from './LenseStore'
+import { UserLensQuery } from './LensStore'
 
 const LenseQueries = {
   User: UserLensQuery,

@@ -2,7 +2,7 @@ import { openDB, type DBSchema } from 'idb'
 import type {
   LenseModelConfigMap,
   LenseModelIdbByName,
-} from '../planning/LenseModelConfig'
+} from '../planning/LensModelConfig'
 import { runPromiseSequence } from '../util/runPromiseSequence'
 import { idbMigrations } from './idbMigrations'
 

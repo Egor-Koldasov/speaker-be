@@ -22,3 +22,17 @@ func MakeActionBaseResponse(message *genjsonschema.ActionBase) *genjsonschema.Ac
 	}
 	return &messageResult
 }
+
+func MakeBaseResponseAppError(message *genjsonschema.ActionBase, appError genjsonschema.AppError) *genjsonschema.ActionBase {
+	messageResult := MakeActionBaseResponse(message)
+	messageResult.Errors = append(messageResult.Errors, appError)
+	return messageResult
+}
+
+func MakeBaseResponseAuthRequired(message *genjsonschema.ActionBase) *genjsonschema.ActionBase {
+	appError := genjsonschema.AppError{
+		Name:    genjsonschema.ErrorNameAuthRequired,
+		Message: "Access error",
+	}
+	return MakeBaseResponseAppError(message, appError)
+}

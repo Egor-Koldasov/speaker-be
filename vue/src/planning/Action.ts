@@ -1,8 +1,14 @@
-import type { ActionBase } from 'speaker-json-schema/gen-schema-ts/Main.schema'
+import type {
+  ActionBase,
+  ActionName,
+  Main,
+} from 'speaker-json-schema/gen-schema-ts/Main.schema'
+import type { ActionResponseByName } from './DefineUseAction'
 
-export type Action<Name extends string, ActionParams> = {
+export type Action<Name extends ActionName, ActionParams> = {
   name: Name
   initParams: ActionParams
+  onSuccess?: (response: ActionResponseByName<Name>) => void
 }
 
 export type ActionState<
@@ -21,4 +27,5 @@ export type ActionState<
   lastFetchedMainAt: string
   waitingMainDbId: string
   lastResponse: Response | null
+  authToken: string | null
 }

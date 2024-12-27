@@ -57,7 +57,7 @@ describe(`Web Socket health`, () => {
         WsService.ws?.addEventListener('message', (event) => {
           try {
             const message = JSON.parse(event.data) as WsMessageBase
-            expect(message).toHaveProperty('name', WsMessageName.LenseQuery)
+            expect(message).toHaveProperty('name', WsMessageName.LensQuery)
             expect(message).toHaveProperty('responseForId', messageId)
             expect(message).toHaveProperty('errors', [])
             expect(UUID.parse(message.id).getVersion()).toBe(7)
@@ -68,7 +68,7 @@ describe(`Web Socket health`, () => {
           }
         })
         WsService.send({
-          name: WsMessageName.LenseQuery,
+          name: WsMessageName.LensQuery,
           id: messageId,
           errors: [],
           data: {},

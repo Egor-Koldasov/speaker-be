@@ -1,6 +1,6 @@
 # Roadmap
 
-## LenseQuery
+## LensQuery
 
 ### POC initial setup
 
@@ -19,11 +19,11 @@
 - Test multiple browsers
 - Test concurrent access from different devices and network endpoints
 
-#### LenseQuery design
+#### LensQuery design
 
-[./LenseQuery.ts](./LenseQuery.ts)
+[./LensQuery.ts](./LensQuery.ts)
 
-- `LenseQuery.fetchMainDb` types are made with json-schema and are shared across TS and Go environments
+- `LensQuery.fetchMainDb` types are made with json-schema and are shared across TS and Go environments
 - [ ] Provide unified API for all models
 
 #### Setup

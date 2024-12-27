@@ -4,7 +4,7 @@
   "$id": "WsMessageName",
   "title": "WsMessageName",
   "enum": [
-    "LenseQuery",
+    "LensQuery",
     "Action",
     "Mutation"
   ]

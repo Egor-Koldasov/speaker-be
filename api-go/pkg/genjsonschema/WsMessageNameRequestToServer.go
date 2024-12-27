@@ -9,10 +9,10 @@ import "reflect"
 type WsMessageNameRequestToServer string
 
 const WsMessageNameRequestToServerAction WsMessageNameRequestToServer = "Action"
-const WsMessageNameRequestToServerLenseQuery WsMessageNameRequestToServer = "LenseQuery"
+const WsMessageNameRequestToServerLensQuery WsMessageNameRequestToServer = "LensQuery"
 
 var enumValues_WsMessageNameRequestToServer = []interface{}{
-	"LenseQuery",
+	"LensQuery",
 	"Action",
 }
 

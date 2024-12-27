@@ -5,20 +5,19 @@ import (
 	"api-go/pkg/actionrouterutil"
 	"api-go/pkg/genjsonschema"
 	"api-go/pkg/jsonvalidate"
-	"api-go/pkg/modelsurreal"
+	"api-go/pkg/lensrouterutil"
 	"api-go/pkg/surrealdbutil"
 	"api-go/pkg/utilcrypto"
 	"api-go/pkg/utilerror"
 	"api-go/pkg/utilstruct"
 	"errors"
 
-	"github.com/surrealdb/surrealdb.go"
 	"github.com/surrealdb/surrealdb.go/pkg/models"
 	"github.com/xeipuuv/gojsonschema"
 )
 
 var SignUpByEmailCode = actionrouterutil.ActionHandlerConfig{
-	HandlerFn: func(message *genjsonschema.ActionBase) *genjsonschema.ActionBase {
+	HandlerFn: func(message *genjsonschema.ActionBase, helpers lensrouterutil.HandlerFnHelpers) *genjsonschema.ActionBase {
 		messageBufferLoader := gojsonschema.NewGoLoader(message)
 		appErrors := jsonvalidate.ValidateJson(jsonvalidate.SchemaPath_Action_SignUpByEmailCode, messageBufferLoader, genjsonschema.ErrorNameInternal)
 		if len(*appErrors) > 0 {
@@ -28,16 +27,15 @@ var SignUpByEmailCode = actionrouterutil.ActionHandlerConfig{
 		}
 		action := utilstruct.TranslateStruct[genjsonschema.ActionSignUpByEmailCode](message)
 
-		signUpCodesFound, err := surrealdb.Query[[]modelsurreal.SignUpCode](surrealdbutil.Db, "SELECT * FROM SignUpCode WHERE Code=$Code", map[string]interface{}{
-			"Code": action.Data.ActionParams.Code,
-		})
-		var firstQueryResult *surrealdb.QueryResult[[]modelsurreal.SignUpCode]
-		var firstRecord *modelsurreal.SignUpCode
-		if signUpCodesFound != nil && len(*signUpCodesFound) > 0 {
-			firstQueryResult = &(*signUpCodesFound)[0]
-		}
-		if firstQueryResult != nil && len(firstQueryResult.Result) > 0 {
-			firstRecord = &firstQueryResult.Result[0]
+		signUpCodesFound, err := surrealdbutil.Query[genjsonschema.SignUpCode](
+			"SELECT * FROM SignUpCode WHERE code=$Code",
+			map[string]interface{}{
+				"Code": action.Data.ActionParams.Code,
+			})
+		var firstRecord *genjsonschema.SignUpCode
+
+		if signUpCodesFound != nil && len(signUpCodesFound.Result) > 0 {
+			firstRecord = &signUpCodesFound.Result[0]
 		}
 
 		if firstRecord == nil {
@@ -58,8 +56,10 @@ var SignUpByEmailCode = actionrouterutil.ActionHandlerConfig{
 		userToRegister := lensmodel.NewLensModel[genjsonschema.User]()
 		userToRegister.Email = email
 
-		userCreatedMap, err := surrealdb.Create[map[string]any](surrealdbutil.Db, models.Table("User"), userToRegister)
-		userCreated := surrealdbutil.MapToModel[genjsonschema.User](*userCreatedMap)
+		userCreated, err := surrealdbutil.Create[genjsonschema.User](
+			models.Table("User"),
+			userToRegister,
+		)
 		if utilerror.LogError("Failed to create User", err) {
 			response := actionrouterutil.MakeActionBaseResponse(message)
 			response.Errors = []genjsonschema.AppError{{
@@ -71,12 +71,13 @@ var SignUpByEmailCode = actionrouterutil.ActionHandlerConfig{
 
 		// Sign in
 		tokenCode := utilcrypto.GenerateSecureToken(12)
-		sessionToken := modelsurreal.SessionToken{
-			ModelSurrealBase: modelsurreal.MakeModelSurrealBase(),
-			UserId:           *models.ParseRecordID(userCreated.Id),
-			TokenCode:        tokenCode,
-		}
-		_, err = surrealdb.Create[modelsurreal.SessionToken](surrealdbutil.Db, models.Table("SessionToken"), &sessionToken)
+		sessionToken := lensmodel.NewLensModel[genjsonschema.SessionToken]()
+		sessionToken.UserId = userCreated.Id
+		sessionToken.TokenCode = tokenCode
+		_, err = surrealdbutil.Create[genjsonschema.SessionToken](
+			models.Table("SessionToken"),
+			sessionToken,
+		)
 		if utilerror.LogError("Failed to create SessionToken", err) {
 			response := actionrouterutil.MakeActionBaseResponse(message)
 			response.Errors = []genjsonschema.AppError{{
@@ -97,4 +98,5 @@ var SignUpByEmailCode = actionrouterutil.ActionHandlerConfig{
 		// }
 		return response
 	},
+	Guest: true,
 }

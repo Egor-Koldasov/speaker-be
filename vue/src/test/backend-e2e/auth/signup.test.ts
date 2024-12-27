@@ -7,7 +7,7 @@ import { WsService } from '../../../planning/WsService'
 import { readTestEmailsTo } from '../../../util/test/readTestEmails'
 import { makeTestId } from '../../../util/test/makeTestId'
 import { useSignUpByEmailCode } from '../../../planning/Action/useSignUpByEmailCode'
-import { useLensUser } from '../../../planning/lense/useLensUser'
+import { useLensUser } from '../../../planning/Lens/useLensUser'
 import { idbInit } from '../../../idb/idb'
 
 describe(`Signup`, () => {
@@ -46,6 +46,7 @@ describe(`Signup`, () => {
       signUpByCodeAction.lastResponse?.data.actionParams.sessionToken,
     ).toHaveLength(12)
 
+    await waitFor(() => !!lensUser.memData.user.email)
     await waitFor(() => lensUser.memData.user.email === testEmail)
   })
 })

@@ -131,6 +131,9 @@ type MainWsMessage struct {
 type MainWsMessageRequestToServer struct {
 	// Action corresponds to the JSON schema field "Action".
 	Action MainWsMessageRequestToServerAction `json:"Action" yaml:"Action" mapstructure:"Action"`
+
+	// LensQuery corresponds to the JSON schema field "LensQuery".
+	LensQuery MainWsMessageRequestToServerLensQuery `json:"LensQuery" yaml:"LensQuery" mapstructure:"LensQuery"`
 }
 
 type MainWsMessageRequestToServerAction struct {
@@ -188,6 +191,47 @@ func (j *MainWsMessageRequestToServerAction) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+type MainWsMessageRequestToServerLensQuery struct {
+	// LensQueryBase corresponds to the JSON schema field "LensQueryBase".
+	LensQueryBase LensQueryBase `json:"LensQueryBase" yaml:"LensQueryBase" mapstructure:"LensQueryBase"`
+
+	// LensQueryName corresponds to the JSON schema field "LensQueryName".
+	LensQueryName LensQueryName `json:"LensQueryName" yaml:"LensQueryName" mapstructure:"LensQueryName"`
+
+	// LensUser corresponds to the JSON schema field "LensUser".
+	LensUser LensUser `json:"LensUser" yaml:"LensUser" mapstructure:"LensUser"`
+
+	// LensUserResponse corresponds to the JSON schema field "LensUserResponse".
+	LensUserResponse LensUserResponse `json:"LensUserResponse" yaml:"LensUserResponse" mapstructure:"LensUserResponse"`
+}
+
+// UnmarshalJSON implements json.Unmarshaler.
+func (j *MainWsMessageRequestToServerLensQuery) UnmarshalJSON(b []byte) error {
+	var raw map[string]interface{}
+	if err := json.Unmarshal(b, &raw); err != nil {
+		return err
+	}
+	if _, ok := raw["LensQueryBase"]; raw != nil && !ok {
+		return fmt.Errorf("field LensQueryBase in MainWsMessageRequestToServerLensQuery: required")
+	}
+	if _, ok := raw["LensQueryName"]; raw != nil && !ok {
+		return fmt.Errorf("field LensQueryName in MainWsMessageRequestToServerLensQuery: required")
+	}
+	if _, ok := raw["LensUser"]; raw != nil && !ok {
+		return fmt.Errorf("field LensUser in MainWsMessageRequestToServerLensQuery: required")
+	}
+	if _, ok := raw["LensUserResponse"]; raw != nil && !ok {
+		return fmt.Errorf("field LensUserResponse in MainWsMessageRequestToServerLensQuery: required")
+	}
+	type Plain MainWsMessageRequestToServerLensQuery
+	var plain Plain
+	if err := json.Unmarshal(b, &plain); err != nil {
+		return err
+	}
+	*j = MainWsMessageRequestToServerLensQuery(plain)
+	return nil
+}
+
 // UnmarshalJSON implements json.Unmarshaler.
 func (j *MainWsMessageRequestToServer) UnmarshalJSON(b []byte) error {
 	var raw map[string]interface{}
@@ -196,6 +240,9 @@ func (j *MainWsMessageRequestToServer) UnmarshalJSON(b []byte) error {
 	}
 	if _, ok := raw["Action"]; raw != nil && !ok {
 		return fmt.Errorf("field Action in MainWsMessageRequestToServer: required")
+	}
+	if _, ok := raw["LensQuery"]; raw != nil && !ok {
+		return fmt.Errorf("field LensQuery in MainWsMessageRequestToServer: required")
 	}
 	type Plain MainWsMessageRequestToServer
 	var plain Plain

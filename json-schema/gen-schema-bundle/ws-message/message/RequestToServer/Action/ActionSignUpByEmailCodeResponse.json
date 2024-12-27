@@ -49,6 +49,12 @@
         "actionName"
       ]
     },
+    "authToken": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
     "errors": {
       "type": "array",
       "items": {
@@ -96,6 +102,7 @@
     "id",
     "responseForId",
     "data",
+    "authToken",
     "errors"
   ]
 }

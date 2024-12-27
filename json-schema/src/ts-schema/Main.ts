@@ -51,6 +51,20 @@ export default schemaObject(
             $ref: "./ws-message/message/RequestToServer/Action/ActionSignUpByEmailCodeResponse.json",
           },
         }),
+        LensQuery: schemaObject({
+          LensQueryBase: {
+            $ref: "./ws-message/message/RequestToServer/LensQuery/LensQueryBase.json",
+          },
+          LensQueryName: {
+            $ref: "./ws-message/message/RequestToServer/LensQuery/LensQueryName.json",
+          },
+          LensUser: {
+            $ref: "./ws-message/message/RequestToServer/LensQuery/LensUser.json",
+          },
+          LensUserResponse: {
+            $ref: "./ws-message/message/RequestToServer/LensQuery/LensUserResponse.json",
+          },
+        }),
       }),
     }),
   },

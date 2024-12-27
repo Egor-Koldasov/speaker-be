@@ -9,6 +9,12 @@ type LensModels struct {
 	// ModelBase corresponds to the JSON schema field "ModelBase".
 	ModelBase LensModelBase `json:"ModelBase" yaml:"ModelBase" mapstructure:"ModelBase"`
 
+	// SessionToken corresponds to the JSON schema field "SessionToken".
+	SessionToken SessionToken `json:"SessionToken" yaml:"SessionToken" mapstructure:"SessionToken"`
+
+	// SignUpCode corresponds to the JSON schema field "SignUpCode".
+	SignUpCode SignUpCode `json:"SignUpCode" yaml:"SignUpCode" mapstructure:"SignUpCode"`
+
 	// User corresponds to the JSON schema field "User".
 	User User `json:"User" yaml:"User" mapstructure:"User"`
 
@@ -24,6 +30,12 @@ func (j *LensModels) UnmarshalJSON(b []byte) error {
 	}
 	if _, ok := raw["ModelBase"]; raw != nil && !ok {
 		return fmt.Errorf("field ModelBase in LensModels: required")
+	}
+	if _, ok := raw["SessionToken"]; raw != nil && !ok {
+		return fmt.Errorf("field SessionToken in LensModels: required")
+	}
+	if _, ok := raw["SignUpCode"]; raw != nil && !ok {
+		return fmt.Errorf("field SignUpCode in LensModels: required")
 	}
 	if _, ok := raw["User"]; raw != nil && !ok {
 		return fmt.Errorf("field User in LensModels: required")

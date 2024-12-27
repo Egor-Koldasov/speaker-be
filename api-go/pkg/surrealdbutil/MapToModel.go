@@ -7,9 +7,11 @@ import (
 )
 
 func MapToModel[Model interface{}](modelMap map[string]interface{}) *Model {
-	id := modelMap["id"].(models.RecordID)
-	idString := id.String()
-	modelMap["id"] = idString
+	for key, value := range modelMap {
+		if recordID, ok := value.(models.RecordID); ok {
+			modelMap[key] = recordID.String()
+		}
+	}
 	model := utilstruct.TranslateStruct[Model](modelMap)
 	return &model
 }

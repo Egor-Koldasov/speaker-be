@@ -911,6 +911,42 @@
       "additionalProperties": false,
       "title": "LensModels",
       "properties": {
+        "ModelBase": {
+          "type": [
+            "object"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "LensModelBase",
+          "additionalProperties": false,
+          "title": "LensModelBase",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "UUID v7 string"
+            },
+            "createdAt": {
+              "type": "string",
+              "description": "ISO 8601 date string"
+            },
+            "updatedAt": {
+              "type": "string",
+              "description": "ISO 8601 date string"
+            },
+            "deletedAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ISO 8601 date string or null"
+            }
+          },
+          "required": [
+            "id",
+            "createdAt",
+            "updatedAt",
+            "deletedAt"
+          ]
+        },
         "User": {
           "type": [
             "object"
@@ -1028,14 +1064,14 @@
             "primaryForeignLanguage"
           ]
         },
-        "ModelBase": {
+        "SignUpCode": {
           "type": [
             "object"
           ],
           "$schema": "http://json-schema.org/draft-07/schema",
-          "$id": "LensModelBase",
+          "$id": "SignUpCode",
           "additionalProperties": false,
-          "title": "LensModelBase",
+          "title": "SignUpCode",
           "properties": {
             "id": {
               "type": "string",
@@ -1055,20 +1091,77 @@
                 "null"
               ],
               "description": "ISO 8601 date string or null"
+            },
+            "email": {
+              "type": "string",
+              "format": "email"
+            },
+            "code": {
+              "type": "string",
+              "length": 12
             }
           },
           "required": [
             "id",
             "createdAt",
             "updatedAt",
-            "deletedAt"
+            "deletedAt",
+            "email",
+            "code"
+          ]
+        },
+        "SessionToken": {
+          "type": [
+            "object"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "SessionToken",
+          "additionalProperties": false,
+          "title": "SessionToken",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "UUID v7 string"
+            },
+            "createdAt": {
+              "type": "string",
+              "description": "ISO 8601 date string"
+            },
+            "updatedAt": {
+              "type": "string",
+              "description": "ISO 8601 date string"
+            },
+            "deletedAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ISO 8601 date string or null"
+            },
+            "userId": {
+              "type": "string"
+            },
+            "tokenCode": {
+              "type": "string",
+              "length": 12
+            }
+          },
+          "required": [
+            "id",
+            "createdAt",
+            "updatedAt",
+            "deletedAt",
+            "userId",
+            "tokenCode"
           ]
         }
       },
       "required": [
+        "ModelBase",
         "User",
         "UserSettings",
-        "ModelBase"
+        "SignUpCode",
+        "SessionToken"
       ]
     },
     "Models": {
@@ -1437,7 +1530,7 @@
       "$id": "WsMessageNameRequestToServer",
       "title": "WsMessageNameRequestToServer",
       "enum": [
-        "LenseQuery",
+        "LensQuery",
         "Action"
       ]
     },
@@ -1456,7 +1549,7 @@
       "$id": "WsMessageName",
       "title": "WsMessageName",
       "enum": [
-        "LenseQuery",
+        "LensQuery",
         "Action",
         "Mutation"
       ]
@@ -1484,6 +1577,12 @@
             "object"
           ],
           "properties": {}
+        },
+        "authToken": {
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "errors": {
           "type": "array",
@@ -1531,6 +1630,7 @@
         "name",
         "id",
         "data",
+        "authToken",
         "errors"
       ]
     },
@@ -1593,6 +1693,12 @@
                         "actionParams"
                       ]
                     },
+                    "authToken": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
                     "errors": {
                       "type": "array",
                       "items": {
@@ -1604,6 +1710,7 @@
                     "name",
                     "id",
                     "data",
+                    "authToken",
                     "errors"
                   ]
                 },
@@ -1664,6 +1771,12 @@
                         "actionName"
                       ]
                     },
+                    "authToken": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
                     "errors": {
                       "type": "array",
                       "items": {
@@ -1675,6 +1788,7 @@
                     "name",
                     "id",
                     "data",
+                    "authToken",
                     "errors"
                   ]
                 },
@@ -1719,6 +1833,12 @@
                         "actionName"
                       ]
                     },
+                    "authToken": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
                     "errors": {
                       "type": "array",
                       "items": {
@@ -1731,6 +1851,7 @@
                     "id",
                     "responseForId",
                     "data",
+                    "authToken",
                     "errors"
                   ]
                 },
@@ -1782,6 +1903,12 @@
                         "actionName"
                       ]
                     },
+                    "authToken": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
                     "errors": {
                       "type": "array",
                       "items": {
@@ -1793,6 +1920,7 @@
                     "name",
                     "id",
                     "data",
+                    "authToken",
                     "errors"
                   ]
                 },
@@ -1847,6 +1975,12 @@
                         "actionName"
                       ]
                     },
+                    "authToken": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
                     "errors": {
                       "type": "array",
                       "items": {
@@ -1859,6 +1993,7 @@
                     "id",
                     "responseForId",
                     "data",
+                    "authToken",
                     "errors"
                   ]
                 }
@@ -1871,10 +2006,229 @@
                 "SignUpByEmailCode",
                 "SignUpByEmailCodeResponse"
               ]
+            },
+            "LensQuery": {
+              "type": [
+                "object"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema",
+              "additionalProperties": false,
+              "properties": {
+                "LensQueryBase": {
+                  "type": [
+                    "object"
+                  ],
+                  "$schema": "http://json-schema.org/draft-07/schema",
+                  "$id": "LensQueryBase",
+                  "additionalProperties": false,
+                  "title": "LensQueryBase",
+                  "relPathToWsMessage": "../../../../_util",
+                  "properties": {
+                    "name": {
+                      "const": "LensQuery"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "responseForId": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": [
+                        "object"
+                      ],
+                      "$schema": "http://json-schema.org/draft-07/schema",
+                      "additionalProperties": false,
+                      "properties": {
+                        "queryName": {
+                          "$ref": "#/properties/WsMessage/properties/RequestToServer/properties/LensQuery/properties/LensQueryName"
+                        },
+                        "queryParams": {
+                          "type": "object"
+                        }
+                      },
+                      "required": [
+                        "queryName",
+                        "queryParams"
+                      ]
+                    },
+                    "authToken": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/properties/WsMessageBase/properties/errors/items"
+                      }
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "id",
+                    "data",
+                    "authToken",
+                    "errors"
+                  ]
+                },
+                "LensQueryName": {
+                  "type": "string",
+                  "$schema": "http://json-schema.org/draft-07/schema",
+                  "$id": "LensQueryName",
+                  "title": "LensQueryName",
+                  "enum": [
+                    "LensUser"
+                  ]
+                },
+                "LensUser": {
+                  "type": [
+                    "object"
+                  ],
+                  "$schema": "http://json-schema.org/draft-07/schema",
+                  "$id": "LensUser",
+                  "additionalProperties": false,
+                  "title": "LensUser",
+                  "relPathToWsMessage": "../../../../_util",
+                  "properties": {
+                    "name": {
+                      "const": "LensQuery"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": [
+                        "object"
+                      ],
+                      "$schema": "http://json-schema.org/draft-07/schema",
+                      "additionalProperties": false,
+                      "properties": {
+                        "queryParams": {
+                          "type": [
+                            "object"
+                          ],
+                          "$schema": "http://json-schema.org/draft-07/schema",
+                          "additionalProperties": false,
+                          "properties": {},
+                          "required": []
+                        },
+                        "queryName": {
+                          "const": "LensUser"
+                        }
+                      },
+                      "required": [
+                        "queryParams",
+                        "queryName"
+                      ]
+                    },
+                    "authToken": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/properties/WsMessageBase/properties/errors/items"
+                      }
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "id",
+                    "data",
+                    "authToken",
+                    "errors"
+                  ]
+                },
+                "LensUserResponse": {
+                  "type": [
+                    "object"
+                  ],
+                  "$schema": "http://json-schema.org/draft-07/schema",
+                  "$id": "LensUserResponse",
+                  "additionalProperties": false,
+                  "title": "LensUserResponse",
+                  "relPathToWsMessage": "../../../../_util",
+                  "response": true,
+                  "properties": {
+                    "name": {
+                      "const": "LensQuery"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "responseForId": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": [
+                        "object"
+                      ],
+                      "$schema": "http://json-schema.org/draft-07/schema",
+                      "additionalProperties": false,
+                      "properties": {
+                        "queryParams": {
+                          "type": [
+                            "object"
+                          ],
+                          "$schema": "http://json-schema.org/draft-07/schema",
+                          "additionalProperties": false,
+                          "properties": {
+                            "user": {
+                              "$ref": "#/definitions/LenseModels/properties/User"
+                            }
+                          },
+                          "required": [
+                            "user"
+                          ]
+                        },
+                        "queryName": {
+                          "const": "LensUser"
+                        }
+                      },
+                      "required": [
+                        "queryParams",
+                        "queryName"
+                      ]
+                    },
+                    "authToken": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/properties/WsMessageBase/properties/errors/items"
+                      }
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "id",
+                    "responseForId",
+                    "data",
+                    "authToken",
+                    "errors"
+                  ]
+                }
+              },
+              "required": [
+                "LensQueryBase",
+                "LensQueryName",
+                "LensUser",
+                "LensUserResponse"
+              ]
             }
           },
           "required": [
-            "Action"
+            "Action",
+            "LensQuery"
           ]
         }
       },

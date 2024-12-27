@@ -40,3 +40,7 @@ func Init(ctx context.Context, waitGroup *sync.WaitGroup) {
 		waitGroup.Done()
 	}
 }
+
+func GetDb() *surrealdb.DB {
+	return Db
+}

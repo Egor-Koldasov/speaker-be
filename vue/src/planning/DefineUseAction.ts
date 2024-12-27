@@ -9,16 +9,17 @@ import {
 } from 'speaker-json-schema/gen-schema-ts/Main.schema'
 import { uuidv7 } from 'uuidv7'
 import { onBeforeMount, type UnwrapRef } from 'vue'
+import { AuthTokenChan } from '../util/authToken/AuthTokenChan'
+import { getAuthToken } from '../util/authToken/getAuthToken'
 import type { Action, ActionState } from './Action'
 import { WsService } from './WsService'
-import type { K } from 'vitest/dist/chunks/reporters.D7Jzd9GS.js'
 
 export const isActionMessage = (message: ActionBase): message is ActionBase =>
   message.name.valueOf() === WsMessageNameRequestToServer.Action.valueOf()
 
 type ActionParamsByName<Name extends ActionName> =
   Main['WsMessage']['RequestToServer']['Action'][Name]['data']['actionParams']
-type ActionResponseByName<Name extends ActionName> =
+export type ActionResponseByName<Name extends ActionName> =
   `${Name}Response` extends keyof Main['WsMessage']['RequestToServer']['Action']
     ? Main['WsMessage']['RequestToServer']['Action'][`${Name}Response`]
     : never
@@ -30,6 +31,7 @@ export const defineUseAction = <
 >({
   name,
   initParams,
+  onSuccess,
 }: Action<Name, ActionParams>) => {
   type ResponseAction = Omit<Response, 'data'> & {
     data: Omit<Response['data'], 'actionName'> & {
@@ -43,6 +45,7 @@ export const defineUseAction = <
       lastFetchedMainAt: '',
       waitingMainDbId: '',
       lastResponse: null,
+      authToken: null as null | string,
     }),
     actions: {
       async requestMainDb() {
@@ -54,6 +57,7 @@ export const defineUseAction = <
             actionParams: this.memActionParams,
           },
           errors: [],
+          authToken: this.authToken,
         }
         void WsService.send({
           ...wsMessage,
@@ -64,13 +68,27 @@ export const defineUseAction = <
       async onResponseForAction(message: ActionBase) {
         if (!isActionMessage(message)) return
 
-        if (this.$state.waitingMainDbId === message.responseForId) {
-          this.$state.waitingMainDbId = ''
+        if (this.$state.waitingMainDbId !== message.responseForId) {
+          return
         }
 
+        this.$state.waitingMainDbId = ''
         if (message.data.actionName !== name) return
         this.$state.lastFetchedMainAt = dayjs().toISOString()
         this.$state.lastResponse = message as UnwrapRef<ResponseAction>
+        if (message.errors.length === 0 && onSuccess) {
+          onSuccess(message as ActionResponseByName<Name>)
+        }
+      },
+      async init() {
+        this.authToken = await getAuthToken()
+        const onAuthTokenUpdate = (authToken: string) =>
+          (this.authToken = authToken)
+        AuthTokenChan.addListener('message', onAuthTokenUpdate)
+
+        return () => {
+          AuthTokenChan.removeListener('message', onAuthTokenUpdate)
+        }
       },
     },
   })
@@ -83,6 +101,7 @@ export const defineUseAction = <
         WsService.off('responseForId:Action', store.onResponseForAction)
       }
     })
+    store.init()
 
     return store
   }

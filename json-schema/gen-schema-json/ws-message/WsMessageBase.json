@@ -22,6 +22,12 @@
       ],
       "properties": {}
     },
+    "authToken": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
     "errors": {
       "type": "array",
       "items": {
@@ -33,6 +39,7 @@
     "name",
     "id",
     "data",
+    "authToken",
     "errors"
   ]
 }

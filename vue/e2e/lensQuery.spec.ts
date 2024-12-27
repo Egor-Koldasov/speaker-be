@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 
 test.setTimeout(5000)
 
-test('LenseQuery', async ({ page }) => {
+test('LensQuery', async ({ page }) => {
   await page.goto('http://localhost:3001/user')
   await test.step('WebSocket connection open', async () => {
     await page.waitForEvent(

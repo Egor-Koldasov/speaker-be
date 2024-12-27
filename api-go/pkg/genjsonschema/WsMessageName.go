@@ -9,11 +9,11 @@ import "reflect"
 type WsMessageName string
 
 const WsMessageNameAction WsMessageName = "Action"
-const WsMessageNameLenseQuery WsMessageName = "LenseQuery"
+const WsMessageNameLensQuery WsMessageName = "LensQuery"
 const WsMessageNameMutation WsMessageName = "Mutation"
 
 var enumValues_WsMessageName = []interface{}{
-	"LenseQuery",
+	"LensQuery",
 	"Action",
 	"Mutation",
 }

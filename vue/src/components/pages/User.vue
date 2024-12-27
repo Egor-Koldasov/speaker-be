@@ -2,7 +2,7 @@
 import { onMounted } from 'vue'
 import { idb } from '../../idb/idb'
 import { WsService } from '../../planning/WsService'
-import { useLensUser } from '@/planning/lense/useLensUser'
+import { useLensUser } from '@/planning/Lens/useLensUser'
 
 // # Props, State
 // # Hooks

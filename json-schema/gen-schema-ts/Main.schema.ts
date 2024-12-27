@@ -95,6 +95,12 @@ export interface Main {
         SignUpByEmailCode: ActionSignUpByEmailCode;
         SignUpByEmailCodeResponse: ActionSignUpByEmailCodeResponse;
       };
+      LensQuery: {
+        LensQueryBase: LensQueryBase;
+        LensQueryName: LensQueryName;
+        LensUser: LensUser;
+        LensUserResponse: LensUserResponse;
+      };
     };
   };
 }
@@ -415,9 +421,11 @@ export interface AuthSession {
   authToken: string;
 }
 export interface LensModels {
+  ModelBase: LensModelBase;
   User: User;
   UserSettings: UserSettings;
-  ModelBase: LensModelBase;
+  SignUpCode: SignUpCode;
+  SessionToken: SessionToken;
 }
 export interface LensModelBase {
   /**
@@ -437,6 +445,46 @@ export interface LensModelBase {
    */
   deletedAt: string | null;
 }
+export interface SignUpCode {
+  /**
+   * UUID v7 string
+   */
+  id: string;
+  /**
+   * ISO 8601 date string
+   */
+  createdAt: string;
+  /**
+   * ISO 8601 date string
+   */
+  updatedAt: string;
+  /**
+   * ISO 8601 date string or null
+   */
+  deletedAt: string | null;
+  email: string;
+  code: string;
+}
+export interface SessionToken {
+  /**
+   * UUID v7 string
+   */
+  id: string;
+  /**
+   * ISO 8601 date string
+   */
+  createdAt: string;
+  /**
+   * ISO 8601 date string
+   */
+  updatedAt: string;
+  /**
+   * ISO 8601 date string or null
+   */
+  deletedAt: string | null;
+  userId: string;
+  tokenCode: string;
+}
 export interface WsMessageBase {
   name: WsMessageName;
   id: string;
@@ -444,6 +492,7 @@ export interface WsMessageBase {
   data: {
     [k: string]: unknown;
   };
+  authToken: string | null;
   errors: AppError[];
 }
 export interface ActionBase {
@@ -456,6 +505,7 @@ export interface ActionBase {
       [k: string]: unknown;
     };
   };
+  authToken: string | null;
   errors: AppError[];
 }
 export interface ActionSignUpByEmail {
@@ -467,6 +517,7 @@ export interface ActionSignUpByEmail {
     };
     actionName: "SignUpByEmail";
   };
+  authToken: string | null;
   errors: AppError[];
 }
 export interface ActionSignUpByEmailResponse {
@@ -479,6 +530,7 @@ export interface ActionSignUpByEmailResponse {
     };
     actionName: "SignUpByEmail";
   };
+  authToken: string | null;
   errors: AppError[];
 }
 export interface ActionSignUpByEmailCode {
@@ -490,6 +542,7 @@ export interface ActionSignUpByEmailCode {
     };
     actionName: "SignUpByEmailCode";
   };
+  authToken: string | null;
   errors: AppError[];
 }
 export interface ActionSignUpByEmailCodeResponse {
@@ -502,6 +555,43 @@ export interface ActionSignUpByEmailCodeResponse {
     };
     actionName: "SignUpByEmailCode";
   };
+  authToken: string | null;
+  errors: AppError[];
+}
+export interface LensQueryBase {
+  name: "LensQuery";
+  id: string;
+  responseForId?: string;
+  data: {
+    queryName: LensQueryName;
+    queryParams: {
+      [k: string]: unknown;
+    };
+  };
+  authToken: string | null;
+  errors: AppError[];
+}
+export interface LensUser {
+  name: "LensQuery";
+  id: string;
+  data: {
+    queryParams: {};
+    queryName: "LensUser";
+  };
+  authToken: string | null;
+  errors: AppError[];
+}
+export interface LensUserResponse {
+  name: "LensQuery";
+  id: string;
+  responseForId: string;
+  data: {
+    queryParams: {
+      user: User;
+    };
+    queryName: "LensUser";
+  };
+  authToken: string | null;
   errors: AppError[];
 }
 
@@ -566,18 +656,21 @@ export enum WsMessageType {
   EventFromServer = "EventFromServer"
 }
 export enum WsMessageNameRequestToServer {
-  LenseQuery = "LenseQuery",
+  LensQuery = "LensQuery",
   Action = "Action"
 }
 export enum WsMessageNameEventToServer {
   Mutation = "Mutation"
 }
 export enum WsMessageName {
-  LenseQuery = "LenseQuery",
+  LensQuery = "LensQuery",
   Action = "Action",
   Mutation = "Mutation"
 }
 export enum ActionName {
   SignUpByEmail = "SignUpByEmail",
   SignUpByEmailCode = "SignUpByEmailCode"
+}
+export enum LensQueryName {
+  LensUser = "LensUser"
 }

@@ -1,7 +1,7 @@
 import '../../util/test/mockIndexedDb'
 import { beforeEach, describe, test } from 'vitest'
 import { WsService } from '../../planning/WsService'
-import { useLensUser } from '@/planning/lense/useLensUser'
+import { useLensUser } from '@/planning/Lens/useLensUser'
 import { withSetup } from '../../util/test/withSetup'
 import { idbInit } from '../../idb/idb'
 import { withTimeout } from '../../util/withTimeout'

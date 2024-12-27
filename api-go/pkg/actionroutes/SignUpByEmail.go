@@ -1,25 +1,25 @@
 package actionroutes
 
 import (
+	"api-go/lensmodel"
 	"api-go/pkg/actionrouterutil"
 	"api-go/pkg/config"
 	"api-go/pkg/genjsonschema"
 	"api-go/pkg/jsonvalidate"
-	"api-go/pkg/modelsurreal"
+	"api-go/pkg/lensrouterutil"
 	"api-go/pkg/surrealdbutil"
 	"api-go/pkg/utilcrypto"
 	"api-go/pkg/utilerror"
 	"api-go/pkg/utilstruct"
 	"fmt"
 
-	"github.com/surrealdb/surrealdb.go"
 	"github.com/surrealdb/surrealdb.go/pkg/models"
 	"github.com/xeipuuv/gojsonschema"
 	"gopkg.in/gomail.v2"
 )
 
 var SignUpByEmail = actionrouterutil.ActionHandlerConfig{
-	HandlerFn: func(message *genjsonschema.ActionBase) *genjsonschema.ActionBase {
+	HandlerFn: func(message *genjsonschema.ActionBase, helpers lensrouterutil.HandlerFnHelpers) *genjsonschema.ActionBase {
 		messageBufferLoader := gojsonschema.NewGoLoader(message)
 		appErrors := jsonvalidate.ValidateJson(jsonvalidate.SchemaPath_Action_SignUpByEmail, messageBufferLoader, genjsonschema.ErrorNameInternal)
 		if utilerror.LogErrorIf(fmt.Sprintf("Validation error: %v", appErrors), len(*appErrors) > 0) {
@@ -30,12 +30,11 @@ var SignUpByEmail = actionrouterutil.ActionHandlerConfig{
 		signUpToken := utilcrypto.GenerateSecureToken(12)
 
 		// Save signup token to database.
-		signUpCode := modelsurreal.SignUpCode{
-			ModelSurrealBase: modelsurreal.MakeModelSurrealBase(),
-			Email:            signupEmail,
-			Code:             signUpToken,
-		}
-		_, err := surrealdb.Create[modelsurreal.SignUpCode](surrealdbutil.Db, models.Table("SignUpCode"), signUpCode)
+		signUpCode := lensmodel.NewLensModel[genjsonschema.SignUpCode]()
+		signUpCode.Email = signupEmail
+		signUpCode.Code = signUpToken
+
+		_, err := surrealdbutil.Create[interface{}](models.Table("SignUpCode"), signUpCode)
 		if utilerror.LogError("Error creating sign up code", err) {
 			return actionrouterutil.MakeActionBaseResponse(message)
 		}
@@ -60,10 +59,7 @@ var SignUpByEmail = actionrouterutil.ActionHandlerConfig{
 		}
 
 		response := actionrouterutil.MakeActionBaseResponse(message)
-		response.Errors = append(response.Errors, genjsonschema.AppError{
-			Name:    genjsonschema.ErrorNameInternal,
-			Message: "Not implemented",
-		})
 		return response
 	},
+	Guest: true,
 }

@@ -13,7 +13,7 @@
       "$id": "WsMessageName",
       "title": "WsMessageName",
       "enum": [
-        "LenseQuery",
+        "LensQuery",
         "Action",
         "Mutation"
       ]
@@ -29,6 +29,12 @@
         "object"
       ],
       "properties": {}
+    },
+    "authToken": {
+      "type": [
+        "string",
+        "null"
+      ]
     },
     "errors": {
       "type": "array",
@@ -76,6 +82,7 @@
     "name",
     "id",
     "data",
+    "authToken",
     "errors"
   ]
 }

@@ -198,10 +198,38 @@
                 "SignUpByEmailCode",
                 "SignUpByEmailCodeResponse"
               ]
+            },
+            "LensQuery": {
+              "type": [
+                "object"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema",
+              "additionalProperties": false,
+              "properties": {
+                "LensQueryBase": {
+                  "$ref": "./ws-message/message/RequestToServer/LensQuery/LensQueryBase.json"
+                },
+                "LensQueryName": {
+                  "$ref": "./ws-message/message/RequestToServer/LensQuery/LensQueryName.json"
+                },
+                "LensUser": {
+                  "$ref": "./ws-message/message/RequestToServer/LensQuery/LensUser.json"
+                },
+                "LensUserResponse": {
+                  "$ref": "./ws-message/message/RequestToServer/LensQuery/LensUserResponse.json"
+                }
+              },
+              "required": [
+                "LensQueryBase",
+                "LensQueryName",
+                "LensUser",
+                "LensUserResponse"
+              ]
             }
           },
           "required": [
-            "Action"
+            "Action",
+            "LensQuery"
           ]
         }
       },

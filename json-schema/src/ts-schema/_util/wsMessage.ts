@@ -5,7 +5,7 @@ import { SchemaObjectOpts, schemaObject } from "./schemaObject";
 type WsMessageBaseJSchema = typeof WsMessageBase;
 type WsMessageJSchemaProps = Omit<
   WsMessageBaseJSchema["properties"],
-  "id" | "errors" | "name" | "responseForId"
+  "id" | "errors" | "name" | "responseForId" | "authToken"
 > & {
   name: {
     const: string;

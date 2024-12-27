@@ -7,6 +7,42 @@
   "additionalProperties": false,
   "title": "LensModels",
   "properties": {
+    "ModelBase": {
+      "type": [
+        "object"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "$id": "LensModelBase",
+      "additionalProperties": false,
+      "title": "LensModelBase",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "UUID v7 string"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO 8601 date string"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO 8601 date string"
+        },
+        "deletedAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "ISO 8601 date string or null"
+        }
+      },
+      "required": [
+        "id",
+        "createdAt",
+        "updatedAt",
+        "deletedAt"
+      ]
+    },
     "User": {
       "type": [
         "object"
@@ -124,14 +160,14 @@
         "primaryForeignLanguage"
       ]
     },
-    "ModelBase": {
+    "SignUpCode": {
       "type": [
         "object"
       ],
       "$schema": "http://json-schema.org/draft-07/schema",
-      "$id": "LensModelBase",
+      "$id": "SignUpCode",
       "additionalProperties": false,
-      "title": "LensModelBase",
+      "title": "SignUpCode",
       "properties": {
         "id": {
           "type": "string",
@@ -151,19 +187,76 @@
             "null"
           ],
           "description": "ISO 8601 date string or null"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "code": {
+          "type": "string",
+          "length": 12
         }
       },
       "required": [
         "id",
         "createdAt",
         "updatedAt",
-        "deletedAt"
+        "deletedAt",
+        "email",
+        "code"
+      ]
+    },
+    "SessionToken": {
+      "type": [
+        "object"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "$id": "SessionToken",
+      "additionalProperties": false,
+      "title": "SessionToken",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "UUID v7 string"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO 8601 date string"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO 8601 date string"
+        },
+        "deletedAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "ISO 8601 date string or null"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "tokenCode": {
+          "type": "string",
+          "length": 12
+        }
+      },
+      "required": [
+        "id",
+        "createdAt",
+        "updatedAt",
+        "deletedAt",
+        "userId",
+        "tokenCode"
       ]
     }
   },
   "required": [
+    "ModelBase",
     "User",
     "UserSettings",
-    "ModelBase"
+    "SignUpCode",
+    "SessionToken"
   ]
 }

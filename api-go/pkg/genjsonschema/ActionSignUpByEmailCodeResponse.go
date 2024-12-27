@@ -6,6 +6,9 @@ import "encoding/json"
 import "fmt"
 
 type ActionSignUpByEmailCodeResponse struct {
+	// AuthToken corresponds to the JSON schema field "authToken".
+	AuthToken *string `json:"authToken" yaml:"authToken" mapstructure:"authToken"`
+
 	// Data corresponds to the JSON schema field "data".
 	Data ActionSignUpByEmailCodeResponseData `json:"data" yaml:"data" mapstructure:"data"`
 
@@ -79,6 +82,9 @@ func (j *ActionSignUpByEmailCodeResponse) UnmarshalJSON(b []byte) error {
 	var raw map[string]interface{}
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
+	}
+	if _, ok := raw["authToken"]; raw != nil && !ok {
+		return fmt.Errorf("field authToken in ActionSignUpByEmailCodeResponse: required")
 	}
 	if _, ok := raw["data"]; raw != nil && !ok {
 		return fmt.Errorf("field data in ActionSignUpByEmailCodeResponse: required")
