@@ -1,0 +1,99 @@
+{
+  "type": [
+    "object"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "LensCardValue",
+  "additionalProperties": false,
+  "title": "LensCardValue",
+  "properties": {
+    "cardConfigId": {
+      "type": "string",
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "$id": "DbId",
+      "title": "DbId",
+      "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "id": {
+          "$rel": "./DbId.json"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO 8601 date string"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO 8601 date string"
+        },
+        "deletedAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "ISO 8601 date string or null"
+        },
+        "fieldConfigId": {
+          "$ref": "#/properties/cardConfigId"
+        },
+        "fieldValues": {
+          "type": "array",
+          "items": {
+            "type": [
+              "object"
+            ],
+            "$schema": "http://json-schema.org/draft-07/schema",
+            "$id": "FieldValue",
+            "additionalProperties": false,
+            "title": "FieldValue",
+            "description": "A value result of FieldConfig. Either AI generated or user input.",
+            "properties": {
+              "id": {
+                "$rel": "./DbId.json"
+              },
+              "createdAt": {
+                "type": "string",
+                "description": "ISO 8601 date string"
+              },
+              "updatedAt": {
+                "type": "string",
+                "description": "ISO 8601 date string"
+              },
+              "deletedAt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "ISO 8601 date string or null"
+              },
+              "text": {
+                "type": "string"
+              },
+              "fileId": {
+                "$ref": "#/properties/cardConfigId"
+              },
+              "fieldSetId": {
+                "$ref": "#/properties/cardConfigId"
+              }
+            },
+            "required": [
+              "id",
+              "createdAt",
+              "updatedAt",
+              "deletedAt",
+              "text",
+              "fileId",
+              "fieldSetId"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "cardConfigId",
+    "fields"
+  ]
+}

@@ -1,4 +1,4 @@
-import type { LenseModels } from 'speaker-json-schema/gen-schema-ts/Main.schema'
+import type { DbModels } from 'speaker-json-schema/gen-schema-ts/Main.schema'
 import type { LenseModelConfigMap } from './LensModelConfig'
 import type { idb } from '../idb/idb'
 import { UserLensQuery } from './LensStore'
@@ -8,7 +8,7 @@ const LenseQueries = {
 }
 
 type ImportantEntities = {
-  LenseModels: LenseModels
+  DbModels: DbModels
   LenseModelConfigMap: typeof LenseModelConfigMap
   idb: ReturnType<typeof idb>
   LenseQueries: typeof LenseQueries
@@ -16,8 +16,8 @@ type ImportantEntities = {
 
 /**
  * Lense model adding algorithm
- * 1. Create new lense backend model in `json-schema/src/ts-schema/LenseModels.ts`
- *  `ImportantEntities.LenseModels`
+ * 1. Create new lense backend model in `json-schema/src/ts-schema/DbModels.ts`
+ *  `ImportantEntities.DbModels`
  * 2. Create a lense config map, specifying an empty state
  *  and possible Idb-specific fields
  * `ImportantEntities.LenseModelConfigMap`

@@ -6,7 +6,7 @@ export default schemaObject(
       $ref: "#/definitions/Models",
     },
     LensModel: {
-      $ref: "#/definitions/LenseModels",
+      $ref: "#/definitions/DbModels",
     },
     WsMessageType: {
       $ref: "./ws-message/WsMessageType.json",
@@ -58,11 +58,11 @@ export default schemaObject(
           LensQueryName: {
             $ref: "./ws-message/message/RequestToServer/LensQuery/LensQueryName.json",
           },
-          LensUser: {
-            $ref: "./ws-message/message/RequestToServer/LensQuery/LensUser.json",
+          LensQueryUser: {
+            $ref: "./ws-message/message/RequestToServer/LensQuery/LensQueryUser.json",
           },
-          LensUserResponse: {
-            $ref: "./ws-message/message/RequestToServer/LensQuery/LensUserResponse.json",
+          LensQueryUserResponse: {
+            $ref: "./ws-message/message/RequestToServer/LensQuery/LensQueryUserResponse.json",
           },
         }),
       }),
@@ -110,7 +110,10 @@ export default schemaObject(
           },
         }),
       }),
-      LenseModels: {
+      DbModels: {
+        $ref: "./DbModels.json",
+      },
+      LensModels: {
         $ref: "./LensModels.json",
       },
       Models: schemaObject({

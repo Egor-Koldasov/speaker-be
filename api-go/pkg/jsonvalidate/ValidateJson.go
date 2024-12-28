@@ -27,7 +27,7 @@ var SchemaPath_Action = filepath.Join("ws-message/message/RequestToServer/Action
 var SchemaPath_LensQuery = filepath.Join("ws-message/message/RequestToServer/LensQuery")
 var SchemaPath_Action_SignUpByEmail = filepath.Join(SchemaPath_Action, "ActionSignUpByEmail.json")
 var SchemaPath_Action_SignUpByEmailCode = filepath.Join(SchemaPath_Action, "ActionSignUpByEmailCode.json")
-var SchemaPath_LensQuery_LensUser = filepath.Join(SchemaPath_LensQuery, "LensUser.json")
+var SchemaPath_LensQuery_LensUser = filepath.Join(SchemaPath_LensQuery, "LensQueryUser.json")
 
 func init() {
 	loadJsonLoader(SchemaPath_WsMessageBase)

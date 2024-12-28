@@ -30,7 +30,7 @@
           "$id": "LensQueryName",
           "title": "LensQueryName",
           "enum": [
-            "LensUser"
+            "LensQueryUser"
           ]
         },
         "queryParams": {

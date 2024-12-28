@@ -9,5 +9,5 @@ import (
 var LensRouter = map[string]lensrouterutil.LensHandlerConfig{}
 
 func init() {
-	LensRouter[string(genjsonschema.LensQueryNameLensUser)] = lensroutes.LensUser
+	LensRouter[string(genjsonschema.LensQueryNameLensQueryUser)] = lensroutes.LensQueryUser
 }

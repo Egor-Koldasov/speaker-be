@@ -1,0 +1,73 @@
+{
+  "type": [
+    "object"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "LensQueryUserResponse",
+  "additionalProperties": false,
+  "title": "LensQueryUserResponse",
+  "relPathToWsMessage": "../../../../_util",
+  "response": true,
+  "properties": {
+    "name": {
+      "const": "LensQuery"
+    },
+    "id": {
+      "type": "string"
+    },
+    "responseForId": {
+      "type": "string"
+    },
+    "data": {
+      "type": [
+        "object"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "additionalProperties": false,
+      "properties": {
+        "queryParams": {
+          "type": [
+            "object"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "additionalProperties": false,
+          "properties": {
+            "user": {
+              "$ref": "../../../../db-models/User.json"
+            }
+          },
+          "required": [
+            "user"
+          ]
+        },
+        "queryName": {
+          "const": "LensQueryUser"
+        }
+      },
+      "required": [
+        "queryParams",
+        "queryName"
+      ]
+    },
+    "authToken": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "$ref": "../../../../property/AppError.json"
+      }
+    }
+  },
+  "required": [
+    "name",
+    "id",
+    "responseForId",
+    "data",
+    "authToken",
+    "errors"
+  ]
+}

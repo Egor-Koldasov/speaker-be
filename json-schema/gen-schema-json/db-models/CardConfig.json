@@ -1,0 +1,18 @@
+{
+  "type": [
+    "object"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "CardConfig",
+  "additionalProperties": false,
+  "title": "CardConfig",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the card config"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

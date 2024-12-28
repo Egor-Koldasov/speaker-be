@@ -6,6 +6,8 @@ import type { PlaywrightTestConfig } from '@playwright/test'
  */
 // require('dotenv').config();
 
+const viewportMobileDefault = { width: 375, height: 812 }
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -38,6 +40,7 @@ const config: PlaywrightTestConfig = {
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on',
     video: 'on',
+    viewport: viewportMobileDefault,
 
     /* Only on CI systems run the tests headless */
     // headless: !!process.env.CI,

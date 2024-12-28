@@ -1,19 +1,19 @@
 import type {
-  LenseModels,
+  DbModels,
   Models,
 } from 'speaker-json-schema/gen-schema-ts/Main.schema'
 import {
   LensQuery,
   MakeLensModelClient,
   type LenseModel,
-  type LensModelBase,
+  type DbModelBase,
   type LensModelClient,
 } from './LensQuery'
 import type { LenseModelName } from './LensModelConfig'
 
 // Generic types
 type LenseModelStoreBase<ModelNameUnion extends string> = {
-  [K in ModelNameUnion]?: LensModelBase
+  [K in ModelNameUnion]?: DbModelBase
 }
 
 type LenseModelStore<
@@ -21,7 +21,7 @@ type LenseModelStore<
   StoreInstance extends LenseModelStoreBase<ModelNameUnion>,
 > = StoreInstance
 
-type WrapLensModels<ModelNames extends ModelNameUnion> = {
+type WrapDbModels<ModelNames extends ModelNameUnion> = {
   [K in ModelNames]: LenseModel<Models[K]>
 }
 
@@ -30,8 +30,8 @@ type ModelNameUnion = keyof Models
 type AppLenseModelStore = LenseModelStore<
   LenseModelName,
   {
-    User: LenseModel<LenseModels['User']>
-    UserSettings: LenseModel<LenseModels['UserSettings']>
+    User: LenseModel<DbModels['User']>
+    UserSettings: LenseModel<DbModels['UserSettings']>
   }
 >
 
@@ -53,7 +53,7 @@ const LensModelClientMap = {
 export const UserLensQuery = LensQuery({
   name: 'User',
   initData: {
-    user: null as null | LenseModels['User'],
+    user: null as null | DbModels['User'],
   },
   initParams: {},
   async fetchIdb(lensArgs, name) {

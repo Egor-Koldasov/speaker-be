@@ -17,8 +17,7 @@
       "title": "User",
       "properties": {
         "id": {
-          "type": "string",
-          "description": "UUID v7 string"
+          "$rel": "./DbId.json"
         },
         "createdAt": {
           "type": "string",
@@ -82,8 +81,7 @@
       },
       "properties": {
         "id": {
-          "type": "string",
-          "description": "UUID v7 string"
+          "$rel": "./DbId.json"
         },
         "createdAt": {
           "type": "string",

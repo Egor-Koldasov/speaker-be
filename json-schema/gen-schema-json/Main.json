@@ -93,7 +93,10 @@
         "DefineTerm"
       ]
     },
-    "LenseModels": {
+    "DbModels": {
+      "$ref": "./DbModels.json"
+    },
+    "LensModels": {
       "$ref": "./LensModels.json"
     },
     "Models": {
@@ -133,7 +136,7 @@
       "$ref": "#/definitions/Models"
     },
     "LensModel": {
-      "$ref": "#/definitions/LenseModels"
+      "$ref": "#/definitions/DbModels"
     },
     "WsMessageType": {
       "$ref": "./ws-message/WsMessageType.json"
@@ -212,18 +215,18 @@
                 "LensQueryName": {
                   "$ref": "./ws-message/message/RequestToServer/LensQuery/LensQueryName.json"
                 },
-                "LensUser": {
-                  "$ref": "./ws-message/message/RequestToServer/LensQuery/LensUser.json"
+                "LensQueryUser": {
+                  "$ref": "./ws-message/message/RequestToServer/LensQuery/LensQueryUser.json"
                 },
-                "LensUserResponse": {
-                  "$ref": "./ws-message/message/RequestToServer/LensQuery/LensUserResponse.json"
+                "LensQueryUserResponse": {
+                  "$ref": "./ws-message/message/RequestToServer/LensQuery/LensQueryUserResponse.json"
                 }
               },
               "required": [
                 "LensQueryBase",
                 "LensQueryName",
-                "LensUser",
-                "LensUserResponse"
+                "LensQueryUser",
+                "LensQueryUserResponse"
               ]
             }
           },

@@ -12,7 +12,7 @@ const initUser: User = {
   deletedAt: null,
 }
 export const useLensUser = defineUseLens({
-  name: LensQueryName.LensUser,
+  name: LensQueryName.LensQueryUser,
   initData: {
     user: initUser,
   },

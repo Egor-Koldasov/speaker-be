@@ -76,10 +76,14 @@ export type ChatOutputDataParseTextFromForeign = {
  * The list of BCP 47 language tags of the languages native to the user. Take this list as a priority when you try to detect the text language. Although it is not guaranteed to completely match the text languages
  */
 export type NativeLanguages = string[];
+/**
+ * SurrealDb Id string with a format "Table:uuid". Where `uuid` is UUID v7 string
+ */
+export type DbId = string;
 
 export interface Main {
   model: Models;
-  LensModel: LensModels;
+  LensModel: DbModels;
   WsMessageType: WsMessageType;
   WsMessageNameRequestToServer: WsMessageNameRequestToServer;
   WsMessageNameEventToServer: WsMessageNameEventToServer;
@@ -98,8 +102,8 @@ export interface Main {
       LensQuery: {
         LensQueryBase: LensQueryBase;
         LensQueryName: LensQueryName;
-        LensUser: LensUser;
-        LensUserResponse: LensUserResponse;
+        LensQueryUser: LensQueryUser;
+        LensQueryUserResponse: LensQueryUserResponse;
       };
     };
   };
@@ -308,10 +312,9 @@ export interface AuthInfo {
   userSettings: UserSettings;
 }
 export interface User {
-  /**
-   * UUID v7 string
-   */
-  id: string;
+  id: {
+    [k: string]: unknown;
+  };
   /**
    * ISO 8601 date string
    */
@@ -327,10 +330,9 @@ export interface User {
   email: string;
 }
 export interface UserSettings {
-  /**
-   * UUID v7 string
-   */
-  id: string;
+  id: {
+    [k: string]: unknown;
+  };
   /**
    * ISO 8601 date string
    */
@@ -420,18 +422,22 @@ export interface MessageGetCards {
 export interface AuthSession {
   authToken: string;
 }
-export interface LensModels {
-  ModelBase: LensModelBase;
+export interface DbModels {
+  ModelBase: DbModelBase;
   User: User;
   UserSettings: UserSettings;
   SignUpCode: SignUpCode;
   SessionToken: SessionToken;
+  CardConfig: CardConfig;
+  FieldConfig: FieldConfig;
+  FieldValue: FieldValue;
+  FieldValueSet: FieldValueSet;
+  RelCardConfigFieldConfig: RelCardConfigFieldConfig;
 }
-export interface LensModelBase {
-  /**
-   * UUID v7 string
-   */
-  id: string;
+export interface DbModelBase {
+  id: {
+    [k: string]: unknown;
+  };
   /**
    * ISO 8601 date string
    */
@@ -446,10 +452,9 @@ export interface LensModelBase {
   deletedAt: string | null;
 }
 export interface SignUpCode {
-  /**
-   * UUID v7 string
-   */
-  id: string;
+  id: {
+    [k: string]: unknown;
+  };
   /**
    * ISO 8601 date string
    */
@@ -466,10 +471,9 @@ export interface SignUpCode {
   code: string;
 }
 export interface SessionToken {
-  /**
-   * UUID v7 string
-   */
-  id: string;
+  id: {
+    [k: string]: unknown;
+  };
   /**
    * ISO 8601 date string
    */
@@ -484,6 +488,98 @@ export interface SessionToken {
   deletedAt: string | null;
   userId: string;
   tokenCode: string;
+}
+export interface CardConfig {
+  /**
+   * The name of the card config
+   */
+  name: string;
+}
+export interface FieldConfig {
+  id: {
+    [k: string]: unknown;
+  };
+  /**
+   * ISO 8601 date string
+   */
+  createdAt: string;
+  /**
+   * ISO 8601 date string
+   */
+  updatedAt: string;
+  /**
+   * ISO 8601 date string or null
+   */
+  deletedAt: string | null;
+  /**
+   * The name of the field defined by user and displayed back to user
+   */
+  name: string;
+  valueType: FieldConfigValueType;
+  /**
+   * The minimum number of results for AI to generate. If the AI cannot generate enough results it can return less, but otherwise should match
+   */
+  minResult: number;
+  /**
+   * The maximum number of results for AI to generate. AI should never generate more than this number of results.
+   */
+  maxResult: number;
+  prompt: string;
+}
+/**
+ * A value result of FieldConfig. Either AI generated or user input.
+ */
+export interface FieldValue {
+  id: {
+    [k: string]: unknown;
+  };
+  /**
+   * ISO 8601 date string
+   */
+  createdAt: string;
+  /**
+   * ISO 8601 date string
+   */
+  updatedAt: string;
+  /**
+   * ISO 8601 date string or null
+   */
+  deletedAt: string | null;
+  text: string;
+  fileId: DbId;
+  fieldSetId: DbId;
+}
+/**
+ * A set of results of FieldConfig. Either AI generated or user input.
+ */
+export interface FieldValueSet {
+  id: {
+    [k: string]: unknown;
+  };
+  /**
+   * ISO 8601 date string
+   */
+  createdAt: string;
+  /**
+   * ISO 8601 date string
+   */
+  updatedAt: string;
+  /**
+   * ISO 8601 date string or null
+   */
+  deletedAt: string | null;
+  fieldConfigId: DbId;
+}
+/**
+ * Many to many relation between CardConfig and FieldConfig
+ */
+export interface RelCardConfigFieldConfig {
+  cardConfigId: {
+    [k: string]: unknown;
+  };
+  fieldConfigId: {
+    [k: string]: unknown;
+  };
 }
 export interface WsMessageBase {
   name: WsMessageName;
@@ -571,17 +667,17 @@ export interface LensQueryBase {
   authToken: string | null;
   errors: AppError[];
 }
-export interface LensUser {
+export interface LensQueryUser {
   name: "LensQuery";
   id: string;
   data: {
     queryParams: {};
-    queryName: "LensUser";
+    queryName: "LensQueryUser";
   };
   authToken: string | null;
   errors: AppError[];
 }
-export interface LensUserResponse {
+export interface LensQueryUserResponse {
   name: "LensQuery";
   id: string;
   responseForId: string;
@@ -589,7 +685,7 @@ export interface LensUserResponse {
     queryParams: {
       user: User;
     };
-    queryName: "LensUser";
+    queryName: "LensQueryUser";
   };
   authToken: string | null;
   errors: AppError[];
@@ -647,6 +743,14 @@ export enum Name11 {
   GetCards = "GetCards"
 }
 /**
+ * The type of the value for AI to generate
+ */
+export enum FieldConfigValueType {
+  Text = "Text",
+  Image = "Image",
+  Audio = "Audio"
+}
+/**
  * Type of message
  */
 export enum WsMessageType {
@@ -672,5 +776,5 @@ export enum ActionName {
   SignUpByEmailCode = "SignUpByEmailCode"
 }
 export enum LensQueryName {
-  LensUser = "LensUser"
+  LensQueryUser = "LensQueryUser"
 }

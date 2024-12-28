@@ -18,8 +18,8 @@ type SignUpCode struct {
 	// Email corresponds to the JSON schema field "email".
 	Email string `json:"email" yaml:"email" mapstructure:"email"`
 
-	// UUID v7 string
-	Id string `json:"id" yaml:"id" mapstructure:"id"`
+	// Id corresponds to the JSON schema field "id".
+	Id interface{} `json:"id" yaml:"id" mapstructure:"id"`
 
 	// ISO 8601 date string
 	UpdatedAt string `json:"updatedAt" yaml:"updatedAt" mapstructure:"updatedAt"`

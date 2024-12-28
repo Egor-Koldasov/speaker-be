@@ -8,10 +8,10 @@ import "reflect"
 
 type LensQueryName string
 
-const LensQueryNameLensUser LensQueryName = "LensUser"
+const LensQueryNameLensQueryUser LensQueryName = "LensQueryUser"
 
 var enumValues_LensQueryName = []interface{}{
-	"LensUser",
+	"LensQueryUser",
 }
 
 // UnmarshalJSON implements json.Unmarshaler.

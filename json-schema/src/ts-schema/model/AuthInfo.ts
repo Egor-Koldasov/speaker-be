@@ -3,10 +3,10 @@ import { schemaObject } from "../_util/schemaObject";
 export default schemaObject(
   {
     user: {
-      $ref: "../lens-models/User.json",
+      $ref: "../db-models/User.json",
     },
     userSettings: {
-      $ref: "../lens-models/UserSettings.json",
+      $ref: "../db-models/UserSettings.json",
     },
   },
   {

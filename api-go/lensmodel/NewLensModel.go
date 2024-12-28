@@ -13,7 +13,7 @@ import (
 func NewLensModel[T interface{}]() *T {
 	uuidGenerated, err := uuid.NewV7()
 	utilerror.FatalError("Error generating UUID", err)
-	modelBase := genjsonschema.LensModelBase{
+	modelBase := genjsonschema.DbModelBase{
 		Id:        uuidGenerated.String(),
 		CreatedAt: utiltime.TimeToIso(time.Now()),
 		UpdatedAt: utiltime.TimeToIso(time.Now()),

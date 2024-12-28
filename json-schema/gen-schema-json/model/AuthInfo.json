@@ -8,10 +8,10 @@
   "title": "AuthInfo",
   "properties": {
     "user": {
-      "$ref": "../lens-models/User.json"
+      "$ref": "../db-models/User.json"
     },
     "userSettings": {
-      "$ref": "../lens-models/UserSettings.json"
+      "$ref": "../db-models/UserSettings.json"
     }
   },
   "required": [

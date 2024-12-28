@@ -57,7 +57,7 @@
         "--schema-output=UserCardFieldAnswer=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/UserCardFieldAnswer.go",
         "--schema-output=UserCardFieldSet=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/UserCardFieldSet.go",
         "--schema-output=UserSettings=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/UserSettings.go",
-        "--schema-output=LenseModels=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/LenseModels.go",
+        "--schema-output=DbModels=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/DbModels.go",
         "--schema-output=Main=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/Main.go",
         "--schema-output=AppError=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/AppError.go",
         "--schema-output=ChatAiError=/Users/egorkolds/code/speaker-be/api-go/scripts/../pkg/genjsonschema/ChatAiError.go",

@@ -6,20 +6,11 @@ import "encoding/json"
 import "fmt"
 
 type LensModels struct {
-	// ModelBase corresponds to the JSON schema field "ModelBase".
-	ModelBase LensModelBase `json:"ModelBase" yaml:"ModelBase" mapstructure:"ModelBase"`
+	// LensCardConfig corresponds to the JSON schema field "LensCardConfig".
+	LensCardConfig LensCardConfig `json:"LensCardConfig" yaml:"LensCardConfig" mapstructure:"LensCardConfig"`
 
-	// SessionToken corresponds to the JSON schema field "SessionToken".
-	SessionToken SessionToken `json:"SessionToken" yaml:"SessionToken" mapstructure:"SessionToken"`
-
-	// SignUpCode corresponds to the JSON schema field "SignUpCode".
-	SignUpCode SignUpCode `json:"SignUpCode" yaml:"SignUpCode" mapstructure:"SignUpCode"`
-
-	// User corresponds to the JSON schema field "User".
-	User User `json:"User" yaml:"User" mapstructure:"User"`
-
-	// UserSettings corresponds to the JSON schema field "UserSettings".
-	UserSettings UserSettings `json:"UserSettings" yaml:"UserSettings" mapstructure:"UserSettings"`
+	// LensCardValue corresponds to the JSON schema field "LensCardValue".
+	LensCardValue LensCardValue `json:"LensCardValue" yaml:"LensCardValue" mapstructure:"LensCardValue"`
 }
 
 // UnmarshalJSON implements json.Unmarshaler.
@@ -28,20 +19,11 @@ func (j *LensModels) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
-	if _, ok := raw["ModelBase"]; raw != nil && !ok {
-		return fmt.Errorf("field ModelBase in LensModels: required")
+	if _, ok := raw["LensCardConfig"]; raw != nil && !ok {
+		return fmt.Errorf("field LensCardConfig in LensModels: required")
 	}
-	if _, ok := raw["SessionToken"]; raw != nil && !ok {
-		return fmt.Errorf("field SessionToken in LensModels: required")
-	}
-	if _, ok := raw["SignUpCode"]; raw != nil && !ok {
-		return fmt.Errorf("field SignUpCode in LensModels: required")
-	}
-	if _, ok := raw["User"]; raw != nil && !ok {
-		return fmt.Errorf("field User in LensModels: required")
-	}
-	if _, ok := raw["UserSettings"]; raw != nil && !ok {
-		return fmt.Errorf("field UserSettings in LensModels: required")
+	if _, ok := raw["LensCardValue"]; raw != nil && !ok {
+		return fmt.Errorf("field LensCardValue in LensModels: required")
 	}
 	type Plain LensModels
 	var plain Plain

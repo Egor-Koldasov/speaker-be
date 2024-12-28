@@ -56,9 +56,9 @@ export type LensState<Name extends string, LensData, LensArgs> = {
 
 type LensName = string
 
-export type LenseModel<Model extends object> = Model & LensModelBase
+export type LenseModel<Model extends object> = Model & DbModelBase
 export type LenseModelClient<Model extends object> = Model &
-  LensModelBase &
+  DbModelBase &
   LensModelClientData
 
 type Mutation<Name extends string, MutationArgs> = {
@@ -70,7 +70,7 @@ type Mutation<Name extends string, MutationArgs> = {
 
 export type LensModelName = string
 
-export type LensModelBase = {
+export type DbModelBase = {
   id: string
   createdAt: string
   updatedAt: string
@@ -96,7 +96,7 @@ type LensModelClientFilters<Custom extends LensModelClientFiltersCustom> = {
   updatedAfter?: string
 } & Custom
 
-export type LensModelClient<Model extends LensModelBase> = {
+export type LensModelClient<Model extends DbModelBase> = {
   getById: (id: string) => Promise<Model>
   getBy: (opts: { filters: {}; sort: {} }) => Promise<Model[]>
   getState: () => LensState
@@ -104,29 +104,29 @@ export type LensModelClient<Model extends LensModelBase> = {
 
 export function MakeLensModelClient<
   ModelName extends LensModelName,
-  Model extends LensModelBase,
+  Model extends DbModelBase,
 >(opts: { modelName: ModelName }): LensModelClient<Model>
 
-function LensModel<
-  ModelName extends LensModelName,
-  Model extends LensModelBase,
->(modelName: ModelName, model: Model): Model
+function LensModel<ModelName extends LensModelName, Model extends DbModelBase>(
+  modelName: ModelName,
+  model: Model,
+): Model
 
-function MakeGetById<Model extends LensModelBase>(
+function MakeGetById<Model extends DbModelBase>(
   model: Model,
 ): (id: string) => Promise<Model>
 
-function MakeGetBy<Model extends LensModelBase>(
+function MakeGetBy<Model extends DbModelBase>(
   model: Model,
 ): LensModelClient<Model>['getBy']
 
-function MakeGetBy<Model extends LensModelBase>(
+function MakeGetBy<Model extends DbModelBase>(
   model: Model,
 ): LensModelClient<Model>['getBy'] {}
 
 export function MakeLensModelClient<
   ModelName extends LensModelName,
-  Model extends LensModelBase,
+  Model extends DbModelBase,
 >(opts: { modelName: ModelName }): LensModelClient<Model> {
   return {}
 }

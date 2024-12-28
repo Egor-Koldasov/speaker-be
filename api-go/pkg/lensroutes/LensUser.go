@@ -11,7 +11,7 @@ import (
 	"github.com/xeipuuv/gojsonschema"
 )
 
-var LensUser = lensrouterutil.LensHandlerConfig{
+var LensQueryUser = lensrouterutil.LensHandlerConfig{
 	HandlerFn: func(message *genjsonschema.LensQueryBase, helpers lensrouterutil.HandlerFnHelpers) *genjsonschema.LensQueryBase {
 		messageBufferLoader := gojsonschema.NewGoLoader(message)
 		appErrors := jsonvalidate.ValidateJson(jsonvalidate.SchemaPath_LensQuery_LensUser, messageBufferLoader, genjsonschema.ErrorNameInternal)
@@ -21,7 +21,7 @@ var LensUser = lensrouterutil.LensHandlerConfig{
 		user := helpers.User
 		response := lensrouterutil.MakeBaseResponse(message)
 		response.Data.QueryParams = utilstruct.TranslateStruct[map[string]interface{}](
-			genjsonschema.LensUserResponseDataQueryParams{
+			genjsonschema.LensQueryUserResponseDataQueryParams{
 				User: *user,
 			})
 		return response

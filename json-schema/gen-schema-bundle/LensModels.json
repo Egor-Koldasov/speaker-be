@@ -7,256 +7,204 @@
   "additionalProperties": false,
   "title": "LensModels",
   "properties": {
-    "ModelBase": {
+    "LensCardConfig": {
       "type": [
         "object"
       ],
       "$schema": "http://json-schema.org/draft-07/schema",
-      "$id": "LensModelBase",
+      "$id": "LensCardConfig",
       "additionalProperties": false,
-      "title": "LensModelBase",
+      "title": "LensCardConfig",
+      "description": "CardConfig with its fieldConfigs loaded",
       "properties": {
-        "id": {
+        "name": {
           "type": "string",
-          "description": "UUID v7 string"
+          "description": "The name of the card config"
         },
-        "createdAt": {
-          "type": "string",
-          "description": "ISO 8601 date string"
-        },
-        "updatedAt": {
-          "type": "string",
-          "description": "ISO 8601 date string"
-        },
-        "deletedAt": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "ISO 8601 date string or null"
-        }
-      },
-      "required": [
-        "id",
-        "createdAt",
-        "updatedAt",
-        "deletedAt"
-      ]
-    },
-    "User": {
-      "type": [
-        "object"
-      ],
-      "$schema": "http://json-schema.org/draft-07/schema",
-      "$id": "User",
-      "additionalProperties": false,
-      "title": "User",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "UUID v7 string"
-        },
-        "createdAt": {
-          "type": "string",
-          "description": "ISO 8601 date string"
-        },
-        "updatedAt": {
-          "type": "string",
-          "description": "ISO 8601 date string"
-        },
-        "deletedAt": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "ISO 8601 date string or null"
-        },
-        "email": {
-          "type": "string",
-          "format": "email"
-        }
-      },
-      "required": [
-        "id",
-        "createdAt",
-        "updatedAt",
-        "deletedAt",
-        "email"
-      ]
-    },
-    "UserSettings": {
-      "type": [
-        "object"
-      ],
-      "$schema": "http://json-schema.org/draft-07/schema",
-      "$id": "UserSettings",
-      "additionalProperties": false,
-      "title": "UserSettings",
-      "definitions": {
-        "foreignLanguages": {
+        "fieldConfigs": {
           "type": "array",
-          "description": "The list of BCP 47 language tags of the languages foreign to the user that are most commonly used in the learning process. Take this list as a priority when you try to detect the text language of the text foreign to the user. Although it is not guaranteed to completely match the text languages",
           "items": {
-            "type": "string"
+            "type": [
+              "object"
+            ],
+            "$schema": "http://json-schema.org/draft-07/schema",
+            "$id": "FieldConfig",
+            "additionalProperties": false,
+            "title": "FieldConfig",
+            "properties": {
+              "id": {
+                "$rel": "./DbId.json"
+              },
+              "createdAt": {
+                "type": "string",
+                "description": "ISO 8601 date string"
+              },
+              "updatedAt": {
+                "type": "string",
+                "description": "ISO 8601 date string"
+              },
+              "deletedAt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "ISO 8601 date string or null"
+              },
+              "name": {
+                "type": "string",
+                "description": "The name of the field defined by user and displayed back to user"
+              },
+              "valueType": {
+                "type": "string",
+                "$schema": "http://json-schema.org/draft-07/schema",
+                "$id": "FieldConfigValueType",
+                "title": "FieldConfigValueType",
+                "enum": [
+                  "Text",
+                  "Image",
+                  "Audio"
+                ],
+                "description": "The type of the value for AI to generate"
+              },
+              "minResult": {
+                "type": "number",
+                "default": 1,
+                "description": "The minimum number of results for AI to generate. If the AI cannot generate enough results it can return less, but otherwise should match"
+              },
+              "maxResult": {
+                "type": "number",
+                "default": 1,
+                "description": "The maximum number of results for AI to generate. AI should never generate more than this number of results."
+              },
+              "prompt": {
+                "type": "string",
+                "desctiption": "The user prompt for the AI, explaining what the AI should generate."
+              }
+            },
+            "required": [
+              "id",
+              "createdAt",
+              "updatedAt",
+              "deletedAt",
+              "name",
+              "valueType",
+              "minResult",
+              "maxResult",
+              "prompt"
+            ]
+          },
+          "meta": {
+            "relation": "ManyToMany"
           }
-        },
-        "translationLanguage": {
+        }
+      },
+      "required": [
+        "name",
+        "fieldConfigs"
+      ]
+    },
+    "LensCardValue": {
+      "type": [
+        "object"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "$id": "LensCardValue",
+      "additionalProperties": false,
+      "title": "LensCardValue",
+      "properties": {
+        "cardConfigId": {
           "type": "string",
-          "description": "The BCP 47 language tag of the language that the user wants to translate the foreign text to."
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "DbId",
+          "title": "DbId",
+          "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
         },
-        "nativeLanguages": {
+        "fields": {
           "type": "array",
-          "description": "The list of BCP 47 language tags of the languages native to the user. Take this list as a priority when you try to detect the text language. Although it is not guaranteed to completely match the text languages",
           "items": {
-            "type": "string"
+            "id": {
+              "$rel": "./DbId.json"
+            },
+            "createdAt": {
+              "type": "string",
+              "description": "ISO 8601 date string"
+            },
+            "updatedAt": {
+              "type": "string",
+              "description": "ISO 8601 date string"
+            },
+            "deletedAt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ISO 8601 date string or null"
+            },
+            "fieldConfigId": {
+              "$ref": "#/properties/LensCardValue/properties/cardConfigId"
+            },
+            "fieldValues": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "object"
+                ],
+                "$schema": "http://json-schema.org/draft-07/schema",
+                "$id": "FieldValue",
+                "additionalProperties": false,
+                "title": "FieldValue",
+                "description": "A value result of FieldConfig. Either AI generated or user input.",
+                "properties": {
+                  "id": {
+                    "$rel": "./DbId.json"
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "description": "ISO 8601 date string"
+                  },
+                  "updatedAt": {
+                    "type": "string",
+                    "description": "ISO 8601 date string"
+                  },
+                  "deletedAt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ISO 8601 date string or null"
+                  },
+                  "text": {
+                    "type": "string"
+                  },
+                  "fileId": {
+                    "$ref": "#/properties/LensCardValue/properties/cardConfigId"
+                  },
+                  "fieldSetId": {
+                    "$ref": "#/properties/LensCardValue/properties/cardConfigId"
+                  }
+                },
+                "required": [
+                  "id",
+                  "createdAt",
+                  "updatedAt",
+                  "deletedAt",
+                  "text",
+                  "fileId",
+                  "fieldSetId"
+                ]
+              }
+            }
           }
-        },
-        "primaryForeignLanguage": {
-          "type": "string",
-          "description": "The BCP 47 language tag of the language that the user wants to translate the text to."
-        }
-      },
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "UUID v7 string"
-        },
-        "createdAt": {
-          "type": "string",
-          "description": "ISO 8601 date string"
-        },
-        "updatedAt": {
-          "type": "string",
-          "description": "ISO 8601 date string"
-        },
-        "deletedAt": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "ISO 8601 date string or null"
-        },
-        "foreignLanguages": {
-          "$ref": "#/properties/UserSettings/definitions/foreignLanguages"
-        },
-        "translationLanguage": {
-          "$ref": "#/properties/UserSettings/definitions/translationLanguage"
-        },
-        "nativeLanguages": {
-          "$ref": "#/properties/UserSettings/definitions/nativeLanguages"
-        },
-        "primaryForeignLanguage": {
-          "$ref": "#/properties/UserSettings/definitions/primaryForeignLanguage"
         }
       },
       "required": [
-        "id",
-        "createdAt",
-        "updatedAt",
-        "deletedAt",
-        "foreignLanguages",
-        "translationLanguage",
-        "nativeLanguages",
-        "primaryForeignLanguage"
-      ]
-    },
-    "SignUpCode": {
-      "type": [
-        "object"
-      ],
-      "$schema": "http://json-schema.org/draft-07/schema",
-      "$id": "SignUpCode",
-      "additionalProperties": false,
-      "title": "SignUpCode",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "UUID v7 string"
-        },
-        "createdAt": {
-          "type": "string",
-          "description": "ISO 8601 date string"
-        },
-        "updatedAt": {
-          "type": "string",
-          "description": "ISO 8601 date string"
-        },
-        "deletedAt": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "ISO 8601 date string or null"
-        },
-        "email": {
-          "type": "string",
-          "format": "email"
-        },
-        "code": {
-          "type": "string",
-          "length": 6
-        }
-      },
-      "required": [
-        "id",
-        "createdAt",
-        "updatedAt",
-        "deletedAt",
-        "email",
-        "code"
-      ]
-    },
-    "SessionToken": {
-      "type": [
-        "object"
-      ],
-      "$schema": "http://json-schema.org/draft-07/schema",
-      "$id": "SessionToken",
-      "additionalProperties": false,
-      "title": "SessionToken",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "UUID v7 string"
-        },
-        "createdAt": {
-          "type": "string",
-          "description": "ISO 8601 date string"
-        },
-        "updatedAt": {
-          "type": "string",
-          "description": "ISO 8601 date string"
-        },
-        "deletedAt": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "ISO 8601 date string or null"
-        },
-        "userId": {
-          "type": "string"
-        },
-        "tokenCode": {
-          "type": "string",
-          "length": 12
-        }
-      },
-      "required": [
-        "id",
-        "createdAt",
-        "updatedAt",
-        "deletedAt",
-        "userId",
-        "tokenCode"
+        "cardConfigId",
+        "fields"
       ]
     }
   },
   "required": [
-    "ModelBase",
-    "User",
-    "UserSettings",
-    "SignUpCode",
-    "SessionToken"
+    "LensCardConfig",
+    "LensCardValue"
   ]
 }

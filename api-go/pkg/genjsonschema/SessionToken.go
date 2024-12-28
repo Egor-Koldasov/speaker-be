@@ -12,8 +12,8 @@ type SessionToken struct {
 	// ISO 8601 date string or null
 	DeletedAt *string `json:"deletedAt" yaml:"deletedAt" mapstructure:"deletedAt"`
 
-	// UUID v7 string
-	Id string `json:"id" yaml:"id" mapstructure:"id"`
+	// Id corresponds to the JSON schema field "id".
+	Id interface{} `json:"id" yaml:"id" mapstructure:"id"`
 
 	// TokenCode corresponds to the JSON schema field "tokenCode".
 	TokenCode string `json:"tokenCode" yaml:"tokenCode" mapstructure:"tokenCode"`
