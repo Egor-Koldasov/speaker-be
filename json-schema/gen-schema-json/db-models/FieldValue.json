@@ -9,7 +9,7 @@
   "description": "A value result of FieldConfig. Either AI generated or user input.",
   "properties": {
     "id": {
-      "$rel": "./DbId.json"
+      "$ref": "./DbId.json"
     },
     "createdAt": {
       "type": "string",

@@ -9,10 +9,14 @@
   "description": "Many to many relation between CardConfig and FieldConfig",
   "properties": {
     "cardConfigId": {
-      "$rel": "./DbId.json"
+      "type": "string",
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "$id": "DbId",
+      "title": "DbId",
+      "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
     },
     "fieldConfigId": {
-      "$rel": "./DbId.json"
+      "$ref": "#/properties/cardConfigId"
     }
   },
   "required": [

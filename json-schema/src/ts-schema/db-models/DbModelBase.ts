@@ -3,7 +3,7 @@ import { schemaObject } from "../_util/schemaObject";
 export default schemaObject(
   {
     id: {
-      $rel: "./DbId.json",
+      $ref: "./DbId.json",
     },
     createdAt: {
       type: "string",

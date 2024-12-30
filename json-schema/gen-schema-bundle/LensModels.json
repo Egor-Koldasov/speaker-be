@@ -33,7 +33,7 @@
             "title": "FieldConfig",
             "properties": {
               "id": {
-                "$rel": "./DbId.json"
+                "$ref": "#/properties/LensCardValue/properties/cardConfigId"
               },
               "createdAt": {
                 "type": "string",
@@ -123,7 +123,7 @@
           "type": "array",
           "items": {
             "id": {
-              "$rel": "./DbId.json"
+              "$ref": "#/properties/LensCardValue/properties/cardConfigId"
             },
             "createdAt": {
               "type": "string",
@@ -156,7 +156,7 @@
                 "description": "A value result of FieldConfig. Either AI generated or user input.",
                 "properties": {
                   "id": {
-                    "$rel": "./DbId.json"
+                    "$ref": "#/properties/LensCardValue/properties/cardConfigId"
                   },
                   "createdAt": {
                     "type": "string",

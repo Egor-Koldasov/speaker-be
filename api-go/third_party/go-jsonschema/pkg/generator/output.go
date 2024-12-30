@@ -27,7 +27,11 @@ func (o *output) findExistingTypeDecl(name string, aType *interface{}) (*codegen
 	case codegen.PrimitiveType:
 		val := reflect.ValueOf(aType)
 		elem := val.Elem().Elem()
-		id := elem.FieldByName("Id").String()
+		if elem.Kind() != reflect.Struct {
+			return nil, false
+		}
+		idVal := elem.FieldByName("Id")
+		id := idVal.String()
 		structureEquals = aType != nil && declFound.Id != "" && declFound.Id == id
 	default:
 		structureEquals = aType != nil && reflect.DeepEqual(declFound.Type, *aType)

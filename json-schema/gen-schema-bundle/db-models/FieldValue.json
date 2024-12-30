@@ -9,7 +9,11 @@
   "description": "A value result of FieldConfig. Either AI generated or user input.",
   "properties": {
     "id": {
-      "$rel": "./DbId.json"
+      "type": "string",
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "$id": "DbId",
+      "title": "DbId",
+      "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
     },
     "createdAt": {
       "type": "string",
@@ -30,14 +34,10 @@
       "type": "string"
     },
     "fileId": {
-      "type": "string",
-      "$schema": "http://json-schema.org/draft-07/schema",
-      "$id": "DbId",
-      "title": "DbId",
-      "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
+      "$ref": "#/properties/id"
     },
     "fieldSetId": {
-      "$ref": "#/properties/fileId"
+      "$ref": "#/properties/id"
     }
   },
   "required": [

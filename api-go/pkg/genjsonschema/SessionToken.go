@@ -13,7 +13,7 @@ type SessionToken struct {
 	DeletedAt *string `json:"deletedAt" yaml:"deletedAt" mapstructure:"deletedAt"`
 
 	// Id corresponds to the JSON schema field "id".
-	Id interface{} `json:"id" yaml:"id" mapstructure:"id"`
+	Id DbId `json:"id" yaml:"id" mapstructure:"id"`
 
 	// TokenCode corresponds to the JSON schema field "tokenCode".
 	TokenCode string `json:"tokenCode" yaml:"tokenCode" mapstructure:"tokenCode"`

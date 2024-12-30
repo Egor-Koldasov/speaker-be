@@ -20,7 +20,7 @@ type FieldValue struct {
 	FileId DbId `json:"fileId" yaml:"fileId" mapstructure:"fileId"`
 
 	// Id corresponds to the JSON schema field "id".
-	Id interface{} `json:"id" yaml:"id" mapstructure:"id"`
+	Id DbId `json:"id" yaml:"id" mapstructure:"id"`
 
 	// Text corresponds to the JSON schema field "text".
 	Text string `json:"text" yaml:"text" mapstructure:"text"`

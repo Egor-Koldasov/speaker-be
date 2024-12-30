@@ -13,7 +13,7 @@ type FieldConfig struct {
 	DeletedAt *string `json:"deletedAt" yaml:"deletedAt" mapstructure:"deletedAt"`
 
 	// Id corresponds to the JSON schema field "id".
-	Id interface{} `json:"id" yaml:"id" mapstructure:"id"`
+	Id DbId `json:"id" yaml:"id" mapstructure:"id"`
 
 	// The maximum number of results for AI to generate. AI should never generate more
 	// than this number of results.

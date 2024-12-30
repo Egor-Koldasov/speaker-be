@@ -9,10 +9,10 @@
   "description": "Many to many relation between CardConfig and FieldConfig",
   "properties": {
     "cardConfigId": {
-      "$rel": "./DbId.json"
+      "$ref": "./DbId.json"
     },
     "fieldConfigId": {
-      "$rel": "./DbId.json"
+      "$ref": "./DbId.json"
     }
   },
   "required": [

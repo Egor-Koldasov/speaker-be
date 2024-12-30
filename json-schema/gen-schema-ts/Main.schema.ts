@@ -73,13 +73,13 @@ export type ChatOutputDataParseTextFromForeign = {
   };
 } | null);
 /**
- * The list of BCP 47 language tags of the languages native to the user. Take this list as a priority when you try to detect the text language. Although it is not guaranteed to completely match the text languages
- */
-export type NativeLanguages = string[];
-/**
  * SurrealDb Id string with a format "Table:uuid". Where `uuid` is UUID v7 string
  */
 export type DbId = string;
+/**
+ * The list of BCP 47 language tags of the languages native to the user. Take this list as a priority when you try to detect the text language. Although it is not guaranteed to completely match the text languages
+ */
+export type NativeLanguages = string[];
 
 export interface Main {
   model: Models;
@@ -312,9 +312,7 @@ export interface AuthInfo {
   userSettings: UserSettings;
 }
 export interface User {
-  id: {
-    [k: string]: unknown;
-  };
+  id: DbId;
   /**
    * ISO 8601 date string
    */
@@ -330,9 +328,7 @@ export interface User {
   email: string;
 }
 export interface UserSettings {
-  id: {
-    [k: string]: unknown;
-  };
+  id: DbId;
   /**
    * ISO 8601 date string
    */
@@ -435,9 +431,7 @@ export interface DbModels {
   RelCardConfigFieldConfig: RelCardConfigFieldConfig;
 }
 export interface DbModelBase {
-  id: {
-    [k: string]: unknown;
-  };
+  id: DbId;
   /**
    * ISO 8601 date string
    */
@@ -452,9 +446,7 @@ export interface DbModelBase {
   deletedAt: string | null;
 }
 export interface SignUpCode {
-  id: {
-    [k: string]: unknown;
-  };
+  id: DbId;
   /**
    * ISO 8601 date string
    */
@@ -471,9 +463,7 @@ export interface SignUpCode {
   code: string;
 }
 export interface SessionToken {
-  id: {
-    [k: string]: unknown;
-  };
+  id: DbId;
   /**
    * ISO 8601 date string
    */
@@ -496,9 +486,7 @@ export interface CardConfig {
   name: string;
 }
 export interface FieldConfig {
-  id: {
-    [k: string]: unknown;
-  };
+  id: DbId;
   /**
    * ISO 8601 date string
    */
@@ -530,9 +518,7 @@ export interface FieldConfig {
  * A value result of FieldConfig. Either AI generated or user input.
  */
 export interface FieldValue {
-  id: {
-    [k: string]: unknown;
-  };
+  id: DbId;
   /**
    * ISO 8601 date string
    */
@@ -553,9 +539,7 @@ export interface FieldValue {
  * A set of results of FieldConfig. Either AI generated or user input.
  */
 export interface FieldValueSet {
-  id: {
-    [k: string]: unknown;
-  };
+  id: DbId;
   /**
    * ISO 8601 date string
    */
@@ -574,12 +558,8 @@ export interface FieldValueSet {
  * Many to many relation between CardConfig and FieldConfig
  */
 export interface RelCardConfigFieldConfig {
-  cardConfigId: {
-    [k: string]: unknown;
-  };
-  fieldConfigId: {
-    [k: string]: unknown;
-  };
+  cardConfigId: DbId;
+  fieldConfigId: DbId;
 }
 export interface WsMessageBase {
   name: WsMessageName;

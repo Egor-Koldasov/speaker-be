@@ -921,7 +921,7 @@
           "title": "DbModelBase",
           "properties": {
             "id": {
-              "$rel": "./DbId.json"
+              "$ref": "#/definitions/DbModels/properties/User/properties/id"
             },
             "createdAt": {
               "type": "string",
@@ -956,7 +956,11 @@
           "title": "User",
           "properties": {
             "id": {
-              "$rel": "./DbId.json"
+              "type": "string",
+              "$schema": "http://json-schema.org/draft-07/schema",
+              "$id": "DbId",
+              "title": "DbId",
+              "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
             },
             "createdAt": {
               "type": "string",
@@ -1020,7 +1024,7 @@
           },
           "properties": {
             "id": {
-              "$rel": "./DbId.json"
+              "$ref": "#/definitions/DbModels/properties/User/properties/id"
             },
             "createdAt": {
               "type": "string",
@@ -1071,7 +1075,7 @@
           "title": "SignUpCode",
           "properties": {
             "id": {
-              "$rel": "./DbId.json"
+              "$ref": "#/definitions/DbModels/properties/User/properties/id"
             },
             "createdAt": {
               "type": "string",
@@ -1116,7 +1120,7 @@
           "title": "SessionToken",
           "properties": {
             "id": {
-              "$rel": "./DbId.json"
+              "$ref": "#/definitions/DbModels/properties/User/properties/id"
             },
             "createdAt": {
               "type": "string",
@@ -1178,7 +1182,7 @@
           "title": "FieldConfig",
           "properties": {
             "id": {
-              "$rel": "./DbId.json"
+              "$ref": "#/definitions/DbModels/properties/User/properties/id"
             },
             "createdAt": {
               "type": "string",
@@ -1249,7 +1253,7 @@
           "description": "A value result of FieldConfig. Either AI generated or user input.",
           "properties": {
             "id": {
-              "$rel": "./DbId.json"
+              "$ref": "#/definitions/DbModels/properties/User/properties/id"
             },
             "createdAt": {
               "type": "string",
@@ -1270,14 +1274,10 @@
               "type": "string"
             },
             "fileId": {
-              "type": "string",
-              "$schema": "http://json-schema.org/draft-07/schema",
-              "$id": "DbId",
-              "title": "DbId",
-              "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
+              "$ref": "#/definitions/DbModels/properties/User/properties/id"
             },
             "fieldSetId": {
-              "$ref": "#/definitions/DbModels/properties/FieldValue/properties/fileId"
+              "$ref": "#/definitions/DbModels/properties/User/properties/id"
             }
           },
           "required": [
@@ -1301,7 +1301,7 @@
           "description": "A set of results of FieldConfig. Either AI generated or user input.",
           "properties": {
             "id": {
-              "$rel": "./DbId.json"
+              "$ref": "#/definitions/DbModels/properties/User/properties/id"
             },
             "createdAt": {
               "type": "string",
@@ -1319,7 +1319,7 @@
               "description": "ISO 8601 date string or null"
             },
             "fieldConfigId": {
-              "$ref": "#/definitions/DbModels/properties/FieldValue/properties/fileId"
+              "$ref": "#/definitions/DbModels/properties/User/properties/id"
             }
           },
           "required": [
@@ -1341,10 +1341,10 @@
           "description": "Many to many relation between CardConfig and FieldConfig",
           "properties": {
             "cardConfigId": {
-              "$rel": "./DbId.json"
+              "$ref": "#/definitions/DbModels/properties/User/properties/id"
             },
             "fieldConfigId": {
-              "$rel": "./DbId.json"
+              "$ref": "#/definitions/DbModels/properties/User/properties/id"
             }
           },
           "required": [
@@ -1414,13 +1414,13 @@
           "title": "LensCardValue",
           "properties": {
             "cardConfigId": {
-              "$ref": "#/definitions/DbModels/properties/FieldValue/properties/fileId"
+              "$ref": "#/definitions/DbModels/properties/User/properties/id"
             },
             "fields": {
               "type": "array",
               "items": {
                 "id": {
-                  "$rel": "./DbId.json"
+                  "$ref": "#/definitions/DbModels/properties/User/properties/id"
                 },
                 "createdAt": {
                   "type": "string",
@@ -1438,7 +1438,7 @@
                   "description": "ISO 8601 date string or null"
                 },
                 "fieldConfigId": {
-                  "$ref": "#/definitions/DbModels/properties/FieldValue/properties/fileId"
+                  "$ref": "#/definitions/DbModels/properties/User/properties/id"
                 },
                 "fieldValues": {
                   "type": "array",

@@ -8,7 +8,7 @@
   "title": "FieldConfig",
   "properties": {
     "id": {
-      "$rel": "./DbId.json"
+      "$ref": "./DbId.json"
     },
     "createdAt": {
       "type": "string",

@@ -3,10 +3,10 @@ import { schemaObject } from "../_util/schemaObject";
 export default schemaObject(
   {
     cardConfigId: {
-      $rel: "./DbId.json",
+      $ref: "./DbId.json",
     },
     fieldConfigId: {
-      $rel: "./DbId.json",
+      $ref: "./DbId.json",
     },
   },
   {

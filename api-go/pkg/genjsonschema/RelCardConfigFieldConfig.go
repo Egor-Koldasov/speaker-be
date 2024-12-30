@@ -8,10 +8,10 @@ import "fmt"
 // Many to many relation between CardConfig and FieldConfig
 type RelCardConfigFieldConfig struct {
 	// CardConfigId corresponds to the JSON schema field "cardConfigId".
-	CardConfigId interface{} `json:"cardConfigId" yaml:"cardConfigId" mapstructure:"cardConfigId"`
+	CardConfigId DbId `json:"cardConfigId" yaml:"cardConfigId" mapstructure:"cardConfigId"`
 
 	// FieldConfigId corresponds to the JSON schema field "fieldConfigId".
-	FieldConfigId interface{} `json:"fieldConfigId" yaml:"fieldConfigId" mapstructure:"fieldConfigId"`
+	FieldConfigId DbId `json:"fieldConfigId" yaml:"fieldConfigId" mapstructure:"fieldConfigId"`
 }
 
 // UnmarshalJSON implements json.Unmarshaler.

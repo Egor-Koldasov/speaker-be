@@ -35,7 +35,7 @@ type UserSettings struct {
 	ForeignLanguages ForeignLanguages `json:"foreignLanguages" yaml:"foreignLanguages" mapstructure:"foreignLanguages"`
 
 	// Id corresponds to the JSON schema field "id".
-	Id interface{} `json:"id" yaml:"id" mapstructure:"id"`
+	Id DbId `json:"id" yaml:"id" mapstructure:"id"`
 
 	// NativeLanguages corresponds to the JSON schema field "nativeLanguages".
 	NativeLanguages NativeLanguages `json:"nativeLanguages" yaml:"nativeLanguages" mapstructure:"nativeLanguages"`

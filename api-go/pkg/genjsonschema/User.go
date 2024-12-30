@@ -16,7 +16,7 @@ type User struct {
 	Email string `json:"email" yaml:"email" mapstructure:"email"`
 
 	// Id corresponds to the JSON schema field "id".
-	Id interface{} `json:"id" yaml:"id" mapstructure:"id"`
+	Id DbId `json:"id" yaml:"id" mapstructure:"id"`
 
 	// ISO 8601 date string
 	UpdatedAt string `json:"updatedAt" yaml:"updatedAt" mapstructure:"updatedAt"`
