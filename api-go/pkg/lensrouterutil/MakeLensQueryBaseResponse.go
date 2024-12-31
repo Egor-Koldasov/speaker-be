@@ -2,7 +2,6 @@ package lensrouterutil
 
 import (
 	"api-go/pkg/genjsonschema"
-	"api-go/pkg/jsonvalidate"
 	"api-go/pkg/utilerror"
 
 	"github.com/google/uuid"
@@ -15,7 +14,7 @@ func MakeBaseResponse(message *genjsonschema.LensQueryBase) *genjsonschema.LensQ
 		Id:            id.String(),
 		Name:          message.Name,
 		ResponseForId: &message.Id,
-		Errors:        jsonvalidate.AppErrorsEmpty,
+		Errors:        []genjsonschema.AppError{},
 		Data: genjsonschema.LensQueryBaseData{
 			QueryName: message.Data.QueryName,
 		},
@@ -29,10 +28,14 @@ func MakeBaseResponseAppError(message *genjsonschema.LensQueryBase, appError gen
 	return messageResult
 }
 
-func MakeBaseResponseInternalError(message *genjsonschema.LensQueryBase) *genjsonschema.LensQueryBase {
+func MakeBaseResponseInternalError(message *genjsonschema.LensQueryBase, err error) *genjsonschema.LensQueryBase {
+	messageString := "Internal error"
+	if err != nil {
+		messageString = err.Error()
+	}
 	appError := genjsonschema.AppError{
 		Name:    genjsonschema.ErrorNameInternal,
-		Message: "Internal error",
+		Message: messageString,
 	}
 	return MakeBaseResponseAppError(message, appError)
 }

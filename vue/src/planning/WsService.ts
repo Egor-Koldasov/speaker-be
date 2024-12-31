@@ -10,6 +10,7 @@ import {
 import type { ValueOf } from 'type-fest'
 import { wsLogger } from '../loggers/wsLogger'
 import type { IsType } from '../types/util/IsType'
+import { omit } from 'lodash'
 
 enum WsMessageType {
   /**
@@ -120,7 +121,11 @@ export class WsServiceType extends EventEmitter {
           return
         }
         if (message.errors.length > 0) {
-          wsLogger.error(`Message returned errors`, { wsMessage: message })
+          wsLogger.error(
+            `Message returned errors`,
+            message.errors,
+            omit(message, ['errors']),
+          )
         }
 
         this.emit('responseForId', message)

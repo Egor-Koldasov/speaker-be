@@ -61,8 +61,9 @@ export const makeIdb = async () => {
 let idbPromise: ReturnType<typeof makeIdb>
 
 export const idbInit = () => {
-  idbPromise = makeIdb()
-  window.idbPromise = idbPromise
+  return
+  // idbPromise = makeIdb()
+  // window.idbPromise = idbPromise
 }
 
 export const idb = async () => {

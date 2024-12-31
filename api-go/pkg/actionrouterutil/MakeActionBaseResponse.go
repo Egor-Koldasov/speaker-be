@@ -2,7 +2,6 @@ package actionrouterutil
 
 import (
 	"api-go/pkg/genjsonschema"
-	"api-go/pkg/jsonvalidate"
 	"api-go/pkg/utilerror"
 
 	"github.com/google/uuid"
@@ -15,7 +14,7 @@ func MakeActionBaseResponse(message *genjsonschema.ActionBase) *genjsonschema.Ac
 		Id:            id.String(),
 		Name:          message.Name,
 		ResponseForId: &message.Id,
-		Errors:        jsonvalidate.AppErrorsEmpty,
+		Errors:        []genjsonschema.AppError{},
 		Data: genjsonschema.ActionBaseData{
 			ActionName: message.Data.ActionName,
 		},
@@ -27,6 +26,18 @@ func MakeBaseResponseAppError(message *genjsonschema.ActionBase, appError genjso
 	messageResult := MakeActionBaseResponse(message)
 	messageResult.Errors = append(messageResult.Errors, appError)
 	return messageResult
+}
+
+func MakeBaseResponseInternal(message *genjsonschema.ActionBase, err error) *genjsonschema.ActionBase {
+	messageString := "Internal error"
+	if err != nil {
+		messageString = err.Error()
+	}
+	appError := genjsonschema.AppError{
+		Name:    genjsonschema.ErrorNameInternal,
+		Message: messageString,
+	}
+	return MakeBaseResponseAppError(message, appError)
 }
 
 func MakeBaseResponseAuthRequired(message *genjsonschema.ActionBase) *genjsonschema.ActionBase {

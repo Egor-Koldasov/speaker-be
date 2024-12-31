@@ -191,6 +191,9 @@
                 },
                 "SignUpByEmailCodeResponse": {
                   "$ref": "./ws-message/message/RequestToServer/Action/ActionSignUpByEmailCodeResponse.json"
+                },
+                "CreateCardConfig": {
+                  "$ref": "./ws-message/message/RequestToServer/Action/ActionCreateCardConfig.json"
                 }
               },
               "required": [
@@ -199,7 +202,8 @@
                 "SignUpByEmail",
                 "SignUpByEmailResponse",
                 "SignUpByEmailCode",
-                "SignUpByEmailCodeResponse"
+                "SignUpByEmailCodeResponse",
+                "CreateCardConfig"
               ]
             },
             "LensQuery": {
@@ -220,13 +224,21 @@
                 },
                 "LensQueryUserResponse": {
                   "$ref": "./ws-message/message/RequestToServer/LensQuery/LensQueryUserResponse.json"
+                },
+                "LensQueryUserCardConfigs": {
+                  "$ref": "./ws-message/message/RequestToServer/LensQuery/LensQueryUserCardConfigs.json"
+                },
+                "LensQueryUserCardConfigsResponse": {
+                  "$ref": "./ws-message/message/RequestToServer/LensQuery/LensQueryUserCardConfigsResponse.json"
                 }
               },
               "required": [
                 "LensQueryBase",
                 "LensQueryName",
                 "LensQueryUser",
-                "LensQueryUserResponse"
+                "LensQueryUserResponse",
+                "LensQueryUserCardConfigs",
+                "LensQueryUserCardConfigsResponse"
               ]
             }
           },

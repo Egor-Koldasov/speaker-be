@@ -143,6 +143,9 @@ type MainWsMessageRequestToServerAction struct {
 	// ActionName corresponds to the JSON schema field "ActionName".
 	ActionName ActionName `json:"ActionName" yaml:"ActionName" mapstructure:"ActionName"`
 
+	// CreateCardConfig corresponds to the JSON schema field "CreateCardConfig".
+	CreateCardConfig ActionCreateCardConfig `json:"CreateCardConfig" yaml:"CreateCardConfig" mapstructure:"CreateCardConfig"`
+
 	// SignUpByEmail corresponds to the JSON schema field "SignUpByEmail".
 	SignUpByEmail ActionSignUpByEmail `json:"SignUpByEmail" yaml:"SignUpByEmail" mapstructure:"SignUpByEmail"`
 
@@ -169,6 +172,9 @@ func (j *MainWsMessageRequestToServerAction) UnmarshalJSON(b []byte) error {
 	}
 	if _, ok := raw["ActionName"]; raw != nil && !ok {
 		return fmt.Errorf("field ActionName in MainWsMessageRequestToServerAction: required")
+	}
+	if _, ok := raw["CreateCardConfig"]; raw != nil && !ok {
+		return fmt.Errorf("field CreateCardConfig in MainWsMessageRequestToServerAction: required")
 	}
 	if _, ok := raw["SignUpByEmail"]; raw != nil && !ok {
 		return fmt.Errorf("field SignUpByEmail in MainWsMessageRequestToServerAction: required")
@@ -201,6 +207,14 @@ type MainWsMessageRequestToServerLensQuery struct {
 	// LensQueryUser corresponds to the JSON schema field "LensQueryUser".
 	LensQueryUser LensQueryUser `json:"LensQueryUser" yaml:"LensQueryUser" mapstructure:"LensQueryUser"`
 
+	// LensQueryUserCardConfigs corresponds to the JSON schema field
+	// "LensQueryUserCardConfigs".
+	LensQueryUserCardConfigs LensQueryUserCardConfigs `json:"LensQueryUserCardConfigs" yaml:"LensQueryUserCardConfigs" mapstructure:"LensQueryUserCardConfigs"`
+
+	// LensQueryUserCardConfigsResponse corresponds to the JSON schema field
+	// "LensQueryUserCardConfigsResponse".
+	LensQueryUserCardConfigsResponse LensQueryUserCardConfigsResponse `json:"LensQueryUserCardConfigsResponse" yaml:"LensQueryUserCardConfigsResponse" mapstructure:"LensQueryUserCardConfigsResponse"`
+
 	// LensQueryUserResponse corresponds to the JSON schema field
 	// "LensQueryUserResponse".
 	LensQueryUserResponse LensQueryUserResponse `json:"LensQueryUserResponse" yaml:"LensQueryUserResponse" mapstructure:"LensQueryUserResponse"`
@@ -220,6 +234,12 @@ func (j *MainWsMessageRequestToServerLensQuery) UnmarshalJSON(b []byte) error {
 	}
 	if _, ok := raw["LensQueryUser"]; raw != nil && !ok {
 		return fmt.Errorf("field LensQueryUser in MainWsMessageRequestToServerLensQuery: required")
+	}
+	if _, ok := raw["LensQueryUserCardConfigs"]; raw != nil && !ok {
+		return fmt.Errorf("field LensQueryUserCardConfigs in MainWsMessageRequestToServerLensQuery: required")
+	}
+	if _, ok := raw["LensQueryUserCardConfigsResponse"]; raw != nil && !ok {
+		return fmt.Errorf("field LensQueryUserCardConfigsResponse in MainWsMessageRequestToServerLensQuery: required")
 	}
 	if _, ok := raw["LensQueryUserResponse"]; raw != nil && !ok {
 		return fmt.Errorf("field LensQueryUserResponse in MainWsMessageRequestToServerLensQuery: required")

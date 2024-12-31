@@ -8,12 +8,14 @@ import "reflect"
 
 type ActionName string
 
+const ActionNameCreateCardConfig ActionName = "CreateCardConfig"
 const ActionNameSignUpByEmail ActionName = "SignUpByEmail"
 const ActionNameSignUpByEmailCode ActionName = "SignUpByEmailCode"
 
 var enumValues_ActionName = []interface{}{
 	"SignUpByEmail",
 	"SignUpByEmailCode",
+	"CreateCardConfig",
 }
 
 // UnmarshalJSON implements json.Unmarshaler.

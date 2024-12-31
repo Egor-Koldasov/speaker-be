@@ -4,6 +4,7 @@
   "$id": "LensQueryName",
   "title": "LensQueryName",
   "enum": [
-    "LensQueryUser"
+    "User",
+    "UserCardConfigs"
   ]
 }

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useLensUser } from '../../planning/Lens/useLensUser'
+import { useLensQueryUser } from '../../planning/Lens/useLensQueryUser'
 import PublicPage from '../layout/PublicPage.vue'
 
 // # Props, State
 // # Hooks
-const userLens = useLensUser()
+const userLens = useLensQueryUser()
 // # Computed
 const userEmail = computed(() => userLens.$state.memData.user.email)
 // # Callbacks

@@ -6,8 +6,23 @@ import "encoding/json"
 import "fmt"
 
 type CardConfig struct {
+	// ISO 8601 date string
+	CreatedAt string `json:"createdAt" yaml:"createdAt" mapstructure:"createdAt"`
+
+	// ISO 8601 date string or null
+	DeletedAt *string `json:"deletedAt" yaml:"deletedAt" mapstructure:"deletedAt"`
+
+	// Id corresponds to the JSON schema field "id".
+	Id DbId `json:"id" yaml:"id" mapstructure:"id"`
+
 	// The name of the card config
 	Name string `json:"name" yaml:"name" mapstructure:"name"`
+
+	// ISO 8601 date string
+	UpdatedAt string `json:"updatedAt" yaml:"updatedAt" mapstructure:"updatedAt"`
+
+	// UserId corresponds to the JSON schema field "userId".
+	UserId DbId `json:"userId" yaml:"userId" mapstructure:"userId"`
 }
 
 // UnmarshalJSON implements json.Unmarshaler.
@@ -16,8 +31,23 @@ func (j *CardConfig) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
 	}
+	if _, ok := raw["createdAt"]; raw != nil && !ok {
+		return fmt.Errorf("field createdAt in CardConfig: required")
+	}
+	if _, ok := raw["deletedAt"]; raw != nil && !ok {
+		return fmt.Errorf("field deletedAt in CardConfig: required")
+	}
+	if _, ok := raw["id"]; raw != nil && !ok {
+		return fmt.Errorf("field id in CardConfig: required")
+	}
 	if _, ok := raw["name"]; raw != nil && !ok {
 		return fmt.Errorf("field name in CardConfig: required")
+	}
+	if _, ok := raw["updatedAt"]; raw != nil && !ok {
+		return fmt.Errorf("field updatedAt in CardConfig: required")
+	}
+	if _, ok := raw["userId"]; raw != nil && !ok {
+		return fmt.Errorf("field userId in CardConfig: required")
 	}
 	type Plain CardConfig
 	var plain Plain

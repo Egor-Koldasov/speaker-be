@@ -1,9 +1,11 @@
 package jsonvalidate
 
 import (
+	"api-go/pkg/actionroutes"
 	"api-go/pkg/apperrors"
 	"api-go/pkg/config"
 	"api-go/pkg/genjsonschema"
+	"api-go/pkg/lensroutes"
 	"api-go/pkg/utilerror"
 	"fmt"
 	"log"
@@ -31,9 +33,12 @@ var SchemaPath_LensQuery_LensUser = filepath.Join(SchemaPath_LensQuery, "LensQue
 
 func init() {
 	loadJsonLoader(SchemaPath_WsMessageBase)
-	loadJsonLoader(SchemaPath_Action_SignUpByEmail)
-	loadJsonLoader(SchemaPath_Action_SignUpByEmailCode)
-	loadJsonLoader(SchemaPath_LensQuery_LensUser)
+	for actionName := range actionroutes.ActionRouter {
+		loadJsonLoader(filepath.Join(SchemaPath_Action, fmt.Sprintf("Action%v.json", actionName)))
+	}
+	for lensQueryName := range lensroutes.LensRouter {
+		loadJsonLoader(filepath.Join(SchemaPath_LensQuery, fmt.Sprintf("LensQuery%v.json", lensQueryName)))
+	}
 }
 
 func ValidateJson(schemaPath string, loader gojsonschema.JSONLoader, validationErrorName genjsonschema.ErrorName) *[]genjsonschema.AppError {

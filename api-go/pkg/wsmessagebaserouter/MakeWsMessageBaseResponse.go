@@ -2,7 +2,6 @@ package wsmessagebaserouter
 
 import (
 	"api-go/pkg/genjsonschema"
-	"api-go/pkg/jsonvalidate"
 	"api-go/pkg/utilerror"
 
 	"github.com/google/uuid"
@@ -15,7 +14,7 @@ func MakeWsMessageBaseResponse(message *genjsonschema.WsMessageBase) *genjsonsch
 		Id:            id.String(),
 		Name:          message.Name,
 		ResponseForId: &message.Id,
-		Errors:        jsonvalidate.AppErrorsEmpty,
+		Errors:        []genjsonschema.AppError{},
 	}
 	return &messageResult
 }

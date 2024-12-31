@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { effect, watch } from 'vue'
-import { useLensUser } from '../../planning/Lens/useLensUser'
+import { useLensQueryUser } from '../../planning/Lens/useLensQueryUser'
 import { useRouter } from 'vue-router'
 import { useSettingsPanel } from '../../uiStore/useSettingsPanel'
 import SettingsPanel from './SettingsPanel/SettingsPanel.vue'
 import PageHeader from './PageHeader.vue'
 
 // # Props, State
-const userLens = useLensUser()
+const userLens = useLensQueryUser()
 // # Hooks
 const router = useRouter()
 const settingsPanel = useSettingsPanel()

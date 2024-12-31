@@ -77,7 +77,7 @@ const exportJsonSchemaBundles = async () => {
     jsonSchemaPathList
       .filter(Boolean)
       .map(async (schemaPath): Promise<void> => {
-        const schemaBundled = await $RefParser.bundle(
+        const schemaBundled = await $RefParser.dereference(
           join(jsonSchemaDir, schemaPath)
         );
         const bundlePath = path.resolve(genBundleDir, schemaPath);

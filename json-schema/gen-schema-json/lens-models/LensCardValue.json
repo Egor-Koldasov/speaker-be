@@ -14,7 +14,7 @@
       "type": "array",
       "items": {
         "id": {
-          "$ref": "../db-models/./DbId.json"
+          "$ref": "../db-models/../db-models/./DbId.json"
         },
         "createdAt": {
           "type": "string",

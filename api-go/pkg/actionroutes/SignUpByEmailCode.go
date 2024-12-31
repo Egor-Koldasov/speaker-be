@@ -4,7 +4,6 @@ import (
 	"api-go/lensmodel"
 	"api-go/pkg/actionrouterutil"
 	"api-go/pkg/genjsonschema"
-	"api-go/pkg/jsonvalidate"
 	"api-go/pkg/lensrouterutil"
 	"api-go/pkg/surrealdbutil"
 	"api-go/pkg/utilcrypto"
@@ -13,18 +12,10 @@ import (
 	"errors"
 
 	"github.com/surrealdb/surrealdb.go/pkg/models"
-	"github.com/xeipuuv/gojsonschema"
 )
 
 var SignUpByEmailCode = actionrouterutil.ActionHandlerConfig{
 	HandlerFn: func(message *genjsonschema.ActionBase, helpers lensrouterutil.HandlerFnHelpers) *genjsonschema.ActionBase {
-		messageBufferLoader := gojsonschema.NewGoLoader(message)
-		appErrors := jsonvalidate.ValidateJson(jsonvalidate.SchemaPath_Action_SignUpByEmailCode, messageBufferLoader, genjsonschema.ErrorNameInternal)
-		if len(*appErrors) > 0 {
-			response := actionrouterutil.MakeActionBaseResponse(message)
-			response.Errors = *appErrors
-			return response
-		}
 		action := utilstruct.TranslateStruct[genjsonschema.ActionSignUpByEmailCode](message)
 
 		signUpCodesFound, err := surrealdbutil.Query[genjsonschema.SignUpCode](
@@ -72,7 +63,7 @@ var SignUpByEmailCode = actionrouterutil.ActionHandlerConfig{
 		// Sign in
 		tokenCode := utilcrypto.GenerateSecureToken(12)
 		sessionToken := lensmodel.NewLensModel[genjsonschema.SessionToken]()
-		sessionToken.UserId = userCreated.Id
+		sessionToken.UserId = string(userCreated.Id)
 		sessionToken.TokenCode = tokenCode
 		_, err = surrealdbutil.Create[genjsonschema.SessionToken](
 			models.Table("SessionToken"),

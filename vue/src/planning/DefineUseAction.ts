@@ -82,12 +82,13 @@ export const defineUseAction = <
       },
       async init() {
         this.authToken = await getAuthToken()
-        const onAuthTokenUpdate = (authToken: string) =>
-          (this.authToken = authToken)
-        AuthTokenChan.addListener('message', onAuthTokenUpdate)
+        const onAuthTokenUpdate = (authToken: string) => {
+          this.authToken = authToken
+        }
+        AuthTokenChan.addListener('authToken', onAuthTokenUpdate)
 
         return () => {
-          AuthTokenChan.removeListener('message', onAuthTokenUpdate)
+          AuthTokenChan.removeListener('authToken', onAuthTokenUpdate)
         }
       },
     },

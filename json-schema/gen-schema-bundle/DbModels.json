@@ -17,7 +17,11 @@
       "title": "DbModelBase",
       "properties": {
         "id": {
-          "$ref": "#/properties/User/properties/id"
+          "type": "string",
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "DbId",
+          "title": "DbId",
+          "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
         },
         "createdAt": {
           "type": "string",
@@ -120,7 +124,11 @@
       },
       "properties": {
         "id": {
-          "$ref": "#/properties/User/properties/id"
+          "type": "string",
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "DbId",
+          "title": "DbId",
+          "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
         },
         "createdAt": {
           "type": "string",
@@ -138,16 +146,26 @@
           "description": "ISO 8601 date string or null"
         },
         "foreignLanguages": {
-          "$ref": "#/properties/UserSettings/definitions/foreignLanguages"
+          "type": "array",
+          "description": "The list of BCP 47 language tags of the languages foreign to the user that are most commonly used in the learning process. Take this list as a priority when you try to detect the text language of the text foreign to the user. Although it is not guaranteed to completely match the text languages",
+          "items": {
+            "type": "string"
+          }
         },
         "translationLanguage": {
-          "$ref": "#/properties/UserSettings/definitions/translationLanguage"
+          "type": "string",
+          "description": "The BCP 47 language tag of the language that the user wants to translate the foreign text to."
         },
         "nativeLanguages": {
-          "$ref": "#/properties/UserSettings/definitions/nativeLanguages"
+          "type": "array",
+          "description": "The list of BCP 47 language tags of the languages native to the user. Take this list as a priority when you try to detect the text language. Although it is not guaranteed to completely match the text languages",
+          "items": {
+            "type": "string"
+          }
         },
         "primaryForeignLanguage": {
-          "$ref": "#/properties/UserSettings/definitions/primaryForeignLanguage"
+          "type": "string",
+          "description": "The BCP 47 language tag of the language that the user wants to translate the text to."
         }
       },
       "required": [
@@ -171,7 +189,11 @@
       "title": "SignUpCode",
       "properties": {
         "id": {
-          "$ref": "#/properties/User/properties/id"
+          "type": "string",
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "DbId",
+          "title": "DbId",
+          "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
         },
         "createdAt": {
           "type": "string",
@@ -216,7 +238,11 @@
       "title": "SessionToken",
       "properties": {
         "id": {
-          "$ref": "#/properties/User/properties/id"
+          "type": "string",
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "DbId",
+          "title": "DbId",
+          "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
         },
         "createdAt": {
           "type": "string",
@@ -259,13 +285,47 @@
       "additionalProperties": false,
       "title": "CardConfig",
       "properties": {
+        "id": {
+          "type": "string",
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "DbId",
+          "title": "DbId",
+          "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO 8601 date string"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO 8601 date string"
+        },
+        "deletedAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "ISO 8601 date string or null"
+        },
         "name": {
           "type": "string",
           "description": "The name of the card config"
+        },
+        "userId": {
+          "type": "string",
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "DbId",
+          "title": "DbId",
+          "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
         }
       },
       "required": [
-        "name"
+        "id",
+        "createdAt",
+        "updatedAt",
+        "deletedAt",
+        "name",
+        "userId"
       ]
     },
     "FieldConfig": {
@@ -278,7 +338,11 @@
       "title": "FieldConfig",
       "properties": {
         "id": {
-          "$ref": "#/properties/User/properties/id"
+          "type": "string",
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "DbId",
+          "title": "DbId",
+          "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
         },
         "createdAt": {
           "type": "string",
@@ -349,7 +413,11 @@
       "description": "A value result of FieldConfig. Either AI generated or user input.",
       "properties": {
         "id": {
-          "$ref": "#/properties/User/properties/id"
+          "type": "string",
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "DbId",
+          "title": "DbId",
+          "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
         },
         "createdAt": {
           "type": "string",
@@ -370,10 +438,18 @@
           "type": "string"
         },
         "fileId": {
-          "$ref": "#/properties/User/properties/id"
+          "type": "string",
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "DbId",
+          "title": "DbId",
+          "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
         },
         "fieldSetId": {
-          "$ref": "#/properties/User/properties/id"
+          "type": "string",
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "DbId",
+          "title": "DbId",
+          "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
         }
       },
       "required": [
@@ -397,7 +473,11 @@
       "description": "A set of results of FieldConfig. Either AI generated or user input.",
       "properties": {
         "id": {
-          "$ref": "#/properties/User/properties/id"
+          "type": "string",
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "DbId",
+          "title": "DbId",
+          "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
         },
         "createdAt": {
           "type": "string",
@@ -415,7 +495,11 @@
           "description": "ISO 8601 date string or null"
         },
         "fieldConfigId": {
-          "$ref": "#/properties/User/properties/id"
+          "type": "string",
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "DbId",
+          "title": "DbId",
+          "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
         }
       },
       "required": [
@@ -437,10 +521,18 @@
       "description": "Many to many relation between CardConfig and FieldConfig",
       "properties": {
         "cardConfigId": {
-          "$ref": "#/properties/User/properties/id"
+          "type": "string",
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "DbId",
+          "title": "DbId",
+          "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
         },
         "fieldConfigId": {
-          "$ref": "#/properties/User/properties/id"
+          "type": "string",
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "$id": "DbId",
+          "title": "DbId",
+          "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
         }
       },
       "required": [

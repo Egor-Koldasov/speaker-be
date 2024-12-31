@@ -31,7 +31,8 @@
           "title": "ActionName",
           "enum": [
             "SignUpByEmail",
-            "SignUpByEmailCode"
+            "SignUpByEmailCode",
+            "CreateCardConfig"
           ]
         },
         "actionParams": {

@@ -8,9 +8,30 @@
   "title": "LensCardConfig",
   "description": "CardConfig with its fieldConfigs loaded",
   "properties": {
+    "id": {
+      "$ref": "../db-models/./DbId.json"
+    },
+    "createdAt": {
+      "type": "string",
+      "description": "ISO 8601 date string"
+    },
+    "updatedAt": {
+      "type": "string",
+      "description": "ISO 8601 date string"
+    },
+    "deletedAt": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "ISO 8601 date string or null"
+    },
     "name": {
       "type": "string",
       "description": "The name of the card config"
+    },
+    "userId": {
+      "$ref": "../db-models/./DbId.json"
     },
     "fieldConfigs": {
       "type": "array",
@@ -23,7 +44,12 @@
     }
   },
   "required": [
+    "id",
+    "createdAt",
+    "updatedAt",
+    "deletedAt",
     "name",
+    "userId",
     "fieldConfigs"
   ]
 }

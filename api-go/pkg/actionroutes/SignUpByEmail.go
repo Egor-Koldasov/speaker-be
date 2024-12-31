@@ -5,27 +5,19 @@ import (
 	"api-go/pkg/actionrouterutil"
 	"api-go/pkg/config"
 	"api-go/pkg/genjsonschema"
-	"api-go/pkg/jsonvalidate"
 	"api-go/pkg/lensrouterutil"
 	"api-go/pkg/surrealdbutil"
 	"api-go/pkg/utilcrypto"
 	"api-go/pkg/utilerror"
 	"api-go/pkg/utilstruct"
-	"fmt"
 	"strings"
 
 	"github.com/surrealdb/surrealdb.go/pkg/models"
-	"github.com/xeipuuv/gojsonschema"
 	"gopkg.in/gomail.v2"
 )
 
 var SignUpByEmail = actionrouterutil.ActionHandlerConfig{
 	HandlerFn: func(message *genjsonschema.ActionBase, helpers lensrouterutil.HandlerFnHelpers) *genjsonschema.ActionBase {
-		messageBufferLoader := gojsonschema.NewGoLoader(message)
-		appErrors := jsonvalidate.ValidateJson(jsonvalidate.SchemaPath_Action_SignUpByEmail, messageBufferLoader, genjsonschema.ErrorNameInternal)
-		if utilerror.LogErrorIf(fmt.Sprintf("Validation error: %v", appErrors), len(*appErrors) > 0) {
-			return actionrouterutil.MakeActionBaseResponse(message)
-		}
 		action := utilstruct.TranslateStruct[genjsonschema.ActionSignUpByEmail](message)
 		signupEmail := action.Data.ActionParams.Email
 		signUpToken := strings.ToUpper(utilcrypto.GenerateSecureToken(6))

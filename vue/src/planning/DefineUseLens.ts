@@ -20,10 +20,10 @@ import { AuthTokenChan } from '../util/authToken/AuthTokenChan'
 import type { IsType } from '../types/util/IsType'
 
 type LensQueryParamsByName<Name extends LensQueryName> =
-  Main['WsMessage']['RequestToServer']['LensQuery'][Name]['data']['queryParams']
+  Main['WsMessage']['RequestToServer']['LensQuery'][`LensQuery${Name}`]['data']['queryParams']
 export type LensQueryResponseByName<Name extends LensQueryName> =
-  `${Name}Response` extends keyof Main['WsMessage']['RequestToServer']['LensQuery']
-    ? Main['WsMessage']['RequestToServer']['LensQuery'][`${Name}Response`]
+  `LensQuery${Name}Response` extends keyof Main['WsMessage']['RequestToServer']['LensQuery']
+    ? Main['WsMessage']['RequestToServer']['LensQuery'][`LensQuery${Name}Response`]
     : never
 
 type LensQueryResponseMessage<
@@ -60,7 +60,7 @@ export const isLenseQueryMessage = (
   LensQueryName
 > => message.name.valueOf() === WsMessageNameRequestToServer.LensQuery.valueOf()
 
-export const defineUseLens = <
+export const defineUseLensQuery = <
   const Name extends LensQueryName,
   const Response extends LensQueryResponseByName<Name>,
   const LensArgs extends LensQueryParamsByName<Name>,

@@ -14,7 +14,7 @@ func NewLensModel[T interface{}]() *T {
 	uuidGenerated, err := uuid.NewV7()
 	utilerror.FatalError("Error generating UUID", err)
 	modelBase := genjsonschema.DbModelBase{
-		Id:        uuidGenerated.String(),
+		Id:        genjsonschema.DbId(uuidGenerated.String()),
 		CreatedAt: utiltime.TimeToIso(time.Now()),
 		UpdatedAt: utiltime.TimeToIso(time.Now()),
 		DeletedAt: nil,

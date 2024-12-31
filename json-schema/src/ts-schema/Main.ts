@@ -50,6 +50,9 @@ export default schemaObject(
           SignUpByEmailCodeResponse: {
             $ref: "./ws-message/message/RequestToServer/Action/ActionSignUpByEmailCodeResponse.json",
           },
+          CreateCardConfig: {
+            $ref: "./ws-message/message/RequestToServer/Action/ActionCreateCardConfig.json",
+          },
         }),
         LensQuery: schemaObject({
           LensQueryBase: {
@@ -63,6 +66,12 @@ export default schemaObject(
           },
           LensQueryUserResponse: {
             $ref: "./ws-message/message/RequestToServer/LensQuery/LensQueryUserResponse.json",
+          },
+          LensQueryUserCardConfigs: {
+            $ref: "./ws-message/message/RequestToServer/LensQuery/LensQueryUserCardConfigs.json",
+          },
+          LensQueryUserCardConfigsResponse: {
+            $ref: "./ws-message/message/RequestToServer/LensQuery/LensQueryUserCardConfigsResponse.json",
           },
         }),
       }),

@@ -41,7 +41,7 @@
           ]
         },
         "queryName": {
-          "const": "LensQueryUser"
+          "const": "User"
         }
       },
       "required": [

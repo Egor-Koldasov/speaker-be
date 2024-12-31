@@ -98,12 +98,15 @@ export interface Main {
         SignUpByEmailResponse: ActionSignUpByEmailResponse;
         SignUpByEmailCode: ActionSignUpByEmailCode;
         SignUpByEmailCodeResponse: ActionSignUpByEmailCodeResponse;
+        CreateCardConfig: ActionCreateCardConfig;
       };
       LensQuery: {
         LensQueryBase: LensQueryBase;
         LensQueryName: LensQueryName;
         LensQueryUser: LensQueryUser;
         LensQueryUserResponse: LensQueryUserResponse;
+        LensQueryUserCardConfigs: LensQueryUserCardConfigs;
+        LensQueryUserCardConfigsResponse: LensQueryUserCardConfigsResponse;
       };
     };
   };
@@ -480,10 +483,24 @@ export interface SessionToken {
   tokenCode: string;
 }
 export interface CardConfig {
+  id: DbId;
+  /**
+   * ISO 8601 date string
+   */
+  createdAt: string;
+  /**
+   * ISO 8601 date string
+   */
+  updatedAt: string;
+  /**
+   * ISO 8601 date string or null
+   */
+  deletedAt: string | null;
   /**
    * The name of the card config
    */
   name: string;
+  userId: DbId;
 }
 export interface FieldConfig {
   id: DbId;
@@ -634,6 +651,18 @@ export interface ActionSignUpByEmailCodeResponse {
   authToken: string | null;
   errors: AppError[];
 }
+export interface ActionCreateCardConfig {
+  name: "Action";
+  id: string;
+  data: {
+    actionParams: {
+      cardConfig: CardConfig;
+    };
+    actionName: "CreateCardConfig";
+  };
+  authToken: string | null;
+  errors: AppError[];
+}
 export interface LensQueryBase {
   name: "LensQuery";
   id: string;
@@ -652,7 +681,7 @@ export interface LensQueryUser {
   id: string;
   data: {
     queryParams: {};
-    queryName: "LensQueryUser";
+    queryName: "User";
   };
   authToken: string | null;
   errors: AppError[];
@@ -665,7 +694,32 @@ export interface LensQueryUserResponse {
     queryParams: {
       user: User;
     };
-    queryName: "LensQueryUser";
+    queryName: "User";
+  };
+  authToken: string | null;
+  errors: AppError[];
+}
+export interface LensQueryUserCardConfigs {
+  name: "LensQuery";
+  id: string;
+  data: {
+    queryParams: {
+      [k: string]: unknown;
+    };
+    queryName: "UserCardConfigs";
+  };
+  authToken: string | null;
+  errors: AppError[];
+}
+export interface LensQueryUserCardConfigsResponse {
+  name: "LensQuery";
+  id: string;
+  responseForId: string;
+  data: {
+    queryParams: {
+      cardConfigs: CardConfig[];
+    };
+    queryName: "UserCardConfigs";
   };
   authToken: string | null;
   errors: AppError[];
@@ -753,8 +807,10 @@ export enum WsMessageName {
 }
 export enum ActionName {
   SignUpByEmail = "SignUpByEmail",
-  SignUpByEmailCode = "SignUpByEmailCode"
+  SignUpByEmailCode = "SignUpByEmailCode",
+  CreateCardConfig = "CreateCardConfig"
 }
 export enum LensQueryName {
-  LensQueryUser = "LensQueryUser"
+  User = "User",
+  UserCardConfigs = "UserCardConfigs"
 }

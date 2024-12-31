@@ -4,7 +4,7 @@ import { wsMessageLensQuery } from "../../../../_util/wsMessageLensQuery";
 export default wsMessageLensQuery(
   {
     queryName: {
-      const: "LensQueryUser",
+      const: "User",
     },
     queryParams: schemaObject({
       user: {

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { useLensUser } from '../../../planning/Lens/useLensUser'
+import { useLensQueryUser } from '../../../planning/Lens/useLensQueryUser'
 import { useSettingsPanel } from '../../../uiStore/useSettingsPanel'
 
 // # Props, State
 // # Hooks
 const settingsPanel = useSettingsPanel()
-const userLens = useLensUser()
+const userLens = useLensQueryUser()
 
 // # Computed
 // # Callbacks

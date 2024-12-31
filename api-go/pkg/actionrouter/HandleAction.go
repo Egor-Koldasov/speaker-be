@@ -2,12 +2,18 @@ package actionrouter
 
 import (
 	"api-go/pkg/actionrouterutil"
+	"api-go/pkg/actionroutes"
 	"api-go/pkg/genjsonschema"
+	"api-go/pkg/jsonvalidate"
 	"api-go/pkg/lensrouterutil"
 	"api-go/pkg/utilstruct"
 	"api-go/pkg/wsmessagebaserouter"
 	"api-go/surrealdbqueries"
 	"errors"
+	"fmt"
+	"path/filepath"
+
+	"github.com/xeipuuv/gojsonschema"
 )
 
 func HandleAction(message *genjsonschema.WsMessageBase) *genjsonschema.WsMessageBase {
@@ -21,12 +27,12 @@ func HandleAction(message *genjsonschema.WsMessageBase) *genjsonschema.WsMessage
 			ActionParams: message.Data["actionParams"].(map[string]interface{}),
 		},
 	}
-	handler, handlerExists := ActionRouter[string(actionBase.Data.ActionName)]
+	handler, handlerExists := actionroutes.ActionRouter[string(actionBase.Data.ActionName)]
 	if !handlerExists {
 		handlerResult := wsmessagebaserouter.MakeWsMessageBaseResponse(message)
 		handlerResult.Errors = append(handlerResult.Errors, genjsonschema.AppError{
 			Name:    genjsonschema.ErrorNameInternal,
-			Message: "WSMessage handler not found",
+			Message: "Action handler not found",
 		})
 		handlerResult.Data = genjsonschema.WsMessageBaseData{}
 		return handlerResult
@@ -37,8 +43,11 @@ func HandleAction(message *genjsonschema.WsMessageBase) *genjsonschema.WsMessage
 		if message.AuthToken == nil {
 			err = errors.New("AuthToken is required")
 		}
-		if err != nil {
+		if err == nil {
 			user, err = surrealdbqueries.GetUserBySessionToken(*message.AuthToken)
+		}
+		if err == nil && user == nil {
+			err = errors.New("user not found")
 		}
 		if err != nil {
 			reponse := utilstruct.TranslateStruct[genjsonschema.WsMessageBase](
@@ -46,6 +55,16 @@ func HandleAction(message *genjsonschema.WsMessageBase) *genjsonschema.WsMessage
 			)
 			return &reponse
 		}
+	}
+	messageBufferLoader := gojsonschema.NewGoLoader(message)
+	schemaPath := filepath.Join(jsonvalidate.SchemaPath_Action, fmt.Sprintf("Action%v.json", string(actionBase.Data.ActionName)))
+	appErrors := jsonvalidate.ValidateJson(schemaPath, messageBufferLoader, genjsonschema.ErrorNameInternal)
+	if len(*appErrors) > 0 {
+		response := utilstruct.TranslateStruct[genjsonschema.WsMessageBase](
+			*actionrouterutil.MakeActionBaseResponse(&actionBase),
+		)
+		response.Errors = *appErrors
+		return &response
 	}
 	handlerResult := handler.HandlerFn(&actionBase, lensrouterutil.HandlerFnHelpers{
 		User: user,

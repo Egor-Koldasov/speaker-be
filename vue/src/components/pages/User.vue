@@ -2,7 +2,7 @@
 import { onMounted } from 'vue'
 import { idb } from '../../idb/idb'
 import { WsService } from '../../planning/WsService'
-import { useLensUser } from '@/planning/Lens/useLensUser'
+import { useLensQueryUser } from '@/planning/Lens/useLensQueryUser'
 
 // # Props, State
 // # Hooks
@@ -14,7 +14,7 @@ onMounted(async () => {
   WsService
   console.log('WsService', WsService)
 })
-const lensUser = useLensUser()
+const lensUser = useLensQueryUser()
 </script>
 <template>
   <div>
