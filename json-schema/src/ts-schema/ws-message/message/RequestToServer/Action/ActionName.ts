@@ -4,6 +4,7 @@ export const actionNames = [
   "SignUpByEmail",
   "SignUpByEmailCode",
   "CreateCardConfig",
+  "CreateFieldConfig",
 ] as const;
 export default schema({
   title: "ActionName",

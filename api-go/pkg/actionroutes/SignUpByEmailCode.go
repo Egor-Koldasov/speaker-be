@@ -18,15 +18,14 @@ var SignUpByEmailCode = actionrouterutil.ActionHandlerConfig{
 	HandlerFn: func(message *genjsonschema.ActionBase, helpers lensrouterutil.HandlerFnHelpers) *genjsonschema.ActionBase {
 		action := utilstruct.TranslateStruct[genjsonschema.ActionSignUpByEmailCode](message)
 
-		signUpCodesFound, err := surrealdbutil.Query[genjsonschema.SignUpCode](
-			"SELECT * FROM SignUpCode WHERE code=$Code",
-			map[string]interface{}{
-				"Code": action.Data.ActionParams.Code,
-			})
+		signUpCodesFound, err := surrealdbutil.SelectBy[genjsonschema.SignUpCode](
+			"SignUpCode",
+			"code",
+			action.Data.ActionParams.Code)
 		var firstRecord *genjsonschema.SignUpCode
 
-		if signUpCodesFound != nil && len(signUpCodesFound.Result) > 0 {
-			firstRecord = &signUpCodesFound.Result[0]
+		if len(signUpCodesFound) > 0 {
+			firstRecord = &signUpCodesFound[0]
 		}
 
 		if firstRecord == nil {

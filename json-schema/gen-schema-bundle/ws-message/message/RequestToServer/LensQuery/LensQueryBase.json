@@ -31,7 +31,8 @@
           "title": "LensQueryName",
           "enum": [
             "User",
-            "UserCardConfigs"
+            "UserCardConfigs",
+            "CardConfig"
           ]
         },
         "queryParams": {

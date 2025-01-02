@@ -1,0 +1,248 @@
+{
+  "type": [
+    "object"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "LensQueryCardConfigResponse",
+  "additionalProperties": false,
+  "title": "LensQueryCardConfigResponse",
+  "response": true,
+  "relPathToWsMessage": "../../../../_util",
+  "properties": {
+    "name": {
+      "const": "LensQuery"
+    },
+    "id": {
+      "type": "string"
+    },
+    "responseForId": {
+      "type": "string"
+    },
+    "data": {
+      "type": [
+        "object"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "additionalProperties": false,
+      "properties": {
+        "queryParams": {
+          "type": [
+            "object"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "additionalProperties": false,
+          "properties": {
+            "cardConfig": {
+              "type": [
+                "object"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema",
+              "$id": "LensCardConfig",
+              "additionalProperties": false,
+              "title": "LensCardConfig",
+              "description": "CardConfig with its fieldConfigs loaded",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "$schema": "http://json-schema.org/draft-07/schema",
+                  "$id": "DbId",
+                  "title": "DbId",
+                  "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "description": "ISO 8601 date string"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "description": "ISO 8601 date string"
+                },
+                "deletedAt": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "ISO 8601 date string or null"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "The name of the card config"
+                },
+                "userId": {
+                  "type": "string",
+                  "$schema": "http://json-schema.org/draft-07/schema",
+                  "$id": "DbId",
+                  "title": "DbId",
+                  "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
+                },
+                "fieldConfigByName": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": [
+                      "object"
+                    ],
+                    "$schema": "http://json-schema.org/draft-07/schema",
+                    "$id": "FieldConfig",
+                    "additionalProperties": false,
+                    "title": "FieldConfig",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "$schema": "http://json-schema.org/draft-07/schema",
+                        "$id": "DbId",
+                        "title": "DbId",
+                        "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "description": "ISO 8601 date string"
+                      },
+                      "updatedAt": {
+                        "type": "string",
+                        "description": "ISO 8601 date string"
+                      },
+                      "deletedAt": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "ISO 8601 date string or null"
+                      },
+                      "cardConfigId": {
+                        "type": "string",
+                        "$schema": "http://json-schema.org/draft-07/schema",
+                        "$id": "DbId",
+                        "title": "DbId",
+                        "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "The name of the field defined by user and displayed back to user"
+                      },
+                      "valueType": {
+                        "type": "string",
+                        "$schema": "http://json-schema.org/draft-07/schema",
+                        "$id": "FieldConfigValueType",
+                        "title": "FieldConfigValueType",
+                        "enum": [
+                          "Text",
+                          "Image",
+                          "Audio"
+                        ],
+                        "description": "The type of the value for AI to generate"
+                      },
+                      "minResult": {
+                        "type": "number",
+                        "default": 1,
+                        "description": "The minimum number of results for AI to generate. If the AI cannot generate enough results it can return less, but otherwise should match"
+                      },
+                      "maxResult": {
+                        "type": "number",
+                        "default": 1,
+                        "description": "The maximum number of results for AI to generate. AI should never generate more than this number of results."
+                      },
+                      "prompt": {
+                        "type": "string",
+                        "desctiption": "The user prompt for the AI, explaining what the AI should generate."
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "createdAt",
+                      "updatedAt",
+                      "deletedAt",
+                      "cardConfigId",
+                      "name",
+                      "valueType",
+                      "minResult",
+                      "maxResult",
+                      "prompt"
+                    ]
+                  },
+                  "description": "A map of fieldConfigs with their names as keys",
+                  "meta": {
+                    "relation": "ManyToMany"
+                  }
+                }
+              },
+              "required": [
+                "id",
+                "createdAt",
+                "updatedAt",
+                "deletedAt",
+                "name",
+                "userId",
+                "fieldConfigByName"
+              ]
+            }
+          },
+          "required": [
+            "cardConfig"
+          ]
+        },
+        "queryName": {
+          "const": "CardConfig"
+        }
+      },
+      "required": [
+        "queryParams",
+        "queryName"
+      ]
+    },
+    "authToken": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": [
+          "object"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema",
+        "$id": "AppError",
+        "additionalProperties": false,
+        "title": "AppError",
+        "description": "An application typed error.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "$schema": "http://json-schema.org/draft-07/schema",
+            "$id": "ErrorName",
+            "title": "ErrorName",
+            "description": "The code name of the error.",
+            "enum": [
+              "Unknown",
+              "Internal",
+              "Ai_CreateCompletion",
+              "AI_ResponseUnmarshal",
+              "JsonSchema_MessageInput",
+              "JsonSchema_MessageOutput",
+              "NotFound_MessageName",
+              "FromAi_Critical",
+              "ChatAiError",
+              "AuthRequired"
+            ]
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "message"
+        ]
+      }
+    }
+  },
+  "required": [
+    "name",
+    "id",
+    "responseForId",
+    "data",
+    "authToken",
+    "errors"
+  ]
+}

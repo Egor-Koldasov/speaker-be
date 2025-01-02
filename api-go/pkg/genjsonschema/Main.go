@@ -201,6 +201,13 @@ type MainWsMessageRequestToServerLensQuery struct {
 	// LensQueryBase corresponds to the JSON schema field "LensQueryBase".
 	LensQueryBase LensQueryBase `json:"LensQueryBase" yaml:"LensQueryBase" mapstructure:"LensQueryBase"`
 
+	// LensQueryCardConfig corresponds to the JSON schema field "LensQueryCardConfig".
+	LensQueryCardConfig LensQueryCardConfig `json:"LensQueryCardConfig" yaml:"LensQueryCardConfig" mapstructure:"LensQueryCardConfig"`
+
+	// LensQueryCardConfigResponse corresponds to the JSON schema field
+	// "LensQueryCardConfigResponse".
+	LensQueryCardConfigResponse LensQueryCardConfigResponse `json:"LensQueryCardConfigResponse" yaml:"LensQueryCardConfigResponse" mapstructure:"LensQueryCardConfigResponse"`
+
 	// LensQueryName corresponds to the JSON schema field "LensQueryName".
 	LensQueryName LensQueryName `json:"LensQueryName" yaml:"LensQueryName" mapstructure:"LensQueryName"`
 
@@ -228,6 +235,12 @@ func (j *MainWsMessageRequestToServerLensQuery) UnmarshalJSON(b []byte) error {
 	}
 	if _, ok := raw["LensQueryBase"]; raw != nil && !ok {
 		return fmt.Errorf("field LensQueryBase in MainWsMessageRequestToServerLensQuery: required")
+	}
+	if _, ok := raw["LensQueryCardConfig"]; raw != nil && !ok {
+		return fmt.Errorf("field LensQueryCardConfig in MainWsMessageRequestToServerLensQuery: required")
+	}
+	if _, ok := raw["LensQueryCardConfigResponse"]; raw != nil && !ok {
+		return fmt.Errorf("field LensQueryCardConfigResponse in MainWsMessageRequestToServerLensQuery: required")
 	}
 	if _, ok := raw["LensQueryName"]; raw != nil && !ok {
 		return fmt.Errorf("field LensQueryName in MainWsMessageRequestToServerLensQuery: required")

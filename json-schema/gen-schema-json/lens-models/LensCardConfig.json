@@ -33,11 +33,12 @@
     "userId": {
       "$ref": "../db-models/./DbId.json"
     },
-    "fieldConfigs": {
-      "type": "array",
-      "items": {
+    "fieldConfigByName": {
+      "type": "object",
+      "additionalProperties": {
         "$ref": "../db-models/FieldConfig.json"
       },
+      "description": "A map of fieldConfigs with their names as keys",
       "meta": {
         "relation": "ManyToMany"
       }
@@ -50,6 +51,6 @@
     "deletedAt",
     "name",
     "userId",
-    "fieldConfigs"
+    "fieldConfigByName"
   ]
 }

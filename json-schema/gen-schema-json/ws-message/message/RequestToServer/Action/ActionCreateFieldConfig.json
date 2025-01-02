@@ -1,0 +1,68 @@
+{
+  "type": [
+    "object"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "ActionCreateFieldConfig",
+  "additionalProperties": false,
+  "title": "ActionCreateFieldConfig",
+  "relPathToWsMessage": "../../../../_util",
+  "properties": {
+    "name": {
+      "const": "Action"
+    },
+    "id": {
+      "type": "string"
+    },
+    "data": {
+      "type": [
+        "object"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "additionalProperties": false,
+      "properties": {
+        "actionParams": {
+          "type": [
+            "object"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "additionalProperties": false,
+          "properties": {
+            "fieldConfig": {
+              "$ref": "../../../../db-models/FieldConfig.json"
+            }
+          },
+          "required": [
+            "fieldConfig"
+          ]
+        },
+        "actionName": {
+          "const": "CreateFieldConfig"
+        }
+      },
+      "required": [
+        "actionParams",
+        "actionName"
+      ]
+    },
+    "authToken": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "$ref": "../../../../property/AppError.json"
+      }
+    }
+  },
+  "required": [
+    "name",
+    "id",
+    "data",
+    "authToken",
+    "errors"
+  ]
+}

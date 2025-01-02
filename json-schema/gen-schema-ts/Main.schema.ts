@@ -107,6 +107,8 @@ export interface Main {
         LensQueryUserResponse: LensQueryUserResponse;
         LensQueryUserCardConfigs: LensQueryUserCardConfigs;
         LensQueryUserCardConfigsResponse: LensQueryUserCardConfigsResponse;
+        LensQueryCardConfig: LensQueryCardConfig;
+        LensQueryCardConfigResponse: LensQueryCardConfigResponse;
       };
     };
   };
@@ -516,6 +518,7 @@ export interface FieldConfig {
    * ISO 8601 date string or null
    */
   deletedAt: string | null;
+  cardConfigId: DbId;
   /**
    * The name of the field defined by user and displayed back to user
    */
@@ -724,6 +727,60 @@ export interface LensQueryUserCardConfigsResponse {
   authToken: string | null;
   errors: AppError[];
 }
+export interface LensQueryCardConfig {
+  name: "LensQuery";
+  id: string;
+  data: {
+    queryParams: {
+      cardConfigId: DbId;
+    };
+    queryName: "CardConfig";
+  };
+  authToken: string | null;
+  errors: AppError[];
+}
+export interface LensQueryCardConfigResponse {
+  name: "LensQuery";
+  id: string;
+  responseForId: string;
+  data: {
+    queryParams: {
+      cardConfig: LensCardConfig;
+    };
+    queryName: "CardConfig";
+  };
+  authToken: string | null;
+  errors: AppError[];
+}
+/**
+ * CardConfig with its fieldConfigs loaded
+ */
+export interface LensCardConfig {
+  id: DbId;
+  /**
+   * ISO 8601 date string
+   */
+  createdAt: string;
+  /**
+   * ISO 8601 date string
+   */
+  updatedAt: string;
+  /**
+   * ISO 8601 date string or null
+   */
+  deletedAt: string | null;
+  /**
+   * The name of the card config
+   */
+  name: string;
+  userId: DbId;
+  /**
+   * A map of fieldConfigs with their names as keys
+   */
+  fieldConfigByName: {
+    [k: string]: FieldConfig;
+  };
+}
 
 /**
  * The code name of the error.
@@ -808,9 +865,11 @@ export enum WsMessageName {
 export enum ActionName {
   SignUpByEmail = "SignUpByEmail",
   SignUpByEmailCode = "SignUpByEmailCode",
-  CreateCardConfig = "CreateCardConfig"
+  CreateCardConfig = "CreateCardConfig",
+  CreateFieldConfig = "CreateFieldConfig"
 }
 export enum LensQueryName {
   User = "User",
-  UserCardConfigs = "UserCardConfigs"
+  UserCardConfigs = "UserCardConfigs",
+  CardConfig = "CardConfig"
 }

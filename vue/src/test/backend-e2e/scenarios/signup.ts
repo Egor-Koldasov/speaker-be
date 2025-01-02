@@ -9,9 +9,13 @@ import { withSetup } from '../../../util/test/withSetup'
 import { waitFor } from '../../../util/waitFor'
 
 export const testSignup = async () => {
-  const [signUpAction] = withSetup(() => useSignUpByEmail())
-  const [signUpByCodeAction] = withSetup(() => useSignUpByEmailCode())
-  const [lensUser] = withSetup(() => useLensQueryUser())
+  const {
+    result: [signUpAction, signUpByCodeAction, lensUser],
+  } = withSetup(() => [
+    useSignUpByEmail(),
+    useSignUpByEmailCode(),
+    useLensQueryUser(),
+  ])
 
   const testEmail = `signup-test-${makeTestId()}@test.com`
 

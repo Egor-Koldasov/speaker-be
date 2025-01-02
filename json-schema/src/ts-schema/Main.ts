@@ -73,6 +73,12 @@ export default schemaObject(
           LensQueryUserCardConfigsResponse: {
             $ref: "./ws-message/message/RequestToServer/LensQuery/LensQueryUserCardConfigsResponse.json",
           },
+          LensQueryCardConfig: {
+            $ref: "./ws-message/message/RequestToServer/LensQuery/LensQueryCardConfig.json",
+          },
+          LensQueryCardConfigResponse: {
+            $ref: "./ws-message/message/RequestToServer/LensQuery/LensQueryCardConfigResponse.json",
+          },
         }),
       }),
     }),

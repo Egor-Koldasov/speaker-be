@@ -1,0 +1,68 @@
+{
+  "type": [
+    "object"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "LensQueryCardConfig",
+  "additionalProperties": false,
+  "title": "LensQueryCardConfig",
+  "relPathToWsMessage": "../../../../_util",
+  "properties": {
+    "name": {
+      "const": "LensQuery"
+    },
+    "id": {
+      "type": "string"
+    },
+    "data": {
+      "type": [
+        "object"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "additionalProperties": false,
+      "properties": {
+        "queryParams": {
+          "type": [
+            "object"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "additionalProperties": false,
+          "properties": {
+            "cardConfigId": {
+              "$ref": "../../../../db-models/DbId.json"
+            }
+          },
+          "required": [
+            "cardConfigId"
+          ]
+        },
+        "queryName": {
+          "const": "CardConfig"
+        }
+      },
+      "required": [
+        "queryParams",
+        "queryName"
+      ]
+    },
+    "authToken": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "$ref": "../../../../property/AppError.json"
+      }
+    }
+  },
+  "required": [
+    "name",
+    "id",
+    "data",
+    "authToken",
+    "errors"
+  ]
+}

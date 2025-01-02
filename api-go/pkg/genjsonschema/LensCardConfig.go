@@ -13,8 +13,8 @@ type LensCardConfig struct {
 	// ISO 8601 date string or null
 	DeletedAt *string `json:"deletedAt" yaml:"deletedAt" mapstructure:"deletedAt"`
 
-	// FieldConfigs corresponds to the JSON schema field "fieldConfigs".
-	FieldConfigs []FieldConfig `json:"fieldConfigs" yaml:"fieldConfigs" mapstructure:"fieldConfigs"`
+	// A map of fieldConfigs with their names as keys
+	FieldConfigByName LensCardConfigFieldConfigByName `json:"fieldConfigByName" yaml:"fieldConfigByName" mapstructure:"fieldConfigByName"`
 
 	// Id corresponds to the JSON schema field "id".
 	Id DbId `json:"id" yaml:"id" mapstructure:"id"`
@@ -29,6 +29,9 @@ type LensCardConfig struct {
 	UserId DbId `json:"userId" yaml:"userId" mapstructure:"userId"`
 }
 
+// A map of fieldConfigs with their names as keys
+type LensCardConfigFieldConfigByName map[string]FieldConfig
+
 // UnmarshalJSON implements json.Unmarshaler.
 func (j *LensCardConfig) UnmarshalJSON(b []byte) error {
 	var raw map[string]interface{}
@@ -41,8 +44,8 @@ func (j *LensCardConfig) UnmarshalJSON(b []byte) error {
 	if _, ok := raw["deletedAt"]; raw != nil && !ok {
 		return fmt.Errorf("field deletedAt in LensCardConfig: required")
 	}
-	if _, ok := raw["fieldConfigs"]; raw != nil && !ok {
-		return fmt.Errorf("field fieldConfigs in LensCardConfig: required")
+	if _, ok := raw["fieldConfigByName"]; raw != nil && !ok {
+		return fmt.Errorf("field fieldConfigByName in LensCardConfig: required")
 	}
 	if _, ok := raw["id"]; raw != nil && !ok {
 		return fmt.Errorf("field id in LensCardConfig: required")

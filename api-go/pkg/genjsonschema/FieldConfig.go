@@ -6,6 +6,9 @@ import "encoding/json"
 import "fmt"
 
 type FieldConfig struct {
+	// CardConfigId corresponds to the JSON schema field "cardConfigId".
+	CardConfigId DbId `json:"cardConfigId" yaml:"cardConfigId" mapstructure:"cardConfigId"`
+
 	// ISO 8601 date string
 	CreatedAt string `json:"createdAt" yaml:"createdAt" mapstructure:"createdAt"`
 
@@ -41,6 +44,9 @@ func (j *FieldConfig) UnmarshalJSON(b []byte) error {
 	var raw map[string]interface{}
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
+	}
+	if _, ok := raw["cardConfigId"]; raw != nil && !ok {
+		return fmt.Errorf("field cardConfigId in FieldConfig: required")
 	}
 	if _, ok := raw["createdAt"]; raw != nil && !ok {
 		return fmt.Errorf("field createdAt in FieldConfig: required")

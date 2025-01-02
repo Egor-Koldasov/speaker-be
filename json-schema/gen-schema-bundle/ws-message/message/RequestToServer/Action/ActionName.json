@@ -6,6 +6,7 @@
   "enum": [
     "SignUpByEmail",
     "SignUpByEmailCode",
-    "CreateCardConfig"
+    "CreateCardConfig",
+    "CreateFieldConfig"
   ]
 }

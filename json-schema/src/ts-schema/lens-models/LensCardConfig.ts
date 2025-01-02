@@ -7,11 +7,12 @@ import CardConfig from "../db-models/CardConfig";
 export default schemaObject(
   {
     ...moveRefs(CardConfig, "../db-models").properties,
-    fieldConfigs: {
-      type: "array",
-      items: {
+    fieldConfigByName: {
+      type: "object",
+      additionalProperties: {
         $ref: "../db-models/FieldConfig.json",
       },
+      description: "A map of fieldConfigs with their names as keys",
       meta: schemaMeta({
         relation: MetaRelation.ManyToMany,
       }),

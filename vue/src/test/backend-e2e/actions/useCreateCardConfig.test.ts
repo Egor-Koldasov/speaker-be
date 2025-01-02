@@ -17,10 +17,9 @@ describe('useCreateCardConfig lensQueryUserCardConfigs', () => {
   })
   test('should create a card config', async () => {
     await testSignup()
-    const [actionCreateCardConfig] = withSetup(() => useCreateCardConfig())
-    const [lensQueryUserCardConfigs] = withSetup(() =>
-      useLensQueryUserCardConfigs(),
-    )
+    const {
+      result: [actionCreateCardConfig, lensQueryUserCardConfigs],
+    } = withSetup(() => [useCreateCardConfig(), useLensQueryUserCardConfigs()])
     actionCreateCardConfig.memActionParams.cardConfig = {
       ...makeDbModelBase(),
       name: `Test card config ${makeTestId()} ${new Date().toISOString()}`,
@@ -38,5 +37,9 @@ describe('useCreateCardConfig lensQueryUserCardConfigs', () => {
     expect(lensQueryUserCardConfigs.memData.cardConfigs[0]?.name).toBe(
       actionCreateCardConfig.memActionParams.cardConfig.name,
     )
+
+    // const {
+    //   result: [actionCreateCardConfig, lensQueryUserCardConfigs],
+    // } = withSetup(() => [useCreateCardConfig(), useLensQueryUserCardConfigs()])
   })
 })
