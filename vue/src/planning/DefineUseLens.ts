@@ -1,6 +1,7 @@
 import dayjs from 'dayjs'
 import { defineStore } from 'pinia'
 import {
+  ActionName,
   LensQueryName,
   WsMessageName,
   WsMessageNameRequestToServer,
@@ -9,22 +10,20 @@ import {
   type Main,
   type WsMessageBase,
 } from 'speaker-json-schema/gen-schema-ts/Main.schema'
-import type { ValueOf } from 'type-fest'
 import { uuidv7 } from 'uuidv7'
-import { onBeforeMount, watch, type UnwrapRef } from 'vue'
-import { assignCopy } from '../util/assignCopy'
-import { WsService, type WsMessage } from './WsService'
-import type { LensQuery, LensState } from './LensQuery'
-import { getAuthToken } from '../util/authToken/getAuthToken'
-import { AuthTokenChan } from '../util/authToken/AuthTokenChan'
+import { onBeforeMount, toRaw, watch, type UnwrapRef } from 'vue'
 import type { IsType } from '../types/util/IsType'
-
-type LensQueryParamsByName<Name extends LensQueryName> =
-  Main['WsMessage']['RequestToServer']['LensQuery'][`LensQuery${Name}`]['data']['queryParams']
-export type LensQueryResponseByName<Name extends LensQueryName> =
-  `LensQuery${Name}Response` extends keyof Main['WsMessage']['RequestToServer']['LensQuery']
-    ? Main['WsMessage']['RequestToServer']['LensQuery'][`LensQuery${Name}Response`]
-    : never
+import { AuthTokenChan } from '../util/authToken/AuthTokenChan'
+import { getAuthToken } from '../util/authToken/getAuthToken'
+import type {
+  ActionDependencyConfig,
+  LensQueryConfig,
+  LensQueryParamsByName,
+  LensQueryResponseByName,
+  LensState,
+} from './LensQuery'
+import { WsService, type WsMessage } from './WsService'
+import type { ActionResponseParamsByName } from './Action'
 
 type LensQueryResponseMessage<
   Data extends Record<string, unknown>,
@@ -62,27 +61,30 @@ export const isLenseQueryMessage = (
 
 export const defineUseLensQuery = <
   const Name extends LensQueryName,
-  const Response extends LensQueryResponseByName<Name>,
-  const LensArgs extends LensQueryParamsByName<Name>,
->({
-  name,
-  initData,
-  initParams: initArgs,
-  // fetchIdb,
-  receiveMainDb,
-  onActionResponse,
-}: LensQuery<Name, Response['data']['queryParams'], LensArgs>) => {
+  Response extends LensQueryResponseByName<Name>,
+  LensArgs extends LensQueryParamsByName<Name>,
+>(
+  lensQueryConfig: LensQueryConfig<Name, Response, LensArgs>,
+) => {
+  const {
+    name,
+    initData,
+    initMemDataArgs,
+    // fetchIdb,
+    receiveMainDb,
+    onActionResponse,
+  } = lensQueryConfig
   const useStoreEmpty = defineStore(name, {
-    state: () =>
-      ({
-        name,
-        memData: initData,
-        memDataArgs: initArgs,
-        lastFetchedIdbAt: '',
-        lastFetchedMainAt: '',
-        waitingMainDbId: '',
-        authToken: null as null | string,
-      }) satisfies LensState<Name, Response['data']['queryParams'], LensArgs>,
+    state: (): LensState<Name, Response, LensArgs> => ({
+      name,
+      memData: initData,
+      memDataArgs: initMemDataArgs,
+      lastFetchedIdbAt: '',
+      lastFetchedMainAt: '',
+      waitingMainDbId: '',
+      authToken: null as null | string,
+      lastErrors: [],
+    }),
     actions: {
       async fetchFromIdb() {
         // const { lensData } = await fetchIdb(
@@ -95,11 +97,15 @@ export const defineUseLensQuery = <
         // })
       },
       async requestMainDb() {
+        const mainDbEnabled =
+          !lensQueryConfig.shouldFetchMainDb ||
+          lensQueryConfig.shouldFetchMainDb(this)
+        if (!mainDbEnabled) return
         const wsMessage: LensQueryRequestMessage<LensArgs, Name> = {
           name: WsMessageName.LensQuery,
           id: uuidv7(),
           data: {
-            queryParams: this.memDataArgs as LensArgs,
+            queryParams: toRaw(this.memDataArgs) as LensArgs,
             queryName: this.name as Name,
           },
           errors: [],
@@ -119,6 +125,10 @@ export const defineUseLensQuery = <
 
         const messageData = response.data.queryParams
         await receiveMainDb?.(messageData)
+        if (response.errors.length > 0) {
+          this.lastErrors = response.errors
+          return
+        }
         this.$patch((state): void => {
           if (state.waitingMainDbId === response.responseForId) {
             state.memData = messageData as UnwrapRef<
@@ -132,6 +142,23 @@ export const defineUseLensQuery = <
       },
       async onActionResponse(message: ActionBase) {
         onActionResponse?.(message, this)
+        const actionDependency =
+          lensQueryConfig.actionDependencies?.[message.data.actionName]
+        if (!actionDependency) return
+        if (actionDependency === true) {
+          this.refetch()
+          return
+        }
+        const receiveMainDb =
+          actionDependency.receiveMainDb as ActionDependencyConfig<
+            Name,
+            Response,
+            LensArgs,
+            ActionName
+          >['receiveMainDb']
+        const actionData = message.data
+          .actionParams as ActionResponseParamsByName<ActionName>
+        receiveMainDb?.(actionData, this)
       },
       async init() {
         this.authToken = await getAuthToken()
@@ -167,3 +194,9 @@ export const defineUseLensQuery = <
   }
   return useLens
 }
+
+export type LensStore<
+  Name extends LensQueryName,
+  Response extends LensQueryResponseByName<Name>,
+  LensArgs extends LensQueryParamsByName<Name>,
+> = ReturnType<ReturnType<typeof defineUseLensQuery<Name, Response, LensArgs>>>

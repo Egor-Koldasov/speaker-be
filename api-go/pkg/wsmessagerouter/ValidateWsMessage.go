@@ -13,8 +13,6 @@ func ValidateWsInputMessage(message []byte) (*genjsonschema.WsMessageBase, *[]ge
 	messageBufferLoader := gojsonschema.NewBytesLoader(message)
 	appErrors := jsonvalidate.ValidateJson(jsonvalidate.SchemaPath_WsMessageBase, messageBufferLoader, genjsonschema.ErrorNameInternal)
 
-	log.Printf("Errors: %v\n", appErrors)
-
 	if len(*appErrors) > 0 {
 		return nil, appErrors
 	}

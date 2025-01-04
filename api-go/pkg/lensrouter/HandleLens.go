@@ -67,6 +67,7 @@ func HandleLens(message *genjsonschema.WsMessageBase) *genjsonschema.WsMessageBa
 		User: user,
 	})
 	messageResult := wsmessagebaserouter.MakeWsMessageBaseResponse(message)
+	messageResult.Errors = handlerResult.Errors
 	messageResult.Data = genjsonschema.WsMessageBaseData{
 		"queryName":   handlerResult.Data.QueryName,
 		"queryParams": handlerResult.Data.QueryParams,

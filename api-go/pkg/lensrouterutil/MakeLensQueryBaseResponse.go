@@ -33,6 +33,7 @@ func MakeBaseResponseInternalError(message *genjsonschema.LensQueryBase, err err
 	if err != nil {
 		messageString = err.Error()
 	}
+	utilerror.LogError("Lens internal error", err)
 	appError := genjsonschema.AppError{
 		Name:    genjsonschema.ErrorNameInternal,
 		Message: messageString,

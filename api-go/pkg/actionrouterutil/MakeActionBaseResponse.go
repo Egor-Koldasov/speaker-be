@@ -33,6 +33,7 @@ func MakeBaseResponseInternal(message *genjsonschema.ActionBase, err error) *gen
 	if err != nil {
 		messageString = err.Error()
 	}
+	utilerror.LogError("Action internal error", err)
 	appError := genjsonschema.AppError{
 		Name:    genjsonschema.ErrorNameInternal,
 		Message: messageString,

@@ -1,43 +1,71 @@
-import type { ActionBase } from 'speaker-json-schema/gen-schema-ts/Main.schema'
+import type {
+  ActionBase,
+  ActionName,
+  AppError,
+  LensQueryName,
+  Main,
+} from 'speaker-json-schema/gen-schema-ts/Main.schema'
+import type { ActionResponseParamsByName } from './Action'
+import type { LensStore } from './DefineUseLens'
+
+export type LensQueryParamsByName<Name extends LensQueryName> =
+  Main['WsMessage']['RequestToServer']['LensQuery'][`LensQuery${Name}`]['data']['queryParams']
+export type LensQueryResponseByName<Name extends LensQueryName> =
+  `LensQuery${Name}Response` extends keyof Main['WsMessage']['RequestToServer']['LensQuery']
+    ? Main['WsMessage']['RequestToServer']['LensQuery'][`LensQuery${Name}Response`]
+    : never
+export type LensQueryResponseParamsByName<Name extends LensQueryName> =
+  LensQueryResponseByName<Name>['data']['queryParams']
+
+export type ActionDependencyConfig<
+  Name extends LensQueryName,
+  Response extends LensQueryResponseByName<Name>,
+  LensArgs extends LensQueryParamsByName<Name>,
+  AName extends ActionName,
+> = {
+  receiveMainDb?: (
+    actionData: ActionResponseParamsByName<AName>,
+    store: LensStore<Name, Response, LensArgs>,
+  ) => void
+}
 
 /**
  *
  */
-export type LensQuery<Name extends string, LensData, LensArgs> = {
+export type LensQueryConfig<
+  Name extends LensQueryName,
+  Response extends LensQueryResponseByName<Name>,
+  LensArgs extends LensQueryParamsByName<Name>,
+> = {
   name: Name
-  initData: LensData
-  initParams: LensArgs
+  initData: Response['data']['queryParams']
+  initMemDataArgs: LensArgs
 
   // fetchIdb: FetchIdb<Name, LensData, LensArgs>
-  receiveMainDb?: (lensData: LensData) => Promise<void>
+  receiveMainDb?: (lensData: Response['data']['queryParams']) => Promise<void>
   onActionResponse?: (
     message: ActionBase,
     helpers: { refetch: () => void },
   ) => void
   init?: () => void
+  actionDependencies?: {
+    [Key in ActionName]?:
+      | boolean
+      | ActionDependencyConfig<Name, Response, LensArgs, ActionName>
+  }
+  shouldFetchMainDb?: (store: LensStore<Name, Response, LensArgs>) => boolean
 }
 
-type FetchIdbResult<LensData> = {
-  lensData: LensData
-  wantSync: boolean
-}
-
-type FetchIdb<Name extends string, LensState, LensArgs> = (
-  lensArgs: LensArgs,
-  name: Name,
-) => Promise<FetchIdbResult<LensState>>
-
-type FetchMainDb<Name extends string, LensState, LensArgs> = (
-  lensArgs: LensArgs,
-  name: Name,
-) => Promise<LensState>
-
-export type LensState<Name extends string, LensData, LensArgs> = {
+export type LensState<
+  Name extends LensQueryName,
+  Response extends LensQueryResponseByName<Name>,
+  LensArgs extends LensQueryParamsByName<Name>,
+> = {
   name: Name
   /**
    * Lens data stored in memory
    */
-  memData: LensData
+  memData: LensQueryResponseParamsByName<Name>
   /**
    * The arguments used to fetch the data that is currently in memory
    */
@@ -52,87 +80,5 @@ export type LensState<Name extends string, LensData, LensArgs> = {
   lastFetchedMainAt: string
   waitingMainDbId: string
   authToken: null | string
-}
-
-type LensName = string
-
-export type LenseModel<Model extends object> = Model & DbModelBase
-export type LenseModelClient<Model extends object> = Model &
-  DbModelBase &
-  LensModelClientData
-
-type Mutation<Name extends string, MutationArgs> = {
-  name: Name
-  mutateIdbOptimistic: (mutationArgs: MutationArgs) => Promise<void>
-  mutateMainDb: (mutationArgs: MutationArgs) => Promise<void>
-  syncLenseMap: { [K in LensName]?: (mutationArgs: MutationArgs) => boolean }
-}
-
-export type LensModelName = string
-
-export type DbModelBase = {
-  id: string
-  createdAt: string
-  updatedAt: string
-  deletedAt: string | null
-}
-export type LensModelClientData = {
-  /**
-   * Optimistic data will have this value null
-   */
-  lastSyncedAt: string | null
-}
-
-type FilterCustomParams = unknown
-
-type LensModelClientFiltersCustom<FilterNameUnion extends string = string> = {
-  [K in FilterNameUnion]: FilterCustomParams
-}
-
-type LensModelClientFilters<Custom extends LensModelClientFiltersCustom> = {
-  createdBefore?: string
-  createdAfter?: string
-  updatedBefore?: string
-  updatedAfter?: string
-} & Custom
-
-export type LensModelClient<Model extends DbModelBase> = {
-  getById: (id: string) => Promise<Model>
-  getBy: (opts: { filters: {}; sort: {} }) => Promise<Model[]>
-  getState: () => LensState
-}
-
-export function MakeLensModelClient<
-  ModelName extends LensModelName,
-  Model extends DbModelBase,
->(opts: { modelName: ModelName }): LensModelClient<Model>
-
-function LensModel<ModelName extends LensModelName, Model extends DbModelBase>(
-  modelName: ModelName,
-  model: Model,
-): Model
-
-function MakeGetById<Model extends DbModelBase>(
-  model: Model,
-): (id: string) => Promise<Model>
-
-function MakeGetBy<Model extends DbModelBase>(
-  model: Model,
-): LensModelClient<Model>['getBy']
-
-function MakeGetBy<Model extends DbModelBase>(
-  model: Model,
-): LensModelClient<Model>['getBy'] {}
-
-export function MakeLensModelClient<
-  ModelName extends LensModelName,
-  Model extends DbModelBase,
->(opts: { modelName: ModelName }): LensModelClient<Model> {
-  return {}
-}
-
-export function LensQuery<Name extends string, LensData, LensArgs>(
-  lensQuery: LensQuery<Name, LensData, LensArgs>,
-): LensQuery<Name, LensData, LensArgs> {
-  return lensQuery
+  lastErrors: AppError[]
 }

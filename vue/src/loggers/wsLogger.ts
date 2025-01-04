@@ -1,7 +1,6 @@
 import { createConsola } from 'consola'
+import { makeLogger } from './makeLogger'
 
-const pino = createConsola({
-  level: 5,
-})
+const logger = makeLogger('Web Socket')
 
-export const wsLogger = pino
+export const wsLogger = logger

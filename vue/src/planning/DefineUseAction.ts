@@ -5,24 +5,21 @@ import {
   WsMessageName,
   WsMessageNameRequestToServer,
   type ActionBase,
-  type Main,
 } from 'speaker-json-schema/gen-schema-ts/Main.schema'
 import { uuidv7 } from 'uuidv7'
 import { onBeforeMount, type UnwrapRef } from 'vue'
 import { AuthTokenChan } from '../util/authToken/AuthTokenChan'
 import { getAuthToken } from '../util/authToken/getAuthToken'
-import type { Action, ActionState } from './Action'
+import type {
+  Action,
+  ActionParamsByName,
+  ActionResponseByName,
+  ActionState,
+} from './Action'
 import { WsService } from './WsService'
 
 export const isActionMessage = (message: ActionBase): message is ActionBase =>
   message.name.valueOf() === WsMessageNameRequestToServer.Action.valueOf()
-
-type ActionParamsByName<Name extends ActionName> =
-  Main['WsMessage']['RequestToServer']['Action'][Name]['data']['actionParams']
-export type ActionResponseByName<Name extends ActionName> =
-  `${Name}Response` extends keyof Main['WsMessage']['RequestToServer']['Action']
-    ? Main['WsMessage']['RequestToServer']['Action'][`${Name}Response`]
-    : never
 
 export const defineUseAction = <
   const Name extends ActionName,

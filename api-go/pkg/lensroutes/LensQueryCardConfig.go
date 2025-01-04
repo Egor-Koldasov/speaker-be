@@ -10,12 +10,16 @@ import (
 var LensQueryCardConfig = lensrouterutil.LensHandlerConfig{
 	HandlerFn: func(message *genjsonschema.LensQueryBase, helpers lensrouterutil.HandlerFnHelpers) *genjsonschema.LensQueryBase {
 		lensQuery := utilstruct.TranslateStruct[genjsonschema.LensQueryCardConfig](*message)
-		cardConfigId := string(lensQuery.Data.QueryParams.CardConfigId)
-		cardConfig, err := surrealdbutil.Select[genjsonschema.CardConfig](cardConfigId)
+		cardConfigIdString := string(lensQuery.Data.QueryParams.CardConfigId)
+		cardConfigIdRecord, err := surrealdbutil.ParseId(cardConfigIdString)
 		if err != nil {
 			return lensrouterutil.MakeBaseResponseInternalError(message, err)
 		}
-		fieldConfigs, err := surrealdbutil.SelectBy[genjsonschema.FieldConfig]("FieldConfig", "cardConfigId", cardConfigId)
+		cardConfig, err := surrealdbutil.Select[genjsonschema.CardConfig](*cardConfigIdRecord)
+		if err != nil {
+			return lensrouterutil.MakeBaseResponseInternalError(message, err)
+		}
+		fieldConfigs, err := surrealdbutil.SelectBy[genjsonschema.FieldConfig]("FieldConfig", "cardConfigId", cardConfigIdRecord)
 		if err != nil {
 			return lensrouterutil.MakeBaseResponseInternalError(message, err)
 		}
@@ -27,7 +31,7 @@ var LensQueryCardConfig = lensrouterutil.LensHandlerConfig{
 		response := lensrouterutil.MakeBaseResponse(message)
 		response.Data.QueryParams = utilstruct.TranslateStruct[genjsonschema.LensQueryBaseDataQueryParams](
 			genjsonschema.LensQueryCardConfigResponseDataQueryParams{
-				CardConfig: genjsonschema.LensCardConfig{},
+				CardConfig: lensCardConfig,
 			},
 		)
 		return response

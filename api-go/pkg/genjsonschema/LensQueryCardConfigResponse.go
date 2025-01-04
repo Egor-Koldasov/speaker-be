@@ -35,25 +35,7 @@ type LensQueryCardConfigResponseData struct {
 
 type LensQueryCardConfigResponseDataQueryParams struct {
 	// CardConfig corresponds to the JSON schema field "cardConfig".
-	CardConfig LensCardConfig `json:"cardConfig" yaml:"cardConfig" mapstructure:"cardConfig"`
-}
-
-// UnmarshalJSON implements json.Unmarshaler.
-func (j *LensQueryCardConfigResponseDataQueryParams) UnmarshalJSON(b []byte) error {
-	var raw map[string]interface{}
-	if err := json.Unmarshal(b, &raw); err != nil {
-		return err
-	}
-	if _, ok := raw["cardConfig"]; raw != nil && !ok {
-		return fmt.Errorf("field cardConfig in LensQueryCardConfigResponseDataQueryParams: required")
-	}
-	type Plain LensQueryCardConfigResponseDataQueryParams
-	var plain Plain
-	if err := json.Unmarshal(b, &plain); err != nil {
-		return err
-	}
-	*j = LensQueryCardConfigResponseDataQueryParams(plain)
-	return nil
+	CardConfig *LensCardConfig `json:"cardConfig,omitempty" yaml:"cardConfig,omitempty" mapstructure:"cardConfig,omitempty"`
 }
 
 // UnmarshalJSON implements json.Unmarshaler.

@@ -6,11 +6,16 @@ export default wsMessageLensQuery(
     queryName: {
       const: "CardConfig",
     },
-    queryParams: schemaObject({
-      cardConfig: {
-        $ref: "../../../../lens-models/LensCardConfig.json",
+    queryParams: schemaObject(
+      {
+        cardConfig: {
+          $ref: "../../../../lens-models/LensCardConfig.json",
+        },
       },
-    }),
+      {
+        optional: ["cardConfig"],
+      }
+    ),
   },
   {
     title: "LensQueryCardConfigResponse",

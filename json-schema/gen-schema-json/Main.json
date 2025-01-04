@@ -194,6 +194,9 @@
                 },
                 "CreateCardConfig": {
                   "$ref": "./ws-message/message/RequestToServer/Action/ActionCreateCardConfig.json"
+                },
+                "CreateFieldConfig": {
+                  "$ref": "./ws-message/message/RequestToServer/Action/ActionCreateFieldConfig.json"
                 }
               },
               "required": [
@@ -203,7 +206,8 @@
                 "SignUpByEmailResponse",
                 "SignUpByEmailCode",
                 "SignUpByEmailCodeResponse",
-                "CreateCardConfig"
+                "CreateCardConfig",
+                "CreateFieldConfig"
               ]
             },
             "LensQuery": {

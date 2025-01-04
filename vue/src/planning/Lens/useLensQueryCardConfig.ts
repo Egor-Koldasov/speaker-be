@@ -1,18 +1,15 @@
 import { LensQueryName } from 'speaker-json-schema/gen-schema-ts/Main.schema'
 import { defineUseLensQuery } from '../DefineUseLens'
-import { makeDbModelBase } from '../../util/model-factories/makeDbModelBase'
 
 export const useLensQueryCardConfig = defineUseLensQuery({
   name: LensQueryName.CardConfig,
   initData: {
-    cardConfig: {
-      ...makeDbModelBase(),
-      name: '',
-      userId: '',
-      fieldConfigByName: {},
-    },
+    cardConfig: undefined,
   },
-  initParams: {
+  initMemDataArgs: {
     cardConfigId: '',
+  },
+  shouldFetchMainDb(store) {
+    return store.$state.memDataArgs.cardConfigId.length > 0
   },
 })

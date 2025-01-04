@@ -7,13 +7,14 @@ export const waitFor = async (
 ) => {
   const { timeout = 3000, stepTimeout = 100 } = opts
   const start = Date.now()
-  while (
-    !(await Promise.resolve(condition())) &&
-    Date.now() - start < timeout
-  ) {
-    await new Promise((resolve) => setTimeout(resolve, stepTimeout))
+  let resolved = false
+  while (!resolved && Date.now() - start < timeout) {
+    resolved = await Promise.resolve(condition())
+    if (!resolved) {
+      await new Promise((resolve) => setTimeout(resolve, stepTimeout))
+    }
   }
-  if (!(await Promise.resolve(condition()))) {
+  if (!resolved) {
     throw new Error('waitFor timeout')
   }
 }

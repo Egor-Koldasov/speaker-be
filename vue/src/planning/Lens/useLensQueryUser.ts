@@ -16,7 +16,7 @@ export const useLensQueryUser = defineUseLensQuery({
   initData: {
     user: initUser,
   },
-  initParams: {},
+  initMemDataArgs: {},
   // async fetchIdb() {
   //   const [userIdb] = await (await idb()).getAll('User', undefined, 1)
   //   const user = !userIdb ? initUser : LenseModelConfigMap.User.fromIdb(userIdb)

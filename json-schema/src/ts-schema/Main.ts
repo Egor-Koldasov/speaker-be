@@ -53,6 +53,9 @@ export default schemaObject(
           CreateCardConfig: {
             $ref: "./ws-message/message/RequestToServer/Action/ActionCreateCardConfig.json",
           },
+          CreateFieldConfig: {
+            $ref: "./ws-message/message/RequestToServer/Action/ActionCreateFieldConfig.json",
+          },
         }),
         LensQuery: schemaObject({
           LensQueryBase: {

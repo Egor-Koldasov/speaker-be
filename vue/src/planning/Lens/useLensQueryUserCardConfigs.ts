@@ -6,5 +6,5 @@ export const useLensQueryUserCardConfigs = defineUseLensQuery({
   initData: {
     cardConfigs: [],
   },
-  initParams: {},
+  initMemDataArgs: {},
 })

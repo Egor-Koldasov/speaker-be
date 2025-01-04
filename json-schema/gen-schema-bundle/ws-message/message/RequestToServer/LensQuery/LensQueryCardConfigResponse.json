@@ -176,9 +176,7 @@
               ]
             }
           },
-          "required": [
-            "cardConfig"
-          ]
+          "required": []
         },
         "queryName": {
           "const": "CardConfig"

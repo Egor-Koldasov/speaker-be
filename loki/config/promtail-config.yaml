@@ -1,0 +1,6 @@
+scrape_configs:
+  - job_name: Vue app
+    file_sd_configs:
+      - files:
+          - /mnt/logs/vue-app-output.log
+    

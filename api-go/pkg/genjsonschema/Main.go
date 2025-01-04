@@ -146,6 +146,9 @@ type MainWsMessageRequestToServerAction struct {
 	// CreateCardConfig corresponds to the JSON schema field "CreateCardConfig".
 	CreateCardConfig ActionCreateCardConfig `json:"CreateCardConfig" yaml:"CreateCardConfig" mapstructure:"CreateCardConfig"`
 
+	// CreateFieldConfig corresponds to the JSON schema field "CreateFieldConfig".
+	CreateFieldConfig ActionCreateFieldConfig `json:"CreateFieldConfig" yaml:"CreateFieldConfig" mapstructure:"CreateFieldConfig"`
+
 	// SignUpByEmail corresponds to the JSON schema field "SignUpByEmail".
 	SignUpByEmail ActionSignUpByEmail `json:"SignUpByEmail" yaml:"SignUpByEmail" mapstructure:"SignUpByEmail"`
 
@@ -175,6 +178,9 @@ func (j *MainWsMessageRequestToServerAction) UnmarshalJSON(b []byte) error {
 	}
 	if _, ok := raw["CreateCardConfig"]; raw != nil && !ok {
 		return fmt.Errorf("field CreateCardConfig in MainWsMessageRequestToServerAction: required")
+	}
+	if _, ok := raw["CreateFieldConfig"]; raw != nil && !ok {
+		return fmt.Errorf("field CreateFieldConfig in MainWsMessageRequestToServerAction: required")
 	}
 	if _, ok := raw["SignUpByEmail"]; raw != nil && !ok {
 		return fmt.Errorf("field SignUpByEmail in MainWsMessageRequestToServerAction: required")

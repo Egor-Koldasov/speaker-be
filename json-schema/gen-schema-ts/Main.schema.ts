@@ -99,6 +99,7 @@ export interface Main {
         SignUpByEmailCode: ActionSignUpByEmailCode;
         SignUpByEmailCodeResponse: ActionSignUpByEmailCodeResponse;
         CreateCardConfig: ActionCreateCardConfig;
+        CreateFieldConfig: ActionCreateFieldConfig;
       };
       LensQuery: {
         LensQueryBase: LensQueryBase;
@@ -666,6 +667,18 @@ export interface ActionCreateCardConfig {
   authToken: string | null;
   errors: AppError[];
 }
+export interface ActionCreateFieldConfig {
+  name: "Action";
+  id: string;
+  data: {
+    actionParams: {
+      fieldConfig: FieldConfig;
+    };
+    actionName: "CreateFieldConfig";
+  };
+  authToken: string | null;
+  errors: AppError[];
+}
 export interface LensQueryBase {
   name: "LensQuery";
   id: string;
@@ -745,7 +758,7 @@ export interface LensQueryCardConfigResponse {
   responseForId: string;
   data: {
     queryParams: {
-      cardConfig: LensCardConfig;
+      cardConfig?: LensCardConfig;
     };
     queryName: "CardConfig";
   };

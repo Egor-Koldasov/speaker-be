@@ -36,9 +36,7 @@
               "$ref": "../../../../lens-models/LensCardConfig.json"
             }
           },
-          "required": [
-            "cardConfig"
-          ]
+          "required": []
         },
         "queryName": {
           "const": "CardConfig"

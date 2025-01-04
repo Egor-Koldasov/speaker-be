@@ -89,7 +89,6 @@ export class WsServiceType extends EventEmitter {
   ws: WebSocket | null = null
   pendingQueryToServerMap: WsPendingQueryToServerMap = {}
   init() {
-    console.log('init')
     this.ws?.close()
     this.ws = new WebSocket(`ws://${wsHost}:6969/ws`)
 
