@@ -15,7 +15,9 @@ const userEmail = computed(() => userLens.$state.memData.user.email)
   <PublicPage>
     <div class="PublicHome">
       <div class="content">
-        <div>Welcome to early application</div>
+        <h1 class="header">Memonova</h1>
+        <div>Spaced repetition tool to remember anything</div>
+        <div class="early-welcome">Welcome to early application</div>
       </div>
     </div>
   </PublicPage>
@@ -31,7 +33,16 @@ const userEmail = computed(() => userLens.$state.memData.user.email)
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-size: 2rem;
   text-align: center;
+  h1 {
+    font-size: 2rem;
+  }
+  div {
+    font-size: 1.5rem;
+  }
+}
+.early-welcome.early-welcome {
+  /* font-size: 1.2rem; */
+  /* color: #ffffff50; */
 }
 </style>
