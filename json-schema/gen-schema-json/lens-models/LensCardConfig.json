@@ -30,9 +30,6 @@
       "type": "string",
       "description": "The name of the card config"
     },
-    "userId": {
-      "$ref": "../db-models/./DbId.json"
-    },
     "fieldConfigByName": {
       "type": "object",
       "additionalProperties": {
@@ -50,7 +47,6 @@
     "updatedAt",
     "deletedAt",
     "name",
-    "userId",
     "fieldConfigByName"
   ]
 }

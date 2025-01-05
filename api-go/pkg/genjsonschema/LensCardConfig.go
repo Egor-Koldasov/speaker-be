@@ -24,9 +24,6 @@ type LensCardConfig struct {
 
 	// ISO 8601 date string
 	UpdatedAt string `json:"updatedAt" yaml:"updatedAt" mapstructure:"updatedAt"`
-
-	// UserId corresponds to the JSON schema field "userId".
-	UserId DbId `json:"userId" yaml:"userId" mapstructure:"userId"`
 }
 
 // A map of fieldConfigs with their names as keys
@@ -55,9 +52,6 @@ func (j *LensCardConfig) UnmarshalJSON(b []byte) error {
 	}
 	if _, ok := raw["updatedAt"]; raw != nil && !ok {
 		return fmt.Errorf("field updatedAt in LensCardConfig: required")
-	}
-	if _, ok := raw["userId"]; raw != nil && !ok {
-		return fmt.Errorf("field userId in LensCardConfig: required")
 	}
 	type Plain LensCardConfig
 	var plain Plain

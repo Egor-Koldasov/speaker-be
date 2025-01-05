@@ -8,9 +8,6 @@ export default schemaObject(
       type: "string",
       description: "The name of the card config",
     },
-    userId: {
-      $ref: "./DbId.json",
-    },
   },
   { title: "CardConfig" }
 );

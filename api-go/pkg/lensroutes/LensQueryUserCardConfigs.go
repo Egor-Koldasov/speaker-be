@@ -9,10 +9,12 @@ import (
 
 var LensQueryUserCardConfigs = lensrouterutil.LensHandlerConfig{
 	HandlerFn: func(message *genjsonschema.LensQueryBase, helpers lensrouterutil.HandlerFnHelpers) *genjsonschema.LensQueryBase {
-		cardConfigs, err := surrealdbutil.SelectBy[genjsonschema.CardConfig](
+		cardConfigs, err := surrealdbutil.SelectByRelationOwner[genjsonschema.CardConfig](
 			"CardConfig",
-			"userId",
-			helpers.User.Id,
+			surrealdbutil.RelationOwner{
+				TableName: "User",
+				Id:        string(helpers.User.Id),
+			},
 		)
 		if err != nil {
 			return lensrouterutil.MakeBaseResponseInternalError(message, err)

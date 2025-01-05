@@ -20,9 +20,6 @@ type CardConfig struct {
 
 	// ISO 8601 date string
 	UpdatedAt string `json:"updatedAt" yaml:"updatedAt" mapstructure:"updatedAt"`
-
-	// UserId corresponds to the JSON schema field "userId".
-	UserId DbId `json:"userId" yaml:"userId" mapstructure:"userId"`
 }
 
 // UnmarshalJSON implements json.Unmarshaler.
@@ -45,9 +42,6 @@ func (j *CardConfig) UnmarshalJSON(b []byte) error {
 	}
 	if _, ok := raw["updatedAt"]; raw != nil && !ok {
 		return fmt.Errorf("field updatedAt in CardConfig: required")
-	}
-	if _, ok := raw["userId"]; raw != nil && !ok {
-		return fmt.Errorf("field userId in CardConfig: required")
 	}
 	type Plain CardConfig
 	var plain Plain

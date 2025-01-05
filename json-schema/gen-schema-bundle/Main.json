@@ -2717,13 +2717,6 @@
             "name": {
               "type": "string",
               "description": "The name of the card config"
-            },
-            "userId": {
-              "type": "string",
-              "$schema": "http://json-schema.org/draft-07/schema",
-              "$id": "DbId",
-              "title": "DbId",
-              "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
             }
           },
           "required": [
@@ -2731,8 +2724,7 @@
             "createdAt",
             "updatedAt",
             "deletedAt",
-            "name",
-            "userId"
+            "name"
           ]
         },
         "FieldConfig": {
@@ -2975,13 +2967,6 @@
               "type": "string",
               "description": "The name of the card config"
             },
-            "userId": {
-              "type": "string",
-              "$schema": "http://json-schema.org/draft-07/schema",
-              "$id": "DbId",
-              "title": "DbId",
-              "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
-            },
             "fieldConfigByName": {
               "type": "object",
               "additionalProperties": {
@@ -3070,7 +3055,6 @@
             "updatedAt",
             "deletedAt",
             "name",
-            "userId",
             "fieldConfigByName"
           ]
         },
@@ -7955,13 +7939,6 @@
             "name": {
               "type": "string",
               "description": "The name of the card config"
-            },
-            "userId": {
-              "type": "string",
-              "$schema": "http://json-schema.org/draft-07/schema",
-              "$id": "DbId",
-              "title": "DbId",
-              "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
             }
           },
           "required": [
@@ -7969,8 +7946,7 @@
             "createdAt",
             "updatedAt",
             "deletedAt",
-            "name",
-            "userId"
+            "name"
           ]
         },
         "FieldConfig": {
@@ -8914,13 +8890,6 @@
                                 "name": {
                                   "type": "string",
                                   "description": "The name of the card config"
-                                },
-                                "userId": {
-                                  "type": "string",
-                                  "$schema": "http://json-schema.org/draft-07/schema",
-                                  "$id": "DbId",
-                                  "title": "DbId",
-                                  "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
                                 }
                               },
                               "required": [
@@ -8928,8 +8897,7 @@
                                 "createdAt",
                                 "updatedAt",
                                 "deletedAt",
-                                "name",
-                                "userId"
+                                "name"
                               ]
                             }
                           },
@@ -9725,13 +9693,6 @@
                                   "name": {
                                     "type": "string",
                                     "description": "The name of the card config"
-                                  },
-                                  "userId": {
-                                    "type": "string",
-                                    "$schema": "http://json-schema.org/draft-07/schema",
-                                    "$id": "DbId",
-                                    "title": "DbId",
-                                    "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
                                   }
                                 },
                                 "required": [
@@ -9739,8 +9700,7 @@
                                   "createdAt",
                                   "updatedAt",
                                   "deletedAt",
-                                  "name",
-                                  "userId"
+                                  "name"
                                 ]
                               }
                             }
@@ -9992,13 +9952,6 @@
                                   "type": "string",
                                   "description": "The name of the card config"
                                 },
-                                "userId": {
-                                  "type": "string",
-                                  "$schema": "http://json-schema.org/draft-07/schema",
-                                  "$id": "DbId",
-                                  "title": "DbId",
-                                  "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
-                                },
                                 "fieldConfigByName": {
                                   "type": "object",
                                   "additionalProperties": {
@@ -10087,7 +10040,6 @@
                                 "updatedAt",
                                 "deletedAt",
                                 "name",
-                                "userId",
                                 "fieldConfigByName"
                               ]
                             }

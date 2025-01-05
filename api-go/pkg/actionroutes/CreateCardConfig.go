@@ -13,8 +13,15 @@ import (
 var CreateCardConfig = actionrouterutil.ActionHandlerConfig{
 	HandlerFn: func(message *genjsonschema.ActionBase, helpers lensrouterutil.HandlerFnHelpers) *genjsonschema.ActionBase {
 		action := utilstruct.TranslateStruct[genjsonschema.ActionCreateCardConfig](message)
-		action.Data.ActionParams.CardConfig.UserId = helpers.User.Id
 		_, err := surrealdbutil.Create[genjsonschema.CardConfig](models.Table("CardConfig"), &action.Data.ActionParams.CardConfig)
+		if err != nil {
+			return actionrouterutil.MakeBaseResponseInternal(message, err)
+		}
+		err = surrealdbutil.Relate(&surrealdbutil.Relationship{
+			Relation: "Has",
+			In:       string(helpers.User.Id),
+			Out:      string(action.Data.ActionParams.CardConfig.Id),
+		})
 		if err != nil {
 			return actionrouterutil.MakeBaseResponseInternal(message, err)
 		}

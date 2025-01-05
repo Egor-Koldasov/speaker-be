@@ -28,9 +28,6 @@
     "name": {
       "type": "string",
       "description": "The name of the card config"
-    },
-    "userId": {
-      "$ref": "./DbId.json"
     }
   },
   "required": [
@@ -38,7 +35,6 @@
     "createdAt",
     "updatedAt",
     "deletedAt",
-    "name",
-    "userId"
+    "name"
   ]
 }

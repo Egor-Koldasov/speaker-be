@@ -16,7 +16,7 @@ const cardConfigSelector = useCardConfigSelector()
 </script>
 <template>
   <LabelBox class="CardConfigSelector">
-    <LabelText class="label-text">Select card config</LabelText>
+    <LabelText class="label-text">Card config</LabelText>
     <Select
       :value="cardConfigSelector.selectedCardConfigId"
       @change="
