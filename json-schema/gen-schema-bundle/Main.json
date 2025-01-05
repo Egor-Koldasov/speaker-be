@@ -2717,6 +2717,10 @@
             "name": {
               "type": "string",
               "description": "The name of the card config"
+            },
+            "prompt": {
+              "type": "string",
+              "desctiption": "The user prompt for the AI, explaining what the AI should generate."
             }
           },
           "required": [
@@ -2724,7 +2728,8 @@
             "createdAt",
             "updatedAt",
             "deletedAt",
-            "name"
+            "name",
+            "prompt"
           ]
         },
         "FieldConfig": {
@@ -2967,6 +2972,10 @@
               "type": "string",
               "description": "The name of the card config"
             },
+            "prompt": {
+              "type": "string",
+              "desctiption": "The user prompt for the AI, explaining what the AI should generate."
+            },
             "fieldConfigByName": {
               "type": "object",
               "additionalProperties": {
@@ -3055,6 +3064,7 @@
             "updatedAt",
             "deletedAt",
             "name",
+            "prompt",
             "fieldConfigByName"
           ]
         },
@@ -7939,6 +7949,10 @@
             "name": {
               "type": "string",
               "description": "The name of the card config"
+            },
+            "prompt": {
+              "type": "string",
+              "desctiption": "The user prompt for the AI, explaining what the AI should generate."
             }
           },
           "required": [
@@ -7946,7 +7960,8 @@
             "createdAt",
             "updatedAt",
             "deletedAt",
-            "name"
+            "name",
+            "prompt"
           ]
         },
         "FieldConfig": {
@@ -8890,6 +8905,10 @@
                                 "name": {
                                   "type": "string",
                                   "description": "The name of the card config"
+                                },
+                                "prompt": {
+                                  "type": "string",
+                                  "desctiption": "The user prompt for the AI, explaining what the AI should generate."
                                 }
                               },
                               "required": [
@@ -8897,7 +8916,8 @@
                                 "createdAt",
                                 "updatedAt",
                                 "deletedAt",
-                                "name"
+                                "name",
+                                "prompt"
                               ]
                             }
                           },
@@ -9693,6 +9713,10 @@
                                   "name": {
                                     "type": "string",
                                     "description": "The name of the card config"
+                                  },
+                                  "prompt": {
+                                    "type": "string",
+                                    "desctiption": "The user prompt for the AI, explaining what the AI should generate."
                                   }
                                 },
                                 "required": [
@@ -9700,7 +9724,8 @@
                                   "createdAt",
                                   "updatedAt",
                                   "deletedAt",
-                                  "name"
+                                  "name",
+                                  "prompt"
                                 ]
                               }
                             }
@@ -9952,6 +9977,10 @@
                                   "type": "string",
                                   "description": "The name of the card config"
                                 },
+                                "prompt": {
+                                  "type": "string",
+                                  "desctiption": "The user prompt for the AI, explaining what the AI should generate."
+                                },
                                 "fieldConfigByName": {
                                   "type": "object",
                                   "additionalProperties": {
@@ -10040,6 +10069,7 @@
                                 "updatedAt",
                                 "deletedAt",
                                 "name",
+                                "prompt",
                                 "fieldConfigByName"
                               ]
                             }

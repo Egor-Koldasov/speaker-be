@@ -12,10 +12,11 @@ import LabelBox from '../ui/LabelBox.vue'
 import TextField from '../ui/TextField.vue'
 import LabelText from '../ui/LabelText.vue'
 import type { CardConfig } from 'speaker-json-schema/gen-schema-ts/Main.schema'
+import TextArea from '../ui/TextArea.vue'
 
 // # Props, State
 const form = reactive({
-  cardConfig: null as null | Pick<CardConfig, 'name'>,
+  cardConfig: null as null | Pick<CardConfig, 'name' | 'prompt'>,
 })
 // # Hooks
 const actionCreateCardConfig = useCreateCardConfig()
@@ -29,7 +30,7 @@ const createCardConfig = () => {
   actionCreateCardConfig.$state.memActionParams.cardConfig = {
     ...makeDbModelBase({ name: 'CardConfig' }),
     name: `Unnamed card config ${new Date()}`,
-    userId: '',
+    prompt: '',
   }
   actionCreateCardConfig.requestMainDb()
 }
@@ -64,6 +65,13 @@ effect(() => {
           <LabelText>Name</LabelText>
           <TextField v-model="form.cardConfig.name" />
         </LabelBox>
+        <LabelBox :always-wrap="true">
+          <LabelText>Prompt</LabelText>
+          <TextArea
+            v-model="form.cardConfig.prompt"
+            placeholder="Enter a prompt that will be added to every field prompt when generating their values"
+          />
+        </LabelBox>
       </div>
     </div>
   </Page>
@@ -81,21 +89,27 @@ effect(() => {
   align-items: center;
   padding-bottom: 1rem;
   border-bottom: 1px solid #ffffff33;
-  .CardConfigSelector::v-deep {
+  :deep(.CardConfigSelector) {
     flex-grow: 1;
   }
 }
 .font-icon {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 400;
   display: flex;
   align-items: center;
 }
 .CardConfig {
-  .LabelBox::v-deep {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  :deep(.LabelBox) {
     flex-grow: 1;
   }
-  .TextField::v-deep {
+  :deep(.LabelText) {
+    min-width: 4rem;
+  }
+  :deep(.TextField) {
     flex-grow: 1;
   }
 }

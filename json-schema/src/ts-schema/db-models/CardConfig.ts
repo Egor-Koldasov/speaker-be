@@ -8,6 +8,11 @@ export default schemaObject(
       type: "string",
       description: "The name of the card config",
     },
+    prompt: {
+      type: "string",
+      desctiption:
+        "The user prompt for the AI, explaining what the AI should generate.",
+    },
   },
   { title: "CardConfig" }
 );

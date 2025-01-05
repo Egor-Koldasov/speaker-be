@@ -18,6 +18,9 @@ type CardConfig struct {
 	// The name of the card config
 	Name string `json:"name" yaml:"name" mapstructure:"name"`
 
+	// Prompt corresponds to the JSON schema field "prompt".
+	Prompt string `json:"prompt" yaml:"prompt" mapstructure:"prompt"`
+
 	// ISO 8601 date string
 	UpdatedAt string `json:"updatedAt" yaml:"updatedAt" mapstructure:"updatedAt"`
 }
@@ -39,6 +42,9 @@ func (j *CardConfig) UnmarshalJSON(b []byte) error {
 	}
 	if _, ok := raw["name"]; raw != nil && !ok {
 		return fmt.Errorf("field name in CardConfig: required")
+	}
+	if _, ok := raw["prompt"]; raw != nil && !ok {
+		return fmt.Errorf("field prompt in CardConfig: required")
 	}
 	if _, ok := raw["updatedAt"]; raw != nil && !ok {
 		return fmt.Errorf("field updatedAt in CardConfig: required")

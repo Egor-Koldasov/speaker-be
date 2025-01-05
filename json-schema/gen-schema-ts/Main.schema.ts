@@ -502,6 +502,7 @@ export interface CardConfig {
    * The name of the card config
    */
   name: string;
+  prompt: string;
 }
 export interface FieldConfig {
   id: DbId;
@@ -777,6 +778,7 @@ export interface LensCardConfig {
    * The name of the card config
    */
   name: string;
+  prompt: string;
   /**
    * A map of fieldConfigs with their names as keys
    */

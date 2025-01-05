@@ -11,6 +11,7 @@ export const useCreateCardConfig = defineUseAction({
     cardConfig: {
       ...makeEmptyDbModelBase(),
       name: '',
+      prompt: '',
     } satisfies CardConfig,
   },
 })
