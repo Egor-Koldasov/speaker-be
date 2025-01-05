@@ -31,6 +31,9 @@ type ActionCreateFieldConfigData struct {
 }
 
 type ActionCreateFieldConfigDataActionParams struct {
+	// CardConfigId corresponds to the JSON schema field "cardConfigId".
+	CardConfigId DbId `json:"cardConfigId" yaml:"cardConfigId" mapstructure:"cardConfigId"`
+
 	// FieldConfig corresponds to the JSON schema field "fieldConfig".
 	FieldConfig FieldConfig `json:"fieldConfig" yaml:"fieldConfig" mapstructure:"fieldConfig"`
 }
@@ -40,6 +43,9 @@ func (j *ActionCreateFieldConfigDataActionParams) UnmarshalJSON(b []byte) error 
 	var raw map[string]interface{}
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
+	}
+	if _, ok := raw["cardConfigId"]; raw != nil && !ok {
+		return fmt.Errorf("field cardConfigId in ActionCreateFieldConfigDataActionParams: required")
 	}
 	if _, ok := raw["fieldConfig"]; raw != nil && !ok {
 		return fmt.Errorf("field fieldConfig in ActionCreateFieldConfigDataActionParams: required")

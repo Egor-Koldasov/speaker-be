@@ -11,4 +11,5 @@ func init() {
 	ActionRouter[string(genjsonschema.ActionNameSignUpByEmail)] = SignUpByEmail
 	ActionRouter[string(genjsonschema.ActionNameSignUpByEmailCode)] = SignUpByEmailCode
 	ActionRouter[string(genjsonschema.ActionNameCreateCardConfig)] = CreateCardConfig
+	ActionRouter[string(genjsonschema.ActionNameCreateFieldConfig)] = CreateFieldConfig
 }

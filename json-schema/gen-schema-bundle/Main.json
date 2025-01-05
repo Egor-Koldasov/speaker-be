@@ -2766,13 +2766,6 @@
               ],
               "description": "ISO 8601 date string or null"
             },
-            "cardConfigId": {
-              "type": "string",
-              "$schema": "http://json-schema.org/draft-07/schema",
-              "$id": "DbId",
-              "title": "DbId",
-              "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
-            },
             "name": {
               "type": "string",
               "description": "The name of the field defined by user and displayed back to user"
@@ -2809,7 +2802,6 @@
             "createdAt",
             "updatedAt",
             "deletedAt",
-            "cardConfigId",
             "name",
             "valueType",
             "minResult",
@@ -2924,36 +2916,6 @@
             "deletedAt",
             "fieldConfigId"
           ]
-        },
-        "RelCardConfigFieldConfig": {
-          "type": [
-            "object"
-          ],
-          "$schema": "http://json-schema.org/draft-07/schema",
-          "$id": "RelCardConfigFieldConfig",
-          "additionalProperties": false,
-          "title": "RelCardConfigFieldConfig",
-          "description": "Many to many relation between CardConfig and FieldConfig",
-          "properties": {
-            "cardConfigId": {
-              "type": "string",
-              "$schema": "http://json-schema.org/draft-07/schema",
-              "$id": "DbId",
-              "title": "DbId",
-              "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
-            },
-            "fieldConfigId": {
-              "type": "string",
-              "$schema": "http://json-schema.org/draft-07/schema",
-              "$id": "DbId",
-              "title": "DbId",
-              "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
-            }
-          },
-          "required": [
-            "cardConfigId",
-            "fieldConfigId"
-          ]
         }
       },
       "required": [
@@ -2965,8 +2927,7 @@
         "CardConfig",
         "FieldConfig",
         "FieldValue",
-        "FieldValueSet",
-        "RelCardConfigFieldConfig"
+        "FieldValueSet"
       ]
     },
     "LensModels": {
@@ -3054,13 +3015,6 @@
                     ],
                     "description": "ISO 8601 date string or null"
                   },
-                  "cardConfigId": {
-                    "type": "string",
-                    "$schema": "http://json-schema.org/draft-07/schema",
-                    "$id": "DbId",
-                    "title": "DbId",
-                    "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
-                  },
                   "name": {
                     "type": "string",
                     "description": "The name of the field defined by user and displayed back to user"
@@ -3097,7 +3051,6 @@
                   "createdAt",
                   "updatedAt",
                   "deletedAt",
-                  "cardConfigId",
                   "name",
                   "valueType",
                   "minResult",
@@ -8051,13 +8004,6 @@
               ],
               "description": "ISO 8601 date string or null"
             },
-            "cardConfigId": {
-              "type": "string",
-              "$schema": "http://json-schema.org/draft-07/schema",
-              "$id": "DbId",
-              "title": "DbId",
-              "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
-            },
             "name": {
               "type": "string",
               "description": "The name of the field defined by user and displayed back to user"
@@ -8094,7 +8040,6 @@
             "createdAt",
             "updatedAt",
             "deletedAt",
-            "cardConfigId",
             "name",
             "valueType",
             "minResult",
@@ -8209,36 +8154,6 @@
             "deletedAt",
             "fieldConfigId"
           ]
-        },
-        "RelCardConfigFieldConfig": {
-          "type": [
-            "object"
-          ],
-          "$schema": "http://json-schema.org/draft-07/schema",
-          "$id": "RelCardConfigFieldConfig",
-          "additionalProperties": false,
-          "title": "RelCardConfigFieldConfig",
-          "description": "Many to many relation between CardConfig and FieldConfig",
-          "properties": {
-            "cardConfigId": {
-              "type": "string",
-              "$schema": "http://json-schema.org/draft-07/schema",
-              "$id": "DbId",
-              "title": "DbId",
-              "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
-            },
-            "fieldConfigId": {
-              "type": "string",
-              "$schema": "http://json-schema.org/draft-07/schema",
-              "$id": "DbId",
-              "title": "DbId",
-              "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
-            }
-          },
-          "required": [
-            "cardConfigId",
-            "fieldConfigId"
-          ]
         }
       },
       "required": [
@@ -8250,8 +8165,7 @@
         "CardConfig",
         "FieldConfig",
         "FieldValue",
-        "FieldValueSet",
-        "RelCardConfigFieldConfig"
+        "FieldValueSet"
       ]
     },
     "WsMessageType": {
@@ -9149,13 +9063,6 @@
                                   ],
                                   "description": "ISO 8601 date string or null"
                                 },
-                                "cardConfigId": {
-                                  "type": "string",
-                                  "$schema": "http://json-schema.org/draft-07/schema",
-                                  "$id": "DbId",
-                                  "title": "DbId",
-                                  "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
-                                },
                                 "name": {
                                   "type": "string",
                                   "description": "The name of the field defined by user and displayed back to user"
@@ -9192,17 +9099,24 @@
                                 "createdAt",
                                 "updatedAt",
                                 "deletedAt",
-                                "cardConfigId",
                                 "name",
                                 "valueType",
                                 "minResult",
                                 "maxResult",
                                 "prompt"
                               ]
+                            },
+                            "cardConfigId": {
+                              "type": "string",
+                              "$schema": "http://json-schema.org/draft-07/schema",
+                              "$id": "DbId",
+                              "title": "DbId",
+                              "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
                             }
                           },
                           "required": [
-                            "fieldConfig"
+                            "fieldConfig",
+                            "cardConfigId"
                           ]
                         },
                         "actionName": {
@@ -10118,13 +10032,6 @@
                                         ],
                                         "description": "ISO 8601 date string or null"
                                       },
-                                      "cardConfigId": {
-                                        "type": "string",
-                                        "$schema": "http://json-schema.org/draft-07/schema",
-                                        "$id": "DbId",
-                                        "title": "DbId",
-                                        "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
-                                      },
                                       "name": {
                                         "type": "string",
                                         "description": "The name of the field defined by user and displayed back to user"
@@ -10161,7 +10068,6 @@
                                       "createdAt",
                                       "updatedAt",
                                       "deletedAt",
-                                      "cardConfigId",
                                       "name",
                                       "valueType",
                                       "minResult",

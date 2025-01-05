@@ -21,10 +21,6 @@ type DbModels struct {
 	// ModelBase corresponds to the JSON schema field "ModelBase".
 	ModelBase DbModelBase `json:"ModelBase" yaml:"ModelBase" mapstructure:"ModelBase"`
 
-	// RelCardConfigFieldConfig corresponds to the JSON schema field
-	// "RelCardConfigFieldConfig".
-	RelCardConfigFieldConfig RelCardConfigFieldConfig `json:"RelCardConfigFieldConfig" yaml:"RelCardConfigFieldConfig" mapstructure:"RelCardConfigFieldConfig"`
-
 	// SessionToken corresponds to the JSON schema field "SessionToken".
 	SessionToken SessionToken `json:"SessionToken" yaml:"SessionToken" mapstructure:"SessionToken"`
 
@@ -58,9 +54,6 @@ func (j *DbModels) UnmarshalJSON(b []byte) error {
 	}
 	if _, ok := raw["ModelBase"]; raw != nil && !ok {
 		return fmt.Errorf("field ModelBase in DbModels: required")
-	}
-	if _, ok := raw["RelCardConfigFieldConfig"]; raw != nil && !ok {
-		return fmt.Errorf("field RelCardConfigFieldConfig in DbModels: required")
 	}
 	if _, ok := raw["SessionToken"]; raw != nil && !ok {
 		return fmt.Errorf("field SessionToken in DbModels: required")

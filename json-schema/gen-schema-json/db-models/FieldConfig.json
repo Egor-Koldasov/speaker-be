@@ -25,9 +25,6 @@
       ],
       "description": "ISO 8601 date string or null"
     },
-    "cardConfigId": {
-      "$ref": "./DbId.json"
-    },
     "name": {
       "type": "string",
       "description": "The name of the field defined by user and displayed back to user"
@@ -55,7 +52,6 @@
     "createdAt",
     "updatedAt",
     "deletedAt",
-    "cardConfigId",
     "name",
     "valueType",
     "minResult",

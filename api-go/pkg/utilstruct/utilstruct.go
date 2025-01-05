@@ -1,6 +1,7 @@
 package utilstruct
 
 import (
+	"api-go/pkg/utilerror"
 	"reflect"
 
 	"github.com/mitchellh/mapstructure"
@@ -8,7 +9,8 @@ import (
 
 func TranslateStruct[OutputType any](input interface{}) OutputType {
 	var output OutputType
-	mapstructure.Decode(input, &output)
+	err := mapstructure.Decode(input, &output)
+	utilerror.LogError("TranslateStruct", err)
 	return output
 }
 
@@ -18,6 +20,7 @@ func TranslateStructNil[OutputType any](input interface{}) *OutputType {
 	if inputRefVal.IsNil() {
 		return nil
 	}
-	mapstructure.Decode(input, &output)
+	err := mapstructure.Decode(input, &output)
+	utilerror.LogError("TranslateStructNil", err)
 	return &output
 }

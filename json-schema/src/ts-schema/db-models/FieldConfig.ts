@@ -4,9 +4,6 @@ import DbModelBase from "./DbModelBase";
 export default schemaObject(
   {
     ...DbModelBase.properties,
-    cardConfigId: {
-      $ref: "./DbId.json",
-    },
     name: {
       type: "string",
       description:

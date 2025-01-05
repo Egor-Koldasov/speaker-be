@@ -83,13 +83,6 @@
                 ],
                 "description": "ISO 8601 date string or null"
               },
-              "cardConfigId": {
-                "type": "string",
-                "$schema": "http://json-schema.org/draft-07/schema",
-                "$id": "DbId",
-                "title": "DbId",
-                "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
-              },
               "name": {
                 "type": "string",
                 "description": "The name of the field defined by user and displayed back to user"
@@ -126,7 +119,6 @@
               "createdAt",
               "updatedAt",
               "deletedAt",
-              "cardConfigId",
               "name",
               "valueType",
               "minResult",

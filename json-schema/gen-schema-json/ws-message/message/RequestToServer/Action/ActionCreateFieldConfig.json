@@ -30,10 +30,14 @@
           "properties": {
             "fieldConfig": {
               "$ref": "../../../../db-models/FieldConfig.json"
+            },
+            "cardConfigId": {
+              "$ref": "../../../../db-models/DbId.json"
             }
           },
           "required": [
-            "fieldConfig"
+            "fieldConfig",
+            "cardConfigId"
           ]
         },
         "actionName": {

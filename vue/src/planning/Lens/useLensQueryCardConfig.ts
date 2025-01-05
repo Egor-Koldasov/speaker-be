@@ -12,4 +12,8 @@ export const useLensQueryCardConfig = defineUseLensQuery({
   shouldFetchMainDb(store) {
     return store.$state.memDataArgs.cardConfigId.length > 0
   },
+  actionDependencies: {
+    CreateCardConfig: true,
+    CreateFieldConfig: true,
+  },
 })

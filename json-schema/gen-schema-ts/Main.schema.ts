@@ -434,7 +434,6 @@ export interface DbModels {
   FieldConfig: FieldConfig;
   FieldValue: FieldValue;
   FieldValueSet: FieldValueSet;
-  RelCardConfigFieldConfig: RelCardConfigFieldConfig;
 }
 export interface DbModelBase {
   id: DbId;
@@ -519,7 +518,6 @@ export interface FieldConfig {
    * ISO 8601 date string or null
    */
   deletedAt: string | null;
-  cardConfigId: DbId;
   /**
    * The name of the field defined by user and displayed back to user
    */
@@ -573,13 +571,6 @@ export interface FieldValueSet {
    * ISO 8601 date string or null
    */
   deletedAt: string | null;
-  fieldConfigId: DbId;
-}
-/**
- * Many to many relation between CardConfig and FieldConfig
- */
-export interface RelCardConfigFieldConfig {
-  cardConfigId: DbId;
   fieldConfigId: DbId;
 }
 export interface WsMessageBase {
@@ -673,6 +664,7 @@ export interface ActionCreateFieldConfig {
   data: {
     actionParams: {
       fieldConfig: FieldConfig;
+      cardConfigId: DbId;
     };
     actionName: "CreateFieldConfig";
   };

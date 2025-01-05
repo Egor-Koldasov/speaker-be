@@ -29,9 +29,6 @@ export default schemaObject(
     FieldValueSet: {
       $ref: "./db-models/FieldValueSet.json",
     },
-    RelCardConfigFieldConfig: {
-      $ref: "./db-models/RelCardConfigFieldConfig.json",
-    },
   },
   {
     title: "DbModels",

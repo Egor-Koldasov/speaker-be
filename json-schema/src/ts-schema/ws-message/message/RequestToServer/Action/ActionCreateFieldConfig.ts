@@ -10,6 +10,9 @@ export default wsMessageAction(
       fieldConfig: {
         $ref: "../../../../db-models/FieldConfig.json",
       },
+      cardConfigId: {
+        $ref: "../../../../db-models/DbId.json",
+      },
     }),
   },
   {
