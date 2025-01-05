@@ -1,6 +1,7 @@
 import test, { Page, expect } from '@playwright/test'
 import { makeTestId } from '../../../src/util/test/makeTestId'
 import { readTestEmailsTo } from '../../../src/util/test/readTestEmails'
+import { E2esTags } from '../e2eSelectors/E2esTags'
 
 export const testSignup = async (opts: { page: Page }) => {
   const { page } = opts
@@ -34,8 +35,11 @@ export const testSignup = async (opts: { page: Page }) => {
       await page.getByLabel('Enter authentication code').press('Enter')
     })
     await test.step('App home page', async () => {
-      await page.getByRole('button', { name: 'Settings' }).click()
+      await E2esTags.Layout.e2esPageNavigationButton({ page }).click()
+      await E2esTags.PageNavigation.e2esSettingsButton({ page }).click()
       await expect(page.getByText(testEmail)).toBeVisible()
+      await E2esTags.Layout.e2esPageNavigationButton({ page }).click()
+      await E2esTags.PageNavigation.e2esAppHomeButton({ page }).click()
     })
   })
 }

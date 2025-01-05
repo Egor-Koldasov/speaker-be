@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { effect, watch } from 'vue'
+import { Transition, effect, ref, watch } from 'vue'
 import { useLensQueryUser } from '../../planning/Lens/useLensQueryUser'
 import { useRouter } from 'vue-router'
 import { useSettingsPanel } from '../../uiStore/useSettingsPanel'
@@ -8,9 +8,10 @@ import PageHeader from './PageHeader.vue'
 
 // # Props, State
 const userLens = useLensQueryUser()
+const isMounted = ref(false)
+
 // # Hooks
 const router = useRouter()
-const settingsPanel = useSettingsPanel()
 
 // # Computed
 // # Callbacks
@@ -29,15 +30,16 @@ effect(() => {
 })
 </script>
 <template>
-  <main class="Page" :class="{ settingsOpen: settingsPanel.open }">
-    <div class="settings-layout">
+  <Transition :duration="isMounted ? undefined : 10">
+    <main class="Page">
       <div class="page-box">
         <PageHeader />
-        <slot />
+        <div class="page-content">
+          <slot />
+        </div>
       </div>
-      <SettingsPanel />
-    </div>
-  </main>
+    </main>
+  </Transition>
 </template>
 <style scoped lang="scss">
 @import '../../styles/vars/_settings.scss';
@@ -47,28 +49,32 @@ effect(() => {
   display: flex;
   align-items: center;
   overflow: hidden;
-
-  &.settingsOpen {
-    .page-box {
-      width: calc(100% - $panelWidth * 2);
-    }
+}
+.v-enter-active,
+.v-leave-active {
+  .page-content {
+    transition: transform 0.2s ease;
   }
 }
-.settings-layout {
-  position: absolute;
-  width: calc(100% + $panelWidth);
-  height: 100%;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
+
+.v-enter-from,
+.v-leave-to {
+  .page-content {
+    transform: translateX(100%);
+  }
 }
 .page-box {
-  width: calc(100% - $panelWidth);
+  width: calc(100%);
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+}
+.page-content {
+  width: 100%;
+  height: 100%;
+  padding: 0.5rem;
 }
 </style>

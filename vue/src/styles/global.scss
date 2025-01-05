@@ -20,13 +20,25 @@
 
 input,
 button,
+button[type='button'],
 [role='button'],
 select,
 textarea,
 form {
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+  margin: 0;
+  line-height: 1rem;
+  min-height: 2rem;
+  // color: inherit;
+
   &,
   &[type] {
     margin: 0;
+  }
+  &[type='button'] {
+    padding-top: 0rem;
+    padding-bottom: 0rem;
   }
 }
 select,
@@ -37,4 +49,8 @@ button,
 [role='button'] {
   border: none;
   padding: 4px 8px;
+}
+
+label {
+  margin: 0;
 }

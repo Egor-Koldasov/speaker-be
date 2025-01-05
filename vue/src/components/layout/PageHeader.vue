@@ -1,12 +1,8 @@
 <script setup lang="ts">
-import { useSettingsPanel } from '../../uiStore/useSettingsPanel'
-import { useToasts } from '../../uiStore/useToasts'
 import PageNavigation from './PageNavigation.vue'
 
 // # Props, State
 // # Hooks
-const toasts = useToasts()
-const settingsPanel = useSettingsPanel()
 // # Computed
 // # Callbacks
 // const onSpeak = () => {
@@ -35,48 +31,18 @@ const settingsPanel = useSettingsPanel()
 <template>
   <header class="PageHeader">
     <PageNavigation />
-    <div class="button-bar">
-      <!-- <button @click="onSpeak" :disabled="dataStore.textToSpeech.loading">
+    <!-- <button @click="onSpeak" :disabled="dataStore.textToSpeech.loading">
         Speak text
       </button> -->
-      <slot />
-      <button class="settings-button" @click="settingsPanel.onSettingsClick">
-        <img
-          src="@/assets/icons/Settings.png"
-          alt="Settings"
-          class="settings-img"
-        />
-      </button>
-    </div>
+    <slot />
   </header>
 </template>
 <style scoped lang="scss">
 .PageHeader {
-  margin-bottom: auto;
   width: 100%;
   display: flex;
   align-items: center;
-
   padding: 0.5rem;
-  .button-bar {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-}
-.settings-button {
-  padding: 0;
-  background-color: #433448;
-  &:hover {
-    .settings-img {
-      transform: rotate(720deg);
-    }
-  }
-}
-.settings-img {
-  width: 2rem;
-  height: 2rem;
-  transition: transform 0.1s;
+  border-bottom: 1px solid #ffffff18;
 }
 </style>

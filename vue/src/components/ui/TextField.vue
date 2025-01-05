@@ -28,6 +28,10 @@ const model = defineModel()
 <style scoped lang="scss">
 @import '../../styles/_colors.scss';
 .TextField.TextField.TextField.TextField {
+  width: 10rem;
+  margin: 0;
+  padding: 0 0.3rem;
+  height: auto;
   background-color: $inputBg1;
   border: none;
   &:-webkit-autofill {
