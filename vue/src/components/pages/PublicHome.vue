@@ -16,7 +16,7 @@ const userEmail = computed(() => userLens.$state.memData.user.email)
     <div class="PublicHome">
       <div class="content">
         <h1 class="header">Memonova</h1>
-        <div>Spaced repetition tool to remember anything</div>
+        <div>Spaced repetition tool to remember things forever</div>
         <div class="early-welcome">Welcome to early application</div>
       </div>
     </div>
