@@ -33,6 +33,7 @@ test('Create CardConfig', async () => {
   actionCreateCardConfig.memActionParams.cardConfig = {
     ...makeDbModelBase({ name: 'CardConfig' }),
     name: `Test card config ${makeTestId()} ${new Date().toISOString()}`,
+    prompt: 'Test prompt',
   }
   await timeout(0).promise
   actionCreateCardConfig.requestMainDb()
