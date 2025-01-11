@@ -15,7 +15,7 @@ const userEmail = computed(() => userLens.$state.memData.user.email)
   <PublicPage>
     <div class="PublicHome">
       <div class="content">
-        <h1 class="header">Memonova</h1>
+        <h1 class="header">Nexa Memoria</h1>
         <div>
           <a target="_blank" href="https://google.com?q=Spaced+repetition"
             >Spaced repetition</a

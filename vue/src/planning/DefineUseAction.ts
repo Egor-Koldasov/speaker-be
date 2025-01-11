@@ -5,7 +5,7 @@ import {
   WsMessageName,
   WsMessageNameRequestToServer,
   type ActionBase,
-} from 'speaker-json-schema/gen-schema-ts/Main.schema'
+} from 'speaker-json-schema'
 import { uuidv7 } from 'uuidv7'
 import { onBeforeMount, type UnwrapRef } from 'vue'
 import { AuthTokenChan } from '../util/authToken/AuthTokenChan'
