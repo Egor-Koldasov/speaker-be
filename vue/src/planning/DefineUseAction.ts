@@ -12,11 +12,13 @@ import { AuthTokenChan } from '../util/authToken/AuthTokenChan'
 import { getAuthToken } from '../util/authToken/getAuthToken'
 import type {
   Action,
+  ActionByName,
   ActionParamsByName,
   ActionResponseByName,
   ActionState,
 } from './Action'
 import { WsService } from './WsService'
+import type { Router } from 'vue-router'
 
 export const isActionMessage = (message: ActionBase): message is ActionBase =>
   message.name.valueOf() === WsMessageNameRequestToServer.Action.valueOf()
@@ -62,6 +64,12 @@ export const defineUseAction = <
         })
         this.$state.waitingMainDbId = wsMessage.id
       },
+      async onSuccess(
+        response: ActionResponseByName<Name>,
+        helpers: { router: Router },
+      ) {
+        onSuccess?.(response, helpers)
+      },
       async onResponseForAction(message: ActionBase) {
         if (!isActionMessage(message)) return
 
@@ -73,8 +81,8 @@ export const defineUseAction = <
         if (message.data.actionName !== name) return
         this.$state.lastFetchedMainAt = dayjs().toISOString()
         this.$state.lastResponse = message as UnwrapRef<ResponseAction>
-        if (message.errors.length === 0 && onSuccess) {
-          onSuccess(message as ActionResponseByName<Name>, this)
+        if (message.errors.length === 0) {
+          this.onSuccess(message as ActionResponseByName<Name>, this)
         }
       },
       async init() {
@@ -90,8 +98,26 @@ export const defineUseAction = <
       },
     },
   })
-  const useAction = () => {
+  const useAction = (
+    opts: {
+      onSuccess?: (
+        requestParams: ActionParamsByName<Name>,
+        response: ActionResponseByName<Name>,
+        helpers: { router: Router },
+      ) => void
+    } = {},
+  ) => {
     const store = useStoreEmpty()
+
+    store.$onAction(({ name, store }) => {
+      if (name === 'onSuccess' && opts.onSuccess) {
+        opts.onSuccess(
+          store.memActionParams,
+          store.lastResponse as ActionResponseByName<Name>,
+          store,
+        )
+      }
+    })
 
     onBeforeMount(() => {
       WsService.on(`responseForId:Action`, store.onResponseForAction)

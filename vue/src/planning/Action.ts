@@ -5,8 +5,10 @@ import type {
 } from 'speaker-json-schema/gen-schema-ts/Main.schema'
 import type { Router } from 'vue-router'
 
+export type ActionByName<Name extends ActionName> =
+  Main['WsMessage']['RequestToServer']['Action'][Name]
 export type ActionParamsByName<Name extends ActionName> =
-  Main['WsMessage']['RequestToServer']['Action'][Name]['data']['actionParams']
+  ActionByName<Name>['data']['actionParams']
 export type ActionResponseByName<Name extends ActionName> =
   `${Name}Response` extends keyof Main['WsMessage']['RequestToServer']['Action']
     ? Main['WsMessage']['RequestToServer']['Action'][`${Name}Response`]

@@ -22,7 +22,7 @@ onMounted(async () => {
 </script>
 <template>
   <div class="route">
-    <Transition :duration="isMounted ? undefined : 10">
+    <Transition>
       <slot :ref="slotRef" />
     </Transition>
   </div>

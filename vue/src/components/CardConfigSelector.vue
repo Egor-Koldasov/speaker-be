@@ -38,8 +38,13 @@ const cardConfigSelector = useCardConfigSelector()
 </template>
 <style scoped lang="scss">
 .CardConfigSelector {
-  .Select::v-deep {
+  .label-text {
+    padding: 0 0.4rem;
+    flex-shrink: 0;
+  }
+  :deep(.Select) {
     flex-grow: 1;
+    flex-shrink: 1;
   }
 }
 </style>

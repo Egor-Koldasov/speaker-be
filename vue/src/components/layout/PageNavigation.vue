@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive } from 'vue'
+import { computed, nextTick, reactive } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import PageOverlay from './PageOverlay.vue'
 import { OverlayLvl } from '../../types/OverlayLvl'
@@ -46,6 +46,12 @@ const navItemConfigActive = computed(() => {
 })
 
 // # Callbacks
+const onLinkClick = () => {
+  state.navOpen = false
+  setTimeout(() => {
+    // debugger
+  }, 16 * 4)
+}
 // # Watchers
 </script>
 <template>
@@ -59,9 +65,8 @@ const navItemConfigActive = computed(() => {
           :class="{ active: navItemConfigActive?.to === itemConfig.to }"
           v-for="itemConfig in navConfig"
           :key="itemConfig.to"
-          @click="state.navOpen = false"
         >
-          <RouterLink :to="itemConfig.to">{{
+          <RouterLink :to="itemConfig.to" @click="onLinkClick">{{
             itemConfig.textShown
           }}</RouterLink>
         </li>
@@ -90,7 +95,6 @@ const navItemConfigActive = computed(() => {
     /> -->
     <!-- menu-icon.svg -->
     <svg
-      alt="Page Navigation"
       class="settings-img"
       xmlns="http://www.w3.org/2000/svg"
       id="Outline"
@@ -98,6 +102,7 @@ const navItemConfigActive = computed(() => {
       width="512"
       height="512"
     >
+      <title>Page Navigation</title>
       <path d="M7,6H23a1,1,0,0,0,0-2H7A1,1,0,0,0,7,6Z" />
       <path d="M23,11H7a1,1,0,0,0,0,2H23a1,1,0,0,0,0-2Z" />
       <path d="M23,18H7a1,1,0,0,0,0,2H23a1,1,0,0,0,0-2Z" />

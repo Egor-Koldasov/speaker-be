@@ -58,3 +58,22 @@ label {
 h1 {
   margin: 0;
 }
+
+button,
+[type='submit'],
+[type='reset'],
+[type='button'],
+[type='file']::file-selector-button,
+[role='button'] {
+  box-shadow: none;
+}
+
+// * {
+//   transition: 0s !important;
+// }
+
+input,
+select,
+textarea {
+  box-shadow: none;
+}

@@ -30,7 +30,7 @@ effect(() => {
 })
 </script>
 <template>
-  <Transition :duration="isMounted ? undefined : 10">
+  <Transition>
     <main class="Page">
       <div class="page-box">
         <PageHeader />
@@ -43,12 +43,15 @@ effect(() => {
 </template>
 <style scoped lang="scss">
 @import '../../styles/vars/_settings.scss';
+@import '../../styles/colors';
 .Page {
   position: fixed;
   inset: 0;
   display: flex;
   align-items: center;
   overflow: hidden;
+  z-index: 1;
+  background-color: $mainBg;
 }
 .v-enter-active,
 .v-leave-active {
@@ -57,10 +60,16 @@ effect(() => {
   }
 }
 
-.v-enter-from,
-.v-leave-to {
+.v-enter-from {
+  z-index: 0;
   .page-content {
-    transform: translateX(100%);
+    transform: translateY(100%);
+  }
+}
+.v-leave-to {
+  z-index: 0;
+  .page-content {
+    transform: translateY(-100%);
   }
 }
 .page-box {

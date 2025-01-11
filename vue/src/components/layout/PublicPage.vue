@@ -32,12 +32,14 @@ const userEmail = computed(() => userLens.$state.memData.user.email)
 </template>
 <style scoped lang="scss">
 @import '../../styles/vars/_settings.scss';
+@import '../../styles/colors';
 .Page {
   position: fixed;
   inset: 0;
   display: flex;
   align-items: center;
   overflow: hidden;
+  background-color: $mainBg;
 
   &.settingsOpen {
     .page-box {

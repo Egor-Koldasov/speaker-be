@@ -9,7 +9,7 @@ export type ToastById = Record<string, Toast>
 
 export const useToasts = defineStore('toasts', {
   state: () => ({
-    toasts: {} as ToastById
+    toasts: {} as ToastById,
   }),
   actions: {
     addToast(props: { message: string }) {
@@ -18,6 +18,6 @@ export const useToasts = defineStore('toasts', {
       setTimeout(() => {
         delete this.toasts[id]
       }, 5000)
-    }
-  }
+    },
+  },
 })
