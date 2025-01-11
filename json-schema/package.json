@@ -1,11 +1,12 @@
 {
   "name": "speaker-json-schema",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "./gen-schema-ts-dist/Main.schema.js",
+  "types": "./gen-schema-ts-dist/Main.schema.d.ts",
   "author": "Egor Koldasov",
   "license": "MIT",
   "scripts": {
-    "generate": "rm -rf ./dist && npx tsc --build && node ./dist/export-schemas.js",
+    "generate": "rm -rf ./dist && npx tsc --build && node ./dist/export-schemas.js && npx tsc -p ./tsconfig-gen.json",
     "run-ts": "nodemon --delay 2 -w ./ -i ./dist -i ./gen* -x 'npx tsc && node $1'",
     "dev": "yarn run-ts -- ./dist/export-schemas.js"
   },

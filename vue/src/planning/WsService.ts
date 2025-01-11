@@ -6,7 +6,7 @@ import {
   type AppError,
   type WsMessageBase,
   type WsMessageNameEventToServer,
-} from 'speaker-json-schema/gen-schema-ts/Main.schema'
+} from 'speaker-json-schema'
 import type { ValueOf } from 'type-fest'
 import { wsLogger } from '../loggers/wsLogger'
 import type { IsType } from '../types/util/IsType'

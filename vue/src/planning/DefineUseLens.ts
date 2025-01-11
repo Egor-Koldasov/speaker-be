@@ -9,7 +9,7 @@ import {
   type LensQueryBase,
   type Main,
   type WsMessageBase,
-} from 'speaker-json-schema/gen-schema-ts/Main.schema'
+} from 'speaker-json-schema'
 import { uuidv7 } from 'uuidv7'
 import { onBeforeMount, toRaw, watch, type UnwrapRef } from 'vue'
 import type { IsType } from '../types/util/IsType'

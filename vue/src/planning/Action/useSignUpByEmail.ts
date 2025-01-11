@@ -1,4 +1,4 @@
-import { ActionName } from 'speaker-json-schema/gen-schema-ts/Main.schema'
+import { ActionName } from 'speaker-json-schema'
 import { defineUseAction } from '../DefineUseAction'
 import { useRouter } from 'vue-router'
 

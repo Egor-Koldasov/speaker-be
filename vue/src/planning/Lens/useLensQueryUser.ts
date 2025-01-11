@@ -1,7 +1,4 @@
-import {
-  LensQueryName,
-  type User,
-} from 'speaker-json-schema/gen-schema-ts/Main.schema'
+import { LensQueryName, type User } from 'speaker-json-schema'
 import { defineUseLensQuery } from '../DefineUseLens'
 
 const initUser: User = {
