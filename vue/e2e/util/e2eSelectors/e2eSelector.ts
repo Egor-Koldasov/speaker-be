@@ -1,6 +1,9 @@
 import { Locator, Page } from '@playwright/test'
-import { isType } from '../../../src/util/isType'
 
-type E2eSelectorFn = (opts: { page: Page }) => Locator
+type E2eSelectorFn<ExtraProps extends object> = (
+  opts: { page: Page } & ExtraProps,
+) => Locator
 
-export const e2eSelector = isType<E2eSelectorFn>
+export const e2eSelector = <ExtraProps extends object>(
+  fn: E2eSelectorFn<ExtraProps>,
+) => fn

@@ -32,20 +32,47 @@ pre {
 }
 html {
   font-size: 16px;
+  overflow: hidden;
 }
 body {
+  height: calc(100svh);
   background-color: $mainBg;
-  color: $textForDark;
-  height: 100svh;
-  opacity: 0;
-  transform: scale(0.94);
-  &.ready {
-    opacity: 1;
-    transform: scale(1);
-    transition: 1s;
+  position: relative;
 
+  #static-loading {
+    border: 16px solid #544659;
+    position: absolute;
+    inset: 0;
+    animation: border-pulse 0.8s infinite alternate ease-in-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #544659;
+    font-size: 2rem;
+    #static-loading-graphic {
+      border: 8px solid #544659;
+      width: 64px;
+      height: 64px;
+      animation: square-circle-pulse 0.4s infinite alternate ease-in-out;
+    }
+  }
+
+  #app {
+    background-color: $mainBg;
+    color: $textForDark;
+    height: 100%;
+    opacity: 0;
+    /* transform: scale(0.1); */
+  }
+  &.ready {
+    #app {
+      opacity: 1;
+      /* transform: scale(1); */
+      transition: 0.2s ease;
+    }
     * {
-      transition: 0.4s;
+      transition: 0.2s ease;
     }
   }
 }
@@ -58,7 +85,7 @@ body {
   flex-direction: column;
 }
 .route {
-  height: calc(100% - 24px);
+  height: calc(100%);
   position: relative;
   overflow: hidden;
   & > * {
@@ -87,5 +114,24 @@ article {
 
 h2 {
   color: inherit;
+}
+
+@keyframes border-pulse {
+  0% {
+    border-color: #544659aa;
+  }
+  100% {
+    border-color: #544659;
+  }
+}
+@keyframes square-circle-pulse {
+  0% {
+    border-radius: 0;
+    border-color: #544659aa;
+  }
+  100% {
+    border-radius: 50%;
+    border-color: #544659;
+  }
 }
 </style>

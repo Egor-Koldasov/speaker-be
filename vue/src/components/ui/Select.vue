@@ -25,6 +25,9 @@ const props = defineProps<{
   width: 10rem;
   background-color: #301637;
   border-color: transparent;
+  padding-left: 0;
+  padding-right: 1.4rem;
+  background-position: center right 0.2rem;
   &:hover {
     background-color: #3f1f4b;
   }

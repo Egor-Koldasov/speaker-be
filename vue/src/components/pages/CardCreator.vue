@@ -19,10 +19,15 @@ const form = reactive({
   cardConfig: null as null | Pick<CardConfig, 'name' | 'prompt'>,
 })
 // # Hooks
-const actionCreateCardConfig = useCreateCardConfig()
 const toasts = useToasts()
 const cardConfigSelector = useCardConfigSelector()
 const lensQueryCardConfig = useLensQueryCardConfig()
+const actionCreateCardConfig = useCreateCardConfig({
+  onSuccess(requestParams) {
+    toasts.addToast({ message: 'Card config created ' })
+    cardConfigSelector.$state.selectedCardConfigId = requestParams.cardConfig.id
+  },
+})
 // # Computed
 const cardConfig = computed(() => lensQueryCardConfig.$state.memData.cardConfig)
 // # Callbacks
@@ -35,14 +40,6 @@ const createCardConfig = () => {
   actionCreateCardConfig.requestMainDb()
 }
 // # Watchers
-watch(
-  () => [actionCreateCardConfig.lastFetchedMainAt],
-  () => {
-    if (!actionCreateCardConfig.$state.lastFetchedMainAt) {
-      toasts.addToast({ message: 'Created card config' })
-    }
-  },
-)
 effect(() => {
   lensQueryCardConfig.$state.memDataArgs.cardConfigId =
     cardConfigSelector.$state.selectedCardConfigId
@@ -56,11 +53,16 @@ effect(() => {
     <div class="CardCreator">
       <div class="card-list-manager">
         <CardConfigSelector />
-        <Button class="secondary" @click="createCardConfig">
+        <Button class="create-card-config-button" @click="createCardConfig">
           <div class="font-icon">+</div>
         </Button>
       </div>
-      <div class="CardConfig" v-if="form.cardConfig">
+      <div
+        class="CardConfig"
+        v-if="
+          form.cardConfig && lensQueryCardConfig.$state.memDataArgs.cardConfigId
+        "
+      >
         <LabelBox>
           <LabelText>Name</LabelText>
           <TextField v-model="form.cardConfig.name" />
@@ -84,13 +86,34 @@ effect(() => {
 }
 .card-list-manager {
   display: flex;
-  gap: 1rem;
+  gap: 0;
   flex-wrap: wrap;
   align-items: center;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #ffffff33;
+  /* padding: 0 0.4rem; */
+  border-bottom: 0;
   :deep(.CardConfigSelector) {
     flex-grow: 1;
+    background-color: #39293f;
+    box-shadow: 0 3px 0px 0px #231927;
+    border-top-left-radius: 0.4rem;
+    border-bottom-left-radius: 0.4rem;
+  }
+  :deep(.Select) {
+    background-color: transparent;
+  }
+  .create-card-config-button {
+    border-left: 1px solid #ffffff22;
+    border-radius: 0;
+    background-color: #39293f;
+    box-shadow: 0 3px 0px 0px #231927;
+    border-top-right-radius: 0.4rem;
+    border-bottom-right-radius: 0.4rem;
+    transition: 0s;
+    &:active {
+      box-shadow: none;
+      transform: translateY(3px);
+      border-left-color: transparent;
+    }
   }
 }
 .font-icon {
@@ -111,6 +134,7 @@ effect(() => {
   }
   :deep(.TextField) {
     flex-grow: 1;
+    overflow-x: auto;
   }
 }
 </style>

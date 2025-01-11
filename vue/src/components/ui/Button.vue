@@ -10,9 +10,9 @@
 </template>
 <style scoped lang="scss">
 .Button {
+  color: inherit;
   &.secondary {
     background-color: #301637;
-    color: inherit;
     &:hover {
       background-color: #3f1f4b;
     }

@@ -38,11 +38,16 @@ import PageNavigation from './PageNavigation.vue'
   </header>
 </template>
 <style scoped lang="scss">
+@import '../../styles/colors';
+
 .PageHeader {
   width: 100%;
   display: flex;
   align-items: center;
   padding: 0.5rem;
   border-bottom: 1px solid #ffffff18;
+  background-color: $mainBg;
+  position: relative;
+  z-index: 1;
 }
 </style>

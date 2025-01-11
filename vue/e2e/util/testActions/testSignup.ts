@@ -2,6 +2,7 @@ import test, { Page, expect } from '@playwright/test'
 import { makeTestId } from '../../../src/util/test/makeTestId'
 import { readTestEmailsTo } from '../../../src/util/test/readTestEmails'
 import { E2esTags } from '../e2eSelectors/E2esTags'
+import { clickWhenSingle } from '../clickWhenSingle'
 
 export const testSignup = async (opts: { page: Page }) => {
   const { page } = opts
@@ -26,7 +27,7 @@ export const testSignup = async (opts: { page: Page }) => {
         expect(email).toBeTruthy()
 
         signUpCode = email.Content.Body
-        expect(signUpCode).toHaveLength(12)
+        expect(signUpCode).toHaveLength(6)
       }).toPass()
     })
     await test.step('Enter code', async () => {
@@ -35,11 +36,11 @@ export const testSignup = async (opts: { page: Page }) => {
       await page.getByLabel('Enter authentication code').press('Enter')
     })
     await test.step('App home page', async () => {
-      await E2esTags.Layout.e2esPageNavigationButton({ page }).click()
-      await E2esTags.PageNavigation.e2esSettingsButton({ page }).click()
+      await clickWhenSingle(E2esTags.Layout.pageNavigationButton({ page }))
+      await E2esTags.PageNavigation.settingsButton({ page }).click()
       await expect(page.getByText(testEmail)).toBeVisible()
-      await E2esTags.Layout.e2esPageNavigationButton({ page }).click()
-      await E2esTags.PageNavigation.e2esAppHomeButton({ page }).click()
+      await clickWhenSingle(E2esTags.Layout.pageNavigationButton({ page }))
+      await E2esTags.PageNavigation.appHomeButton({ page }).click()
     })
   })
 }
