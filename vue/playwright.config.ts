@@ -12,7 +12,7 @@ const viewportMobileDefault = { width: 375, height: 812 }
  * See https://playwright.dev/docs/test-configuration.
  */
 const config: PlaywrightTestConfig = {
-  testDir: './e2e',
+  testDir: './src/e2e',
   /* Maximum time one test can run for. */
   timeout: process.env.NODE_ENV === 'development' ? 5 * 60 * 1000 : 30 * 1000,
   expect: {

@@ -13,6 +13,8 @@ import TextField from '../ui/TextField.vue'
 import LabelText from '../ui/LabelText.vue'
 import type { CardConfig } from 'speaker-json-schema/gen-schema-ts/Main.schema'
 import TextArea from '../ui/TextArea.vue'
+import dayjs from 'dayjs'
+import { useLensQueryUserCardConfigs } from '../../planning/Lens/useLensQueryUserCardConfigs'
 
 // # Props, State
 const form = reactive({
@@ -22,6 +24,7 @@ const form = reactive({
 const toasts = useToasts()
 const cardConfigSelector = useCardConfigSelector()
 const lensQueryCardConfig = useLensQueryCardConfig()
+const userCardConfig = useLensQueryUserCardConfigs()
 const actionCreateCardConfig = useCreateCardConfig({
   onSuccess(requestParams) {
     toasts.addToast({ message: 'Card config created ' })
@@ -34,7 +37,7 @@ const cardConfig = computed(() => lensQueryCardConfig.$state.memData.cardConfig)
 const createCardConfig = () => {
   actionCreateCardConfig.$state.memActionParams.cardConfig = {
     ...makeDbModelBase({ name: 'CardConfig' }),
-    name: `Unnamed card config ${new Date()}`,
+    name: `Unnamed card config ${userCardConfig.$state.memData.cardConfigs.length + 1}`,
     prompt: '',
   }
   actionCreateCardConfig.requestMainDb()
