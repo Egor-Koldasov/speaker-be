@@ -502,7 +502,21 @@ export interface CardConfig {
    * The name of the card config
    */
   name: string;
+  /**
+   * A list of all the parameter definitions that will be added to each FieldConfig.
+   */
+  promptParameterDefinitions: PromptParameterDefinition[];
   prompt: string;
+}
+export interface PromptParameterDefinition {
+  /**
+   * The programmical name of the parameter to refer
+   */
+  name: string;
+  /**
+   * The description of purpose and structure of the parameter
+   */
+  parameterDescription: string;
 }
 export interface FieldConfig {
   id: DbId;
@@ -531,6 +545,10 @@ export interface FieldConfig {
    * The maximum number of results for AI to generate. AI should never generate more than this number of results.
    */
   maxResult: number;
+  /**
+   * A list of all the parameter definitions that the FieldConfig uses.
+   */
+  promptParameterDefinitions: PromptParameterDefinition[];
   prompt: string;
 }
 /**
@@ -778,6 +796,10 @@ export interface LensCardConfig {
    * The name of the card config
    */
   name: string;
+  /**
+   * A list of all the parameter definitions that will be added to each FieldConfig.
+   */
+  promptParameterDefinitions: PromptParameterDefinition[];
   prompt: string;
   /**
    * A map of fieldConfigs with their names as keys

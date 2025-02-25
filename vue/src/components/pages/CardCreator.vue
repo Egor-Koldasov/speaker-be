@@ -1,20 +1,23 @@
 <script setup lang="ts">
-import { computed, effect, reactive, watch } from 'vue'
+import { type CardConfig } from 'speaker-json-schema/gen-schema-ts/Main.schema'
+import { computed, effect, reactive } from 'vue'
 import { useCreateCardConfig } from '../../planning/Action/useCreateCardConfig'
+import { useCreateFieldConfig } from '../../planning/Action/useCreateFieldConfig'
+import { useLensQueryCardConfig } from '../../planning/Lens/useLensQueryCardConfig'
+import { useLensQueryUserCardConfigs } from '../../planning/Lens/useLensQueryUserCardConfigs'
+import { useCardConfigSelector } from '../../uiStore/useCardConfigSelector'
+import { useFieldConfigSelector } from '../../uiStore/useFieldConfigSelector'
+import { useToasts } from '../../uiStore/useToasts'
 import { makeDbModelBase } from '../../util/model-factories/makeDbModelBase'
 import CardConfigSelector from '../CardConfigSelector.vue'
+import FieldConfigSelector from '../FieldConfigSelector.vue'
 import Page from '../layout/Page.vue'
 import Button from '../ui/Button.vue'
-import { useToasts } from '../../uiStore/useToasts'
-import { useCardConfigSelector } from '../../uiStore/useCardConfigSelector'
-import { useLensQueryCardConfig } from '../../planning/Lens/useLensQueryCardConfig'
 import LabelBox from '../ui/LabelBox.vue'
-import TextField from '../ui/TextField.vue'
 import LabelText from '../ui/LabelText.vue'
-import type { CardConfig } from 'speaker-json-schema/gen-schema-ts/Main.schema'
 import TextArea from '../ui/TextArea.vue'
-import dayjs from 'dayjs'
-import { useLensQueryUserCardConfigs } from '../../planning/Lens/useLensQueryUserCardConfigs'
+import TextField from '../ui/TextField.vue'
+import { FieldConfigValueType } from 'speaker-json-schema'
 
 // # Props, State
 const form = reactive({
@@ -23,12 +26,20 @@ const form = reactive({
 // # Hooks
 const toasts = useToasts()
 const cardConfigSelector = useCardConfigSelector()
+const fieldConfigSelector = useFieldConfigSelector()
 const lensQueryCardConfig = useLensQueryCardConfig()
 const userCardConfig = useLensQueryUserCardConfigs()
 const actionCreateCardConfig = useCreateCardConfig({
   onSuccess(requestParams) {
     toasts.addToast({ message: 'Card config created ' })
     cardConfigSelector.$state.selectedCardConfigId = requestParams.cardConfig.id
+  },
+})
+const actionCreateFieldConfig = useCreateFieldConfig({
+  onSuccess(requestParams) {
+    toasts.addToast({ message: 'Field config created ' })
+    fieldConfigSelector.$state.selectedFieldConfigId =
+      requestParams.fieldConfig.id
   },
 })
 // # Computed
@@ -41,6 +52,17 @@ const createCardConfig = () => {
     prompt: '',
   }
   actionCreateCardConfig.requestMainDb()
+}
+const createFieldConfig = () => {
+  actionCreateFieldConfig.$state.memActionParams.fieldConfig = {
+    ...makeDbModelBase({ name: 'FieldConfig' }),
+    name: `Unnamed field config ${userCardConfig.$state.memData.cardConfigs.length + 1}`,
+    prompt: '',
+    minResult: 1,
+    maxResult: 1,
+    valueType: FieldConfigValueType.Text,
+  }
+  actionCreateFieldConfig.requestMainDb()
 }
 // # Watchers
 effect(() => {
@@ -78,6 +100,12 @@ effect(() => {
           />
         </LabelBox>
       </div>
+      <div class="field-list-manager">
+        <FieldConfigSelector />
+        <Button class="create-card-config-button" @click="createFieldConfig">
+          <div class="font-icon">+</div>
+        </Button>
+      </div>
     </div>
   </Page>
 </template>
@@ -87,23 +115,14 @@ effect(() => {
   flex-direction: column;
   gap: 1rem;
 }
-.card-list-manager {
+.card-list-manager,
+.field-list-manager {
   display: flex;
   gap: 0;
   flex-wrap: wrap;
   align-items: center;
   /* padding: 0 0.4rem; */
   border-bottom: 0;
-  :deep(.CardConfigSelector) {
-    flex-grow: 1;
-    background-color: #39293f;
-    box-shadow: 0 3px 0px 0px #231927;
-    border-top-left-radius: 0.4rem;
-    border-bottom-left-radius: 0.4rem;
-  }
-  :deep(.Select) {
-    background-color: transparent;
-  }
   .create-card-config-button {
     border-left: 1px solid #ffffff22;
     border-radius: 0;

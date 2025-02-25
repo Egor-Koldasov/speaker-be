@@ -25,6 +25,9 @@ type LensCardConfig struct {
 	// Prompt corresponds to the JSON schema field "prompt".
 	Prompt string `json:"prompt" yaml:"prompt" mapstructure:"prompt"`
 
+	// A list of all the parameter definitions that will be added to each FieldConfig.
+	PromptParameterDefinitions []PromptParameterDefinition `json:"promptParameterDefinitions" yaml:"promptParameterDefinitions" mapstructure:"promptParameterDefinitions"`
+
 	// ISO 8601 date string
 	UpdatedAt string `json:"updatedAt" yaml:"updatedAt" mapstructure:"updatedAt"`
 }
@@ -55,6 +58,9 @@ func (j *LensCardConfig) UnmarshalJSON(b []byte) error {
 	}
 	if _, ok := raw["prompt"]; raw != nil && !ok {
 		return fmt.Errorf("field prompt in LensCardConfig: required")
+	}
+	if _, ok := raw["promptParameterDefinitions"]; raw != nil && !ok {
+		return fmt.Errorf("field promptParameterDefinitions in LensCardConfig: required")
 	}
 	if _, ok := raw["updatedAt"]; raw != nil && !ok {
 		return fmt.Errorf("field updatedAt in LensCardConfig: required")

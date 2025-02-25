@@ -82,5 +82,9 @@ test('Create CardConfig', async () => {
   expect(
     fieldConfig?.name ===
       actionCreateFieldConfig.$state.memActionParams.fieldConfig.name,
-  )
+  ).toBeTruthy()
+  expect(lensQueryCardConfig.$state.waitingMainDbId).not.toBeFalsy()
+  await waitFor(() => {
+    return !!lensQueryCardConfig.$state.waitingMainDbId
+  })
 })

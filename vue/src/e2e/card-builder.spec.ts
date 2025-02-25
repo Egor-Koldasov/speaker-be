@@ -6,7 +6,7 @@ import { clickWhenSingle } from './util/clickWhenSingle'
 test('Definition builder', async ({ page }) => {
   await testSignup({ page })
 
-  await test.step('Create a card', async () => {
+  await test.step('Create a card config 1', async () => {
     await clickWhenSingle(Tags.Layout.pageNavigationButton({ page }))
     await Tags.PageNavigation.cardCreator({ page }).click()
     await Tags.CardCreator.createCardButton({ page }).click()
@@ -19,6 +19,12 @@ test('Definition builder', async ({ page }) => {
     )
     expect(selectedOption).toMatch(/^Unnamed card config 1$/)
   })
+
+  const cardConfig1Name = `Test card config 1`
+
+  await test.step('Rename card config 1', async () => {})
+
+  await test.step('Create field config 1_1', async () => {})
 
   // await Tags.CardCreator.cardConfigSelector({ page }).selectOption({
   //   label: 'Unnamed card',

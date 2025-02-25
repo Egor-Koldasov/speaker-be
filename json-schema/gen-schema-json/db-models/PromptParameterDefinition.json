@@ -1,0 +1,33 @@
+{
+  "type": [
+    "object"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "PromptParameterDefinition",
+  "additionalProperties": false,
+  "title": "PromptParameterDefinition",
+  "examples": [
+    {
+      "name": "userLearningLanguages",
+      "parameterDescription": "A list of the languages that the user is interested in learning"
+    },
+    {
+      "name": "translationLanguage",
+      "parameterDescription": "The language that the user wants to translate to"
+    }
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The programmical name of the parameter to refer"
+    },
+    "parameterDescription": {
+      "type": "string",
+      "description": "The description of purpose and structure of the parameter"
+    }
+  },
+  "required": [
+    "name",
+    "parameterDescription"
+  ]
+}

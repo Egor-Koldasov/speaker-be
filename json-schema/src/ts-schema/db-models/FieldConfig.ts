@@ -24,6 +24,14 @@ export default schemaObject(
       description:
         "The maximum number of results for AI to generate. AI should never generate more than this number of results.",
     },
+    promptParameterDefinitions: {
+      type: "array",
+      description:
+        "A list of all the parameter definitions that the FieldConfig uses.",
+      items: {
+        $ref: "./PromptParameterDefinition.json",
+      },
+    },
     prompt: {
       type: "string",
       desctiption:

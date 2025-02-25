@@ -5,23 +5,24 @@ import LabelText from './ui/LabelText.vue'
 import Select from './ui/Select.vue'
 import Option from './ui/Option.vue'
 import { useCardConfigSelector } from '../uiStore/useCardConfigSelector'
+import { useFieldConfigSelector } from '../uiStore/useFieldConfigSelector'
 
 // # Props, State
 // # Hooks
 const userCardConfig = useLensQueryUserCardConfigs()
-const cardConfigSelector = useCardConfigSelector()
+const fieldConfigSelector = useFieldConfigSelector()
 // # Computed
 // # Callbacks
 // # Watchers
 </script>
 <template>
-  <LabelBox class="CardConfigSelector">
-    <LabelText class="label-text">Card config</LabelText>
+  <LabelBox class="FieldConfigSelector">
+    <LabelText class="label-text">Field config</LabelText>
     <Select
-      :value="cardConfigSelector.selectedCardConfigId"
+      :value="fieldConfigSelector.selectedFieldConfigId"
       @change="
         (nextId) => {
-          cardConfigSelector.$state.selectedCardConfigId = nextId
+          fieldConfigSelector.$state.selectedFieldConfigId = nextId
         }
       "
     >
@@ -37,7 +38,7 @@ const cardConfigSelector = useCardConfigSelector()
   </LabelBox>
 </template>
 <style scoped lang="scss">
-.CardConfigSelector {
+.FieldConfigSelector {
   flex-grow: 1;
   background-color: #39293f;
   box-shadow: 0 3px 0px 0px #231927;
