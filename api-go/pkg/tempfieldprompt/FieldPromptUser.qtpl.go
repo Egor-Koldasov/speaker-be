@@ -49,8 +49,7 @@ func StreamFieldPromptUser(qw422016 *qt422016.Writer, props FieldPromptUserProps
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:17
 	for _, parameterDefinition := range props.CardConfig.PromptParameterDefinitions {
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:17
-		qw422016.N().S(`
-- Name: `)
+		qw422016.N().S(`- Name: `)
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:18
 		qw422016.N().S(parameterDefinition.Name)
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:18
@@ -63,14 +62,10 @@ func StreamFieldPromptUser(qw422016 *qt422016.Writer, props FieldPromptUserProps
 `)
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:20
 	}
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:20
-	qw422016.N().S(`
-`)
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:21
 	for _, parameterDefinition := range props.FieldConfig.PromptParameterDefinitions {
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:21
-		qw422016.N().S(`
-- Name: `)
+		qw422016.N().S(`- Name: `)
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:22
 		qw422016.N().S(parameterDefinition.Name)
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:22
@@ -85,7 +80,6 @@ func StreamFieldPromptUser(qw422016 *qt422016.Writer, props FieldPromptUserProps
 	}
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:24
 	qw422016.N().S(`
-
 === FIELD CONFIG (Instructions) ===
 - Field Name: `)
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:27
@@ -103,8 +97,7 @@ func StreamFieldPromptUser(qw422016 *qt422016.Writer, props FieldPromptUserProps
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:31
 	for _, parameterDefinition := range props.CardConfig.PromptParameterDefinitions {
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:31
-		qw422016.N().S(`
-- Name: `)
+		qw422016.N().S(`- Name: `)
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:32
 		qw422016.N().S(parameterDefinition.Name)
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:32
@@ -117,14 +110,10 @@ func StreamFieldPromptUser(qw422016 *qt422016.Writer, props FieldPromptUserProps
 `)
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:34
 	}
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:34
-	qw422016.N().S(`
-`)
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:35
 	for _, parameterDefinition := range props.FieldConfig.PromptParameterDefinitions {
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:35
-		qw422016.N().S(`
-- Name: `)
+		qw422016.N().S(`- Name: `)
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:36
 		qw422016.N().S(parameterDefinition.Name)
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:36
@@ -139,7 +128,6 @@ func StreamFieldPromptUser(qw422016 *qt422016.Writer, props FieldPromptUserProps
 	}
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:38
 	qw422016.N().S(`
-
 === USER REQUEST ===
 1. Use the Card Prompt above solely as context or background.
 2. Follow the Field Prompt as your main instructions for generating the final text response.

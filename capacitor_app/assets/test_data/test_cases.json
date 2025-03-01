@@ -1,0 +1,42 @@
+[
+  {
+    "id": "english_to_spanish",
+    "name": "English to Spanish Translation",
+    "description": "Basic translation of an English sentence to Spanish",
+    "inputText": "Hello, how are you today? I would like to learn Spanish.",
+    "languageFrom": "English",
+    "languageTo": "Spanish",
+    "expectedKeywords": ["Hola", "cómo", "estás", "hoy", "aprender", "español"],
+    "expectedOutput": "¡Hola! ¿Cómo estás hoy? Me gustaría aprender español."
+  },
+  {
+    "id": "english_to_french",
+    "name": "English to French Translation",
+    "description": "Basic translation of an English sentence to French",
+    "inputText": "I love to travel and explore new cultures. Paris is beautiful in the spring.",
+    "languageFrom": "English",
+    "languageTo": "French",
+    "expectedKeywords": ["aime", "voyager", "explorer", "nouvelles", "cultures", "Paris", "beau", "printemps"],
+    "expectedOutput": "J'aime voyager et explorer de nouvelles cultures. Paris est belle au printemps."
+  },
+  {
+    "id": "word_definition",
+    "name": "English Word Definition",
+    "description": "Define an English word with examples",
+    "inputText": "Define the word 'serendipity' with examples",
+    "languageFrom": "English",
+    "languageTo": "English",
+    "expectedKeywords": ["chance", "fortunate", "unexpected", "discovery", "happy", "accident"],
+    "expectedOutput": null
+  },
+  {
+    "id": "grammar_correction",
+    "name": "Grammar Correction",
+    "description": "Correct grammatical errors in English text",
+    "inputText": "She don't like apples. Yesterday I go to the store and buyed milk.",
+    "languageFrom": "English",
+    "languageTo": "English",
+    "expectedKeywords": ["doesn't", "went", "bought"],
+    "expectedOutput": "She doesn't like apples. Yesterday I went to the store and bought milk."
+  }
+]

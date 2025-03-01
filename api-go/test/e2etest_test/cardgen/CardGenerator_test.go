@@ -4,11 +4,15 @@ import (
 	"api-go/pkg/config"
 	"api-go/pkg/fieldgenprompt"
 	"api-go/pkg/genjsonschema"
+	"api-go/pkg/resourcequeue"
 	"api-go/pkg/utilerror"
 	"api-go/pkg/utillog"
 	"context"
+	"fmt"
 	"os"
+	"sync"
 	"testing"
+	"time"
 
 	"github.com/tmc/langchaingo/llms"
 	"github.com/tmc/langchaingo/llms/ollama"
@@ -109,34 +113,98 @@ Do not use the example answer; generate a fresh response based solely on the pro
 			UpdatedAt: "2023-09-22T09:15:22Z",
 			Id:        "mockLensCardConfig1_synonyms",
 		},
-		// "definitionOriginal": genjsonschema.FieldConfig{
-		// 	Name:      "definitionOriginal",
-		// 	ValueType: genjsonschema.FieldConfigValueTypeText,
-		// 	Prompt:    "An extensive definition in the original language.",
-		// 	CreatedAt: "2023-07-15T14:30:45Z",
-		// 	UpdatedAt: "2023-09-22T09:15:22Z",
-		// 	Id:        "mockLensCardConfig1_definitionOriginal",
-		// },
-		// "definitionTranslated": genjsonschema.FieldConfig{
-		// 	Name:      "definitionTranslated",
-		// 	ValueType: genjsonschema.FieldConfigValueTypeText,
-		// 	Prompt:    "An extensive definition in the language defined by a `languageTranslated` property.",
-		// 	CreatedAt: "2023-07-15T14:30:45Z",
-		// 	UpdatedAt: "2023-09-22T09:15:22Z",
-		// 	Id:        "mockLensCardConfig1_definitionTranslated",
-		// },
-		// "origin": genjsonschema.FieldConfig{
-		// 	Name:      "origin",
-		// 	ValueType: genjsonschema.FieldConfigValueTypeText,
-		// 	Prompt:    "The root parts of the word and the origin in the language defined by a `languageTranslated` property. If the original form from Part 1 is different from the neutral grammatic form from Part 2, explain that difference including all the details.",
-		// 	CreatedAt: "2023-07-15T14:30:45Z",
-		// 	UpdatedAt: "2023-09-22T09:15:22Z",
-		// 	Id:        "mockLensCardConfig1_origin",
-		// },
 	},
 }
 
+// LLMJobData contains data needed for LLM processing
+type LLMJobData struct {
+	LLM       interface{}
+	ModelName string
+	Messages  []llms.MessageContent
+	Ctx       context.Context
+}
+
+// LLMJobResult contains the result of LLM processing
+type LLMJobResult struct {
+	ModelName   string
+	Content     string
+	Error       error
+	ProcessedAt time.Time
+}
+
+// processLLMJob handles the actual generation of content from an LLM
+// Updated to use channel communication instead of return values
+func processLLMJob(ctx context.Context, job *resourcequeue.Job, resultCh chan<- resourcequeue.JobResult) {
+	data, ok := job.Data.(*LLMJobData)
+	if !ok {
+		resultCh <- resourcequeue.JobResult{
+			ID:        job.ID,
+			Error:     fmt.Errorf("invalid job data format"),
+			StartTime: time.Now(),
+			EndTime:   time.Now(),
+		}
+		return
+	}
+
+	startTime := time.Now()
+	var content string
+	var err error
+
+	// Process based on LLM type
+	switch llm := data.LLM.(type) {
+	case *openai.LLM:
+		var completion *llms.ContentResponse
+		completion, err = llm.GenerateContent(data.Ctx, data.Messages)
+		if err == nil && len(completion.Choices) > 0 {
+			content = completion.Choices[0].Content
+		}
+	case *ollama.LLM:
+		var completion *llms.ContentResponse
+		completion, err = llm.GenerateContent(data.Ctx, data.Messages)
+		if err == nil && len(completion.Choices) > 0 {
+			content = completion.Choices[0].Content
+		}
+	default:
+		err = fmt.Errorf("unsupported LLM type")
+	}
+
+	endTime := time.Now()
+
+	// Send result via channel
+	resultCh <- resourcequeue.JobResult{
+		ID: job.ID,
+		Output: &LLMJobResult{
+			ModelName:   data.ModelName,
+			Content:     content,
+			Error:       err,
+			ProcessedAt: endTime,
+		},
+		Error:     err,
+		StartTime: startTime,
+		EndTime:   endTime,
+	}
+}
+
 func TestCardGenerator(t *testing.T) {
+	// Initialize the resource queue with model-specific resource requirements
+	resourceConfig := resourcequeue.NewResourceConfig()
+
+	// Configure resource requirements for different models with adjusted values
+	// Based on benchmarking, we found models can run efficiently in parallel with lower resource requirements
+	resourceConfig.SetJobTypeUnits("OpenAI", 0)    // OpenAI has no local resource requirements
+	resourceConfig.SetJobTypeUnits("Llama3.2", 3)  // Standard model
+	resourceConfig.SetJobTypeUnits("Mistral", 3)   // Standard model
+	resourceConfig.SetJobTypeUnits("DeepSeek", 5)  // Larger model
+	resourceConfig.SetJobTypeUnits("Phi-4", 5)     // Larger model
+	resourceConfig.SetJobTypeUnits("Qwen2.5", 3)   // Standard model
+	resourceConfig.SetJobTypeUnits("Gemma", 2)     // Standard model with better parallel performance
+
+	// Create the resource queue with 21 maximum units (can run many more models concurrently now)
+	queue := resourcequeue.NewResourceQueue(21, resourceConfig, processLLMJob)
+	queue.Start()
+	defer queue.Stop()
+
+	// Prepare card config and prompt
 	cardConfig1 := genjsonschema.CardConfig{
 		Id:                         mockLensCardConfig1Word.Id,
 		Name:                       mockLensCardConfig1Word.Name,
@@ -160,26 +228,32 @@ func TestCardGenerator(t *testing.T) {
 
 	utillog.PrintfTiming("Prompt:\n%v\n\n", prompt)
 
+	// Create a context for the test
 	ctx := context.Background()
-	llmOpenAi, err := openai.New(openai.WithToken(config.Config.OpenaiApiKey))
-	utilerror.FatalError("Failed to initialize OpenAI LLM", err)
-	llmLlama3_2, err := ollama.New(ollama.WithModel("llama3.2"))
-	utilerror.FatalError("Failed to initialize Ollama LLM", err)
-	llmMistral, err := ollama.New(ollama.WithModel("mistral"))
-	utilerror.FatalError("Failed to initialize Ollama LLM", err)
-	llmDeepSeek, err := ollama.New(ollama.WithModel("deepseek-r1:14b"))
-	utilerror.FatalError("Failed to initialize Ollama LLM", err)
-	llmPhi4, err := ollama.New(ollama.WithModel("phi4"))
-	utilerror.FatalError("Failed to initialize Ollama LLM", err)
-	llmQwen2_5, err := ollama.New(ollama.WithModel("qwen2.5"))
-	utilerror.FatalError("Failed to initialize Ollama LLM", err)
-	llmGemma, err := ollama.New(ollama.WithModel("gemma"))
-	utilerror.FatalError("Failed to initialize Ollama LLM", err)
-	// prompts.NewChatPromptTemplate([]prompts.ChatPromptTemplate{
-	// 	{
 
-	// 	}
-	// })
+	// Initialize all LLMs with their actual model names for Ollama
+	// llmOpenAi, err := openai.New(openai.WithToken(config.Config.OpenaiApiKey))
+	// utilerror.FatalError("Failed to initialize OpenAI LLM", err)
+
+	llmLlama3_2, err := ollama.New(ollama.WithModel("llama3.2"))
+	utilerror.FatalError("Failed to initialize Llama3.2 LLM", err)
+
+	llmMistral, err := ollama.New(ollama.WithModel("mistral"))
+	utilerror.FatalError("Failed to initialize Mistral LLM", err)
+
+	llmDeepSeek, err := ollama.New(ollama.WithModel("deepseek-r1:14b"))
+	utilerror.FatalError("Failed to initialize DeepSeek LLM", err)
+
+	llmPhi4, err := ollama.New(ollama.WithModel("phi4"))
+	utilerror.FatalError("Failed to initialize Phi-4 LLM", err)
+
+	llmQwen2_5, err := ollama.New(ollama.WithModel("qwen2.5"))
+	utilerror.FatalError("Failed to initialize Qwen2.5 LLM", err)
+
+	llmGemma, err := ollama.New(ollama.WithModel("gemma"))
+	utilerror.FatalError("Failed to initialize Gemma LLM", err)
+
+	// Prepare messages for LLMs
 	messages := []llms.MessageContent{
 		{
 			Role:  llms.ChatMessageTypeSystem,
@@ -190,31 +264,78 @@ func TestCardGenerator(t *testing.T) {
 			Parts: []llms.ContentPart{llms.TextPart(prompt[1].Text)},
 		},
 	}
-	completion1, err := llmOpenAi.GenerateContent(ctx, messages)
-	utilerror.FatalError("llm.GenerateContent", err)
-	utillog.PrintfTiming("OpenAI: \n%v\n\n", completion1.Choices[0].Content)
 
-	completion2, err := llmLlama3_2.GenerateContent(ctx, messages)
-	utilerror.FatalError("llm.GenerateContent", err)
-	utillog.PrintfTiming("Llama3.2: \n%v\n\n", completion2.Choices[0].Content)
+	// Prepare job data for each model
+	llmJobs := []*LLMJobData{
+		// {LLM: llmOpenAi, ModelName: "OpenAI", Messages: messages, Ctx: ctx},
+		{LLM: llmLlama3_2, ModelName: "Llama3.2", Messages: messages, Ctx: ctx},
+		{LLM: llmMistral, ModelName: "Mistral", Messages: messages, Ctx: ctx},
+		{LLM: llmDeepSeek, ModelName: "DeepSeek", Messages: messages, Ctx: ctx},
+		{LLM: llmPhi4, ModelName: "Phi-4", Messages: messages, Ctx: ctx},
+		{LLM: llmQwen2_5, ModelName: "Qwen2.5", Messages: messages, Ctx: ctx},
+		{LLM: llmGemma, ModelName: "Gemma", Messages: messages, Ctx: ctx},
+	}
 
-	completion3, err := llmMistral.GenerateContent(ctx, messages)
-	utilerror.FatalError("llm.GenerateContent", err)
-	utillog.PrintfTiming("Mistral: \n%v\n\n", completion3.Choices[0].Content)
+	// Submit all jobs to the queue
+	resultChannels := make([]<-chan resourcequeue.JobResult, len(llmJobs))
+	var wg sync.WaitGroup
 
-	completion4, err := llmDeepSeek.GenerateContent(ctx, messages)
-	utilerror.FatalError("llm.GenerateContent", err)
-	utillog.PrintfTiming("DeepSeek: \n%v\n\n", completion4.Choices[0].Content)
+	for i, jobData := range llmJobs {
+		// Submit job to queue
+		resultChan, err := queue.Enqueue(
+			fmt.Sprintf("job-%s", jobData.ModelName),
+			jobData.ModelName, // Use model name as job type for resource allocation
+			jobData,
+		)
+		if err != nil {
+			t.Logf("Error enqueueing %s: %v", jobData.ModelName, err)
+			continue
+		}
 
-	completion5, err := llmPhi4.GenerateContent(ctx, messages)
-	utilerror.FatalError("llm.GenerateContent", err)
-	utillog.PrintfTiming("Phi-4: \n%v\n\n", completion5.Choices[0].Content)
+		// Store the result channel for later processing
+		resultChannels[i] = resultChan
 
-	completion6, err := llmQwen2_5.GenerateContent(ctx, messages)
-	utilerror.FatalError("llm.GenerateContent", err)
-	utillog.PrintfTiming("Qwen2.5: \n%v\n\n", completion6.Choices[0].Content)
+		// Print queue status after each enqueue
+		status := queue.GetQueueStatus()
+		t.Logf("Queue status after adding %s: %d jobs pending, %.2f/%.2f units available",
+			jobData.ModelName, status.QueueLength, status.AvailableUnits, status.MaxUnits)
+	}
 
-	completion7, err := llmGemma.GenerateContent(ctx, messages)
-	utilerror.FatalError("llm.GenerateContent", err)
-	utillog.PrintfTiming("Gemma: \n%v\n\n", completion7.Choices[0].Content)
+	// Process all results
+	for i, resultChan := range resultChannels {
+		if resultChan == nil {
+			continue
+		}
+
+		wg.Add(1)
+		go func(i int, ch <-chan resourcequeue.JobResult) {
+			defer wg.Done()
+
+			// Wait for the result
+			result := <-ch
+			if result.Error != nil {
+				t.Logf("Error processing job %d: %v", i, result.Error)
+				return
+			}
+
+			// Type assertion for the result
+			llmResult, ok := result.Output.(*LLMJobResult)
+			if !ok {
+				t.Logf("Invalid result type for job %d", i)
+				return
+			}
+
+			// Log the result
+			utillog.PrintfTiming("%s: \n%v\n\n", llmResult.ModelName, llmResult.Content)
+		}(i, resultChan)
+	}
+
+	// Wait for all results to be processed
+	wg.Wait()
+
+	// Print final queue status
+	finalStatus := queue.GetQueueStatus()
+	t.Logf("Final queue status: %d running, %d pending, %.2f/%.2f units available",
+		len(finalStatus.RunningJobs), finalStatus.QueueLength,
+		finalStatus.AvailableUnits, finalStatus.MaxUnits)
 }

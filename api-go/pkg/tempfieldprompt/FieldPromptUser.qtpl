@@ -14,28 +14,28 @@ type FieldPromptUserProps struct {
 - Card Prompt (Context Only): {%s= props.CardConfig.Prompt %}
 
 === PARAMETERS DEFINITIONS ===
-{% for _, parameterDefinition := range props.CardConfig.PromptParameterDefinitions %}
+{%- for _, parameterDefinition := range props.CardConfig.PromptParameterDefinitions -%}
 - Name: {%s= parameterDefinition.Name %}
   Description: {%s= parameterDefinition.ParameterDescription %}
-{% endfor %}
-{% for _, parameterDefinition := range props.FieldConfig.PromptParameterDefinitions %}
+{%- endfor -%}
+{%- for _, parameterDefinition := range props.FieldConfig.PromptParameterDefinitions -%}
 - Name: {%s= parameterDefinition.Name %}
   Description: {%s= parameterDefinition.ParameterDescription %}
-{% endfor %}
+{%- endfor -%}
 
 === FIELD CONFIG (Instructions) ===
 - Field Name: {%s= props.FieldConfig.Name %}
 - Field Prompt (AI Instructions): {%s= props.FieldConfig.Prompt %}
 
 === PARAMETERS VALUES ===
-{% for _, parameterDefinition := range props.CardConfig.PromptParameterDefinitions %}
+{%- for _, parameterDefinition := range props.CardConfig.PromptParameterDefinitions -%}
 - Name: {%s= parameterDefinition.Name %}
   Value: {%s= props.CardParamValues[parameterDefinition.Name] %}
-{% endfor %}
-{% for _, parameterDefinition := range props.FieldConfig.PromptParameterDefinitions %}
+{%- endfor -%}
+{%- for _, parameterDefinition := range props.FieldConfig.PromptParameterDefinitions -%}
 - Name: {%s= parameterDefinition.Name %}
   Value: {%s= props.FieldParamValues[parameterDefinition.Name] %}
-{% endfor %}
+{%- endfor -%}
 
 === USER REQUEST ===
 1. Use the Card Prompt above solely as context or background.
