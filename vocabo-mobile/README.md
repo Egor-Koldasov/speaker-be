@@ -17,7 +17,7 @@ Vocabo is a cross-platform mobile application focused on language learning and v
 
 The current phase focuses on:
 
-- [ ] Set up Expo project
+- [x] Set up Expo project
 - [ ] Test running LLM chat on mobile offline
 
 ## License
