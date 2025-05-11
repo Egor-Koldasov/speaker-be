@@ -144,10 +144,10 @@ func TestWordSplitter(t *testing.T) {
 	defer queue.Stop()
 
 	// Sample text in Russian to test the word splitter
-	sampleRussianText := "Студенты читают интересные книги в новой библиотеке каждый день."
+	sampleRussianText := "В этой комнате было как-то сыро."
 
-	// Create the prompt using our parameter definitions and schema
-	prompt := fieldgenprompt.NewFieldGenPrompt(
+	// Create the prompt using our specialized word splitter prompt
+	prompt := fieldgenprompt.NewWordSplitterPrompt(
 		jsonSchemaString,
 		mockParameterDefinitions,
 		map[string]string{

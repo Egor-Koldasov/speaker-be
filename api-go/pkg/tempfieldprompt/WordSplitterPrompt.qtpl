@@ -1,0 +1,38 @@
+{% import "api-go/pkg/genjsonschema" %}
+{% code
+type WordSplitterProps struct {
+	TermNeutralJsonSchema string
+	PromptParameterDefinitions []genjsonschema.PromptParameterDefinition
+	ParamValues map[string]string
+}
+%}
+
+{% func WordSplitterPrompt(props WordSplitterProps) %}
+You are a stateless software function named `WordSplitter`.
+Your input parameters:
+```json
+[
+{%- for _, parameterDefinition := range props.PromptParameterDefinitions -%}
+  {
+    "name": "{%s= parameterDefinition.Name %}",
+    "description": "{%s= parameterDefinition.ParameterDescription %}",
+    "value": "{%s= props.ParamValues[parameterDefinition.Name] %}"
+  },
+{%- endfor -%}
+]
+```
+
+The purpose of this function is to split text into individual words and convert them to their neutral grammatical forms:
+1. Identify all unique meaningful words in the text (excluding punctuation and functional words if appropriate)
+2. For each word, determine its base/neutral form:
+   - For verbs: infinitive form
+   - For nouns: singular form
+   - For adjectives: masculine singular form 
+   - For other word types: appropriate dictionary form
+3. Return a list of these terms in their neutral forms along with their language code
+
+Return **only** a single, JSON object matching this schema:
+```json
+{%s= props.TermNeutralJsonSchema %}
+```
+{% endfunc %} 
