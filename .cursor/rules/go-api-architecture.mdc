@@ -1,0 +1,48 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Go API Architecture
+
+The Go API follows a package-based architecture to organize functionality:
+
+## Directory Structure
+
+- `api-go/pkg/` - Contains all packages organized by functionality
+- `api-go/cmd/server/` - Application entry point and server setup
+- `api-go/assets/` - Static assets and configuration files
+- `api-go/scripts/` - Helper scripts and tools
+
+## Key Packages
+
+- `actionrouter`, `lensrouter`, `wsmessagerouter` - Route handlers for different API endpoints
+- `pgdb`, `neo4jdb` - Database interaction layers
+- `aichat`, `cardgenprompt` - AI/ML integration components
+- `jsonvalidate`, `genjsonschema` - JSON schema validation and generation
+- `util*` packages - Utility functions organized by domain
+
+## Code Organization Principles
+
+1. Each package has a clear, single responsibility
+2. Utility functions are grouped in domain-specific util packages
+3. Database interactions are abstracted in DB-specific packages
+4. Generated code from JSON schemas is kept in separate packages
+
+## Error Handling
+
+- Use `apperrors` package for consistent error handling
+- Return structured error responses
+- Use proper logging with `utillog` package
+
+## Configuration
+
+- Environment variables are managed through the `config` package
+- Secrets should be loaded via environment variables, not hardcoded
+
+## Interface Consistency
+
+Maintain consistent API interfaces across different router implementations. When adding new routes:
+1. Define JSON schema models in the json-schema module
+2. Generate corresponding Go structs
+3. Implement handlers in appropriate router packages

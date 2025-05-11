@@ -1,0 +1,69 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Project Overview
+
+This project is a multi-component system with several interrelated applications:
+
+## Project Context
+
+**Important Note**: This project has undergone significant experimentation, resulting in a substantial amount of deprecated code throughout the codebase. When working with the project:
+
+- Be cautious about using existing code without verifying its current status
+- Some directories may contain completely deprecated implementations
+- Older experimental approaches may conflict with current implementations
+- Always check recent commit history to identify active code paths
+- Ask for clarification when uncertain about code relevance
+
+## Main Components
+
+1. **Vue Frontend** 
+   - Located in `vue/` directory
+   - Modern Vue.js application with TypeScript support
+   - Manages UI state through stores and components
+
+2. **Go API Backend**
+   - Located in `api-go/` directory
+   - Structured using a package-based architecture
+   - Handles routing, database interactions, and business logic
+
+3. **JSON Schema System**
+   - Located in `json-schema/` directory
+   - Provides type definitions shared between TypeScript and Go
+   - Generates code for both frontend and backend
+
+4. **Mobile Applications**
+   - Flutter app in `maid/` directory
+   - React Native/Expo app in `vocabo-mobile/` directory
+
+5. **Database**
+   - PostgreSQL (referenced in dependencies)
+   - Neo4j (referenced in directory structure)
+   - SurrealDB (referenced in utility packages)
+
+## Key Entry Points
+
+- Vue frontend: [vue/src/main.ts](mdc:vue/src/main.ts)
+- Flutter app: [maid/lib/main.dart](mdc:maid/lib/main.dart)
+
+## Development Workflow
+
+The project uses a dev script that concurrently runs:
+- TypeScript API compilation
+- API server
+- Vue development server
+- JSON Schema development process
+
+Run with: `npm run dev` or `yarn dev`
+
+## Identifying Active Code
+
+To distinguish between active and deprecated code:
+
+1. Check recent git commit history
+2. Look for documentation comments indicating deprecation
+3. Check for imported/referenced modules in actively used files
+4. Examine test coverage - actively maintained code often has tests
+5. When adding new features, prefer extending recently modified code

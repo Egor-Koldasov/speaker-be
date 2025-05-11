@@ -1,0 +1,43 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Vue Frontend Architecture
+
+The Vue frontend follows a structured architecture to manage state, components, and routing:
+
+## Directory Structure
+
+- `vue/src/components/` - Reusable UI components
+- `vue/src/views/` - Page-level components corresponding to routes
+- `vue/src/router/` - Vue Router configuration
+- `vue/src/dataStore/` - Data management and state
+- `vue/src/uiStore/` - UI-specific state management
+- `vue/src/types/` - TypeScript type definitions
+- `vue/src/util/` - Utility functions
+- `vue/src/styles/` - Global styling
+- `vue/src/assets/` - Static assets
+
+## Patterns and Conventions
+
+1. Use TypeScript for all .ts and .vue files
+2. Component naming:
+   - Page components: PascalCase.vue
+   - Reusable components: PascalCase.vue
+3. Store modules for state management
+4. Leverage TypeScript interfaces from the shared json-schema module
+5. For e2e testing, use the test utilities in `vue/src/e2e/`
+
+## Data Flow
+
+1. API requests typically flow through the dataStore
+2. UI state is managed by uiStore
+3. Components receive data through props or store injections
+
+## Component Documentation
+
+Components should be structured with:
+- Props defined with types
+- Emits defined for events
+- Clear separation of template, script, and style blocks
