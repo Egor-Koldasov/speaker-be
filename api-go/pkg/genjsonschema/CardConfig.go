@@ -21,7 +21,8 @@ type CardConfig struct {
 	// Prompt corresponds to the JSON schema field "prompt".
 	Prompt string `json:"prompt" yaml:"prompt" mapstructure:"prompt"`
 
-	// A list of all the parameter definitions that will be added to each FieldConfig.
+	// A list of all the parameter definitions that will be injected into the prompt
+	// of the card generator.
 	PromptParameterDefinitions []PromptParameterDefinition `json:"promptParameterDefinitions" yaml:"promptParameterDefinitions" mapstructure:"promptParameterDefinitions"`
 
 	// ISO 8601 date string

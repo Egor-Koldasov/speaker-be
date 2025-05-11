@@ -191,13 +191,13 @@ func TestCardGenerator(t *testing.T) {
 
 	// Configure resource requirements for different models with adjusted values
 	// Based on benchmarking, we found models can run efficiently in parallel with lower resource requirements
-	resourceConfig.SetJobTypeUnits("OpenAI", 0)    // OpenAI has no local resource requirements
-	resourceConfig.SetJobTypeUnits("Llama3.2", 3)  // Standard model
-	resourceConfig.SetJobTypeUnits("Mistral", 3)   // Standard model
-	resourceConfig.SetJobTypeUnits("DeepSeek", 5)  // Larger model
-	resourceConfig.SetJobTypeUnits("Phi-4", 5)     // Larger model
-	resourceConfig.SetJobTypeUnits("Qwen2.5", 3)   // Standard model
-	resourceConfig.SetJobTypeUnits("Gemma", 2)     // Standard model with better parallel performance
+	resourceConfig.SetJobTypeUnits("OpenAI", 0)   // OpenAI has no local resource requirements
+	resourceConfig.SetJobTypeUnits("Llama3.2", 3) // Standard model
+	resourceConfig.SetJobTypeUnits("Mistral", 3)  // Standard model
+	resourceConfig.SetJobTypeUnits("DeepSeek", 5) // Larger model
+	resourceConfig.SetJobTypeUnits("Phi-4", 5)    // Larger model
+	resourceConfig.SetJobTypeUnits("Qwen2.5", 3)  // Standard model
+	resourceConfig.SetJobTypeUnits("Gemma", 2)    // Standard model with better parallel performance
 
 	// Create the resource queue with 21 maximum units (can run many more models concurrently now)
 	queue := resourcequeue.NewResourceQueue(21, resourceConfig, processLLMJob)
@@ -256,12 +256,8 @@ func TestCardGenerator(t *testing.T) {
 	// Prepare messages for LLMs
 	messages := []llms.MessageContent{
 		{
-			Role:  llms.ChatMessageTypeSystem,
-			Parts: []llms.ContentPart{llms.TextPart(prompt[0].Text)},
-		},
-		{
 			Role:  llms.ChatMessageTypeHuman,
-			Parts: []llms.ContentPart{llms.TextPart(prompt[1].Text)},
+			Parts: []llms.ContentPart{llms.TextPart(prompt[0].Text)},
 		},
 	}
 

@@ -25,7 +25,8 @@ type LensCardConfig struct {
 	// Prompt corresponds to the JSON schema field "prompt".
 	Prompt string `json:"prompt" yaml:"prompt" mapstructure:"prompt"`
 
-	// A list of all the parameter definitions that will be added to each FieldConfig.
+	// A list of all the parameter definitions that will be injected into the prompt
+	// of the card generator.
 	PromptParameterDefinitions []PromptParameterDefinition `json:"promptParameterDefinitions" yaml:"promptParameterDefinitions" mapstructure:"promptParameterDefinitions"`
 
 	// ISO 8601 date string
@@ -33,7 +34,7 @@ type LensCardConfig struct {
 }
 
 // A map of fieldConfigs with their names as keys
-type LensCardConfigFieldConfigByName map[string]FieldConfig
+type LensCardConfigFieldConfigByName map[string]LensFieldConfig
 
 // UnmarshalJSON implements json.Unmarshaler.
 func (j *LensCardConfig) UnmarshalJSON(b []byte) error {

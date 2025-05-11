@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"sync"
 	"time"
 )
@@ -90,17 +89,17 @@ func NewResourceQueue(maxUnits float64, config ResourceConfig, processorFunc Job
 
 // Start begins processing queue jobs
 func (q *ResourceQueue) Start() {
-	log.Printf("Starting resource queue with %.2f maximum units", q.maxUnits)
+	// log.Printf("Starting resource queue with %.2f maximum units", q.maxUnits)
 	q.wg.Add(1)
 	go q.processQueue()
 }
 
 // Stop gracefully shuts down the queue
 func (q *ResourceQueue) Stop() {
-	log.Println("Stopping resource queue")
+	// log.Println("Stopping resource queue")
 	q.cancel()
 	q.wg.Wait()
-	log.Println("Resource queue stopped")
+	// log.Println("Resource queue stopped")
 }
 
 // Enqueue adds a new job to the queue
@@ -133,7 +132,7 @@ func (q *ResourceQueue) Enqueue(id, jobType string, data interface{}) (<-chan Jo
 	}
 
 	q.queue = append(q.queue, job)
-	log.Printf("Enqueued job %s (Type: %s, Units: %.2f)", id, jobType, units)
+	// log.Printf("Enqueued job %s (Type: %s, Units: %.2f)", id, jobType, units)
 
 	// Signal that a new job was added
 	select {
@@ -237,8 +236,8 @@ func (q *ResourceQueue) tryProcessNextJobs() {
 				q.running[job.ID] = job
 				q.availableUnits -= job.Units
 
-				log.Printf("Starting to process job %s (Type: %s, Units: %.2f, Available: %.2f)",
-					job.ID, job.Type, job.Units, q.availableUnits)
+				// log.Printf("Starting to process job %s (Type: %s, Units: %.2f, Available: %.2f)",
+				// 			job.ID, job.Type, job.Units, q.availableUnits)
 
 				// Process this job (in a separate goroutine)
 				q.wg.Add(1)
@@ -292,15 +291,15 @@ func (q *ResourceQueue) processJob(job *Job) {
 	select {
 	case job.ResultCh <- result:
 	default:
-		log.Printf("Warning: Could not send result for job %s (receiver may have timed out)", job.ID)
+		// log.Printf("Warning: Could not send result for job %s (receiver may have timed out)", job.ID)
 	}
 
 	// Clean up and update available resources
 	q.mu.Lock()
 	delete(q.running, job.ID)
 	q.availableUnits += job.Units
-	log.Printf("Finished processing job %s (Units released: %.2f, Available: %.2f)",
-		job.ID, job.Units, q.availableUnits)
+	// log.Printf("Finished processing job %s (Units released: %.2f, Available: %.2f)",
+	// 		job.ID, job.Units, q.availableUnits)
 	q.mu.Unlock()
 
 	// Signal that resources are now available
@@ -330,7 +329,7 @@ func (q *ResourceQueue) CancelJob(id string) bool {
 				EndTime:   time.Now(),
 			}
 
-			log.Printf("Cancelled queued job %s", id)
+			// log.Printf("Cancelled queued job %s", id)
 			return true
 		}
 	}

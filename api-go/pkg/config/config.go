@@ -16,6 +16,7 @@ type ConfigType struct {
 	PgConnectionString string
 	HttpPort           string
 	OpenaiApiKey       string
+	ClaudeApiKey       string
 	JsonSchemaPath     string
 	AuthEmailFrom      string
 	AuthSmtpHost       string
@@ -42,6 +43,7 @@ func Init() {
 	Config.PgConnectionString = utilenv.RequireEnv("PG_CONNECTION_STRING")
 	Config.HttpPort = utilenv.GetEnv("HTTP_PORT", "8080")
 	Config.OpenaiApiKey = utilenv.RequireEnv("OPENAI_API_KEY")
+	Config.ClaudeApiKey = utilenv.RequireEnv("CLAUDE_API_KEY")
 	Config.JsonSchemaPath = utilenv.GetEnv("JSON_SCHEMA_PATH", "")
 	if Config.JsonSchemaPath == "" {
 		pwd, err := os.Getwd()

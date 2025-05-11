@@ -11,7 +11,7 @@ export default schemaObject(
     promptParameterDefinitions: {
       type: "array",
       description:
-        "A list of all the parameter definitions that will be added to each FieldConfig.",
+        "A list of all the parameter definitions that will be injected into the prompt of the card generator.",
       items: {
         $ref: "./PromptParameterDefinition.json",
       },
@@ -19,7 +19,7 @@ export default schemaObject(
     prompt: {
       type: "string",
       desctiption:
-        "The user prompt for the AI, explaining what the AI should generate.",
+        "A general text, that will be injected into the prompt of the card generator.",
     },
   },
   { title: "CardConfig" }

@@ -1,0 +1,61 @@
+{
+  "type": [
+    "object"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "LensFieldConfig",
+  "additionalProperties": false,
+  "title": "LensFieldConfig",
+  "description": "FieldConfig with its nested fieldConfigs loaded",
+  "properties": {
+    "id": {
+      "$ref": "../db-models/../db-models/../db-models/./DbId.json"
+    },
+    "createdAt": {
+      "type": "string",
+      "description": "ISO 8601 date string"
+    },
+    "updatedAt": {
+      "type": "string",
+      "description": "ISO 8601 date string"
+    },
+    "deletedAt": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "ISO 8601 date string or null"
+    },
+    "name": {
+      "type": "string",
+      "description": "The name of the field defined by user and displayed back to user"
+    },
+    "valueType": {
+      "$ref": "../db-models/./FieldConfigValueType.json"
+    },
+    "prompt": {
+      "type": "string",
+      "desctiption": "The text of the field, that will be injected into the prompt of the card generator."
+    },
+    "fieldConfigByName": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "../db-models/FieldConfig.json"
+      },
+      "description": "A map of nested fieldConfigs with their names as keys. Empty for leaf fieldConfigs.",
+      "meta": {
+        "relation": "ManyToMany"
+      }
+    }
+  },
+  "required": [
+    "id",
+    "createdAt",
+    "updatedAt",
+    "deletedAt",
+    "name",
+    "valueType",
+    "prompt",
+    "fieldConfigByName"
+  ]
+}

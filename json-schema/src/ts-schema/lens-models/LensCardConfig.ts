@@ -10,7 +10,7 @@ export default schemaObject(
     fieldConfigByName: {
       type: "object",
       additionalProperties: {
-        $ref: "../db-models/FieldConfig.json",
+        $ref: "../lens-models/LensFieldConfig.json",
       },
       description: "A map of fieldConfigs with their names as keys",
       meta: schemaMeta({

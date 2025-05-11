@@ -22,143 +22,133 @@ var (
 
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:3
 type FieldPromptUserProps struct {
-	CardConfig       genjsonschema.CardConfig
-	FieldConfig      genjsonschema.FieldConfig
-	CardParamValues  map[string]string
-	FieldParamValues map[string]string
+	CardConfigJsonSchema       string
+	PromptParameterDefinitions []genjsonschema.PromptParameterDefinition
+	CardParamValues            map[string]string
 }
 
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:11
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:10
 func StreamFieldPromptUser(qw422016 *qt422016.Writer, props FieldPromptUserProps) {
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:11
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:10
 	qw422016.N().S(`
-=== CARD CONFIG (Context) ===
-- Card Name: `)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:13
-	qw422016.N().S(props.CardConfig.Name)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:13
-	qw422016.N().S(`
-- Card Prompt (Context Only): `)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:14
-	qw422016.N().S(props.CardConfig.Prompt)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:14
-	qw422016.N().S(`
-
-=== PARAMETERS DEFINITIONS ===
+You are a stateless software function named `)
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:10
+	qw422016.N().S("`")
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:10
+	qw422016.N().S(`GenerateJsonObject`)
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:10
+	qw422016.N().S("`")
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:10
+	qw422016.N().S(`.
+Your input parameters:
 `)
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:10
+	qw422016.N().S("`")
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:10
+	qw422016.N().S(``)
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:10
+	qw422016.N().S("`")
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:10
+	qw422016.N().S(``)
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:10
+	qw422016.N().S("`")
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:10
+	qw422016.N().S(`json
+[
+`)
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:15
+	for _, parameterDefinition := range props.PromptParameterDefinitions {
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:15
+		qw422016.N().S(`  {
+    "name": "`)
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:17
-	for _, parameterDefinition := range props.CardConfig.PromptParameterDefinitions {
+		qw422016.N().S(parameterDefinition.Name)
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:17
-		qw422016.N().S(`- Name: `)
+		qw422016.N().S(`",
+    "description": "`)
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:18
-		qw422016.N().S(parameterDefinition.Name)
+		qw422016.N().S(parameterDefinition.ParameterDescription)
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:18
-		qw422016.N().S(`
-  Description: `)
+		qw422016.N().S(`",
+    "value": "`)
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:19
-		qw422016.N().S(parameterDefinition.ParameterDescription)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:19
-		qw422016.N().S(`
-`)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:20
-	}
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:21
-	for _, parameterDefinition := range props.FieldConfig.PromptParameterDefinitions {
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:21
-		qw422016.N().S(`- Name: `)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:22
-		qw422016.N().S(parameterDefinition.Name)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:22
-		qw422016.N().S(`
-  Description: `)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:23
-		qw422016.N().S(parameterDefinition.ParameterDescription)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:23
-		qw422016.N().S(`
-`)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:24
-	}
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:24
-	qw422016.N().S(`
-=== FIELD CONFIG (Instructions) ===
-- Field Name: `)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:27
-	qw422016.N().S(props.FieldConfig.Name)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:27
-	qw422016.N().S(`
-- Field Prompt (AI Instructions): `)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:28
-	qw422016.N().S(props.FieldConfig.Prompt)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:28
-	qw422016.N().S(`
-
-=== PARAMETERS VALUES ===
-`)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:31
-	for _, parameterDefinition := range props.CardConfig.PromptParameterDefinitions {
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:31
-		qw422016.N().S(`- Name: `)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:32
-		qw422016.N().S(parameterDefinition.Name)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:32
-		qw422016.N().S(`
-  Value: `)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:33
 		qw422016.N().S(props.CardParamValues[parameterDefinition.Name])
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:33
-		qw422016.N().S(`
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:19
+		qw422016.N().S(`"
+  },
 `)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:34
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:21
 	}
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:35
-	for _, parameterDefinition := range props.FieldConfig.PromptParameterDefinitions {
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:35
-		qw422016.N().S(`- Name: `)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:36
-		qw422016.N().S(parameterDefinition.Name)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:36
-		qw422016.N().S(`
-  Value: `)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:37
-		qw422016.N().S(props.FieldParamValues[parameterDefinition.Name])
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:37
-		qw422016.N().S(`
-`)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:38
-	}
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:38
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:21
+	qw422016.N().S(`  {
+    "name": "targetJsonSchema",
+    "description": "The JSON schema of the object to be generated",
+    "value": `)
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
+	qw422016.N().S(props.CardConfigJsonSchema)
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
 	qw422016.N().S(`
-=== USER REQUEST ===
-1. Use the Card Prompt above solely as context or background.
-2. Follow the Field Prompt as your main instructions for generating the final text response.
-3. Incorporate the parameter definitions and use the provided parameter values as applicable.
-4. Produce your answer in plain text.
+  }
+]
 `)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:45
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
+	qw422016.N().S("`")
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
+	qw422016.N().S(``)
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
+	qw422016.N().S("`")
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
+	qw422016.N().S(``)
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
+	qw422016.N().S("`")
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
+	qw422016.N().S(`
+
+The purpose of this function is to generate a JSON object that fits the JSON schema described by the `)
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
+	qw422016.N().S("`")
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
+	qw422016.N().S(`targetJsonSchema`)
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
+	qw422016.N().S("`")
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
+	qw422016.N().S(` parameter to the best of your ability.
+
+Return **only** a single, JSON object that validates against the `)
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
+	qw422016.N().S("`")
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
+	qw422016.N().S(`targetJsonSchema`)
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
+	qw422016.N().S("`")
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
+	qw422016.N().S(` parameter.
+`)
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:33
 }
 
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:45
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:33
 func WriteFieldPromptUser(qq422016 qtio422016.Writer, props FieldPromptUserProps) {
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:45
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:33
 	qw422016 := qt422016.AcquireWriter(qq422016)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:45
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:33
 	StreamFieldPromptUser(qw422016, props)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:45
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:33
 	qt422016.ReleaseWriter(qw422016)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:45
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:33
 }
 
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:45
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:33
 func FieldPromptUser(props FieldPromptUserProps) string {
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:45
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:33
 	qb422016 := qt422016.AcquireByteBuffer()
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:45
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:33
 	WriteFieldPromptUser(qb422016, props)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:45
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:33
 	qs422016 := string(qb422016.B)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:45
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:33
 	qt422016.ReleaseByteBuffer(qb422016)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:45
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:33
 	return qs422016
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:45
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:33
 }

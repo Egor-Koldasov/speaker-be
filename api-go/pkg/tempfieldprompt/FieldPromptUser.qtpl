@@ -1,45 +1,35 @@
 {% import "api-go/pkg/genjsonschema" %}
 {% code
 type FieldPromptUserProps struct {
-	CardConfig genjsonschema.CardConfig
-	FieldConfig genjsonschema.FieldConfig
+	CardConfigJsonSchema string
+	PromptParameterDefinitions []genjsonschema.PromptParameterDefinition
 	CardParamValues map[string]string
-	FieldParamValues map[string]string
 }
 %}
 
 {% func FieldPromptUser(props FieldPromptUserProps) %}
-=== CARD CONFIG (Context) ===
-- Card Name: {%s= props.CardConfig.Name %}
-- Card Prompt (Context Only): {%s= props.CardConfig.Prompt %}
-
-=== PARAMETERS DEFINITIONS ===
-{%- for _, parameterDefinition := range props.CardConfig.PromptParameterDefinitions -%}
-- Name: {%s= parameterDefinition.Name %}
-  Description: {%s= parameterDefinition.ParameterDescription %}
+You are a stateless software function named `GenerateDictionaryEntry`.
+Your input parameters:
+```json
+[
+{%- for _, parameterDefinition := range props.PromptParameterDefinitions -%}
+  {
+    "name": "{%s= parameterDefinition.Name %}",
+    "description": "{%s= parameterDefinition.ParameterDescription %}",
+    "value": "{%s= props.CardParamValues[parameterDefinition.Name] %}"
+  },
 {%- endfor -%}
-{%- for _, parameterDefinition := range props.FieldConfig.PromptParameterDefinitions -%}
-- Name: {%s= parameterDefinition.Name %}
-  Description: {%s= parameterDefinition.ParameterDescription %}
-{%- endfor -%}
+  {
+    "name": "targetJsonSchema",
+    "description": "The JSON schema of the object to be generated",
+    "value": {%s= props.CardConfigJsonSchema %}
+  }
+]
+```
 
-=== FIELD CONFIG (Instructions) ===
-- Field Name: {%s= props.FieldConfig.Name %}
-- Field Prompt (AI Instructions): {%s= props.FieldConfig.Prompt %}
+The purpose of this function is to generate a JSON object that fits the JSON schema of the dictionary enty described by the `targetJsonSchema` parameter to the best of your ability.
+- The definition entry should strive for the best dictionary level of quality and accuracy.
+- The definition should include as many meanings as possible, including rare usages and folklore.
 
-=== PARAMETERS VALUES ===
-{%- for _, parameterDefinition := range props.CardConfig.PromptParameterDefinitions -%}
-- Name: {%s= parameterDefinition.Name %}
-  Value: {%s= props.CardParamValues[parameterDefinition.Name] %}
-{%- endfor -%}
-{%- for _, parameterDefinition := range props.FieldConfig.PromptParameterDefinitions -%}
-- Name: {%s= parameterDefinition.Name %}
-  Value: {%s= props.FieldParamValues[parameterDefinition.Name] %}
-{%- endfor -%}
-
-=== USER REQUEST ===
-1. Use the Card Prompt above solely as context or background.
-2. Follow the Field Prompt as your main instructions for generating the final text response.
-3. Incorporate the parameter definitions and use the provided parameter values as applicable.
-4. Produce your answer in plain text.
+Return **only** a single, JSON object that validates against the `targetJsonSchema` parameter.
 {% endfunc %}

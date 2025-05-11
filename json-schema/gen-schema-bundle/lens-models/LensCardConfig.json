@@ -36,7 +36,7 @@
     },
     "promptParameterDefinitions": {
       "type": "array",
-      "description": "A list of all the parameter definitions that will be added to each FieldConfig.",
+      "description": "A list of all the parameter definitions that will be injected into the prompt of the card generator.",
       "items": {
         "type": [
           "object"
@@ -73,7 +73,7 @@
     },
     "prompt": {
       "type": "string",
-      "desctiption": "The user prompt for the AI, explaining what the AI should generate."
+      "desctiption": "A general text, that will be injected into the prompt of the card generator."
     },
     "fieldConfigByName": {
       "type": "object",
@@ -82,9 +82,10 @@
           "object"
         ],
         "$schema": "http://json-schema.org/draft-07/schema",
-        "$id": "FieldConfig",
+        "$id": "LensFieldConfig",
         "additionalProperties": false,
-        "title": "FieldConfig",
+        "title": "LensFieldConfig",
+        "description": "FieldConfig with its nested fieldConfigs loaded",
         "properties": {
           "id": {
             "type": "string",
@@ -120,60 +121,84 @@
             "enum": [
               "Text",
               "Image",
-              "Audio"
+              "Audio",
+              "FieldConfigMap"
             ],
             "description": "The type of the value for AI to generate"
           },
-          "minResult": {
-            "type": "number",
-            "default": 1,
-            "description": "The minimum number of results for AI to generate. If the AI cannot generate enough results it can return less, but otherwise should match"
+          "prompt": {
+            "type": "string",
+            "desctiption": "The text of the field, that will be injected into the prompt of the card generator."
           },
-          "maxResult": {
-            "type": "number",
-            "default": 1,
-            "description": "The maximum number of results for AI to generate. AI should never generate more than this number of results."
-          },
-          "promptParameterDefinitions": {
-            "type": "array",
-            "description": "A list of all the parameter definitions that the FieldConfig uses.",
-            "items": {
+          "fieldConfigByName": {
+            "type": "object",
+            "additionalProperties": {
               "type": [
                 "object"
               ],
               "$schema": "http://json-schema.org/draft-07/schema",
-              "$id": "PromptParameterDefinition",
+              "$id": "FieldConfig",
               "additionalProperties": false,
-              "title": "PromptParameterDefinition",
-              "examples": [
-                {
-                  "name": "userLearningLanguages",
-                  "parameterDescription": "A list of the languages that the user is interested in learning"
-                },
-                {
-                  "name": "translationLanguage",
-                  "parameterDescription": "The language that the user wants to translate to"
-                }
-              ],
+              "title": "FieldConfig",
               "properties": {
+                "id": {
+                  "type": "string",
+                  "$schema": "http://json-schema.org/draft-07/schema",
+                  "$id": "DbId",
+                  "title": "DbId",
+                  "description": "SurrealDb Id string with a format \"Table:uuid\". Where `uuid` is UUID v7 string"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "description": "ISO 8601 date string"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "description": "ISO 8601 date string"
+                },
+                "deletedAt": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "ISO 8601 date string or null"
+                },
                 "name": {
                   "type": "string",
-                  "description": "The programmical name of the parameter to refer"
+                  "description": "The name of the field defined by user and displayed back to user"
                 },
-                "parameterDescription": {
+                "valueType": {
                   "type": "string",
-                  "description": "The description of purpose and structure of the parameter"
+                  "$schema": "http://json-schema.org/draft-07/schema",
+                  "$id": "FieldConfigValueType",
+                  "title": "FieldConfigValueType",
+                  "enum": [
+                    "Text",
+                    "Image",
+                    "Audio",
+                    "FieldConfigMap"
+                  ],
+                  "description": "The type of the value for AI to generate"
+                },
+                "prompt": {
+                  "type": "string",
+                  "desctiption": "The text of the field, that will be injected into the prompt of the card generator."
                 }
               },
               "required": [
+                "id",
+                "createdAt",
+                "updatedAt",
+                "deletedAt",
                 "name",
-                "parameterDescription"
+                "valueType",
+                "prompt"
               ]
+            },
+            "description": "A map of nested fieldConfigs with their names as keys. Empty for leaf fieldConfigs.",
+            "meta": {
+              "relation": "ManyToMany"
             }
-          },
-          "prompt": {
-            "type": "string",
-            "desctiption": "The user prompt for the AI, explaining what the AI should generate."
           }
         },
         "required": [
@@ -183,10 +208,8 @@
           "deletedAt",
           "name",
           "valueType",
-          "minResult",
-          "maxResult",
-          "promptParameterDefinitions",
-          "prompt"
+          "prompt",
+          "fieldConfigByName"
         ]
       },
       "description": "A map of fieldConfigs with their names as keys",

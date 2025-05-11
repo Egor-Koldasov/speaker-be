@@ -503,7 +503,7 @@ export interface CardConfig {
    */
   name: string;
   /**
-   * A list of all the parameter definitions that will be added to each FieldConfig.
+   * A list of all the parameter definitions that will be injected into the prompt of the card generator.
    */
   promptParameterDefinitions: PromptParameterDefinition[];
   prompt: string;
@@ -537,18 +537,6 @@ export interface FieldConfig {
    */
   name: string;
   valueType: FieldConfigValueType;
-  /**
-   * The minimum number of results for AI to generate. If the AI cannot generate enough results it can return less, but otherwise should match
-   */
-  minResult: number;
-  /**
-   * The maximum number of results for AI to generate. AI should never generate more than this number of results.
-   */
-  maxResult: number;
-  /**
-   * A list of all the parameter definitions that the FieldConfig uses.
-   */
-  promptParameterDefinitions: PromptParameterDefinition[];
   prompt: string;
 }
 /**
@@ -797,12 +785,42 @@ export interface LensCardConfig {
    */
   name: string;
   /**
-   * A list of all the parameter definitions that will be added to each FieldConfig.
+   * A list of all the parameter definitions that will be injected into the prompt of the card generator.
    */
   promptParameterDefinitions: PromptParameterDefinition[];
   prompt: string;
   /**
    * A map of fieldConfigs with their names as keys
+   */
+  fieldConfigByName: {
+    [k: string]: LensFieldConfig;
+  };
+}
+/**
+ * FieldConfig with its nested fieldConfigs loaded
+ */
+export interface LensFieldConfig {
+  id: DbId;
+  /**
+   * ISO 8601 date string
+   */
+  createdAt: string;
+  /**
+   * ISO 8601 date string
+   */
+  updatedAt: string;
+  /**
+   * ISO 8601 date string or null
+   */
+  deletedAt: string | null;
+  /**
+   * The name of the field defined by user and displayed back to user
+   */
+  name: string;
+  valueType: FieldConfigValueType;
+  prompt: string;
+  /**
+   * A map of nested fieldConfigs with their names as keys. Empty for leaf fieldConfigs.
    */
   fieldConfigByName: {
     [k: string]: FieldConfig;
@@ -866,7 +884,8 @@ export enum Name11 {
 export enum FieldConfigValueType {
   Text = "Text",
   Image = "Image",
-  Audio = "Audio"
+  Audio = "Audio",
+  FieldConfigMap = "FieldConfigMap"
 }
 /**
  * Type of message

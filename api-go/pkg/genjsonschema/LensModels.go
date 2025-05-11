@@ -11,6 +11,9 @@ type LensModels struct {
 
 	// LensCardValue corresponds to the JSON schema field "LensCardValue".
 	LensCardValue LensCardValue `json:"LensCardValue" yaml:"LensCardValue" mapstructure:"LensCardValue"`
+
+	// LensFieldConfig corresponds to the JSON schema field "LensFieldConfig".
+	LensFieldConfig LensFieldConfig `json:"LensFieldConfig" yaml:"LensFieldConfig" mapstructure:"LensFieldConfig"`
 }
 
 // UnmarshalJSON implements json.Unmarshaler.
@@ -24,6 +27,9 @@ func (j *LensModels) UnmarshalJSON(b []byte) error {
 	}
 	if _, ok := raw["LensCardValue"]; raw != nil && !ok {
 		return fmt.Errorf("field LensCardValue in LensModels: required")
+	}
+	if _, ok := raw["LensFieldConfig"]; raw != nil && !ok {
+		return fmt.Errorf("field LensFieldConfig in LensModels: required")
 	}
 	type Plain LensModels
 	var plain Plain

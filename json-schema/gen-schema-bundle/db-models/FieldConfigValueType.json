@@ -6,7 +6,8 @@
   "enum": [
     "Text",
     "Image",
-    "Audio"
+    "Audio",
+    "FieldConfigMap"
   ],
   "description": "The type of the value for AI to generate"
 }

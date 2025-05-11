@@ -15,22 +15,11 @@ type FieldConfig struct {
 	// Id corresponds to the JSON schema field "id".
 	Id DbId `json:"id" yaml:"id" mapstructure:"id"`
 
-	// The maximum number of results for AI to generate. AI should never generate more
-	// than this number of results.
-	MaxResult float64 `json:"maxResult" yaml:"maxResult" mapstructure:"maxResult"`
-
-	// The minimum number of results for AI to generate. If the AI cannot generate
-	// enough results it can return less, but otherwise should match
-	MinResult float64 `json:"minResult" yaml:"minResult" mapstructure:"minResult"`
-
 	// The name of the field defined by user and displayed back to user
 	Name string `json:"name" yaml:"name" mapstructure:"name"`
 
 	// Prompt corresponds to the JSON schema field "prompt".
 	Prompt string `json:"prompt" yaml:"prompt" mapstructure:"prompt"`
-
-	// A list of all the parameter definitions that the FieldConfig uses.
-	PromptParameterDefinitions []PromptParameterDefinition `json:"promptParameterDefinitions" yaml:"promptParameterDefinitions" mapstructure:"promptParameterDefinitions"`
 
 	// ISO 8601 date string
 	UpdatedAt string `json:"updatedAt" yaml:"updatedAt" mapstructure:"updatedAt"`
@@ -60,9 +49,6 @@ func (j *FieldConfig) UnmarshalJSON(b []byte) error {
 	if _, ok := raw["prompt"]; raw != nil && !ok {
 		return fmt.Errorf("field prompt in FieldConfig: required")
 	}
-	if _, ok := raw["promptParameterDefinitions"]; raw != nil && !ok {
-		return fmt.Errorf("field promptParameterDefinitions in FieldConfig: required")
-	}
 	if _, ok := raw["updatedAt"]; raw != nil && !ok {
 		return fmt.Errorf("field updatedAt in FieldConfig: required")
 	}
@@ -73,12 +59,6 @@ func (j *FieldConfig) UnmarshalJSON(b []byte) error {
 	var plain Plain
 	if err := json.Unmarshal(b, &plain); err != nil {
 		return err
-	}
-	if v, ok := raw["maxResult"]; !ok || v == nil {
-		plain.MaxResult = 1.0
-	}
-	if v, ok := raw["minResult"]; !ok || v == nil {
-		plain.MinResult = 1.0
 	}
 	*j = FieldConfig(plain)
 	return nil

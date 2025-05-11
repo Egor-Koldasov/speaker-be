@@ -9,6 +9,7 @@ import "reflect"
 type FieldConfigValueType string
 
 const FieldConfigValueTypeAudio FieldConfigValueType = "Audio"
+const FieldConfigValueTypeFieldConfigMap FieldConfigValueType = "FieldConfigMap"
 const FieldConfigValueTypeImage FieldConfigValueType = "Image"
 const FieldConfigValueTypeText FieldConfigValueType = "Text"
 
@@ -16,6 +17,7 @@ var enumValues_FieldConfigValueType = []interface{}{
 	"Text",
 	"Image",
 	"Audio",
+	"FieldConfigMap",
 }
 
 // UnmarshalJSON implements json.Unmarshaler.

@@ -4,6 +4,7 @@ export enum FieldConfigValueTypes {
   Text = "Text",
   Image = "Image",
   Audio = "Audio",
+  FieldConfigMap = "FieldConfigMap",
 }
 export default schema({
   title: "FieldConfigValueType",

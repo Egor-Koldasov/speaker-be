@@ -43,33 +43,32 @@ Rules:
 
 Follow these rules precisely to ensure that your final answer is strictly aligned with the specific field instructions and is suitable to be used directly as the card's documented value.
 Do not engage in chatting and do not explain your answer. Respond with a pure and isolated answer in a programmatic manner without any additional commentary.
-
 `)
-//line ../../pkg/tempfieldprompt/FieldPromptDeveloper.qtpl:25
+//line ../../pkg/tempfieldprompt/FieldPromptDeveloper.qtpl:24
 }
 
-//line ../../pkg/tempfieldprompt/FieldPromptDeveloper.qtpl:25
+//line ../../pkg/tempfieldprompt/FieldPromptDeveloper.qtpl:24
 func WriteFieldPromptDeveloper(qq422016 qtio422016.Writer) {
-//line ../../pkg/tempfieldprompt/FieldPromptDeveloper.qtpl:25
+//line ../../pkg/tempfieldprompt/FieldPromptDeveloper.qtpl:24
 	qw422016 := qt422016.AcquireWriter(qq422016)
-//line ../../pkg/tempfieldprompt/FieldPromptDeveloper.qtpl:25
+//line ../../pkg/tempfieldprompt/FieldPromptDeveloper.qtpl:24
 	StreamFieldPromptDeveloper(qw422016)
-//line ../../pkg/tempfieldprompt/FieldPromptDeveloper.qtpl:25
+//line ../../pkg/tempfieldprompt/FieldPromptDeveloper.qtpl:24
 	qt422016.ReleaseWriter(qw422016)
-//line ../../pkg/tempfieldprompt/FieldPromptDeveloper.qtpl:25
+//line ../../pkg/tempfieldprompt/FieldPromptDeveloper.qtpl:24
 }
 
-//line ../../pkg/tempfieldprompt/FieldPromptDeveloper.qtpl:25
+//line ../../pkg/tempfieldprompt/FieldPromptDeveloper.qtpl:24
 func FieldPromptDeveloper() string {
-//line ../../pkg/tempfieldprompt/FieldPromptDeveloper.qtpl:25
+//line ../../pkg/tempfieldprompt/FieldPromptDeveloper.qtpl:24
 	qb422016 := qt422016.AcquireByteBuffer()
-//line ../../pkg/tempfieldprompt/FieldPromptDeveloper.qtpl:25
+//line ../../pkg/tempfieldprompt/FieldPromptDeveloper.qtpl:24
 	WriteFieldPromptDeveloper(qb422016)
-//line ../../pkg/tempfieldprompt/FieldPromptDeveloper.qtpl:25
+//line ../../pkg/tempfieldprompt/FieldPromptDeveloper.qtpl:24
 	qs422016 := string(qb422016.B)
-//line ../../pkg/tempfieldprompt/FieldPromptDeveloper.qtpl:25
+//line ../../pkg/tempfieldprompt/FieldPromptDeveloper.qtpl:24
 	qt422016.ReleaseByteBuffer(qb422016)
-//line ../../pkg/tempfieldprompt/FieldPromptDeveloper.qtpl:25
+//line ../../pkg/tempfieldprompt/FieldPromptDeveloper.qtpl:24
 	return qs422016
-//line ../../pkg/tempfieldprompt/FieldPromptDeveloper.qtpl:25
+//line ../../pkg/tempfieldprompt/FieldPromptDeveloper.qtpl:24
 }
