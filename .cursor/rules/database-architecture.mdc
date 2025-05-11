@@ -5,51 +5,14 @@ alwaysApply: false
 ---
 # Database Architecture
 
-This project uses multiple databases for different purposes:
+## Current Database Status
 
-## PostgreSQL
+**ALL CURRENT DATABASE IMPLEMENTATIONS ARE DEPRECATED AND WILL BE REMOVED**
 
-- Primary relational database
-- Used for structured data and transactions
-- Accessed through:
-  - Go: `api-go/pkg/pgdb` package with pgx driver
-  - Migrations: `migrations.sql` and Goose (based on the `cmd/goose` directory)
+No data migration is planned as no critical data is currently stored in any database. The project will transition to using Apache Cassandra exclusively.
 
-## Neo4j (Graph Database)
+## Future Database: Apache Cassandra
 
-- Used for graph-based data relationships
-- Accessed through `api-go/pkg/neo4jdb` package
-- Queries defined in `api-go/pkg/neo4jqueries`
-- Configuration in `neo4j.conf`
-
-## SurrealDB
-
-- Used for specific use cases
-- Utility functions in `api-go/pkg/surrealdbutil`
-- Queries defined in `surrealdbqueries` directory
-
-## Database Access Patterns
-
-1. **Data Access Layer**
-   - Database interactions should be abstracted in dedicated packages
-   - Direct SQL queries should be kept in *db packages
-   - Business logic should use the DB interfaces, not raw queries
-
-2. **Migration Management**
-   - Schema changes are tracked in `migrations.sql`
-   - Use the Goose tool for running migrations (`cmd/goose`)
-
-3. **Data Validation**
-   - Use JSON Schema validation before inserting/updating data
-   - Generated Go structs provide type safety
-
-4. **Error Handling**
-   - Database errors should be properly wrapped and contextualized
-   - Avoid exposing raw DB errors to API clients
-   - Log DB errors appropriately
-
-When adding new database features:
-1. Create appropriate JSON schema models
-2. Update migrations if needed
-3. Implement data access in the appropriate DB package
-4. Write tests for new database operations
+- Will be the sole database system for the project
+- Distributed NoSQL database designed for high availability and scalability
+- Well-suited for time-series data and large-scale applications

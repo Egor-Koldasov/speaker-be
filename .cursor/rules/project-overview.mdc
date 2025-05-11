@@ -9,13 +9,15 @@ This project is a multi-component system with several interrelated applications:
 
 ## Project Context
 
-**Important Note**: This project has undergone significant experimentation, resulting in a substantial amount of deprecated code throughout the codebase. When working with the project:
+**Important Note**: This project has undergone significant experimentation, resulting in a substantial amount of deprecated code throughout the codebase. Additionally, **ALL CURRENT DATABASES ARE DEPRECATED**. The project is planning to transition to Apache Cassandra as the primary database.
 
+When working with the project:
 - Be cautious about using existing code without verifying its current status
 - Some directories may contain completely deprecated implementations
 - Older experimental approaches may conflict with current implementations
 - Always check recent commit history to identify active code paths
 - Ask for clarification when uncertain about code relevance
+- Do not extend current database implementations; prepare for Cassandra transition
 
 ## Main Components
 
@@ -34,10 +36,11 @@ This project is a multi-component system with several interrelated applications:
    - Provides type definitions shared between TypeScript and Go
    - Generates code for both frontend and backend
 
-5. **Database**
-   - PostgreSQL (referenced in dependencies)
-   - Neo4j (referenced in directory structure)
-   - SurrealDB (referenced in utility packages)
+4. **Database (ALL DEPRECATED)**
+   - PostgreSQL (deprecated) - Referenced in dependencies
+   - Neo4j (deprecated) - Referenced in directory structure
+   - SurrealDB (deprecated) - Referenced in utility packages
+   - Future database will be Apache Cassandra
 
 ## Key Entry Points
 
