@@ -17,7 +17,7 @@ func NewFieldGenPrompt(
 	// Build the user-facing prompt with updated ordering:
 	// Field parameter definitions come before the field prompt.
 	var userMsg bytes.Buffer
-	tempfieldprompt.WriteFieldPromptUser(&userMsg, tempfieldprompt.FieldPromptUserProps{
+	tempfieldprompt.WriteGenerateDictionaryEntry(&userMsg, tempfieldprompt.GenerateDictionaryEntryProps{
 		CardConfigJsonSchema:       cardConfigJsonSchema,
 		PromptParameterDefinitions: promptParameterDefinitions,
 		CardParamValues:            cardParamValues,

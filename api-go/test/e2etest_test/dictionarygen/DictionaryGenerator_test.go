@@ -4,11 +4,11 @@ import (
 	"api-go/pkg/config"
 	"api-go/pkg/fieldgenprompt"
 	"api-go/pkg/genjsonschema"
+	"api-go/pkg/jsonschemastring"
 	"api-go/pkg/resourcequeue"
 	"api-go/pkg/utilerror"
 	"api-go/pkg/utillog"
 	"context"
-	"encoding/json"
 	"fmt"
 	"os"
 	"sync"
@@ -40,89 +40,28 @@ Each meaning should contain the detailed definition of the term in the language,
 func init() {
 	os.Setenv("ENV_REL_PATH", "../../../")
 	config.Init()
+	jsonschemastring.Init()
 }
 
-var mockLensCardConfig1Word genjsonschema.LensCardConfig = genjsonschema.LensCardConfig{
-	Name:      "A dictionary definition for a term",
-	Prompt:    "A detailed representation of a term for the purpuse of learning the language.",
-	CreatedAt: "2023-07-15T14:30:45Z",
-	UpdatedAt: "2023-09-22T09:15:22Z",
-	Id:        "mockLensCardConfig1",
-	PromptParameterDefinitions: []genjsonschema.PromptParameterDefinition{
-		{
-			Name:                 "translatingTerm",
-			ParameterDescription: "A word or a phrase to translate and define",
-		},
-		// {
-		// 	Name:                 "termContext",
-		// 	ParameterDescription: "A context of `translatingTerm` from which it is taken. Can be a sentence or a long text",
-		// },
-		{
-			Name: "userLearningLanguages",
-			ParameterDescription: "A list of languages that the user is learning." +
-				" The format is `${language1Bcp47Code}:${language1Priority},${language2Bcp47Code}:${language2Priority}`," +
-				" where `languageBcp47Code` is a BCP 47 language code and `priority` is a natural number the higher the more important." +
-				" Priority can be both positive and negative and multiple languages can have the same priority.",
-		},
-		{
-			Name:                 "translationLanguage",
-			ParameterDescription: "A BCP 47 code of the target language to translate the term to.",
-		},
+var mockParameterDefinitions = []genjsonschema.PromptParameterDefinition{
+	{
+		Name:                 "translatingTerm",
+		ParameterDescription: "A word or a phrase to translate and define",
 	},
-	FieldConfigByName: genjsonschema.LensCardConfigFieldConfigByName{
-		"sourceLanguage": genjsonschema.LensFieldConfig{
-			Name:      "sourceLanguage",
-			ValueType: genjsonschema.FieldConfigValueTypeText,
-			Prompt: "The original language of the word in a BCP 47 format." +
-				" The value should be guessed based on the word itself and the `userLearningLanguages` parameter in case of ambiguity." +
-				" Multiple values are possible, in that case they should be ordered by priority based on the best fit and the `userLearningLanguages` parameter.",
-		},
-		"meanings": genjsonschema.LensFieldConfig{
-			Name:      "meanings",
-			ValueType: genjsonschema.FieldConfigValueTypeFieldConfigMap,
-			Prompt: "A list of all the different meanings of the term." +
-				" Each separate meaning can have a different pronunciation, grammatical form, part of speech, synonyms, and usage examples." +
-				" The order of the meanings should be from most to least common usage." +
-				" The logic of separation should be the closest to the most established dictionary logic." +
-				" Include all the meanings of the term known, including the folkloric ones." +
-				" The purpose is to generate a single source of truth for the term in the language." +
-				" Known issues to avoid: " +
-				" - Insufficient number of meanings despite the explicit request to include all known meanings.",
-			FieldConfigByName: genjsonschema.LensFieldConfigFieldConfigByName{
-				"neutralForm": genjsonschema.FieldConfig{
-					Name:      "neutralForm",
-					ValueType: genjsonschema.FieldConfigValueTypeText,
-					Prompt:    "The word in a neutral grammatic form of the original language.",
-				},
-				"definitionOriginal": genjsonschema.FieldConfig{
-					Name:      "definitionOriginal",
-					ValueType: genjsonschema.FieldConfigValueTypeText,
-					Prompt:    "A detailed definition of the word in the original language.",
-				},
-				"definitionTranslated": genjsonschema.FieldConfig{
-					Name:      "definitionTranslated",
-					ValueType: genjsonschema.FieldConfigValueTypeText,
-					Prompt:    "A detailed definition of the word in the target language.",
-				},
-				"translation": genjsonschema.FieldConfig{
-					Name:      "translation",
-					ValueType: genjsonschema.FieldConfigValueTypeText,
-					Prompt: "A translation of `translatingTerm` parameter to the language defined by a `translationLanguage` parameter." +
-						" Prefer specifying multiple words separated by comma, for a better understanding of a word from different angles.",
-				},
-				"pronounciation": genjsonschema.FieldConfig{
-					Name:      "pronounciation",
-					ValueType: genjsonschema.FieldConfigValueTypeText,
-					Prompt: "A comma separated list of the most common pronunciations of the original word given in IPA format." +
-						"The order should be from most to least common pronounciations.",
-				},
-				"synonyms": genjsonschema.FieldConfig{
-					Name:      "synonyms",
-					ValueType: genjsonschema.FieldConfigValueTypeText,
-					Prompt:    "Common synonyms in the original language.",
-				},
-			},
-		},
+	// {
+	// 	Name:                 "termContext",
+	// 	ParameterDescription: "A context of `translatingTerm` from which it is taken. Can be a sentence or a long text",
+	// },
+	{
+		Name: "userLearningLanguages",
+		ParameterDescription: "A list of languages that the user is learning." +
+			" The format is `${language1Bcp47Code}:${language1Priority},${language2Bcp47Code}:${language2Priority}`," +
+			" where `languageBcp47Code` is a BCP 47 language code and `priority` is a natural number the higher the more important." +
+			" Priority can be both positive and negative and multiple languages can have the same priority.",
+	},
+	{
+		Name:                 "translationLanguage",
+		ParameterDescription: "A BCP 47 code of the target language to translate the term to.",
 	},
 }
 
@@ -202,11 +141,9 @@ func processLLMJob(ctx context.Context, job *resourcequeue.Job, resultCh chan<- 
 }
 
 func TestDictionaryGenerator(t *testing.T) {
-	jsonSchema, err := fieldgenprompt.LensCardConfigToJsonSchema(mockLensCardConfig1Word)
-	utilerror.FatalError("Failed to convert LensCardConfig to JsonSchema", err)
-	jsonSchemaBytes, err := json.Marshal(jsonSchema)
-	utilerror.FatalError("Failed to marshal JsonSchema", err)
-	// spew.Dump(string(jsonSchemaBytes))
+	jsonSchemaString, err := jsonschemastring.GetJsonSchemaString(jsonschemastring.SchemaPath_AiJsonSchemas_AiDictionaryEntryConfig)
+	utilerror.FatalError("Failed to get JsonSchema", err)
+	// spew.Dump(jsonSchemaString)
 	// os.Exit(0)
 
 	// Initialize the resource queue with model-specific resource requirements
@@ -229,8 +166,8 @@ func TestDictionaryGenerator(t *testing.T) {
 	defer queue.Stop()
 
 	prompt := fieldgenprompt.NewFieldGenPrompt(
-		string(jsonSchemaBytes),
-		mockLensCardConfig1Word.PromptParameterDefinitions,
+		jsonSchemaString,
+		mockParameterDefinitions,
 		map[string]string{
 			"translatingTerm": "левый",
 			// "termContext":           "รัฐบาลควรส่งเสริมความยั่งยืนในด้านทรัพยากรธรรมชาติ",

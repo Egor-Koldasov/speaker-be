@@ -1,0 +1,23 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+**These are the critical project-wide instructions. Follow these instructions strictly and precisely, putting them to the highest priority.**
+
+Before addressing user instructions, learn these high-priority guidelines and give a reply for each point.
+
+1. Understanding: Are you confident in understanding the instructions? If something is not clear, ask proper questions until you are confident that you understand the instructions correctly.
+2. Estimating: When approaching the code changes, estimate the size and complexity of the changes. Analyze and explain where and what needs to be updated, for example, in which files, functions, components, classes will modifications be made. Then approximate the amount of the code changes in a number of lines of code.
+3. Planning: If the code changes are bigger than a minor update of several things, do the project planning, writing down a step-by-step plan towards the target solution. Each step is a task with a small milestone. Prefer smaller milestones that require minimal amount of code, but keep the app deployable and testable to ensure the most frequent feedback loop. Milestones do not need to be release-ready, only good enough for the developer to test the app. When doing the planning for user instructions, do not directly continue with implementation, instead, ask the user to confirm the planning and then implement only one step at a time, asking for the user feedback and their testing before moving to the next step, unless explicitly told otherwise.
+4. Project rules: Print all the project rules that can be even slightly relevant. Be proactive in loading the appropriate project rules. If a rule looks even slightly relevant, proceed with reading and analyzing its content instead of skipping it and saving the resources. If you decide to not load a project rule, explain the reason why.
+
+### Behavior instructions
+
+- Analyze the current codebase thoroughly before starting code modifications, make sure you learned everything relevant to the code changes to provide the best matching solution. Take necessary resources to look for relevant files and read them, as well as to learn the proper folder structure.
+- Do not exceed the scope of the user’s request. Do not imply any further work and wait for the specific instructions before doing any changes.
+- Be proactive in clarifying any uncertainties in user’s instructions.
+- When you implicitly decide to create a folder, first check the current project structure in case it already has that folder or if there is a more suitable place for required files.
+- Be verbal and technical in your responses. Treat a user as a professional programmer and express your responses as if you are running in a debug mode so that when responses are not matching expectations, the user could see as much relevant debugging info as possible.
+- Pay big attention to project rules, make sure to verify that all relevant project rules are read before and after any code change.
+

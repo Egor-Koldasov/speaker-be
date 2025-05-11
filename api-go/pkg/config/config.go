@@ -48,7 +48,7 @@ func Init() {
 	if Config.JsonSchemaPath == "" {
 		pwd, err := os.Getwd()
 		utilerror.FatalError("Error getting current working directory", err)
-		Config.JsonSchemaPath = filepath.Join(pwd, "../json-schema/gen-schema-bundle")
+		Config.JsonSchemaPath = filepath.Join(pwd, envRelPath+"../json-schema/gen-schema-bundle")
 	}
 	Config.AuthEmailFrom = utilenv.GetEnv("AUTH_EMAIL_FROM", "koldasov3@gmail.com")
 	Config.AuthSmtpHost = utilenv.GetEnv("AUTH_SMTP_HOST", "127.0.0.1")

@@ -21,21 +21,21 @@ var (
 )
 
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:3
-type FieldPromptUserProps struct {
+type GenerateDictionaryEntryProps struct {
 	CardConfigJsonSchema       string
 	PromptParameterDefinitions []genjsonschema.PromptParameterDefinition
 	CardParamValues            map[string]string
 }
 
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:10
-func StreamFieldPromptUser(qw422016 *qt422016.Writer, props FieldPromptUserProps) {
+func StreamGenerateDictionaryEntry(qw422016 *qt422016.Writer, props GenerateDictionaryEntryProps) {
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:10
 	qw422016.N().S(`
 You are a stateless software function named `)
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:10
 	qw422016.N().S("`")
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:10
-	qw422016.N().S(`GenerateJsonObject`)
+	qw422016.N().S(`GenerateDictionaryEntry`)
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:10
 	qw422016.N().S("`")
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:10
@@ -80,70 +80,86 @@ Your input parameters:
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:21
 	}
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:21
-	qw422016.N().S(`  {
-    "name": "targetJsonSchema",
-    "description": "The JSON schema of the object to be generated",
-    "value": `)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
-	qw422016.N().S(props.CardConfigJsonSchema)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
-	qw422016.N().S(`
-  }
-]
+	qw422016.N().S(`]
 `)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:21
 	qw422016.N().S("`")
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:21
 	qw422016.N().S(``)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:21
 	qw422016.N().S("`")
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:21
 	qw422016.N().S(``)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:21
 	qw422016.N().S("`")
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:21
 	qw422016.N().S(`
 
-The purpose of this function is to generate a JSON object that fits the JSON schema described by the `)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
+The purpose of this function is to generate a JSON object that fits the JSON schema of the dictionary enty described by the `)
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:21
 	qw422016.N().S("`")
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:21
 	qw422016.N().S(`targetJsonSchema`)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:21
 	qw422016.N().S("`")
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:21
 	qw422016.N().S(` parameter to the best of your ability.
+- The definition entry should strive for the best dictionary level of quality and accuracy.
+- The definition should include as many meanings as possible, including rare usages and folklore.
 
-Return **only** a single, JSON object that validates against the `)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
+Return **only** a single, JSON object matching this schema:
+`)
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:21
 	qw422016.N().S("`")
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
-	qw422016.N().S(`targetJsonSchema`)
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:21
+	qw422016.N().S(``)
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:21
 	qw422016.N().S("`")
-//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:25
-	qw422016.N().S(` parameter.
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:21
+	qw422016.N().S(``)
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:21
+	qw422016.N().S("`")
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:21
+	qw422016.N().S(`json
+`)
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:31
+	qw422016.N().S(props.CardConfigJsonSchema)
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:31
+	qw422016.N().S(`
+`)
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:31
+	qw422016.N().S("`")
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:31
+	qw422016.N().S(``)
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:31
+	qw422016.N().S("`")
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:31
+	qw422016.N().S(``)
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:31
+	qw422016.N().S("`")
+//line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:31
+	qw422016.N().S(`
 `)
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:33
 }
 
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:33
-func WriteFieldPromptUser(qq422016 qtio422016.Writer, props FieldPromptUserProps) {
+func WriteGenerateDictionaryEntry(qq422016 qtio422016.Writer, props GenerateDictionaryEntryProps) {
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:33
 	qw422016 := qt422016.AcquireWriter(qq422016)
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:33
-	StreamFieldPromptUser(qw422016, props)
+	StreamGenerateDictionaryEntry(qw422016, props)
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:33
 	qt422016.ReleaseWriter(qw422016)
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:33
 }
 
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:33
-func FieldPromptUser(props FieldPromptUserProps) string {
+func GenerateDictionaryEntry(props GenerateDictionaryEntryProps) string {
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:33
 	qb422016 := qt422016.AcquireByteBuffer()
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:33
-	WriteFieldPromptUser(qb422016, props)
+	WriteGenerateDictionaryEntry(qb422016, props)
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:33
 	qs422016 := string(qb422016.B)
 //line ../../pkg/tempfieldprompt/FieldPromptUser.qtpl:33

@@ -1,0 +1,21 @@
+---
+description: The description of a shared `json-schema` module that contains the declaration of types shared between TypeScript and Go
+globs: 
+alwaysApply: false
+---
+`json-schema` module is designed to contain the declaration of types that are shared across the project.
+
+## Main usecases
+- Generate TypeScript types from json-schema
+- Generate Go struct types from json-schema
+- Inject json-schemas into LLM prompts to define input parameters and expected output value
+
+## Folder structure
+- `json-schema/src/ts-schema` - The source folder for json-schema files. Schemas are defined in TypeScript for easier data manipulation.
+- `json-schema/gen-schema-json` - Auto-generated output. Contains json-schema files converted from the source TypeScript schema into JSON format. Local references between models are kept as links.
+- `json-schema/gen-schema-bundle` - Auto-generated output. Contains json-schema files converted from the source TypeScript schema into JSON format. All references are resolved and included in the files themselves. Each json-schema here contains the whole definition without any external references.
+- `json-schema/gen-schema-ts` - Auto-generated output. Contains TypeScript types generated based on the source json-schema using `json-schema-to-typescript` library. It generates types for objects that will validate against the source json-schema.
+- `api-go/pkg/genjsonschema` - Auto-generated output. Contains Go struct types generated from the source json-schema using a customized fork of a `go-jsonschema` library. It generates types for structs that will validate against the source json-schema.
+
+## Toolkit
+- use `schemaObject` function to declare parts of schemas that define an object data. That will make the code more concise.

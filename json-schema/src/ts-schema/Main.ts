@@ -150,6 +150,9 @@ export default schemaObject(
         Card: {
           $ref: "./model/Card.json",
         },
+        AiDictionaryEntryConfig: {
+          $ref: "./aiJsonSchemas/AiDictionaryEntryConfig.json",
+        },
         // CardType: {
         //   $ref: "./model/CardType.json",
         // },

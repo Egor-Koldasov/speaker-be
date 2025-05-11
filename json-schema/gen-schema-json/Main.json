@@ -120,6 +120,9 @@
         },
         "Card": {
           "$ref": "./model/Card.json"
+        },
+        "AiDictionaryEntryConfig": {
+          "$ref": "./aiJsonSchemas/AiDictionaryEntryConfig.json"
         }
       },
       "required": [
@@ -127,7 +130,8 @@
         "messages",
         "AuthSession",
         "AuthInfo",
-        "Card"
+        "Card",
+        "AiDictionaryEntryConfig"
       ]
     }
   },

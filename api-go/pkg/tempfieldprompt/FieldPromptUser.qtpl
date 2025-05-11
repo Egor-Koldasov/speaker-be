@@ -1,13 +1,13 @@
 {% import "api-go/pkg/genjsonschema" %}
 {% code
-type FieldPromptUserProps struct {
+type GenerateDictionaryEntryProps struct {
 	CardConfigJsonSchema string
 	PromptParameterDefinitions []genjsonschema.PromptParameterDefinition
 	CardParamValues map[string]string
 }
 %}
 
-{% func FieldPromptUser(props FieldPromptUserProps) %}
+{% func GenerateDictionaryEntry(props GenerateDictionaryEntryProps) %}
 You are a stateless software function named `GenerateDictionaryEntry`.
 Your input parameters:
 ```json
@@ -19,11 +19,6 @@ Your input parameters:
     "value": "{%s= props.CardParamValues[parameterDefinition.Name] %}"
   },
 {%- endfor -%}
-  {
-    "name": "targetJsonSchema",
-    "description": "The JSON schema of the object to be generated",
-    "value": {%s= props.CardConfigJsonSchema %}
-  }
 ]
 ```
 
@@ -31,5 +26,8 @@ The purpose of this function is to generate a JSON object that fits the JSON sch
 - The definition entry should strive for the best dictionary level of quality and accuracy.
 - The definition should include as many meanings as possible, including rare usages and folklore.
 
-Return **only** a single, JSON object that validates against the `targetJsonSchema` parameter.
+Return **only** a single, JSON object matching this schema:
+```json
+{%s= props.CardConfigJsonSchema %}
+```
 {% endfunc %}

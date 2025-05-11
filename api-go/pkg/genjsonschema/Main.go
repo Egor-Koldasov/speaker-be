@@ -405,6 +405,10 @@ func (j *MessageMap) UnmarshalJSON(b []byte) error {
 }
 
 type Models struct {
+	// AiDictionaryEntryConfig corresponds to the JSON schema field
+	// "AiDictionaryEntryConfig".
+	AiDictionaryEntryConfig AiDictionaryEntryConfig `json:"AiDictionaryEntryConfig" yaml:"AiDictionaryEntryConfig" mapstructure:"AiDictionaryEntryConfig"`
+
 	// AuthInfo corresponds to the JSON schema field "AuthInfo".
 	AuthInfo AuthInfo `json:"AuthInfo" yaml:"AuthInfo" mapstructure:"AuthInfo"`
 
@@ -426,6 +430,9 @@ func (j *Models) UnmarshalJSON(b []byte) error {
 	var raw map[string]interface{}
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
+	}
+	if _, ok := raw["AiDictionaryEntryConfig"]; raw != nil && !ok {
+		return fmt.Errorf("field AiDictionaryEntryConfig in Models: required")
 	}
 	if _, ok := raw["AuthInfo"]; raw != nil && !ok {
 		return fmt.Errorf("field AuthInfo in Models: required")
