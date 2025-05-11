@@ -29,7 +29,6 @@
     "openai": "^4.33.0",
     "openapi-backend": "^5.10.6",
     "pg": "^8.11.4",
-    "pino-loki": "^2.4.0",
     "uuidv7": "^0.6.3",
     "winston": "^3.17.0",
     "winston-transport-browserconsole": "^1.0.5"

@@ -34,10 +34,6 @@ This project is a multi-component system with several interrelated applications:
    - Provides type definitions shared between TypeScript and Go
    - Generates code for both frontend and backend
 
-4. **Mobile Applications**
-   - Flutter app in `maid/` directory
-   - React Native/Expo app in `vocabo-mobile/` directory
-
 5. **Database**
    - PostgreSQL (referenced in dependencies)
    - Neo4j (referenced in directory structure)
@@ -46,7 +42,6 @@ This project is a multi-component system with several interrelated applications:
 ## Key Entry Points
 
 - Vue frontend: [vue/src/main.ts](mdc:vue/src/main.ts)
-- Flutter app: [maid/lib/main.dart](mdc:maid/lib/main.dart)
 
 ## Development Workflow
 
