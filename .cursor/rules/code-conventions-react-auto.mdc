@@ -1,6 +1,0 @@
----
-description: 
-globs: *.tsx
-alwaysApply: false
----
-Make sure to read the content of `code-conventions-react` rule file.
