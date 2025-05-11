@@ -95,14 +95,38 @@ Your input parameters:
 //line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:21
 	qw422016.N().S(`
 
-The purpose of this function is to split text into individual words and convert them to their neutral grammatical forms:
-1. Identify all unique meaningful words in the text (excluding punctuation and functional words if appropriate)
-2. For each word, determine its base/neutral form:
-   - For verbs: infinitive form
-   - For nouns: singular form
-   - For adjectives: masculine singular form 
-   - For other word types: appropriate dictionary form
-3. Return a list of these terms in their neutral forms along with their language code
+The purpose of this function is to split text into individual words and convert them to their neutral grammatical forms while preserving their original form:
+
+1. Identify ALL words in the text, including:
+   - Particles, articles, and functional words
+   - Repeated instances of the same word
+   - EXCLUDE all punctuation marks and whitespace
+
+2. For each word:
+   - Store its exact original form as it appears in the text in the `)
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:21
+	qw422016.N().S("`")
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:21
+	qw422016.N().S(`contextForm`)
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:21
+	qw422016.N().S("`")
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:21
+	qw422016.N().S(` field
+   - Determine its base/neutral form for the `)
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:21
+	qw422016.N().S("`")
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:21
+	qw422016.N().S(`neutralForm`)
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:21
+	qw422016.N().S("`")
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:21
+	qw422016.N().S(` field:
+     - For verbs: infinitive form
+     - For nouns: singular form
+     - For adjectives: masculine singular form
+     - For other word types: appropriate dictionary form
+   
+3. IMPORTANT: The list must be ordered exactly as the terms appear in the original text
 
 Return **only** a single, JSON object matching this schema:
 `)
@@ -119,49 +143,49 @@ Return **only** a single, JSON object matching this schema:
 //line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:21
 	qw422016.N().S(`json
 `)
-//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:36
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:44
 	qw422016.N().S(props.TermNeutralJsonSchema)
-//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:36
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:44
 	qw422016.N().S(`
 `)
-//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:36
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:44
 	qw422016.N().S("`")
-//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:36
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:44
 	qw422016.N().S(``)
-//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:36
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:44
 	qw422016.N().S("`")
-//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:36
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:44
 	qw422016.N().S(``)
-//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:36
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:44
 	qw422016.N().S("`")
-//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:36
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:44
 	qw422016.N().S(`
 `)
-//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:38
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:46
 }
 
-//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:38
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:46
 func WriteWordSplitterPrompt(qq422016 qtio422016.Writer, props WordSplitterProps) {
-//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:38
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:46
 	qw422016 := qt422016.AcquireWriter(qq422016)
-//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:38
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:46
 	StreamWordSplitterPrompt(qw422016, props)
-//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:38
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:46
 	qt422016.ReleaseWriter(qw422016)
-//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:38
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:46
 }
 
-//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:38
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:46
 func WordSplitterPrompt(props WordSplitterProps) string {
-//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:38
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:46
 	qb422016 := qt422016.AcquireByteBuffer()
-//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:38
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:46
 	WriteWordSplitterPrompt(qb422016, props)
-//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:38
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:46
 	qs422016 := string(qb422016.B)
-//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:38
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:46
 	qt422016.ReleaseByteBuffer(qb422016)
-//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:38
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:46
 	return qs422016
-//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:38
+//line ../../pkg/tempfieldprompt/WordSplitterPrompt.qtpl:46
 }

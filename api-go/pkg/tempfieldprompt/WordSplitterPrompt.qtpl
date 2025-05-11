@@ -22,14 +22,22 @@ Your input parameters:
 ]
 ```
 
-The purpose of this function is to split text into individual words and convert them to their neutral grammatical forms:
-1. Identify all unique meaningful words in the text (excluding punctuation and functional words if appropriate)
-2. For each word, determine its base/neutral form:
-   - For verbs: infinitive form
-   - For nouns: singular form
-   - For adjectives: masculine singular form 
-   - For other word types: appropriate dictionary form
-3. Return a list of these terms in their neutral forms along with their language code
+The purpose of this function is to split text into individual words and convert them to their neutral grammatical forms while preserving their original form:
+
+1. Identify ALL words in the text, including:
+   - Particles, articles, and functional words
+   - Repeated instances of the same word
+   - EXCLUDE all punctuation marks and whitespace
+
+2. For each word:
+   - Store its exact original form as it appears in the text in the `contextForm` field
+   - Determine its base/neutral form for the `neutralForm` field:
+     - For verbs: infinitive form
+     - For nouns: singular form
+     - For adjectives: masculine singular form
+     - For other word types: appropriate dictionary form
+   
+3. IMPORTANT: The list must be ordered exactly as the terms appear in the original text
 
 Return **only** a single, JSON object matching this schema:
 ```json

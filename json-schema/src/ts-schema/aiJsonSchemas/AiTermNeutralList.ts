@@ -16,6 +16,11 @@ export default schemaObject(
           description:
             "The word in a neutral grammatical form of the original language (e.g., infinitive for verbs, singular for nouns)",
         },
+        contextForm: {
+          type: "string",
+          description:
+            "The exact form of the term as it appears in the original text",
+        },
       }),
     },
   },

@@ -153,7 +153,7 @@ func TestWordSplitter(t *testing.T) {
 		map[string]string{
 			"sourceText":     sampleRussianText,
 			"sourceLanguage": "ru",
-			"maxTerms":       "10",
+			"maxTerms":       "11",
 		},
 	)
 
