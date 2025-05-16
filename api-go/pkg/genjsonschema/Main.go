@@ -5,6 +5,42 @@ package genjsonschema
 import "encoding/json"
 import "fmt"
 
+type AiJsonSchemas struct {
+	// AiContextTerm corresponds to the JSON schema field "AiContextTerm".
+	AiContextTerm AiContextTerm `json:"AiContextTerm" yaml:"AiContextTerm" mapstructure:"AiContextTerm"`
+
+	// AiDictionaryEntryConfig corresponds to the JSON schema field
+	// "AiDictionaryEntryConfig".
+	AiDictionaryEntryConfig AiDictionaryEntryConfig `json:"AiDictionaryEntryConfig" yaml:"AiDictionaryEntryConfig" mapstructure:"AiDictionaryEntryConfig"`
+
+	// AiTermNeutralList corresponds to the JSON schema field "AiTermNeutralList".
+	AiTermNeutralList AiTermNeutralList `json:"AiTermNeutralList" yaml:"AiTermNeutralList" mapstructure:"AiTermNeutralList"`
+}
+
+// UnmarshalJSON implements json.Unmarshaler.
+func (j *AiJsonSchemas) UnmarshalJSON(b []byte) error {
+	var raw map[string]interface{}
+	if err := json.Unmarshal(b, &raw); err != nil {
+		return err
+	}
+	if _, ok := raw["AiContextTerm"]; raw != nil && !ok {
+		return fmt.Errorf("field AiContextTerm in AiJsonSchemas: required")
+	}
+	if _, ok := raw["AiDictionaryEntryConfig"]; raw != nil && !ok {
+		return fmt.Errorf("field AiDictionaryEntryConfig in AiJsonSchemas: required")
+	}
+	if _, ok := raw["AiTermNeutralList"]; raw != nil && !ok {
+		return fmt.Errorf("field AiTermNeutralList in AiJsonSchemas: required")
+	}
+	type Plain AiJsonSchemas
+	var plain Plain
+	if err := json.Unmarshal(b, &plain); err != nil {
+		return err
+	}
+	*j = AiJsonSchemas(plain)
+	return nil
+}
+
 type ChatGroupMap struct {
 	// DefineTerm corresponds to the JSON schema field "DefineTerm".
 	DefineTerm ChatGroupMapDefineTerm `json:"DefineTerm" yaml:"DefineTerm" mapstructure:"DefineTerm"`
@@ -405,10 +441,6 @@ func (j *MessageMap) UnmarshalJSON(b []byte) error {
 }
 
 type Models struct {
-	// AiDictionaryEntryConfig corresponds to the JSON schema field
-	// "AiDictionaryEntryConfig".
-	AiDictionaryEntryConfig AiDictionaryEntryConfig `json:"AiDictionaryEntryConfig" yaml:"AiDictionaryEntryConfig" mapstructure:"AiDictionaryEntryConfig"`
-
 	// AuthInfo corresponds to the JSON schema field "AuthInfo".
 	AuthInfo AuthInfo `json:"AuthInfo" yaml:"AuthInfo" mapstructure:"AuthInfo"`
 
@@ -430,9 +462,6 @@ func (j *Models) UnmarshalJSON(b []byte) error {
 	var raw map[string]interface{}
 	if err := json.Unmarshal(b, &raw); err != nil {
 		return err
-	}
-	if _, ok := raw["AiDictionaryEntryConfig"]; raw != nil && !ok {
-		return fmt.Errorf("field AiDictionaryEntryConfig in Models: required")
 	}
 	if _, ok := raw["AuthInfo"]; raw != nil && !ok {
 		return fmt.Errorf("field AuthInfo in Models: required")

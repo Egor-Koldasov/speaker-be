@@ -120,7 +120,6 @@ export interface Models {
   AuthSession: AuthSession;
   AuthInfo: AuthInfo;
   Card: Card;
-  AiDictionaryEntryConfig: AiDictionaryEntryConfig;
 }
 export interface MessageBase {
   input: {
@@ -424,48 +423,6 @@ export interface MessageGetCards {
 }
 export interface AuthSession {
   authToken: string;
-}
-/**
- * A detailed representation of a term for the purpuse of learning the language.
- */
-export interface AiDictionaryEntryConfig {
-  /**
-   * The original language of the word in a BCP 47 format. The value should be guessed based on the word itself and the `userLearningLanguages` parameter in case of ambiguity. Multiple values are possible, in that case they should be ordered by priority based on the best fit and the `userLearningLanguages` parameter.
-   */
-  sourceLanguage: string;
-  /**
-   * A list of all the different meanings of the term. Each separate meaning can have a different pronunciation, grammatical form, part of speech, synonyms, and usage examples. The order of the meanings should be from most to least common usage. The logic of separation should be the closest to the most established dictionary logic. Include all the meanings of the term known, including the folkloric ones. The purpose is to generate a single source of truth for the term in the language. Known issues to avoid:  - Insufficient number of meanings despite the explicit request to include all known meanings.
-   */
-  meanings: {
-    /**
-     * A unique identifier for the meaning. Should follow the format of `{neutralForm}-{index}`. The `index` should be a zero-based index of the meaning in the list of meanings.
-     */
-    id: string;
-    /**
-     * The word in a neutral grammatic form of the original language.
-     */
-    neutralForm: string;
-    /**
-     * A detailed definition of the word in the original language.
-     */
-    definitionOriginal: string;
-    /**
-     * A detailed definition of the word in the target language. It does not need to be a translation of the `definitionOriginal` field. It should be a detailed description of the meaning of the word in the target language. The focus should be on people who are learning `sourceLanguage` and want to understand the meaning of the word in `translationLanguage`.
-     */
-    definitionTranslated: string;
-    /**
-     * A translation of `translatingTerm` parameter to the language defined by a `translationLanguage` parameter. Prefer specifying multiple words separated by comma, for a better understanding of a word from different angles.
-     */
-    translation: string;
-    /**
-     * A comma separated list of the most common pronunciations of the original word given in IPA format.The order should be from most to least common pronounciations.
-     */
-    pronounciation: string;
-    /**
-     * Common synonyms in the original language.
-     */
-    synonyms: string;
-  }[];
 }
 export interface DbModels {
   ModelBase: DbModelBase;
