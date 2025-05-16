@@ -21,6 +21,16 @@ export default schemaObject(
           description:
             "The exact form of the term as it appears in the original text",
         },
+        contextNotesOriginal: {
+          type: "string",
+          description:
+            "Notes about the context of the term in the original language",
+        },
+        contextNotesTranslated: {
+          type: "string",
+          description:
+            "Notes about the context of the term in the target language",
+        },
       }),
     },
   },
