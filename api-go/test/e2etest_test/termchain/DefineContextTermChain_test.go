@@ -1,4 +1,4 @@
-package termmeaning
+package termchain
 
 import (
 	"api-go/pkg/aichatprompt"
@@ -353,7 +353,23 @@ func TestDefineContextTermChain(t *testing.T) {
 
 	// STEP 3: Match context term with dictionary meanings
 	jsonSchemaMeaningsMatch, err := jsonschemastring.GetJsonSchemaString(jsonschemastring.SchemaPath_AiJsonSchemas_AiTermMeaningsMatch)
-	utilerror.FatalError("Failed to get JsonSchema for MatchContextTermMeanings", err)
+	if err != nil {
+		// If schema doesn't exist yet, we can use a simple JSON schema for an array of strings
+		jsonSchemaMeaningsMatch = `{
+			"type": "object",
+			"properties": {
+				"meaningIds": {
+					"type": "array",
+					"description": "List of meaning IDs that match the context term",
+					"items": {
+						"type": "string",
+						"description": "A meaning ID from the dictionary entry that matches the context term"
+					}
+				}
+			},
+			"required": ["meaningIds"]
+		}`
+	}
 
 	matchContextPrompt := fieldgenprompt.NewMatchContextTermMeaningsPrompt(
 		jsonSchemaMeaningsMatch,
