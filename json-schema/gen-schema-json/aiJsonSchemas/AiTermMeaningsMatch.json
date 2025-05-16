@@ -1,0 +1,23 @@
+{
+  "type": [
+    "object"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "AiTermMeaningsMatch",
+  "additionalProperties": false,
+  "title": "AiTermMeaningsMatch",
+  "description": "The result of matching a context term to dictionary entry meanings",
+  "properties": {
+    "meaningIds": {
+      "type": "array",
+      "description": "List of meaning IDs that match the context term",
+      "items": {
+        "type": "string",
+        "description": "A meaning ID from the dictionary entry that matches the context term"
+      }
+    }
+  },
+  "required": [
+    "meaningIds"
+  ]
+}
