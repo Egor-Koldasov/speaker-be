@@ -169,14 +169,14 @@ func TestDictionaryGenerator(t *testing.T) {
 		jsonSchemaString,
 		mockParameterDefinitions,
 		map[string]string{
-			"translatingTerm": "левый",
+			"translatingTerm": "сырой",
 			// "termContext":           "รัฐบาลควรส่งเสริมความยั่งยืนในด้านทรัพยากรธรรมชาติ",
 			"userLearningLanguages": "en:1,ru:2",
 			"translationLanguage":   "en",
 		},
 	)
 
-	utillog.PrintfTiming("Prompt:\n%v\n\n", prompt)
+	utillog.PrintfTiming("Prompt:  \n%v\n\n", prompt)
 
 	// Create a context for the test
 	ctx := context.Background()
@@ -219,7 +219,7 @@ func TestDictionaryGenerator(t *testing.T) {
 		{LLM: llmOpenAi, ModelName: "OpenAI", Messages: messages, Ctx: ctx},
 		{LLM: llmClaude3_7, ModelName: "Claude 3.7 Sonnet", Messages: messages, Ctx: ctx},
 	}
-	loadLlama := true
+	loadLlama := false
 	if loadLlama {
 		llmJobs = append(llmJobs, &LLMJobData{LLM: llmLlama3_2, ModelName: "Llama3.2", Messages: messages, Ctx: ctx})
 		llmJobs = append(llmJobs, &LLMJobData{LLM: llmMistral, ModelName: "Mistral", Messages: messages, Ctx: ctx})

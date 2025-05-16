@@ -438,6 +438,10 @@ export interface AiDictionaryEntryConfig {
    */
   meanings: {
     /**
+     * A unique identifier for the meaning. Should follow the format of `{neutralForm}-{index}`. The `index` should be a zero-based index of the meaning in the list of meanings.
+     */
+    id: string;
+    /**
      * The word in a neutral grammatic form of the original language.
      */
     neutralForm: string;
@@ -446,7 +450,7 @@ export interface AiDictionaryEntryConfig {
      */
     definitionOriginal: string;
     /**
-     * A detailed definition of the word in the target language.
+     * A detailed definition of the word in the target language. It does not need to be a translation of the `definitionOriginal` field. It should be a detailed description of the meaning of the word in the target language. The focus should be on people who are learning `sourceLanguage` and want to understand the meaning of the word in `translationLanguage`.
      */
     definitionTranslated: string;
     /**

@@ -29,8 +29,17 @@ type AiDictionaryEntryConfigMeaningsElem struct {
 	// A detailed definition of the word in the original language.
 	DefinitionOriginal string `json:"definitionOriginal" yaml:"definitionOriginal" mapstructure:"definitionOriginal"`
 
-	// A detailed definition of the word in the target language.
+	// A detailed definition of the word in the target language. It does not need to
+	// be a translation of the `definitionOriginal` field. It should be a detailed
+	// description of the meaning of the word in the target language. The focus should
+	// be on people who are learning `sourceLanguage` and want to understand the
+	// meaning of the word in `translationLanguage`.
 	DefinitionTranslated string `json:"definitionTranslated" yaml:"definitionTranslated" mapstructure:"definitionTranslated"`
+
+	// A unique identifier for the meaning. Should follow the format of
+	// `{neutralForm}-{index}`. The `index` should be a zero-based index of the
+	// meaning in the list of meanings.
+	Id string `json:"id" yaml:"id" mapstructure:"id"`
 
 	// The word in a neutral grammatic form of the original language.
 	NeutralForm string `json:"neutralForm" yaml:"neutralForm" mapstructure:"neutralForm"`
@@ -60,6 +69,9 @@ func (j *AiDictionaryEntryConfigMeaningsElem) UnmarshalJSON(b []byte) error {
 	}
 	if _, ok := raw["definitionTranslated"]; raw != nil && !ok {
 		return fmt.Errorf("field definitionTranslated in AiDictionaryEntryConfigMeaningsElem: required")
+	}
+	if _, ok := raw["id"]; raw != nil && !ok {
+		return fmt.Errorf("field id in AiDictionaryEntryConfigMeaningsElem: required")
 	}
 	if _, ok := raw["neutralForm"]; raw != nil && !ok {
 		return fmt.Errorf("field neutralForm in AiDictionaryEntryConfigMeaningsElem: required")

@@ -12,6 +12,11 @@ export default schemaObject(
       description:
         "A list of all the different meanings of the term. Each separate meaning can have a different pronunciation, grammatical form, part of speech, synonyms, and usage examples. The order of the meanings should be from most to least common usage. The logic of separation should be the closest to the most established dictionary logic. Include all the meanings of the term known, including the folkloric ones. The purpose is to generate a single source of truth for the term in the language. Known issues to avoid:  - Insufficient number of meanings despite the explicit request to include all known meanings.",
       items: schemaObject({
+        id: {
+          type: "string",
+          description:
+            "A unique identifier for the meaning. Should follow the format of `{neutralForm}-{index}`. The `index` should be a zero-based index of the meaning in the list of meanings.",
+        },
         neutralForm: {
           type: "string",
           description:
@@ -25,7 +30,7 @@ export default schemaObject(
         definitionTranslated: {
           type: "string",
           description:
-            "A detailed definition of the word in the target language.",
+            "A detailed definition of the word in the target language. It does not need to be a translation of the `definitionOriginal` field. It should be a detailed description of the meaning of the word in the target language. The focus should be on people who are learning `sourceLanguage` and want to understand the meaning of the word in `translationLanguage`.",
         },
         translation: {
           type: "string",
