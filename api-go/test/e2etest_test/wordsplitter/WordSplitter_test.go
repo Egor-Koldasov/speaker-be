@@ -43,12 +43,11 @@ var mockParameterDefinitions = []genjsonschema.PromptParameterDefinition{
 		ParameterDescription: "Text containing words to be split and converted to neutral form",
 	},
 	{
-		Name:                 "sourceLanguage",
-		ParameterDescription: "The BCP 47 language code of the source text",
-	},
-	{
-		Name:                 "maxTerms",
-		ParameterDescription: "Maximum number of terms to extract (optional, defaults to all terms)",
+		Name: "userLearningLanguages",
+		ParameterDescription: "A list of languages that the user is learning." +
+			" The format is `${language1Bcp47Code}:${language1Priority},${language2Bcp47Code}:${language2Priority}`," +
+			" where `languageBcp47Code` is a BCP 47 language code and `priority` is a natural number the higher the more important." +
+			" Priority can be both positive and negative and multiple languages can have the same priority.",
 	},
 }
 

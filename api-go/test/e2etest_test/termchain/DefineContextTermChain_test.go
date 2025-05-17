@@ -82,12 +82,11 @@ var wordSplitterParameterDefinitions = []genjsonschema.PromptParameterDefinition
 		ParameterDescription: "Text containing words to be split and converted to neutral form",
 	},
 	{
-		Name:                 "sourceLanguage",
-		ParameterDescription: "The BCP 47 language code of the source text",
-	},
-	{
-		Name:                 "maxTerms",
-		ParameterDescription: "Maximum number of terms to extract (optional, defaults to all terms)",
+		Name: "userLearningLanguages",
+		ParameterDescription: "A list of languages that the user is learning." +
+			" The format is `${language1Bcp47Code}:${language1Priority},${language2Bcp47Code}:${language2Priority}`," +
+			" where `languageBcp47Code` is a BCP 47 language code and `priority` is a natural number the higher the more important." +
+			" Priority can be both positive and negative and multiple languages can have the same priority.",
 	},
 }
 
@@ -245,8 +244,8 @@ func TestDefineContextTermChain(t *testing.T) {
 	resourceConfig := resourcequeue.NewResourceConfig()
 
 	// Configure resource requirements for different models
-	resourceConfig.SetJobTypeUnits("OpenAI", 0)            // OpenAI has no local resource requirements
-	resourceConfig.SetJobTypeUnits("Claude 3.7 Sonnet", 0) // Claude has no local resource requirements
+	resourceConfig.SetJobTypeUnits("OpenAI", 0) // OpenAI has no local resource requirements
+	resourceConfig.SetJobTypeUnits("Claude", 0) // Claude has no local resource requirements
 
 	// Create the resource queue with 10 maximum units
 	queue := resourcequeue.NewResourceQueue(10, resourceConfig, processLLMJob)
@@ -254,14 +253,14 @@ func TestDefineContextTermChain(t *testing.T) {
 	defer queue.Stop()
 
 	// 1. Sample Russian sentence
-	sampleRussianText := "В этой комнате было как-то сыро."
+	sampleRussianText := "Они хотят что бы ты в квартире ждал как я понимаю."
 
 	// 2. Create a context for the test
 	ctx := context.Background()
 
 	// 3. Initialize LLMs
-	llmOpenAi, err := openai.New(openai.WithToken(config.Config.OpenaiApiKey), openai.WithModel("gpt-4o-mini"))
-	utilerror.FatalError("Failed to initialize OpenAI LLM", err)
+	// llmOpenAi, err := openai.New(openai.WithToken(config.Config.OpenaiApiKey), openai.WithModel("gpt-4o-mini"))
+	// utilerror.FatalError("Failed to initialize OpenAI LLM", err)
 
 	llmClaude3_7, err := anthropic.New(anthropic.WithToken(config.Config.ClaudeApiKey), anthropic.WithModel("claude-3-5-sonnet-20241022"))
 	utilerror.FatalError("Failed to initialize Claude 3.7 Sonnet LLM", err)
@@ -278,14 +277,13 @@ func TestDefineContextTermChain(t *testing.T) {
 		map[string]string{
 			"sourceText":     sampleRussianText,
 			"sourceLanguage": "ru",
-			"maxTerms":       "5",
 		},
 	)
 
 	utillog.PrintfTiming("WordSplitter Prompt:\n%v\n\n", wordSplitterPrompt)
 
 	// Submit WordSplitter job and wait for results
-	wordSplitterChan, err := submitLLMJob(t, queue, llmClaude3_7, "Claude 3.7 Sonnet", ctx, wordSplitterPrompt)
+	wordSplitterChan, err := submitLLMJob(t, queue, llmClaude3_7, "Claude", ctx, wordSplitterPrompt)
 	utilerror.FatalError("Failed to submit WordSplitter job", err)
 
 	wordSplitterResult, err := getResultFromChannel(wordSplitterChan)
@@ -329,7 +327,7 @@ func TestDefineContextTermChain(t *testing.T) {
 	utillog.PrintfTiming("DictionaryGenerator Prompt:\n%v\n\n", dictionaryPrompt)
 
 	// Submit DictionaryGenerator job and wait for results
-	dictionaryGenChan, err := submitLLMJob(t, queue, llmOpenAi, "OpenAI", ctx, dictionaryPrompt)
+	dictionaryGenChan, err := submitLLMJob(t, queue, llmClaude3_7, "Claude", ctx, dictionaryPrompt)
 	utilerror.FatalError("Failed to submit DictionaryGenerator job", err)
 
 	dictionaryGenResult, err := getResultFromChannel(dictionaryGenChan)
@@ -353,23 +351,7 @@ func TestDefineContextTermChain(t *testing.T) {
 
 	// STEP 3: Match context term with dictionary meanings
 	jsonSchemaMeaningsMatch, err := jsonschemastring.GetJsonSchemaString(jsonschemastring.SchemaPath_AiJsonSchemas_AiTermMeaningsMatch)
-	if err != nil {
-		// If schema doesn't exist yet, we can use a simple JSON schema for an array of strings
-		jsonSchemaMeaningsMatch = `{
-			"type": "object",
-			"properties": {
-				"meaningIds": {
-					"type": "array",
-					"description": "List of meaning IDs that match the context term",
-					"items": {
-						"type": "string",
-						"description": "A meaning ID from the dictionary entry that matches the context term"
-					}
-				}
-			},
-			"required": ["meaningIds"]
-		}`
-	}
+	utilerror.FatalError("Failed to get JsonSchema for MatchContextTermMeanings", err)
 
 	matchContextPrompt := fieldgenprompt.NewMatchContextTermMeaningsPrompt(
 		jsonSchemaMeaningsMatch,
@@ -384,7 +366,7 @@ func TestDefineContextTermChain(t *testing.T) {
 	utillog.PrintfTiming("MatchContextTermMeanings Prompt:\n%v\n\n", matchContextPrompt)
 
 	// Submit MatchContextTermMeanings job and wait for results
-	matchContextChan, err := submitLLMJob(t, queue, llmClaude3_7, "Claude 3.7 Sonnet", ctx, matchContextPrompt)
+	matchContextChan, err := submitLLMJob(t, queue, llmClaude3_7, "Claude", ctx, matchContextPrompt)
 	utilerror.FatalError("Failed to submit MatchContextTermMeanings job", err)
 
 	matchContextResult, err := getResultFromChannel(matchContextChan)
