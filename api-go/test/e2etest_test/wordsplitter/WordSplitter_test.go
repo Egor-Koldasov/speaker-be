@@ -1,16 +1,18 @@
 package wordsplitter
 
 import (
+	"api-go/pkg/aichatprompt"
 	"api-go/pkg/config"
-	"api-go/pkg/fieldgenprompt"
 	"api-go/pkg/genjsonschema"
 	"api-go/pkg/jsonschemastring"
 	"api-go/pkg/resourcequeue"
+	"api-go/pkg/templlmprompt"
 	"api-go/pkg/utilerror"
 	"api-go/pkg/utillog"
 	"context"
 	"fmt"
 	"os"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -145,16 +147,23 @@ func TestWordSplitter(t *testing.T) {
 	// Sample text in Russian to test the word splitter
 	sampleRussianText := "В этой комнате было как-то сыро."
 
-	// Create the prompt using our specialized word splitter prompt
-	prompt := fieldgenprompt.NewWordSplitterPrompt(
-		jsonSchemaString,
-		mockParameterDefinitions,
-		map[string]string{
+	// Create the prompt using templlmprompt.WordSplitter directly
+	promptString := templlmprompt.WordSplitter(templlmprompt.LlmFunctionBaseProps{
+		ReturnJsonSchema:     jsonSchemaString,
+		ParameterDefinitions: mockParameterDefinitions,
+		ParameterValues: map[string]string{
 			"sourceText":     sampleRussianText,
 			"sourceLanguage": "ru",
 			"maxTerms":       "11",
 		},
-	)
+	})
+
+	prompt := []aichatprompt.AiChatPrompt{
+		{
+			Role: aichatprompt.AiChatProptRoleUser,
+			Text: strings.TrimSpace(promptString),
+		},
+	}
 
 	utillog.PrintfTiming("Prompt:\n%v\n\n", prompt)
 

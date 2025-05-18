@@ -1,16 +1,18 @@
 package termmeaning
 
 import (
+	"api-go/pkg/aichatprompt"
 	"api-go/pkg/config"
-	"api-go/pkg/fieldgenprompt"
 	"api-go/pkg/genjsonschema"
 	"api-go/pkg/jsonschemastring"
 	"api-go/pkg/resourcequeue"
+	"api-go/pkg/templlmprompt"
 	"api-go/pkg/utilerror"
 	"api-go/pkg/utillog"
 	"context"
 	"fmt"
 	"os"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -214,16 +216,23 @@ func TestMatchContextTermMeanings(t *testing.T) {
 	// The context string
 	sampleContextString := "В этой комнате было как-то сыро."
 
-	// Create the prompt using our specialized match context term meanings prompt
-	prompt := fieldgenprompt.NewMatchContextTermMeaningsPrompt(
-		jsonSchemaString,
-		mockParameterDefinitions,
-		map[string]string{
+	// Update line calling MatchContextTermMeanings
+	promptString := templlmprompt.MatchContextTermMeanings(templlmprompt.LlmFunctionBaseProps{
+		ReturnJsonSchema:     jsonSchemaString,
+		ParameterDefinitions: mockParameterDefinitions,
+		ParameterValues: map[string]string{
 			"dictionaryEntry": sampleDictionaryEntry,
 			"contextTerm":     sampleContextTerm,
 			"contextString":   sampleContextString,
 		},
-	)
+	})
+
+	prompt := []aichatprompt.AiChatPrompt{
+		{
+			Role: aichatprompt.AiChatProptRoleUser,
+			Text: strings.TrimSpace(promptString),
+		},
+	}
 
 	utillog.PrintfTiming("Prompt:\n%v\n\n", prompt)
 

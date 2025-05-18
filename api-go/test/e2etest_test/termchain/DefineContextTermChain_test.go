@@ -3,7 +3,6 @@ package termchain
 import (
 	"api-go/pkg/aichatprompt"
 	"api-go/pkg/config"
-	"api-go/pkg/fieldgenprompt"
 	"api-go/pkg/genjsonschema"
 	"api-go/pkg/jsonschemastring"
 	"api-go/pkg/resourcequeue"
@@ -272,14 +271,22 @@ func TestDefineContextTermChain(t *testing.T) {
 	jsonSchemaTerms, err := jsonschemastring.GetJsonSchemaString(jsonschemastring.SchemaPath_AiJsonSchemas_AiTermNeutralList)
 	utilerror.FatalError("Failed to get JsonSchema for WordSplitter", err)
 
-	wordSplitterPrompt := fieldgenprompt.NewWordSplitterPrompt(
-		jsonSchemaTerms,
-		wordSplitterParameterDefinitions,
-		map[string]string{
+	// Use WordSplitter directly
+	wordSplitterPromptString := templlmprompt.WordSplitter(templlmprompt.LlmFunctionBaseProps{
+		ReturnJsonSchema:     jsonSchemaTerms,
+		ParameterDefinitions: wordSplitterParameterDefinitions,
+		ParameterValues: map[string]string{
 			"sourceText":     sampleRussianText,
 			"sourceLanguage": "ru",
 		},
-	)
+	})
+
+	wordSplitterPrompt := []aichatprompt.AiChatPrompt{
+		{
+			Role: aichatprompt.AiChatProptRoleUser,
+			Text: wordSplitterPromptString,
+		},
+	}
 
 	utillog.PrintfTiming("WordSplitter Prompt:\n%v\n\n", wordSplitterPrompt)
 
@@ -361,15 +368,23 @@ func TestDefineContextTermChain(t *testing.T) {
 	jsonSchemaMeaningsMatch, err := jsonschemastring.GetJsonSchemaString(jsonschemastring.SchemaPath_AiJsonSchemas_AiTermMeaningsMatch)
 	utilerror.FatalError("Failed to get JsonSchema for MatchContextTermMeanings", err)
 
-	matchContextPrompt := fieldgenprompt.NewMatchContextTermMeaningsPrompt(
-		jsonSchemaMeaningsMatch,
-		matchContextTermMeaningsParameterDefinitions,
-		map[string]string{
+	// Use MatchContextTermMeanings directly
+	matchContextPromptString := templlmprompt.MatchContextTermMeanings(templlmprompt.LlmFunctionBaseProps{
+		ReturnJsonSchema:     jsonSchemaMeaningsMatch,
+		ParameterDefinitions: matchContextTermMeaningsParameterDefinitions,
+		ParameterValues: map[string]string{
 			"dictionaryEntry": string(dictionaryEntryJSON),
 			"contextTerm":     string(lastTermJSON),
 			"contextString":   sampleRussianText,
 		},
-	)
+	})
+
+	matchContextPrompt := []aichatprompt.AiChatPrompt{
+		{
+			Role: aichatprompt.AiChatProptRoleUser,
+			Text: matchContextPromptString,
+		},
+	}
 
 	utillog.PrintfTiming("MatchContextTermMeanings Prompt:\n%v\n\n", matchContextPrompt)
 

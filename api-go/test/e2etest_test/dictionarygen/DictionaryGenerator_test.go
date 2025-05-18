@@ -1,11 +1,12 @@
 package dictionarygen
 
 import (
+	"api-go/pkg/aichatprompt"
 	"api-go/pkg/config"
-	"api-go/pkg/fieldgenprompt"
 	"api-go/pkg/genjsonschema"
 	"api-go/pkg/jsonschemastring"
 	"api-go/pkg/resourcequeue"
+	"api-go/pkg/templlmprompt"
 	"api-go/pkg/utilerror"
 	"api-go/pkg/utillog"
 	"context"
@@ -165,16 +166,22 @@ func TestDictionaryGenerator(t *testing.T) {
 	queue.Start()
 	defer queue.Stop()
 
-	prompt := fieldgenprompt.NewFieldGenPrompt(
-		jsonSchemaString,
-		mockParameterDefinitions,
-		map[string]string{
+	// Update to use direct GenerateDictionaryEntry function
+	promptString := templlmprompt.GenerateDictionaryEntry(templlmprompt.LlmFunctionBaseProps{
+		ReturnJsonSchema:     jsonSchemaString,
+		ParameterDefinitions: mockParameterDefinitions,
+		ParameterValues: map[string]string{
 			"translatingTerm": "сырой",
 			// "termContext":           "รัฐบาลควรส่งเสริมความยั่งยืนในด้านทรัพยากรธรรมชาติ",
 			"userLearningLanguages": "en:1,ru:2",
 			"translationLanguage":   "en",
 		},
-	)
+	})
+
+	prompt := []aichatprompt.AiChatPrompt{{
+		Role: aichatprompt.AiChatProptRoleUser,
+		Text: promptString,
+	}}
 
 	utillog.PrintfTiming("Prompt:  \n%v\n\n", prompt)
 

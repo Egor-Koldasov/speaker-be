@@ -1,16 +1,14 @@
-{% func MatchContextTermMeaningsPrompt(props LlmFunctionBaseProps) %}
+{% func MatchContextTermMeanings(props LlmFunctionBaseProps) %}
 You are a stateless software function named `MatchContextTermMeanings`.
 Your input parameters:
 ```json
 [
-{%- for _, parameterDefinition := range props.ParameterDefinitions -%}
-  {
+{% for _, parameterDefinition := range props.ParameterDefinitions %}  {
     "name": "{%s= parameterDefinition.Name %}",
     "description": "{%s= parameterDefinition.ParameterDescription %}",
     "value": "{%s= props.ParameterValues[parameterDefinition.Name] %}"
   },
-{%- endfor -%}
-]
+{% endfor %}]
 ```
 
 The purpose of this function is to determine which meaning(s) of a dictionary entry best match a given context term.
