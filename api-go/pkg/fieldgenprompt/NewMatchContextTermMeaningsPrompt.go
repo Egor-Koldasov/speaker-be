@@ -17,10 +17,10 @@ func NewMatchContextTermMeaningsPrompt(
 ) []aichatprompt.AiChatPrompt {
 
 	var userMsg bytes.Buffer
-	templlmprompt.WriteMatchContextTermMeaningsPrompt(&userMsg, templlmprompt.MatchContextTermMeaningsProps{
-		TermMeaningsMatchJsonSchema: termMeaningsMatchJsonSchema,
-		PromptParameterDefinitions:  promptParameterDefinitions,
-		ParamValues:                 paramValues,
+	templlmprompt.WriteMatchContextTermMeaningsPrompt(&userMsg, templlmprompt.LlmFunctionBaseProps{
+		ReturnJsonSchema:     termMeaningsMatchJsonSchema,
+		ParameterDefinitions: promptParameterDefinitions,
+		ParameterValues:      paramValues,
 	})
 
 	userPrompt := aichatprompt.AiChatPrompt{

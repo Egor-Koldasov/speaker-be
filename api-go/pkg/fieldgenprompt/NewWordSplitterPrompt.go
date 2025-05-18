@@ -16,10 +16,10 @@ func NewWordSplitterPrompt(
 ) []aichatprompt.AiChatPrompt {
 
 	var userMsg bytes.Buffer
-	templlmprompt.WriteWordSplitterPrompt(&userMsg, templlmprompt.WordSplitterProps{
-		TermNeutralJsonSchema:      termNeutralJsonSchema,
-		PromptParameterDefinitions: promptParameterDefinitions,
-		ParamValues:                paramValues,
+	templlmprompt.WriteWordSplitterPrompt(&userMsg, templlmprompt.LlmFunctionBaseProps{
+		ReturnJsonSchema:     termNeutralJsonSchema,
+		ParameterDefinitions: promptParameterDefinitions,
+		ParameterValues:      paramValues,
 	})
 
 	userPrompt := aichatprompt.AiChatPrompt{

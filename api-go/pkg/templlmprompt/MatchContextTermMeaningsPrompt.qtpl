@@ -1,22 +1,13 @@
-{% import "api-go/pkg/genjsonschema" %}
-{% code
-type MatchContextTermMeaningsProps struct {
-	TermMeaningsMatchJsonSchema string
-	PromptParameterDefinitions []genjsonschema.PromptParameterDefinition
-	ParamValues map[string]string
-}
-%}
-
-{% func MatchContextTermMeaningsPrompt(props MatchContextTermMeaningsProps) %}
+{% func MatchContextTermMeaningsPrompt(props LlmFunctionBaseProps) %}
 You are a stateless software function named `MatchContextTermMeanings`.
 Your input parameters:
 ```json
 [
-{%- for _, parameterDefinition := range props.PromptParameterDefinitions -%}
+{%- for _, parameterDefinition := range props.ParameterDefinitions -%}
   {
     "name": "{%s= parameterDefinition.Name %}",
     "description": "{%s= parameterDefinition.ParameterDescription %}",
-    "value": "{%s= props.ParamValues[parameterDefinition.Name] %}"
+    "value": "{%s= props.ParameterValues[parameterDefinition.Name] %}"
   },
 {%- endfor -%}
 ]
@@ -39,6 +30,6 @@ When determining the appropriate meaning(s):
 Return **only** a JSON array of meaning ID strings that match the context. Example: ["term-0", "term-3"]
 
 ```json
-{%s= props.TermMeaningsMatchJsonSchema %}
+{%s= props.ReturnJsonSchema %}
 ```
 {% endfunc %} 

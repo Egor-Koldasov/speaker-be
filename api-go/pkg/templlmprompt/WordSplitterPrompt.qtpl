@@ -1,22 +1,13 @@
-{% import "api-go/pkg/genjsonschema" %}
-{% code
-type WordSplitterProps struct {
-	TermNeutralJsonSchema string
-	PromptParameterDefinitions []genjsonschema.PromptParameterDefinition
-	ParamValues map[string]string
-}
-%}
-
-{% func WordSplitterPrompt(props WordSplitterProps) %}
+{% func WordSplitterPrompt(props LlmFunctionBaseProps) %}
 You are a stateless software function named `WordSplitter`.
 Your input parameters:
 ```json
 [
-{%- for _, parameterDefinition := range props.PromptParameterDefinitions -%}
+{%- for _, parameterDefinition := range props.ParameterDefinitions -%}
   {
     "name": "{%s= parameterDefinition.Name %}",
     "description": "{%s= parameterDefinition.ParameterDescription %}",
-    "value": "{%s= props.ParamValues[parameterDefinition.Name] %}"
+    "value": "{%s= props.ParameterValues[parameterDefinition.Name] %}"
   },
 {%- endfor -%}
 ]
@@ -41,6 +32,6 @@ The purpose of this function is to split text into individual words and convert 
 
 Return **only** a single, JSON object matching this schema:
 ```json
-{%s= props.TermNeutralJsonSchema %}
+{%s= props.ReturnJsonSchema %}
 ```
 {% endfunc %} 

@@ -4,34 +4,36 @@ globs:
 alwaysApply: false
 ---
 The project has a go package "quicktemplate" used for building AI prompts.
+You can build scripts by running `api-go/scripts/build-qtc-templates.sh`
+
 Below will be the copy-pasted README file content of "quicktemplate" package, that explains the template syntax of ".qtpl" files.
 
 
-[![Build Status](https://travis-ci.org/valyala/quicktemplate.svg)](https://travis-ci.org/valyala/quicktemplate)
-[![GoDoc](https://godoc.org/github.com/valyala/quicktemplate?status.svg)](http://godoc.org/github.com/valyala/quicktemplate)
-[![Go Report Card](https://goreportcard.com/badge/github.com/valyala/quicktemplate)](https://goreportcard.com/report/github.com/valyala/quicktemplate)
+[![Build Status](mdc:https:/travis-ci.org/valyala/quicktemplate.svg)](https://travis-ci.org/valyala/quicktemplate)
+[![GoDoc](mdc:https:/godoc.org/github.com/valyala/quicktemplate?status.svg)](http://godoc.org/github.com/valyala/quicktemplate)
+[![Go Report Card](mdc:https:/goreportcard.com/badge/github.com/valyala/quicktemplate)](https://goreportcard.com/report/github.com/valyala/quicktemplate)
 
 # quicktemplate
 
 A fast, powerful, yet easy to use template engine for Go.
-Inspired by the [Mako templates](http://www.makotemplates.org/) philosophy.
+Inspired by the [Mako templates](mdc:http:/www.makotemplates.org) philosophy.
 
 # Features
 
-  * [Extremely fast](#performance-comparison-with-htmltemplate).
+  * [Extremely fast](mdc:#performance-comparison-with-htmltemplate).
     Templates are converted into Go code and then compiled.
   * Quicktemplate syntax is very close to Go - there is no need to learn
     yet another template language before starting to use quicktemplate.
   * Almost all bugs are caught during template compilation, so production
     suffers less from template-related bugs.
-  * Easy to use. See [quickstart](#quick-start) and [examples](https://github.com/valyala/quicktemplate/tree/master/examples)
+  * Easy to use. See [quickstart](mdc:#quick-start) and [examples](mdc:https:/github.com/valyala/quicktemplate/tree/master/examples)
     for details.
   * Powerful. Arbitrary Go code may be embedded into and mixed with templates.
     Be careful with this power - do not query the database and/or external resources from
     templates unless you miss the PHP way in Go :) This power is mostly for
     arbitrary data transformations.
-  * Easy to use template inheritance powered by [Go interfaces](https://golang.org/doc/effective_go.html#interfaces).
-    See [this example](https://github.com/valyala/quicktemplate/tree/master/examples/basicserver) for details.
+  * Easy to use template inheritance powered by [Go interfaces](mdc:https:/golang.org/doc/effective_go.html#interfaces).
+    See [this example](mdc:https:/github.com/valyala/quicktemplate/tree/master/examples/basicserver) for details.
   * Templates are compiled into a single binary, so there is no need to copy
     template files to the server.
 
@@ -39,17 +41,17 @@ Inspired by the [Mako templates](http://www.makotemplates.org/) philosophy.
 
   * Templates cannot be updated on the fly on the server, since they
     are compiled into a single binary.
-    Take a look at [fasttemplate](https://github.com/valyala/fasttemplate)
+    Take a look at [fasttemplate](mdc:https:/github.com/valyala/fasttemplate)
     if you need a fast template engine for simple dynamically updated templates.
-    [There are ways](https://www.reddit.com/r/golang/comments/f290ja/hot_reloading_with_quicktemplates_sqlc_and/) to dynamically update the templates during development.
+    [There are ways](mdc:https:/www.reddit.com/r/golang/comments/f290ja/hot_reloading_with_quicktemplates_sqlc_and) to dynamically update the templates during development.
 
 # Performance comparison with html/template
 
-Quicktemplate is more than 20x faster than [html/template](https://golang.org/pkg/html/template/).
+Quicktemplate is more than 20x faster than [html/template](mdc:https:/golang.org/pkg/html/template).
 The following simple template is used in the benchmark:
 
-  * [html/template version](https://github.com/valyala/quicktemplate/blob/master/testdata/templates/bench.tpl)
-  * [quicktemplate version](https://github.com/valyala/quicktemplate/blob/master/testdata/templates/bench.qtpl)
+  * [html/template version](mdc:https:/github.com/valyala/quicktemplate/blob/master/testdata/templates/bench.tpl)
+  * [quicktemplate version](mdc:https:/github.com/valyala/quicktemplate/blob/master/testdata/templates/bench.qtpl)
 
 Benchmark results:
 
@@ -63,7 +65,7 @@ BenchmarkHTMLTemplate10-4                 	  100000	     12442 ns/op	    3521 B/
 BenchmarkHTMLTemplate100-4                	   10000	    123392 ns/op	   34498 B/op	    1152 allocs/op
 ```
 
-[goTemplateBenchmark](https://github.com/SlinSo/goTemplateBenchmark) compares QuickTemplate with numerous Go templating packages. QuickTemplate performs favorably.
+[goTemplateBenchmark](mdc:https:/github.com/SlinSo/goTemplateBenchmark) compares QuickTemplate with numerous Go templating packages. QuickTemplate performs favorably.
 
 # Security
 
@@ -81,12 +83,12 @@ BenchmarkHTMLTemplate100-4                	   10000	    123392 ns/op	   34498 B/
 
 # Examples
 
-See [examples](https://github.com/valyala/quicktemplate/tree/master/examples).
+See [examples](mdc:https:/github.com/valyala/quicktemplate/tree/master/examples).
 
 # Quick start
 
 First of all, install the `quicktemplate` package
-and [quicktemplate compiler](https://github.com/valyala/quicktemplate/tree/master/qtc) (`qtc`):
+and [quicktemplate compiler](mdc:https:/github.com/valyala/quicktemplate/tree/master/qtc) (`qtc`):
 
 ```
 go get -u github.com/valyala/quicktemplate
@@ -235,9 +237,9 @@ other output tags:
   * `{%q str %}` and `{%qz bytes %}` for JSON-compatible quoted strings.
   * `{%j str %}` and `{%jz bytes %}` for embedding str into a JSON string. Unlike `{%q str %}`,
     it doesn't quote the string.
-  * `{%u str %}` and `{%uz bytes %}` for [URL encoding](https://en.wikipedia.org/wiki/Percent-encoding)
+  * `{%u str %}` and `{%uz bytes %}` for [URL encoding](mdc:https:/en.wikipedia.org/wiki/Percent-encoding)
     the given str.
-  * `{%v anything %}` is equivalent to `%v` in [printf-like functions](https://golang.org/pkg/fmt/).
+  * `{%v anything %}` is equivalent to `%v` in [printf-like functions](mdc:https:/golang.org/pkg/fmt).
 
 All the output tags except `{%= F() %}` produce HTML-safe output, i.e. they
 escape `<` to `&lt;`, `>` to `&gt;`, etc. If you don't want HTML-safe output,
@@ -250,7 +252,7 @@ It is therefore recommended to stick to it when embedding template function call
 Additionally, the following extensions are supported for `{%= F() %}`:
 
   * `{%=h F() %}` produces html-escaped output.
-  * `{%=u F() %}` produces [URL-encoded](https://en.wikipedia.org/wiki/Percent-encoding) output.
+  * `{%=u F() %}` produces [URL-encoded](mdc:https:/en.wikipedia.org/wiki/Percent-encoding) output.
   * `{%=q F() %}` produces quoted json string.
   * `{%=j F() %}` produces json string without quotes.
   * `{%=uh F() %}` produces html-safe URL-encoded output.
@@ -462,7 +464,7 @@ There are other useful tags supported by quicktemplate:
     {% endfunc %}
     ```
 
-    See [basicserver example](https://github.com/valyala/quicktemplate/tree/master/examples/basicserver)
+    See [basicserver example](mdc:https:/github.com/valyala/quicktemplate/tree/master/examples/basicserver)
     for more details.
 
 # Performance optimization tips
@@ -518,15 +520,15 @@ There are other useful tags supported by quicktemplate:
     ```
 
   * Make sure that the `io.Writer` passed to `Write*` functions
-    is [buffered](https://golang.org/pkg/bufio/#Writer).
+    is [buffered](mdc:https:/golang.org/pkg/bufio/#Writer).
     This will minimize the number of `write`
-    [syscalls](https://en.wikipedia.org/wiki/System_call),
+    [syscalls](mdc:https:/en.wikipedia.org/wiki/System_call),
     which may be quite expensive.
 
-    Note: There is no need to wrap [fasthttp.RequestCtx](https://godoc.org/github.com/valyala/fasthttp#RequestCtx)
-    into [bufio.Writer](https://golang.org/pkg/bufio/#Writer), since it is already buffered.
+    Note: There is no need to wrap [fasthttp.RequestCtx](mdc:https:/godoc.org/github.com/valyala/fasthttp#RequestCtx)
+    into [bufio.Writer](mdc:https:/golang.org/pkg/bufio/#Writer), since it is already buffered.
 
-  * [Profile](http://blog.golang.org/profiling-go-programs) your programs
+  * [Profile](mdc:http:/blog.golang.org/profiling-go-programs) your programs
     for memory allocations and fix the most demanding functions based on
     the output of `go tool pprof --alloc_objects`.
 
@@ -589,8 +591,8 @@ type MarshalData struct {
 ```
 
 Usually, marshalling built with quicktemplate works faster than the marshalling
-implemented via standard [encoding/json](https://golang.org/pkg/encoding/json/)
-and [encoding/xml](https://golang.org/pkg/encoding/xml/).
+implemented via standard [encoding/json](mdc:https:/golang.org/pkg/encoding/json)
+and [encoding/xml](mdc:https:/golang.org/pkg/encoding/xml).
 See the corresponding benchmark results:
 
 ```
@@ -615,11 +617,11 @@ BenchmarkMarshalXMLQuickTemplate1000-4    	   30000	     53000 ns/op	      32 B/
 
 # FAQ
 
-  * *Why is the quicktemplate syntax incompatible with [html/template](https://golang.org/pkg/html/template/)?*
+  * *Why is the quicktemplate syntax incompatible with [html/template](mdc:https:/golang.org/pkg/html/template)?*
 
     Because `html/template` syntax isn't expressive enough for `quicktemplate`.
 
-  * *What's the difference between quicktemplate and [ego](https://github.com/benbjohnson/ego)?*
+  * *What's the difference between quicktemplate and [ego](mdc:https:/github.com/benbjohnson/ego)?*
 
     `Ego` is similar to `quicktemplate` in the sense it converts templates into Go code.
     But it misses the following stuff, which makes `quicktemplate` so powerful
@@ -628,14 +630,14 @@ BenchmarkMarshalXMLQuickTemplate1000-4    	   30000	     53000 ns/op	      32 B/
       * Defining multiple function templates in a single template file.
       * Embedding function templates inside other function templates.
       * Template interfaces, inheritance and overriding.
-        See [this example](https://github.com/valyala/quicktemplate/tree/master/examples/basicserver)
+        See [this example](mdc:https:/github.com/valyala/quicktemplate/tree/master/examples/basicserver)
         for details.
       * Top-level comments outside function templates.
       * Template packages.
       * Combining arbitrary Go files with template files in template packages.
       * Performance optimizations.
 
-  * *What's the difference between quicktemplate and [gorazor](https://github.com/sipin/gorazor)?*
+  * *What's the difference between quicktemplate and [gorazor](mdc:https:/github.com/sipin/gorazor)?*
 
     `Gorazor` is similar to `quicktemplate` in the sense it converts templates into Go code.
     But it misses the following useful features:
@@ -646,13 +648,13 @@ BenchmarkMarshalXMLQuickTemplate1000-4    	   30000	     53000 ns/op	      32 B/
 
 * *Is there a syntax highlighting for qtpl files?*
 
-  Yes - see [this issue](https://github.com/valyala/quicktemplate/issues/19) for details.
+  Yes - see [this issue](mdc:https:/github.com/valyala/quicktemplate/issues/19) for details.
   If you are using JetBrains products (syntax highlighting and autocomplete):
-    * cd [JetBrains settings directory](https://intellij-support.jetbrains.com/hc/en-us/articles/206544519-Directories-used-by-the-IDE-to-store-settings-caches-plugins-and-logs)
+    * cd [JetBrains settings directory](mdc:https:/intellij-support.jetbrains.com/hc/en-us/articles/206544519-Directories-used-by-the-IDE-to-store-settings-caches-plugins-and-logs)
     * mkdir -p filetypes && cd filetypes
     * curl https://raw.githubusercontent.com/valyala/quicktemplate/master/QuickTemplate.xml >> QuickTemplate.xml
     * Restart your IDE
 
 * *I didn't find an answer for my question here.*
 
-  Try exploring [these questions](https://github.com/valyala/quicktemplate/issues?q=label%3Aquestion).
+  Try exploring [these questions](mdc:https:/github.com/valyala/quicktemplate/issues?q=label%3Aquestion).
