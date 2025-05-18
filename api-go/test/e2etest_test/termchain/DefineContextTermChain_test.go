@@ -7,6 +7,7 @@ import (
 	"api-go/pkg/genjsonschema"
 	"api-go/pkg/jsonschemastring"
 	"api-go/pkg/resourcequeue"
+	"api-go/pkg/templlmprompt"
 	"api-go/pkg/utilerror"
 	"api-go/pkg/utillog"
 	"context"
@@ -253,7 +254,7 @@ func TestDefineContextTermChain(t *testing.T) {
 	defer queue.Stop()
 
 	// 1. Sample Russian sentence
-	sampleRussianText := "Они хотят что бы ты в квартире ждал как я понимаю."
+	sampleRussianText := "В этой комнате было как-то сыро."
 
 	// 2. Create a context for the test
 	ctx := context.Background()
@@ -314,15 +315,22 @@ func TestDefineContextTermChain(t *testing.T) {
 	jsonSchemaDictionary, err := jsonschemastring.GetJsonSchemaString(jsonschemastring.SchemaPath_AiJsonSchemas_AiDictionaryEntryConfig)
 	utilerror.FatalError("Failed to get JsonSchema for DictionaryGenerator", err)
 
-	dictionaryPrompt := fieldgenprompt.NewFieldGenPrompt(
-		jsonSchemaDictionary,
-		dictionaryGenParameterDefinitions,
-		map[string]string{
-			"translatingTerm":       lastTerm.NeutralForm,
-			"userLearningLanguages": "en:1,ru:2",
-			"translationLanguage":   "en",
+	dictionaryPromptString := templlmprompt.GenerateDictionaryEntry(
+		templlmprompt.LlmFunctionBaseProps{
+			ReturnJsonSchema:     jsonSchemaDictionary,
+			ParameterDefinitions: dictionaryGenParameterDefinitions,
+			ParameterValues: map[string]string{
+				"translatingTerm":       lastTerm.NeutralForm,
+				"userLearningLanguages": "en:1,ru:2",
+				"translationLanguage":   "en",
+			},
 		},
 	)
+
+	dictionaryPrompt := []aichatprompt.AiChatPrompt{{
+		Role: aichatprompt.AiChatProptRoleUser,
+		Text: dictionaryPromptString,
+	}}
 
 	utillog.PrintfTiming("DictionaryGenerator Prompt:\n%v\n\n", dictionaryPrompt)
 

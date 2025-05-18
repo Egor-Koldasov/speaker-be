@@ -3,7 +3,7 @@ package fieldgenprompt
 import (
 	"api-go/pkg/aichatprompt"
 	"api-go/pkg/genjsonschema"
-	"api-go/pkg/tempfieldprompt"
+	"api-go/pkg/templlmprompt"
 	"bytes"
 	"strings"
 )
@@ -17,7 +17,7 @@ func NewMatchContextTermMeaningsPrompt(
 ) []aichatprompt.AiChatPrompt {
 
 	var userMsg bytes.Buffer
-	tempfieldprompt.WriteMatchContextTermMeaningsPrompt(&userMsg, tempfieldprompt.MatchContextTermMeaningsProps{
+	templlmprompt.WriteMatchContextTermMeaningsPrompt(&userMsg, templlmprompt.MatchContextTermMeaningsProps{
 		TermMeaningsMatchJsonSchema: termMeaningsMatchJsonSchema,
 		PromptParameterDefinitions:  promptParameterDefinitions,
 		ParamValues:                 paramValues,

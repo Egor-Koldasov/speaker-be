@@ -3,7 +3,7 @@ package fieldgenprompt
 import (
 	"api-go/pkg/aichatprompt"
 	"api-go/pkg/genjsonschema"
-	"api-go/pkg/tempfieldprompt"
+	"api-go/pkg/templlmprompt"
 	"bytes"
 	"strings"
 )
@@ -16,7 +16,7 @@ func NewWordSplitterPrompt(
 ) []aichatprompt.AiChatPrompt {
 
 	var userMsg bytes.Buffer
-	tempfieldprompt.WriteWordSplitterPrompt(&userMsg, tempfieldprompt.WordSplitterProps{
+	templlmprompt.WriteWordSplitterPrompt(&userMsg, templlmprompt.WordSplitterProps{
 		TermNeutralJsonSchema:      termNeutralJsonSchema,
 		PromptParameterDefinitions: promptParameterDefinitions,
 		ParamValues:                paramValues,

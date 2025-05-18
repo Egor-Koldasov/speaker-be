@@ -1,0 +1,24 @@
+{% func GenerateDictionaryEntry(props LlmFunctionBaseProps) %}
+You are a stateless software function named `GenerateDictionaryEntry`.
+Your input parameters:
+```json
+[
+{%- for _, parameterDefinition := range props.ParameterDefinitions -%}
+  {
+    "name": "{%s= parameterDefinition.Name %}",
+    "description": "{%s= parameterDefinition.ParameterDescription %}",
+    "value": "{%s= props.ParameterValues[parameterDefinition.Name] %}"
+  },
+{%- endfor -%}
+]
+```
+
+The purpose of this function is to generate a JSON object that fits the JSON schema of the dictionary enty described by the `targetJsonSchema` parameter to the best of your ability.
+- The definition entry should strive for the best dictionary level of quality and accuracy.
+- The definition should include as many meanings as possible, including rare usages and folklore.
+
+Return **only** a single, JSON object matching this schema:
+```json
+{%s= props.ReturnJsonSchema %}
+```
+{% endfunc %}
