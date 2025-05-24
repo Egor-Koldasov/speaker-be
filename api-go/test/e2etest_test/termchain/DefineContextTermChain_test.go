@@ -253,7 +253,7 @@ func TestDefineContextTermChain(t *testing.T) {
 	defer queue.Stop()
 
 	// 1. Sample Russian sentence
-	sampleRussianText := "В этой комнате было как-то сыро."
+	sampleRussianText := "Стало казаться, будто желания превратились в разврат. Стало нехватать умеренности."
 
 	// 2. Create a context for the test
 	ctx := context.Background()
