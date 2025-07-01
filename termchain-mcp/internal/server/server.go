@@ -4,30 +4,30 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 
-	"github.com/mark3labs/mcp-go/mcp"
-	"github.com/mark3labs/mcp-go/server"
+	mcp "github.com/mark3labs/mcp-go/mcp"
+	server "github.com/mark3labs/mcp-go/server"
+
+	"github.com/egor-koldasov/termchain-mcp/internal/service"
+	"github.com/egor-koldasov/termchain-mcp/pkg/domain"
 )
 
 // Server represents the MCP server with all its handlers and configuration
 type Server struct {
-	mcpServer *server.MCPServer
+	mcpServer  *server.MCPServer
+	translator domain.Translator
 }
 
 // NewServer creates a new MCP server with all the necessary handlers
 func NewServer() *Server {
-	// Create a new MCP server with default options
-	mcpServer := server.NewMCPServer(
-		"termchain-mcp",
-		"1.0.0",
-		server.WithToolCapabilities(true),
-	)
+	translator := service.NewTranslationService()
 
 	s := &Server{
-		mcpServer: mcpServer,
+		mcpServer:  server.NewMCPServer("termchain-mcp", "1.0.0"),
+		translator: translator,
 	}
 
-	// Register handlers
 	s.registerHandlers()
 
 	return s
@@ -38,98 +38,120 @@ func (s *Server) GetMCPServer() *server.MCPServer {
 	return s.mcpServer
 }
 
-// registerHandlers registers all the tool handlers with the MCP server
-func (s *Server) registerHandlers() {
-	s.mcpServer.AddTool(
-		mcp.NewTool(
-			"define_term",
-			mcp.WithDescription("Defines a term in the target language"),
-			mcp.WithString("term",
-				mcp.Description("The term to define"),
-				mcp.Required(),
-			),
-			mcp.WithString("source_lang",
-				mcp.Description("Source language code (e.g., 'en')"),
-				mcp.Required(),
-			),
-			mcp.WithString("target_lang",
-				mcp.Description("Target language code (e.g., 'es')"),
-				mcp.Required(),
-			),
-			mcp.WithString("context",
-				mcp.Description("Additional context for the definition"),
-			),
-		),
-		s.defineTermHandler,
-	)
-}
+// handleDefineTerm handles the define_term tool request
+func (s *Server) handleDefineTerm(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	log.Printf("handleDefineTerm called with request: %+v", req)
 
-// defineTermHandler handles the define_term tool request
-func (s *Server) defineTermHandler(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-	// Extract parameters
-	args := request.GetArguments()
-	term, ok := args["term"].(string)
-	if !ok || term == "" {
-		return &mcp.CallToolResult{
-			IsError: true,
-			Content: []mcp.Content{
-				mcp.NewTextContent("term is required"),
-			},
-		}, nil
+	// Get the arguments from the request
+	args := req.GetArguments()
+	if args == nil {
+		log.Println("Error: No arguments provided in request")
+		return nil, fmt.Errorf("missing arguments")
 	}
 
-	sourceLang, ok := args["source_lang"].(string)
-	if !ok || sourceLang == "" {
-		return &mcp.CallToolResult{
-			IsError: true,
-			Content: []mcp.Content{
-				mcp.NewTextContent("source_lang is required"),
-			},
-		}, nil
+	log.Printf("Raw arguments: %+v", args)
+
+	// Parse the request parameters
+	var params struct {
+		Term       string `json:"term"`
+		SourceLang string `json:"source_lang"`
+		TargetLang string `json:"target_lang"`
+		Context    string `json:"context,omitempty"`
 	}
 
-	targetLang, ok := args["target_lang"].(string)
-	if !ok || targetLang == "" {
-		return &mcp.CallToolResult{
-			IsError: true,
-			Content: []mcp.Content{
-				mcp.NewTextContent("target_lang is required"),
-			},
-		}, nil
+	// Convert the arguments to JSON and then unmarshal into our struct
+	jsonData, err := json.Marshal(args)
+	if err != nil {
+		log.Printf("Error marshaling arguments: %v", err)
+		return nil, fmt.Errorf("failed to marshal arguments: %w", err)
 	}
 
-	// Get optional context
-	contextStr, _ := args["context"].(string)
+	log.Printf("JSON data: %s", string(jsonData))
 
-	// Create a mock response
-	// In a real implementation, you would call your LLM service here
-	result := map[string]interface{}{
-		"term":        term,
-		"source_lang": sourceLang,
-		"target_lang": targetLang,
-		"definition":  fmt.Sprintf("Mock definition for '%s' from %s to %s", term, sourceLang, targetLang),
+	if err := json.Unmarshal(jsonData, &params); err != nil {
+		log.Printf("Error unmarshaling arguments: %v", err)
+		return nil, fmt.Errorf("failed to unmarshal arguments: %w", err)
 	}
 
-	// If context was provided, include it in the response
-	if contextStr != "" {
-		result["context"] = contextStr
+	log.Printf("Parsed parameters: %+v", params)
+
+	// Validate required fields
+	if params.Term == "" {
+		return nil, fmt.Errorf("term is required (updated)")
+	}
+	if params.SourceLang == "" {
+		return nil, fmt.Errorf("source_lang is required")
+	}
+	if params.TargetLang == "" {
+		return nil, fmt.Errorf("target_lang is required")
 	}
 
-	// Convert result to JSON
-	resultJSON, err := json.Marshal(result)
+	// Call the translation service
+	result, err := s.translator.Translate(ctx, domain.TranslationRequest{
+		Term:       params.Term,
+		SourceLang: params.SourceLang,
+		TargetLang: params.TargetLang,
+		Context:    params.Context,
+	})
+
 	if err != nil {
 		return &mcp.CallToolResult{
 			IsError: true,
-			Content: []mcp.Content{
-				mcp.NewTextContent(fmt.Sprintf("Error encoding result: %v", err)),
-			},
+			Content: []mcp.Content{mcp.NewTextContent(fmt.Sprintf("translation error: %v", err))},
 		}, nil
 	}
 
-	// Return the result as a text content
+	// Convert the result to a map for JSON serialization
+	resultMap := map[string]interface{}{
+		"term":        result.Term,
+		"definition":  result.Definition,
+		"source_lang": result.SourceLang,
+		"target_lang": result.TargetLang,
+	}
+
+	if result.Context != "" {
+		resultMap["context"] = result.Context
+	}
+
+	// Return the result as JSON
+	jsonResult, err := json.Marshal(resultMap)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal translation result: %w", err)
+	}
+
 	return &mcp.CallToolResult{
-		Content: []mcp.Content{
-			mcp.NewTextContent(string(resultJSON)),
-		},
+		Content: []mcp.Content{mcp.NewTextContent(string(jsonResult))},
 	}, nil
+}
+
+// handleInitializeSession is no longer needed as it's handled by MCP-Go
+
+// registerHandlers registers all the tool and method handlers with the MCP server
+func (s *Server) registerHandlers() {
+	// The mcp.initializeSession method is handled internally by MCP-Go
+	// No need to register it manually
+
+	// Register the define_term tool
+	defineTermTool := mcp.NewTool(
+		"define_term",
+		mcp.WithDescription("Defines a term in the target language"),
+		mcp.WithString("term",
+			mcp.Description("The term to define"),
+			mcp.Required(),
+		),
+		mcp.WithString("source_lang",
+			mcp.Description("Source language code (e.g., 'en')"),
+			mcp.Required(),
+		),
+		mcp.WithString("target_lang",
+			mcp.Description("Target language code (e.g., 'es')"),
+			mcp.Required(),
+		),
+		mcp.WithString("context",
+			mcp.Description("Additional context for the definition"),
+		),
+	)
+
+	// Add the tool with its handler
+	s.mcpServer.AddTool(defineTermTool, s.handleDefineTerm)
 }
