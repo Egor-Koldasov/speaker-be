@@ -243,7 +243,7 @@ func TestMatchContextTermMeanings(t *testing.T) {
 	llmOpenAi, err := openai.New(openai.WithToken(config.Config.OpenaiApiKey), openai.WithModel("gpt-4o-mini"))
 	utilerror.FatalError("Failed to initialize OpenAI LLM", err)
 
-	llmClaude3_7, err := anthropic.New(anthropic.WithToken(config.Config.ClaudeApiKey), anthropic.WithModel("claude-3-5-sonnet-20241022"))
+	llmClaude3_7, err := anthropic.New(anthropic.WithToken(config.Config.ClaudeApiKey), anthropic.WithModel("claude-sonnet-4-0"))
 	utilerror.FatalError("Failed to initialize Claude 3.7 Sonnet LLM", err)
 
 	// Prepare messages for LLMs
