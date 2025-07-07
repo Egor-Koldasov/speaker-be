@@ -4,16 +4,17 @@ Prompt templates for AI functions using LangChain.
 
 import json
 from typing import Any
-from langchain.prompts import PromptTemplate
-from langchain.output_parsers import PydanticOutputParser
+
+from langchain_core.language_models import BaseChatModel
+from langchain_core.prompts import ChatPromptTemplate
+
 from .models import AiDictionaryEntry, DictionaryEntryParams
 
 
-def create_dictionary_entry_chain(model: Any, params: DictionaryEntryParams) -> Any:
+def create_dictionary_entry_chain(
+    model: BaseChatModel, params: DictionaryEntryParams
+) -> Any:
     """Create a LangChain chain for dictionary entry generation (faithful to Go template)."""
-
-    # Create output parser for structured response
-    output_parser = PydanticOutputParser(pydantic_object=AiDictionaryEntry)
 
     # Create parameter definitions (matching Go approach)
     parameter_definitions = [
@@ -34,37 +35,36 @@ def create_dictionary_entry_chain(model: Any, params: DictionaryEntryParams) -> 
         },
     ]
 
-    # Create prompt template (faithful to original Go qtc template)
-    prompt_template = PromptTemplate(
-        input_variables=["parameters_json", "format_instructions"],
-        template="""
+    prompt_template = ChatPromptTemplate.from_messages(
+        [
+            (
+                "system",
+                """
 You are a stateless software function named `GenerateDictionaryEntry`.
 
-Your input parameters:
-```json
-{parameters_json}
-```
+You will be given a set of input parameters.
 
-The purpose of this function is to generate a JSON object that fits the JSON schema of the dictionary entry described by the format instructions to the best of your ability.
-- The definition entry should strive for the best dictionary level of quality and accuracy.
-- The definition should include as many meanings as possible, including rare usages and folklore.
-
-Return **only** a single, JSON object matching this schema:
-```json
-{format_instructions}
-```
-        """.strip(),
+The purpose of this function is to generate the most detailed and comprehensive \
+dictionary entry.
+- The definition entry should strive for the best dictionary level of quality and\
+accuracy.
+- The definition should include as many meanings as possible, including rare usages\
+and folklore.
+                """.strip(),
+            ),
+            ("user", "{parameters_json}"),
+        ]
     )
 
     # Partial the prompt template with our values first
     parameters_json = json.dumps(parameter_definitions, indent=2)
-    format_instructions = output_parser.get_format_instructions()
 
-    prompt = prompt_template.partial(
-        parameters_json=parameters_json, format_instructions=format_instructions
+    prompt = prompt_template.partial(parameters_json=parameters_json)
+
+    model_with_structured_output = model.with_structured_output(
+        schema=AiDictionaryEntry, method="function_calling"
     )
 
-    # Create the chain with debugging
-    chain = prompt | model | output_parser
+    chain = prompt | model_with_structured_output
 
     return chain
