@@ -17,14 +17,29 @@ The `langtools-ai` package provides low-level AI/LLM functions that take a given
 
 ## Installation
 
+### Production Use
 ```bash
 pip install langtools-ai
 ```
 
-For development:
+### Development Setup
+1. Create and activate a virtual environment:
+```bash
+python -m venv venv
+source venv/bin/activate  # On macOS/Linux
+# or
+venv\Scripts\activate     # On Windows
+```
+
+2. Install with development dependencies:
 ```bash
 pip install -e ".[dev]"
 ```
+
+### Dependency Management
+This package uses pip with virtual environments for dependency management. All dependencies are specified in `pyproject.toml`:
+- Runtime dependencies in `[project.dependencies]`
+- Development dependencies in `[project.optional-dependencies.dev]`
 
 ## Usage
 

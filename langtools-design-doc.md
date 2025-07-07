@@ -123,6 +123,37 @@ target-version = "py38"
 line-length = 88
 ```
 
+## Dependency Management
+
+### Python Environment
+The project uses Python virtual environments with pip for dependency management:
+
+```bash
+# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+source venv/bin/activate  # On macOS/Linux
+# or
+venv\Scripts\activate     # On Windows
+
+# Install dependencies
+pip install -e ".[dev]"   # For development with all dev dependencies
+pip install -e .          # For production use only
+```
+
+### Package Dependencies
+- Each package manages its own dependencies in `pyproject.toml`
+- Development dependencies are specified in `[project.optional-dependencies]`
+- Inter-package dependencies use local path references during development
+- Production builds can use version-pinned dependencies
+
+### Dependency Guidelines
+- **Minimal Dependencies**: Only include necessary dependencies
+- **Version Pinning**: Pin major versions to avoid breaking changes
+- **Development vs Production**: Separate dev dependencies from runtime dependencies
+- **Security**: Regularly update dependencies for security patches
+
 ## Code Design Guidelines
 
 ### Function Design
