@@ -81,3 +81,5 @@ dmypy.json
 # IPython
 profile_default/
 ipython_config.py
+
+.mcp.json
