@@ -1,11 +1,10 @@
 [project]
-name = "langtools-ai"
+name = "langtools-mcp"
 version = "0.1.0"
-description = "AI functions for language learning tools using LangChain"
+description = "MCP server for language learning tools"
 dependencies = [
-    "langchain>=0.1.0",
-    "langchain-openai>=0.0.5",
-    "langchain-anthropic>=0.1.0",
+    "mcp>=1.2.0",
+    "fastmcp>=2.0.0",
     "pydantic>=2.0.0",
 ]
 
@@ -19,6 +18,9 @@ dev = [
     "types-requests>=2.31.0",  # Type stubs for requests
 ]
 
+[project.scripts]
+langtools-mcp = "langtools.mcp.main:main"
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
@@ -29,7 +31,7 @@ packages = ["src/langtools"]
 [tool.mypy]
 # Strict configuration with practical exceptions for LangChain integration
 strict = true
-python_version = "3.10"  # Modern Python features and FastMCP compatibility
+python_version = "3.10"  # Required for FastMCP library compatibility
 warn_return_any = true
 warn_unused_configs = true
 show_error_codes = true
@@ -193,6 +195,7 @@ unfixable = [
     "ANN001",  # Missing type annotations for function arguments (test mocks)
     "ANN201",  # Missing return type annotations for test functions
     "PT012",   # Multiple statements in pytest.raises (acceptable in tests)
+    "PT023",   # Use @pytest.mark.asyncio() over @pytest.mark.asyncio
     "SIM117",  # Nested with statements more readable in tests than cramming into one line
 ]
 
@@ -206,11 +209,6 @@ unfixable = [
 "scripts/**/*.py" = [
     "T20",     # Print statements are fine in scripts
     "S101",    # Assert statements are fine in scripts
-]
-
-# Models file contains intentional Cyrillic text in examples
-"**/models.py" = [
-    "RUF003",  # Allow Cyrillic characters in comments (intentional examples)
 ]
 
 # Server files - specific exceptions for cleaner error handling patterns

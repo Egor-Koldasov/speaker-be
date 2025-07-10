@@ -13,10 +13,11 @@ from .models import (
     ModelType,
 )
 
+
 __all__ = [
-    "generate_dictionary_entry",
     "AiDictionaryEntry",
-    "DictionaryEntryParams", 
+    "DictionaryEntryParams",
     "Meaning",
     "ModelType",
+    "generate_dictionary_entry",
 ]

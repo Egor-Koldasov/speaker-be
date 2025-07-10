@@ -3,6 +3,7 @@ Prompt templates for AI functions using LangChain.
 """
 
 import json
+
 from typing import Any
 
 from langchain_core.language_models import BaseChatModel
@@ -11,9 +12,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from .models import AiDictionaryEntry, DictionaryEntryParams
 
 
-def create_dictionary_entry_chain(
-    model: BaseChatModel, params: DictionaryEntryParams
-) -> Any:
+def create_dictionary_entry_chain(model: BaseChatModel, params: DictionaryEntryParams) -> Any:
     """Create a LangChain chain for dictionary entry generation (faithful to Go template)."""
 
     # Create parameter definitions (matching Go approach)
@@ -65,6 +64,4 @@ and folklore.
         schema=AiDictionaryEntry, method="function_calling"
     )
 
-    chain = prompt | model_with_structured_output
-
-    return chain
+    return prompt | model_with_structured_output

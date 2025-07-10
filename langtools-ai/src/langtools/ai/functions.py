@@ -2,27 +2,25 @@
 Core AI functions for language learning tools.
 """
 
+import logging
 import re
 
-from langchain.globals import set_debug
+from typing import NoReturn
 
 from .client import LLMClient
 from .models import AiDictionaryEntry, DictionaryEntryParams, ModelType
 from .prompts import create_dictionary_entry_chain
 
-set_debug(True)
+
+logger = logging.getLogger(__name__)
 
 
 class ValidationError(Exception):
     """Raised when input validation fails."""
 
-    pass
-
 
 class LLMAPIError(Exception):
     """Raised when LLM API calls fail."""
-
-    pass
 
 
 async def generate_dictionary_entry(
@@ -53,9 +51,7 @@ async def generate_dictionary_entry(
 
     # Validate user_learning_languages format (e.g., "en:1,ru:2")
     if not re.match(r"^[a-z]{2}:\d+(,[a-z]{2}:\d+)*$", params.user_learning_languages):
-        raise ValidationError(
-            "Invalid user_learning_languages format. Expected: 'en:1,ru:2'"
-        )
+        raise ValidationError("Invalid user_learning_languages format. Expected: 'en:1,ru:2'")
 
     # Validate translation_language (BCP 47 format)
     if not re.match(r"^[a-z]{2}(-[A-Z]{2})?$", params.translation_language):
@@ -66,6 +62,8 @@ async def generate_dictionary_entry(
     try:
         # Create LangChain client and chain
         client = LLMClient(model)
+        logger.info("=" * 80)
+        logger.info(f"Created LangChain client with model: {model.value}")
         chain = create_dictionary_entry_chain(model=client.model, params=params)
 
         # Execute chain and get result
@@ -74,19 +72,37 @@ async def generate_dictionary_entry(
         # LangChain's PydanticOutputParser automatically validates and returns AiDictionaryEntry
         # Perform additional validation on the meanings
         if not result.meanings:
-            raise ValidationError("Generated dictionary entry has no meanings")
+            _raise_no_meanings_error()
 
-        # Validate meaning IDs follow the expected format
-        for i, meaning in enumerate(result.meanings):
-            expected_id = f"{meaning.neutral_form}-{i}"
-            if meaning.id != expected_id:
-                meaning.id = expected_id  # Fix the ID if it's incorrect
+        return _validate_and_fix_meaning_ids(result)
 
-        return result
-
-    except Exception as e:
+    except (ValidationError, LLMAPIError):
+        raise
+    except (AttributeError, TypeError, ValueError) as e:
         # Wrap LangChain exceptions in our custom exceptions
-        if "API" in str(e) or "timeout" in str(e).lower():
-            raise LLMAPIError(f"LLM API call failed: {e}")
-        else:
-            raise LLMAPIError(f"Failed to generate dictionary entry: {e}")
+        _handle_llm_exception(e)
+
+
+def _raise_no_meanings_error() -> None:
+    """Raise validation error for empty meanings."""
+    raise ValidationError("Generated dictionary entry has no meanings")
+
+
+def _validate_and_fix_meaning_ids(result: AiDictionaryEntry) -> AiDictionaryEntry:
+    """Validate and fix meaning IDs in the result."""
+    # Validate meaning IDs follow the expected format
+    for i, meaning in enumerate(result.meanings):
+        expected_id = f"{meaning.neutral_form}-{i}"
+        if meaning.id != expected_id:
+            meaning.id = expected_id  # Fix the ID if it's incorrect
+    return result
+
+
+def _handle_llm_exception(e: Exception) -> NoReturn:
+    """Handle and wrap LLM exceptions."""
+    if "API" in str(e) or "timeout" in str(e).lower():
+        api_error_msg = f"LLM API call failed: {e}"
+        raise LLMAPIError(api_error_msg) from e
+
+    generic_error_msg = f"Failed to generate dictionary entry: {e}"
+    raise LLMAPIError(generic_error_msg) from e

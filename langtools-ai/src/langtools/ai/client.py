@@ -2,14 +2,20 @@
 LLM client management for AI functions.
 """
 
+import logging
+
 from typing import Any
 
 from langchain_anthropic import ChatAnthropic
 from langchain_community.callbacks.manager import get_openai_callback
 from langchain_core.language_models import BaseChatModel
+from langchain_core.runnables import Runnable
 from langchain_openai import ChatOpenAI
 
-from .models import ModelType
+from .models import AiDictionaryEntry, ModelType
+
+
+logger = logging.getLogger(__name__)
 
 
 class LLMClient:
@@ -23,27 +29,38 @@ class LLMClient:
     def _create_model(self, model_type: ModelType) -> BaseChatModel:
         """Create appropriate LangChain model based on type."""
         if model_type in [ModelType.GPT4, ModelType.GPT3_5]:
+            # Use fewer tokens for GPT models to avoid context length issues
+            max_tokens = 4000 if model_type == ModelType.GPT3_5 else 6000
             return ChatOpenAI(
-                model=model_type.value, temperature=0.3, max_tokens=8000, timeout=180
+                model_name=model_type.value,
+                temperature=0.3,
+                max_tokens=max_tokens,
+                request_timeout=180,
             )
-        elif model_type in [ModelType.CLAUDE_SONNET, ModelType.CLAUDE_SONNET_4]:
+        if model_type in [ModelType.CLAUDE_SONNET, ModelType.CLAUDE_SONNET_4]:
             return ChatAnthropic(
-                model=model_type.value, temperature=0.3, max_tokens=8000, timeout=180
+                model=model_type.value,
+                temperature=0.3,
+                max_tokens=8000,
+                default_request_timeout=180,
             )
-        else:
-            raise ValueError(f"Unsupported model type: {model_type}")
 
-    async def generate_with_parser(self, chain: Any) -> Any:
+        error_msg = f"Unsupported model type: {model_type}"
+        raise ValueError(error_msg)
+
+    async def generate_with_parser(
+        self, chain: Runnable[dict[str, Any], AiDictionaryEntry]
+    ) -> AiDictionaryEntry:
         """Execute LangChain chain with cost logging."""
-        print("🚀 DEBUG: Executing LLM chain...")
+        logger.info("🚀 Executing LLM chain...")
 
         if self.model_type in [ModelType.GPT4, ModelType.GPT3_5]:
             with get_openai_callback() as cb:
                 result = await chain.ainvoke({})
                 # Log cost information for monitoring
-                print(f"💰 LLM API cost: ${cb.total_cost:.4f}")
+                logger.info(f"💰 LLM API cost: ${cb.total_cost:.4f}")
                 return result
         else:
             result = await chain.ainvoke({})
-            print("✅ DEBUG: LLM chain execution completed successfully")
+            logger.info("✅ LLM chain execution completed successfully")
             return result
