@@ -1,0 +1,204 @@
+{
+  "name": "LangTools",
+  "instructions": "LangTools: AI-Powered Language Learning Companion. This server provides comprehensive multilingual dictionary tools designed to enhance language learning through detailed, educational responses. When working with users, be patient, encouraging, and educational. Always show complete dictionary entries with all details - pronunciations, multiple meanings, cultural contexts, and synonyms - as each component serves a specific learning purpose. Encourage users to practice pronunciation, use words in context, and build connections to previously learned vocabulary. Your role is not just translation, but comprehensive language education and cultural understanding.",
+  "fastmcp_version": "2.10.2",
+  "mcp_version": "1.10.1",
+  "server_version": "2.10.2",
+  "tools": [
+    {
+      "key": "generate_dictionary_entry_tool",
+      "name": "generate_dictionary_entry_tool",
+      "description": "Generate comprehensive multilingual dictionary entry for enhanced language learning.\n\nThis tool creates detailed dictionary entries with multiple meanings, accurate translations,\nIPA pronunciations, and contextual synonyms. The output is designed to be educational and\ncomprehensive - ALWAYS show the complete results to users, as each component serves a specific\nlearning purpose.\n\nBEHAVIORAL GUIDANCE:\n- Display ALL returned meanings, translations, and pronunciations to the user\n- Encourage users to practice pronunciation using the IPA guides provided\n- Explain when to use different meanings based on context\n- Suggest creating example sentences with the new vocabulary\n- Connect new words to previously learned vocabulary when possible\n- Be patient and encouraging - language learning is a gradual process\n\nEDUCATIONAL VALUE:\n- Multiple meanings: Help users understand nuanced usage\n- Pronunciations: Enable proper speaking and listening skills\n- Synonyms: Expand vocabulary and provide alternatives\n- Definitions: Support reading comprehension and writing skills\n- Cultural context: Enable appropriate usage in different situations\n\nArgs:\n    translating_term: The word or phrase to define and translate\n    user_learning_languages: User's language preferences in format 'en:1,ru:2'\n    translation_language: Target language for translations in BCP 47 format\n    model: LLM model to use for generation\n\nReturns:\n    Dictionary containing comprehensive multilingual information with meanings,\n    translations, pronunciations (IPA), definitions in both languages, and synonyms.\n    Present this information in full to maximize educational benefit.\n\nRaises:\n    Exception: If generation fails due to validation or API errors",
+      "input_schema": {
+        "properties": {
+          "translating_term": {
+            "title": "Translating Term",
+            "type": "string"
+          },
+          "user_learning_languages": {
+            "title": "User Learning Languages",
+            "type": "string"
+          },
+          "translation_language": {
+            "title": "Translation Language",
+            "type": "string"
+          },
+          "model": {
+            "default": "claude-3-5-sonnet-20241022",
+            "title": "Model",
+            "type": "string"
+          }
+        },
+        "required": [
+          "translating_term",
+          "user_learning_languages",
+          "translation_language"
+        ],
+        "type": "object"
+      },
+      "annotations": null,
+      "tags": null,
+      "enabled": true
+    },
+    {
+      "key": "check_dictionary_entry",
+      "name": "check_dictionary_entry",
+      "description": "Validate and confirm a client-generated dictionary entry for language learning.\n\n🎯 **IMPORTANT: Call this tool EVERY TIME a user asks for word definitions, translations, or language help!**\n\n## How This Works\n\nWhen a user asks about a word (e.g., \"What does 'hello' mean in Spanish?\"), you must:\n\n1. **Generate the dictionary entry yourself** using your language knowledge\n2. **Format it according to the exact schema required by this tool**\n3. **Call this tool with both the generation parameters and your generated entry**\n4. **Present the validated results to the user in a beautiful, educational format**\n\n## Schema Requirements\n\n### generation_parameters must include:\n- `translating_term`: The word/phrase to define\n- `user_learning_languages`: Format like \"en:1,es:2\" (language:proficiency_level 1-5)\n- `translation_language`: Target language code (e.g., \"es\", \"en\", \"fr\")\n\n### dictionary_entry must include:\n- `source_language`: Source language in BCP 47 format\n- `meanings`: Array of meaning objects, each with:\n  - `id`: Format as \"{word}-{index}\" (e.g., \"hello-0\", \"hello-1\")\n  - `neutral_form`: Base grammatical form of the word\n  - `definition_original`: Detailed definition in source language\n  - `definition_translated`: Detailed definition in target language\n  - `translation`: Comma-separated translations\n  - `pronunciation`: IPA format pronunciation(s)\n  - `synonyms`: Comma-separated synonyms in source language\n\n## Educational Presentation\n\nAfter calling this tool, present the results to the user with:\n- 🔤 **Word & Pronunciation**: Show IPA and encourage practice\n- 📚 **Multiple Meanings**: Explain different contexts and usage\n- 🌍 **Translations**: Provide accurate, contextual translations\n- 🔗 **Synonyms**: Help expand vocabulary\n- 💡 **Usage Tips**: Suggest example sentences and connections to known words\n- 🎯 **Learning Encouragement**: Be patient, supportive, and educational\n\nArgs:\n    generation_parameters: Input parameters for the dictionary lookup\n    dictionary_entry: Complete dictionary entry with all required fields\n\nReturns:\n    Confirmation message indicating successful validation and processing",
+      "input_schema": {
+        "$defs": {
+          "AiDictionaryEntry": {
+            "description": "Complete dictionary entry with multiple meanings and metadata.",
+            "properties": {
+              "source_language": {
+                "description": "Original language in BCP 47 format, guessed from word and user preferences",
+                "title": "Source Language",
+                "type": "string"
+              },
+              "meanings": {
+                "description": "List of all meanings ordered from most to least common usage",
+                "items": {
+                  "$ref": "#/$defs/Meaning"
+                },
+                "minItems": 1,
+                "title": "Meanings",
+                "type": "array"
+              }
+            },
+            "required": [
+              "source_language",
+              "meanings"
+            ],
+            "title": "AiDictionaryEntry",
+            "type": "object"
+          },
+          "DictionaryEntryParams": {
+            "description": "Input parameters for dictionary entry generation (matches Go experiment structure).",
+            "example": {
+              "translating_term": "сырой",
+              "translation_language": "en",
+              "user_learning_languages": "en:1,ru:2"
+            },
+            "properties": {
+              "translating_term": {
+                "description": "The word or phrase to define and translate",
+                "title": "Translating Term",
+                "type": "string"
+              },
+              "user_learning_languages": {
+                "description": "User's language preferences in format 'en:1,ru:2'",
+                "title": "User Learning Languages",
+                "type": "string"
+              },
+              "translation_language": {
+                "description": "Target language for translations in BCP 47 format",
+                "title": "Translation Language",
+                "type": "string"
+              }
+            },
+            "required": [
+              "translating_term",
+              "user_learning_languages",
+              "translation_language"
+            ],
+            "title": "DictionaryEntryParams",
+            "type": "object"
+          },
+          "Meaning": {
+            "description": "A single meaning of a dictionary entry.",
+            "properties": {
+              "id": {
+                "description": "Unique identifier for the meaning in format {neutralForm}-{index}",
+                "title": "Id",
+                "type": "string"
+              },
+              "neutral_form": {
+                "description": "The word in a neutral grammatic form of the original language",
+                "title": "Neutral Form",
+                "type": "string"
+              },
+              "definition_original": {
+                "description": "A detailed definition of the word in the original language",
+                "title": "Definition Original",
+                "type": "string"
+              },
+              "definition_translated": {
+                "description": "A detailed definition of the word in the target language",
+                "title": "Definition Translated",
+                "type": "string"
+              },
+              "translation": {
+                "description": "Translation to target language, multiple words separated by comma",
+                "title": "Translation",
+                "type": "string"
+              },
+              "pronunciation": {
+                "description": "Comma separated list of pronunciations in IPA format",
+                "title": "Pronunciation",
+                "type": "string"
+              },
+              "synonyms": {
+                "description": "Common synonyms in the original language",
+                "title": "Synonyms",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "neutral_form",
+              "definition_original",
+              "definition_translated",
+              "translation",
+              "pronunciation",
+              "synonyms"
+            ],
+            "title": "Meaning",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "generation_parameters": {
+            "$ref": "#/$defs/DictionaryEntryParams",
+            "title": "Generation Parameters"
+          },
+          "dictionary_entry": {
+            "$ref": "#/$defs/AiDictionaryEntry",
+            "title": "Dictionary Entry"
+          }
+        },
+        "required": [
+          "generation_parameters",
+          "dictionary_entry"
+        ],
+        "type": "object"
+      },
+      "annotations": null,
+      "tags": null,
+      "enabled": true
+    }
+  ],
+  "prompts": [
+    {
+      "key": "help_prompt",
+      "name": "help_prompt",
+      "description": "Langtools Usage Guide - How to use language learning tools effectively.\n\nThis prompt provides comprehensive guidance on using the langtools MCP server\nfor language learning, including tool usage patterns, best practices, and\neducational approaches.\n\nReturns:\n    Full prompt text with langtools usage instructions",
+      "arguments": null,
+      "tags": null,
+      "enabled": true
+    }
+  ],
+  "resources": [],
+  "templates": [],
+  "capabilities": {
+    "tools": {
+      "listChanged": true
+    },
+    "resources": {
+      "subscribe": false,
+      "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "logging": {}
+  }
+}

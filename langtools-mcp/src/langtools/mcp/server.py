@@ -99,12 +99,12 @@ class DictionaryEntryRequest(BaseModel):
     )
 
 
-@mcp.tool()
+@mcp.tool(enabled=False)
 async def generate_dictionary_entry_tool(
     translating_term: str,
     user_learning_languages: str,
     translation_language: str,
-    model: str = "claude-3-5-sonnet-20241022",
+    model: str = "claude-4-0-sonnet",
 ) -> dict[str, Any]:
     """
     Generate comprehensive multilingual dictionary entry for enhanced language learning.
@@ -165,7 +165,7 @@ async def generate_dictionary_entry_tool(
         result: AiDictionaryEntry = await generate_dictionary_entry(params, model_type)
 
         # Convert Pydantic model to dict for MCP response
-        response = result.model_dump()
+        response: dict[str, Any] = result.model_dump()
 
         logger.info(f"Successfully generated dictionary entry with {len(result.meanings)} meanings")
         logger.debug(f"Response: {response}")
@@ -175,6 +175,68 @@ async def generate_dictionary_entry_tool(
         logger.exception("Failed to generate dictionary entry")
         error_msg = f"Dictionary entry generation failed: {e!s}"
         raise DictionaryGenerationError(error_msg) from e
+
+
+@mcp.tool()
+async def check_dictionary_entry(
+    generation_parameters: DictionaryEntryParams,
+    dictionary_entry: AiDictionaryEntry,
+) -> str:
+    """
+    Validate and confirm a client-generated dictionary entry for language learning.
+
+    🎯 **IMPORTANT: Call this tool EVERY TIME a user asks for word definitions, translations, or language help!**
+
+    ## How This Works
+
+    The purpose of this function is to generate the most detailed and comprehensive
+    dictionary entry.
+
+    - The definition entry should strive for the best dictionary level of quality and
+    accuracy.
+    - The definition should include as many meanings as possible, including rare usages
+    and folklore.
+    - You, the AI agent, is responsible for generating the dictionary entry yourself.
+    This tool serves as an instruction of the proper format and requirements for the dictionary entry.
+
+    ## User Presentation
+
+    After calling this tool, consider presenting the full dictionary information from the JSON
+    in a human-readable format that includes pronunciations, meanings, translations, and synonyms
+    to provide comprehensive language learning value.
+
+    Args:
+        generation_parameters: Input parameters for the dictionary lookup
+        dictionary_entry: Complete dictionary entry with all required fields
+
+    Returns:
+        Confirmation message indicating successful validation and processing
+    """
+    try:
+        # Validate that the entry matches the generation parameters
+        term = generation_parameters.translating_term.lower().strip()
+        entry_terms = [
+            meaning.neutral_form.lower().strip() for meaning in dictionary_entry.meanings
+        ]
+
+        if not any(term in entry_term or entry_term in term for entry_term in entry_terms):
+            return f"⚠️ Warning: The dictionary entry doesn't seem to match the requested term '{term}'. Please verify the entry corresponds to the correct word."
+
+        # Validate completeness
+        total_meanings = len(dictionary_entry.meanings)
+        if total_meanings == 0:
+            return "❌ Error: Dictionary entry must contain at least one meaning."
+
+        # Confirm successful validation
+        logger.info(
+            f"Successfully validated dictionary entry for '{term}' with {total_meanings} meaning(s)"
+        )
+
+        return f"✅ Dictionary entry successfully validated! Found {total_meanings} meaning(s) for '{term}'. The entry is properly formatted and ready for educational presentation to the user."
+
+    except (ValueError, TypeError, AttributeError) as e:
+        logger.exception("Error validating dictionary entry")
+        return f"❌ Validation error: {e!s}. Please ensure the dictionary entry follows the required schema format."
 
 
 @mcp.prompt()
