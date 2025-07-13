@@ -66,14 +66,17 @@ cd package-name && ./scripts/clean.sh
 
 ### Python Environment Setup
 ```bash
-# Create and activate virtual environment
-python -m venv venv
-source venv/bin/activate  # macOS/Linux
-# or: venv\Scripts\activate  # Windows
+# Install uv (if not already installed)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Create and activate virtual environment with uv
+uv venv
+source .venv/bin/activate  # macOS/Linux
+# or: .venv\Scripts\activate  # Windows
 
 # Install package in development mode
-pip install -e ".[dev]"   # With dev dependencies
-pip install -e .          # Production only
+uv pip install -e ".[dev]"   # With dev dependencies
+uv pip install -e .          # Production only
 ```
 
 ### Individual Tools

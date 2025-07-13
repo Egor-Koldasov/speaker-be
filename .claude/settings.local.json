@@ -1,0 +1,52 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat:*)",
+      "Bash(mkdir:*)",
+      "Bash(python -m pip install:*)",
+      "Bash(python3 -m pip install:*)",
+      "Bash(python3:*)",
+      "Bash(source:*)",
+      "Bash(python test:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(python:*)",
+      "Bash(pip install:*)",
+      "Bash(pytest:*)",
+      "Bash(pip show:*)",
+      "Bash(pip uninstall:*)",
+      "WebFetch(domain:gofastmcp.com)",
+      "Bash(langtools-mcp:*)",
+      "Bash(rg:*)",
+      "Bash(mypy:*)",
+      "Bash(ruff check:*)",
+      "Bash(ruff format:*)",
+      "Bash(./scripts/lint.sh:*)",
+      "Bash(./scripts/docker-build.sh:*)",
+      "Bash(./scripts/docker-test.sh:*)",
+      "mcp__langtools__generate_dictionary_entry_tool",
+      "Bash(docker run:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(alembic init:*)",
+      "Bash(../venv/bin/ruff check src/ tests/ --fix)",
+      "Bash(../venv/bin/mypy src/ --show-error-codes)",
+      "Bash(../venv/bin/pytest tests/ -v)",
+      "Bash(../venv/bin/pip install -e \".[dev]\")",
+      "Bash(pip3 install:*)",
+      "Bash(ssh:*)",
+      "Bash(docker stop:*)",
+      "Bash(docker rm:*)",
+      "Bash(./scripts/setup-database.sh:*)",
+      "Bash(docker exec:*)",
+      "Bash(docker logs:*)",
+      "Bash(uv:*)",
+      "Bash(./scripts/dev.sh:*)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "Bash(chmod:*)"
+    ],
+    "deny": []
+  },
+  "enabledMcpjsonServers": [
+    "langtools"
+  ]
+}

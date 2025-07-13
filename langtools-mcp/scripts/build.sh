@@ -4,6 +4,6 @@
 set -e
 
 echo "🏗️ Building langtools-mcp package..."
-python -m build
+uv build
 
 echo "✅ Build complete!"

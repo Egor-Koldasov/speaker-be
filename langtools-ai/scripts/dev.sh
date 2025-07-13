@@ -7,9 +7,18 @@ set -e
 
 echo "=== Setting up development environment for langtools-ai ==="
 
+# Create virtual environment if it doesn't exist
+if [ ! -d ".venv" ]; then
+    echo "Creating virtual environment..."
+    uv venv
+fi
+
+# Activate virtual environment
+source .venv/bin/activate
+
 # Install package in development mode with dev dependencies
 echo "Installing package and dependencies..."
-pip install -e ".[dev]"
+uv pip install -e ".[dev]"
 
 # Run type checking
 echo "Running type checking with mypy..."

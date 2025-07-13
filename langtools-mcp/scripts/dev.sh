@@ -5,11 +5,20 @@ set -e
 
 echo "🔧 Setting up langtools-mcp development environment..."
 
+# Create virtual environment if it doesn't exist
+if [ ! -d ".venv" ]; then
+    echo "Creating virtual environment..."
+    uv venv
+fi
+
+# Activate virtual environment
+source .venv/bin/activate
+
 # Install package in development mode
-pip install -e ".[dev]"
+uv pip install -e ".[dev]"
 
 # Install langtools-ai as dependency
-pip install -e "../langtools-ai"
+uv pip install -e "../langtools-ai"
 
 echo "🔍 Running type checking..."
 mypy src/langtools/mcp/
