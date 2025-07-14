@@ -15,12 +15,12 @@ echo "0. Installing dependencies..."
 uv sync --extra dev
 
 echo "📝 Step 1: Formatting with ruff..."
-uv run ruff format src/ tests/
+uv run ruff format .
 
 echo "🔍 Step 2: Linting with ruff..."
-uv run ruff check src/ tests/ --fix
+uv run ruff check . --fix
 
 echo "🔬 Step 3: Type checking with mypy..."
-uv run mypy src/ --show-error-codes
+uv run mypy . --show-error-codes
 
 echo "✅ All quality checks passed!"

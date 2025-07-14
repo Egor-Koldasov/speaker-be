@@ -96,6 +96,9 @@ RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.11 1 &
 # Switch back to node user
 USER node
 
+# Unset VIRTUAL_ENV to prevent conflicts with uv
+ENV VIRTUAL_ENV=""
+
 # Copy and set up firewall script
 COPY init-firewall.sh /usr/local/bin/
 USER root

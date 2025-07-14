@@ -8,12 +8,12 @@ echo "0. Installing dependencies..."
 uv sync --extra dev
 
 echo "1. Formatting code..."
-uv run ruff format src/ tests/
+uv run ruff format .
 
 echo "2. Linting and fixing..."
-uv run ruff check src/ tests/ --fix
+uv run ruff check . --fix
 
 echo "3. Type checking..."
-uv run mypy src/ --show-error-codes
+uv run mypy . --show-error-codes
 
 echo "✅ All quality gate checks passed!"
