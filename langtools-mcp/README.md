@@ -56,32 +56,59 @@ See [DOCKER.md](DOCKER.md) for complete Docker setup guide.
 
 ### Prerequisites
 - Python 3.10+
-- Virtual environment
+- `uv` package manager
 
 ### Installation
-```bash
-# Clone and setup
-cd langtools-mcp
-python -m venv venv
-source venv/bin/activate  # macOS/Linux
-pip install -e ".[dev]"
 
-# Install langtools-ai dependency
-cd ../langtools-ai
-pip install -e .
+This package uses modern `uv` for dependency management with no manual virtual environment management:
+
+```bash
+# Install uv (if not already installed)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Install dependencies
+cd langtools-mcp
+uv sync --extra dev
+
+# Run any python command with uv
+uv run python script.py
+uv run pytest tests/
+uv run mypy src/
 ```
 
-### Development Commands
-```bash
-# Quality checks (formatting, linting, type checking)
-./scripts/lint.sh
+### Available Scripts
 
-# Run tests
+```bash
+# Full development setup (install, typecheck, lint, test)
+./scripts/dev.sh
+
+# Run tests only
 ./scripts/test.sh
+
+# Run linting and type checking
+./scripts/lint.sh
 
 # Build package
 ./scripts/build.sh
+
+# Clean build artifacts
+./scripts/clean.sh
+
+# Docker commands
+./scripts/docker-build.sh
+./scripts/docker-test.sh
 ```
+
+### Dependency Management
+
+This package uses `uv` for dependency management. All dependencies are specified in `pyproject.toml`:
+- Runtime dependencies in `[project.dependencies]`
+- Development dependencies in `[project.optional-dependencies.dev]`
+
+**Key principles:**
+- No manual `venv` creation or activation
+- Use `uv sync` for dependency management
+- Use `uv run` for all Python commands
 
 ## Architecture
 
@@ -142,7 +169,7 @@ Creates comprehensive dictionary entries with:
 ./scripts/docker-test.sh
 
 # Integration test with real API calls
-python test_integration.py
+uv run python test_integration.py
 ```
 
 ### Integration Testing
@@ -158,7 +185,7 @@ export ANTHROPIC_API_KEY="your-anthropic-key"
 export OPENAI_API_KEY="your-openai-key"
 
 # Run integration test
-python test_integration.py
+uv run python test_integration.py
 ```
 
 ## Contributing

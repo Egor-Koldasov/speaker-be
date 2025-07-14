@@ -10,13 +10,17 @@ cd "$SCRIPT_DIR/.."
 
 echo "🔍 Running code quality checks for langtools-mcp..."
 
+# Ensure dependencies are installed
+echo "0. Installing dependencies..."
+uv sync --extra dev
+
 echo "📝 Step 1: Formatting with ruff..."
-ruff format src/ tests/
+uv run ruff format src/ tests/
 
 echo "🔍 Step 2: Linting with ruff..."
-ruff check src/ tests/ --fix
+uv run ruff check src/ tests/ --fix
 
 echo "🔬 Step 3: Type checking with mypy..."
-mypy src/ --show-error-codes
+uv run mypy src/ --show-error-codes
 
 echo "✅ All quality checks passed!"

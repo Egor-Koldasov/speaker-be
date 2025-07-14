@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Test script for langtools-ai package
+# Test script for langtools-main package
 # Run tests only
 
 set -e
 
-echo "=== Running tests for langtools-ai ==="
+echo "=== Running tests for langtools-main ==="
 
 # Ensure dependencies are installed
 uv sync --extra dev

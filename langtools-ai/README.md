@@ -23,23 +23,32 @@ pip install langtools-ai
 ```
 
 ### Development Setup
-1. Create and activate a virtual environment:
-```bash
-python -m venv venv
-source venv/bin/activate  # On macOS/Linux
-# or
-venv\Scripts\activate     # On Windows
-```
 
-2. Install with development dependencies:
+This package uses modern `uv` for dependency management with no manual virtual environment management:
+
 ```bash
-pip install -e ".[dev]"
+# Install uv (if not already installed)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Install dependencies
+cd langtools-ai
+uv sync --extra dev
+
+# Run any python command with uv
+uv run python script.py
+uv run pytest tests/
+uv run mypy src/
 ```
 
 ### Dependency Management
-This package uses pip with virtual environments for dependency management. All dependencies are specified in `pyproject.toml`:
+This package uses `uv` for dependency management. All dependencies are specified in `pyproject.toml`:
 - Runtime dependencies in `[project.dependencies]`
 - Development dependencies in `[project.optional-dependencies.dev]`
+
+**Key principles:**
+- No manual `venv` creation or activation
+- Use `uv sync` for dependency management
+- Use `uv run` for all Python commands
 
 ## Usage
 
@@ -104,10 +113,23 @@ This will:
 - Run linting and formatting with ruff
 - Run tests with pytest
 
-### Testing
+### Available Scripts
 
 ```bash
+# Full development setup (install, typecheck, lint, test)
+./scripts/dev.sh
+
+# Run tests only
 ./scripts/test.sh
+
+# Run linting and type checking
+./scripts/lint.sh
+
+# Build package
+./scripts/build.sh
+
+# Clean build artifacts
+./scripts/clean.sh
 ```
 
 ### Project Structure
@@ -126,8 +148,11 @@ langtools-ai/
 │   ├── test_client.py
 │   └── test_functions.py
 ├── scripts/
-│   ├── dev.sh
-│   └── test.sh
+│   ├── dev.sh           # Full development workflow
+│   ├── test.sh          # Run tests
+│   ├── lint.sh          # Code quality checks
+│   ├── build.sh         # Build package
+│   └── clean.sh         # Clean artifacts
 └── pyproject.toml
 ```
 

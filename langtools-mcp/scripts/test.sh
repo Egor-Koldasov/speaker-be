@@ -4,4 +4,9 @@
 set -e
 
 echo "🧪 Running tests for langtools-mcp..."
-pytest tests/ -v
+
+# Ensure dependencies are installed
+uv sync --extra dev
+
+# Run tests
+uv run pytest tests/ -v
