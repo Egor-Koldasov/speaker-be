@@ -2,17 +2,22 @@
 Prompt templates for AI functions using LangChain.
 """
 
+from __future__ import annotations
+
 import json
 
-from typing import Any
+from typing import cast
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.runnables import Runnable
 
 from .models import AiDictionaryEntry, DictionaryEntryParams
 
 
-def create_dictionary_entry_chain(model: BaseChatModel, params: DictionaryEntryParams) -> Any:
+def create_dictionary_entry_chain(
+    model: BaseChatModel, params: DictionaryEntryParams
+) -> Runnable[dict[str, str], AiDictionaryEntry]:
     """Create a LangChain chain for dictionary entry generation (faithful to Go template)."""
 
     # Create parameter definitions (matching Go approach)
@@ -24,7 +29,10 @@ def create_dictionary_entry_chain(model: BaseChatModel, params: DictionaryEntryP
         },
         {
             "name": "userLearningLanguages",
-            "description": "User's language preferences in format 'lang:priority' to guide source language detection",
+            "description": (
+                "User's language preferences in format 'lang:priority' "
+                "to guide source language detection"
+            ),
             "value": params.user_learning_languages,
         },
         {
@@ -34,7 +42,7 @@ def create_dictionary_entry_chain(model: BaseChatModel, params: DictionaryEntryP
         },
     ]
 
-    prompt_template = ChatPromptTemplate.from_messages(
+    prompt_template = ChatPromptTemplate.from_messages(  # type: ignore[misc]
         [
             (
                 "system",
@@ -60,8 +68,8 @@ and folklore.
 
     prompt = prompt_template.partial(parameters_json=parameters_json)
 
-    model_with_structured_output = model.with_structured_output(
+    model_with_structured_output = model.with_structured_output(  # type: ignore[misc]
         schema=AiDictionaryEntry, method="function_calling"
     )
 
-    return prompt | model_with_structured_output
+    return cast(Runnable[dict[str, str], AiDictionaryEntry], prompt | model_with_structured_output)

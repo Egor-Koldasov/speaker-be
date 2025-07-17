@@ -215,6 +215,7 @@ package-name/
 - Avoid workaround fixes, always attempt to resolve the root cause of the issue.
 - Be very thorough with typing system, make sure the code has the best type coverage.
 - Avoid `Any` types.
+- If you absolutely cannot fix a type, prefer type casting over supressing an error with "ignore".
 
 ## Working with test
 

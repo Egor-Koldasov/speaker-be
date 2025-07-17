@@ -13,7 +13,6 @@ from .models import (
     ModelType,
 )
 
-
 __all__ = [
     "AiDictionaryEntry",
     "DictionaryEntryParams",

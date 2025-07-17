@@ -4,13 +4,11 @@ Core AI functions for language learning tools.
 
 import logging
 import re
-
 from typing import NoReturn
 
 from .client import LLMClient
 from .models import AiDictionaryEntry, DictionaryEntryParams, ModelType
 from .prompts import create_dictionary_entry_chain
-
 
 logger = logging.getLogger(__name__)
 

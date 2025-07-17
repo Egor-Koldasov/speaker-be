@@ -2,9 +2,9 @@
 LLM client management for AI functions.
 """
 
-import logging
+from __future__ import annotations
 
-from typing import Any
+import logging
 
 from langchain_anthropic import ChatAnthropic
 from langchain_community.callbacks.manager import get_openai_callback
@@ -13,7 +13,6 @@ from langchain_core.runnables import Runnable
 from langchain_openai import ChatOpenAI
 
 from .models import AiDictionaryEntry, ModelType
-
 
 logger = logging.getLogger(__name__)
 
@@ -32,24 +31,24 @@ class LLMClient:
             # Use fewer tokens for GPT models to avoid context length issues
             max_tokens = 4000 if model_type == ModelType.GPT3_5 else 6000
             return ChatOpenAI(
-                model_name=model_type.value,
+                model=model_type.value,
                 temperature=0.3,
-                max_tokens=max_tokens,
-                request_timeout=180,
+                max_tokens=max_tokens,  # type: ignore[call-arg]
+                timeout=180,  # type: ignore[call-arg]
             )
         if model_type in [ModelType.CLAUDE_SONNET, ModelType.CLAUDE_SONNET_4]:
             return ChatAnthropic(
-                model=model_type.value,
+                model=model_type.value,  # type: ignore[call-arg]
                 temperature=0.3,
-                max_tokens=8000,
-                default_request_timeout=180,
+                max_tokens=8000,  # type: ignore[call-arg]
+                timeout=180,  # type: ignore[call-arg]
             )
 
         error_msg = f"Unsupported model type: {model_type}"
         raise ValueError(error_msg)
 
     async def generate_with_parser(
-        self, chain: Runnable[dict[str, Any], AiDictionaryEntry]
+        self, chain: Runnable[dict[str, str], AiDictionaryEntry]
     ) -> AiDictionaryEntry:
         """Execute LangChain chain with cost logging."""
         logger.info("🚀 Executing LLM chain...")

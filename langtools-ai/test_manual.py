@@ -6,7 +6,9 @@ Tests the generate_dictionary_entry function with Russian examples.
 
 import asyncio
 import os
+
 from dotenv import load_dotenv
+
 from langtools.ai.functions import generate_dictionary_entry
 from langtools.ai.models import DictionaryEntryParams, ModelType
 
@@ -14,7 +16,7 @@ from langtools.ai.models import DictionaryEntryParams, ModelType
 load_dotenv("src/langtools/.env")
 
 
-async def test_russian_word():
+async def test_russian_word() -> None:
     """Test dictionary entry generation with Russian word 'жёсткий'."""
 
     # Check if API keys are set
@@ -34,7 +36,7 @@ async def test_russian_word():
 
     try:
         # Generate dictionary entry using Claude Sonnet 4
-        print(f"📝 Calling generate_dictionary_entry with:")
+        print("📝 Calling generate_dictionary_entry with:")
         print(f"   Term: {params.translating_term}")
         print(f"   User languages: {params.user_learning_languages}")
         print(f"   Target language: {params.translation_language}")
@@ -77,7 +79,7 @@ async def test_russian_word():
         raise
 
 
-async def test_validation_errors():
+async def test_validation_errors() -> None:
     """Test input validation with invalid parameters."""
 
     print("\n🧪 Testing input validation")
@@ -93,7 +95,7 @@ async def test_validation_errors():
             translation_language="en",
         )
         await generate_dictionary_entry(params, ModelType.CLAUDE_SONNET_4)
-        assert False, "Should have raised ValidationError for empty term"
+        raise AssertionError("Should have raised ValidationError for empty term")
     except ValidationError as e:
         print(f"✅ Empty term validation: {e}")
 
@@ -105,7 +107,7 @@ async def test_validation_errors():
             translation_language="en",
         )
         await generate_dictionary_entry(params, ModelType.CLAUDE_SONNET_4)
-        assert False, "Should have raised ValidationError for invalid format"
+        raise AssertionError("Should have raised ValidationError for invalid format")
     except ValidationError as e:
         print(f"✅ Invalid format validation: {e}")
 
@@ -117,14 +119,14 @@ async def test_validation_errors():
             translation_language="invalid",
         )
         await generate_dictionary_entry(params, ModelType.CLAUDE_SONNET_4)
-        assert False, "Should have raised ValidationError for invalid language"
+        raise AssertionError("Should have raised ValidationError for invalid language")
     except ValidationError as e:
         print(f"✅ Invalid language validation: {e}")
 
     print("✅ All validation tests passed!")
 
 
-async def main():
+async def main() -> None:
     """Run all manual tests."""
     print("🚀 Starting manual tests for langtools-ai package")
     print("=" * 80)

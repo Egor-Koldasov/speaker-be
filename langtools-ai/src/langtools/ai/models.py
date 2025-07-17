@@ -2,6 +2,8 @@
 Data models and types for AI functions.
 """
 
+from __future__ import annotations
+
 from enum import Enum
 
 from pydantic import BaseModel, Field
@@ -77,8 +79,10 @@ class AiDictionaryEntry(BaseModel):
     #                 {
     #                     "id": "сырой-0",
     #                     "neutral_form": "сырой",
-    #                     "definition_original": "Не подвергшийся тепловой обработке; необработанный, неприготовленный (о пище)",
-    #                     "definition_translated": "Not subjected to heat treatment; unprocessed, uncooked (referring to food)",
+    #                     "definition_original": "Не подвергшийся тепловой обработке; "
+    #                         "необработанный, неприготовленный (о пище)",
+    #                     "definition_translated": "Not subjected to heat treatment; "
+    #                         "unprocessed, uncooked (referring to food)",
     #                     "translation": "raw, uncooked, fresh",
     #                     "pronunciation": "ˈsɨrəj",
     #                     "synonyms": "необработанный, неприготовленный, свежий"
@@ -95,8 +99,10 @@ class AiDictionaryEntry(BaseModel):
     #                 {
     #                     "id": "сырой-2",
     #                     "neutral_form": "сырой",
-    #                     "definition_original": "Необработанный, неочищенный; в первоначальном виде (о материалах, продукции)",
-    #                     "definition_translated": "Unprocessed, unrefined; in original form (referring to materials, products)",
+    #                     "definition_original": "Необработанный, неочищенный; "
+    #                         "в первоначальном виде (о материалах, продукции)",
+    #                     "definition_translated": "Unprocessed, unrefined; "
+    #                         "in original form (referring to materials, products)",
     #                     "translation": "crude, raw, unrefined, unprocessed",
     #                     "pronunciation": "ˈsɨrəj",
     #                     "synonyms": "необработанный, неочищенный, первичный"
@@ -104,8 +110,10 @@ class AiDictionaryEntry(BaseModel):
     #                 {
     #                     "id": "сырой-3",
     #                     "neutral_form": "сырой",
-    #                     "definition_original": "Неопытный, неподготовленный; недостаточно развитый (разговорное)",
-    #                     "definition_translated": "Inexperienced, unprepared; insufficiently developed (colloquial)",
+    #                     "definition_original": "Неопытный, неподготовленный; "
+    #                         "недостаточно развитый (разговорное)",
+    #                     "definition_translated": "Inexperienced, unprepared; "
+    #                         "insufficiently developed (colloquial)",
     #                     "translation": "green, inexperienced, raw, undeveloped",
     #                     "pronunciation": "ˈsɨrəj",
     #                     "synonyms": "неопытный, неподготовленный, незрелый"

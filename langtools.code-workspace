@@ -53,6 +53,7 @@
       "**/*.egg-info": true,
       "**/node_modules": true,
       "**/.git": true
-    }
+    },
+    "python.languageServer": "None"
   }
 }

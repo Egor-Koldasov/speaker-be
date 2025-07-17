@@ -1,6 +1,6 @@
 # # Increased line length for AI/ML code with long prompts and complex type annotations
 line-length = 100
-target-version = "py39" # Upgraded for better language features
+target-version = "py313" # Upgraded for better language features
 
 # # Source code discovery
 # src = ["src"]

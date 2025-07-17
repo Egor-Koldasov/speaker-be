@@ -13,16 +13,16 @@ from langtools.ai.models import AiDictionaryEntry, DictionaryEntryParams, Meanin
 class TestGenerateDictionaryEntry:
     """Test cases for generate_dictionary_entry function."""
 
-    def test_validate_empty_translating_term(self):
+    async def test_validate_empty_translating_term(self) -> None:
         """Test validation fails for empty translating term."""
         params = DictionaryEntryParams(
             translating_term="", user_learning_languages="en:1,ru:2", translation_language="en"
         )
 
         with pytest.raises(ValidationError, match="Translating term cannot be empty"):
-            pytest.run(generate_dictionary_entry(params, ModelType.CLAUDE_SONNET_4))
+            await generate_dictionary_entry(params, ModelType.CLAUDE_SONNET_4)
 
-    def test_validate_long_translating_term(self):
+    async def test_validate_long_translating_term(self) -> None:
         """Test validation fails for overly long translating term."""
         params = DictionaryEntryParams(
             translating_term="a" * 101,  # 101 characters
@@ -31,9 +31,9 @@ class TestGenerateDictionaryEntry:
         )
 
         with pytest.raises(ValidationError, match="Translating term too long"):
-            pytest.run(generate_dictionary_entry(params, ModelType.CLAUDE_SONNET_4))
+            await generate_dictionary_entry(params, ModelType.CLAUDE_SONNET_4)
 
-    def test_validate_invalid_user_learning_languages(self):
+    async def test_validate_invalid_user_learning_languages(self) -> None:
         """Test validation fails for invalid user_learning_languages format."""
         params = DictionaryEntryParams(
             translating_term="сырой",
@@ -42,9 +42,9 @@ class TestGenerateDictionaryEntry:
         )
 
         with pytest.raises(ValidationError, match="Invalid user_learning_languages format"):
-            pytest.run(generate_dictionary_entry(params, ModelType.CLAUDE_SONNET_4))
+            await generate_dictionary_entry(params, ModelType.CLAUDE_SONNET_4)
 
-    def test_validate_invalid_translation_language(self):
+    async def test_validate_invalid_translation_language(self) -> None:
         """Test validation fails for invalid translation_language format."""
         params = DictionaryEntryParams(
             translating_term="сырой",
@@ -53,11 +53,13 @@ class TestGenerateDictionaryEntry:
         )
 
         with pytest.raises(ValidationError, match="Invalid translation_language format"):
-            pytest.run(generate_dictionary_entry(params, ModelType.CLAUDE_SONNET_4))
+            await generate_dictionary_entry(params, ModelType.CLAUDE_SONNET_4)
 
     @patch("langtools.ai.functions.LLMClient")
     @patch("langtools.ai.functions.create_dictionary_entry_chain")
-    async def test_successful_generation(self, mock_create_chain, mock_client_class):
+    async def test_successful_generation(
+        self, mock_create_chain: Mock, mock_client_class: Mock
+    ) -> None:
         """Test successful dictionary entry generation."""
         # Setup mocks
         mock_client = Mock()
@@ -99,12 +101,12 @@ class TestGenerateDictionaryEntry:
 
         # Verify mocks were called correctly
         mock_client_class.assert_called_once_with(ModelType.CLAUDE_SONNET_4)
-        mock_create_chain.assert_called_once_with(model=mock_client.model, params=params)
-        mock_client.generate_with_parser.assert_called_once_with(mock_chain)
+        mock_create_chain.assert_called_once_with(model=mock_client.model, params=params)  # type: ignore[misc]
+        mock_client.generate_with_parser.assert_called_once_with(mock_chain)  # type: ignore[misc]
 
     @patch("langtools.ai.functions.LLMClient")
     @patch("langtools.ai.functions.create_dictionary_entry_chain")
-    async def test_fix_meaning_ids(self, mock_create_chain, mock_client_class):
+    async def test_fix_meaning_ids(self, mock_create_chain: Mock, mock_client_class: Mock) -> None:
         """Test that meaning IDs are fixed if they don't match expected format."""
         # Setup mocks
         mock_client = Mock()
@@ -143,7 +145,9 @@ class TestGenerateDictionaryEntry:
 
     @patch("langtools.ai.functions.LLMClient")
     @patch("langtools.ai.functions.create_dictionary_entry_chain")
-    async def test_empty_meanings_validation(self, mock_create_chain, mock_client_class):
+    async def test_empty_meanings_validation(
+        self, mock_create_chain: Mock, mock_client_class: Mock
+    ) -> None:
         """Test validation fails when result has no meanings."""
         # Setup mocks
         mock_client = Mock()
@@ -167,7 +171,9 @@ class TestGenerateDictionaryEntry:
 
     @patch("langtools.ai.functions.LLMClient")
     @patch("langtools.ai.functions.create_dictionary_entry_chain")
-    async def test_api_error_handling(self, mock_create_chain, mock_client_class):
+    async def test_api_error_handling(
+        self, mock_create_chain: Mock, mock_client_class: Mock
+    ) -> None:
         """Test API error handling."""
         # Setup mocks
         mock_client = Mock()
@@ -189,7 +195,9 @@ class TestGenerateDictionaryEntry:
 
     @patch("langtools.ai.functions.LLMClient")
     @patch("langtools.ai.functions.create_dictionary_entry_chain")
-    async def test_generic_error_handling(self, mock_create_chain, mock_client_class):
+    async def test_generic_error_handling(
+        self, mock_create_chain: Mock, mock_client_class: Mock
+    ) -> None:
         """Test generic error handling."""
         # Setup mocks
         mock_client = Mock()
