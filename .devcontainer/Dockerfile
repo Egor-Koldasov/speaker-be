@@ -85,19 +85,20 @@ USER root
 
 # Install Python package manager (uv) and development tools
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
-    mv /root/.local/bin/uv /usr/local/bin/uv && \
-    chmod +x /usr/local/bin/uv && \
-    rm -rf /root/.local
+  mv /root/.local/bin/uv /usr/local/bin/uv && \
+  chmod +x /usr/local/bin/uv && \
+  rm -rf /root/.local
 
 # Set Python aliases (requires root)
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.11 1 && \
-    update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
+  update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
 
 # Switch back to node user
 USER node
 
 # Unset VIRTUAL_ENV to prevent conflicts with uv
 ENV VIRTUAL_ENV=""
+ENV UV_PROJECT_ENVIRONMENT="/tmp/venv"
 
 # Copy and set up firewall script
 COPY init-firewall.sh /usr/local/bin/
