@@ -17,10 +17,11 @@ uv sync --extra dev
 echo "📝 Step 1: Formatting with ruff..."
 uv run ruff format .
 
-echo "🔍 Step 2: Linting with ruff..."
+echo "🔬 Step 2: Type checking with mypy..."
+uv run mypy . --show-error-codes
+
+echo "🔍 Step 3: Linting with ruff..."
 uv run ruff check . --fix
 
-echo "🔬 Step 3: Type checking with mypy..."
-uv run mypy . --show-error-codes
 
 echo "✅ All quality checks passed!"

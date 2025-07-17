@@ -1,6 +1,0 @@
-{
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "workbench.colorTheme": "One Dark Pro Darker",
-  "python.defaultInterpreterPath": "./venv/bin/python",
-  "python.terminal.activateEnvironment": true
-}

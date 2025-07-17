@@ -114,18 +114,9 @@ Run this script on every change:
 cd package-name && ./scripts/lint.sh
 ```
 
-### Strategic Rule Management
-
-The following rules are strategically ignored with clear justification:
-
-- **TRY300**: Ignored for `**/server.py` files - current try/return pattern cleaner than else block style
-- **SIM117**: Ignored for `tests/**/*.py` files - nested with statements more readable than single line
-- **ANN401**: Allowed globally - explicit Any usage for LangChain external interfaces
-- **FastMCP Compatibility**: mypy python_version set to "3.10" for FastMCP library compatibility
-
 ### Type Checking (mypy)
 
-- **Strict mypy configuration** with practical LangChain exceptions
+- **Strict mypy configuration**
 - **Full type annotations** for all functions and variables
 - **Async-aware** type checking for LLM operations
 - **Pydantic integration** for model validation
@@ -133,8 +124,6 @@ The following rules are strategically ignored with clear justification:
 
 ### Linting and Formatting (ruff)
 
-- **Comprehensive linting** - 25+ rule categories
-- **Built-in formatting** - consistent code style
 - **Strict type enforcement** - catch problematic `Any` usage
 - **Security rules** - bandit security checks
 - **Performance optimization** - performance linting
@@ -219,6 +208,13 @@ package-name/
 ├── README.md
 └── Dockerfile (if needed)
 ```
+
+## Working with types and linting tools
+- Make sure to run `lint.sh` scripts on every code change iteration to keep awareness of potential misses.
+- Avoid supressing linter errors, think about proper fixes.
+- Avoid workaround fixes, always attempt to resolve the root cause of the issue.
+- Be very thorough with typing system, make sure the code has the best type coverage.
+- Avoid `Any` types.
 
 ## Working with test
 
