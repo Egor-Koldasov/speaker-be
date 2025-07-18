@@ -14,4 +14,4 @@ docker run -it --rm \
   -w /workspace \
   --user node \
   claude-code-sandbox \
-  /bin/bash -c "sudo /usr/local/bin/init-firewall.sh && exec zsh"
+  /bin/bash -c "sudo /usr/local/bin/init-firewall.sh && ./scripts/langtools/uv-sync.sh && exec zsh"

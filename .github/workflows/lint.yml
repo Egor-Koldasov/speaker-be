@@ -1,0 +1,108 @@
+name: Lint
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint-langtools-utils:
+    name: Lint langtools-utils
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+          cache-dependency-glob: "langtools-utils/uv.lock"
+      
+      - name: Set up Python
+        run: uv python install 3.10
+      
+      - name: Install dependencies
+        run: |
+          cd langtools-utils
+          uv sync --all-extras
+      
+      - name: Run linters
+        run: |
+          cd langtools-utils
+          ./scripts/lint.sh
+
+  lint-langtools-ai:
+    name: Lint langtools-ai
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+          cache-dependency-glob: "langtools-ai/uv.lock"
+      
+      - name: Set up Python
+        run: uv python install 3.10
+      
+      - name: Install dependencies
+        run: |
+          cd langtools-ai
+          uv sync --all-extras
+      
+      - name: Run linters
+        run: |
+          cd langtools-ai
+          ./scripts/lint.sh
+
+  lint-langtools-main:
+    name: Lint langtools-main
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+          cache-dependency-glob: "langtools-main/uv.lock"
+      
+      - name: Set up Python
+        run: uv python install 3.10
+      
+      - name: Install dependencies
+        run: |
+          cd langtools-main
+          uv sync --all-extras
+      
+      - name: Run linters
+        run: |
+          cd langtools-main
+          ./scripts/lint.sh
+
+  lint-langtools-mcp:
+    name: Lint langtools-mcp
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+          cache-dependency-glob: "langtools-mcp/uv.lock"
+      
+      - name: Set up Python
+        run: uv python install 3.10
+      
+      - name: Install dependencies
+        run: |
+          cd langtools-mcp
+          uv sync --all-extras
+      
+      - name: Run linters
+        run: |
+          cd langtools-mcp
+          ./scripts/lint.sh
