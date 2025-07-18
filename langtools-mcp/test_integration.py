@@ -8,8 +8,52 @@ No mocking - real end-to-end functionality.
 import asyncio
 import os
 import sys
+from dataclasses import dataclass
 from pathlib import Path
+from typing import cast
 from fastmcp.client import Client
+
+
+@dataclass
+class IntegrationMeaning:
+    """Type-safe representation of meaning data."""
+
+    id: str
+    neutral_form: str
+    definition_original: str
+    definition_translated: str
+    translation: str
+    pronunciation: str
+    synonyms: str
+
+
+@dataclass
+class IntegrationTestResponse:
+    """Type-safe representation of integration test response data."""
+
+    source_language: str
+    meanings: list[IntegrationMeaning]
+
+
+def convert_to_integration_response(data: dict[str, object]) -> IntegrationTestResponse:
+    """Convert dictionary data to IntegrationTestResponse."""
+    meanings_data = cast(list[dict[str, str]], data["meanings"])
+    meanings = [
+        IntegrationMeaning(
+            id=meaning["id"],
+            neutral_form=meaning["neutral_form"],
+            definition_original=meaning["definition_original"],
+            definition_translated=meaning["definition_translated"],
+            translation=meaning["translation"],
+            pronunciation=meaning["pronunciation"],
+            synonyms=meaning["synonyms"],
+        )
+        for meaning in meanings_data
+    ]
+    return IntegrationTestResponse(
+        source_language=cast(str, data["source_language"]), meanings=meanings
+    )
+
 
 # Load environment variables from .env file
 try:
@@ -37,14 +81,14 @@ def create_mcp_client():
     openai_key = os.getenv("OPENAI_API_KEY")
 
     # Pass environment variables to subprocess
-    env_vars = {}
+    env_vars: dict[str, str] = {}
     if anthropic_key:
         env_vars["ANTHROPIC_API_KEY"] = anthropic_key
     if openai_key:
         env_vars["OPENAI_API_KEY"] = openai_key
     env_vars["LANGTOOLS_DEBUG"] = "true"
 
-    config = {
+    config: dict[str, dict[str, dict[str, str | list[str] | dict[str, str]]]] = {
         "mcpServers": {
             "langtools": {"command": "langtools-mcp", "args": ["--verbose"], "env": env_vars}
         }
@@ -73,7 +117,7 @@ async def test_real_integration():
         return False
 
     # Show which keys are available
-    available_keys = []
+    available_keys: list[str] = []
     if anthropic_key:
         available_keys.append("Anthropic")
     if openai_key:
@@ -131,55 +175,49 @@ async def test_real_integration():
             print("✅ REAL API call successful!")
 
             # Validate the response structure
-            if not result.data:
+            data_raw = cast(dict[str, object] | None, result.data)
+            if not data_raw:
                 print("❌ No data in response")
                 return False
 
-            data = result.data
-            print(
-                f"📖 Generated entry for: "
-                f"{data.get('meanings', [{}])[0].get('neutral_form', 'N/A')}"
-            )
-            print(f"🌍 Source language: {data.get('source_language', 'N/A')}")
+            # Type-safe conversion to structured response
+            data = convert_to_integration_response(data_raw)
+            meanings = data.meanings
+            print(f"📖 Generated entry for: {meanings[0].neutral_form}")
+            print(f"🌍 Source language: {data.source_language}")
 
-            if "meanings" in data and data["meanings"]:
-                meaning = data["meanings"][0]
-                print(f"🔤 Translation: {meaning.get('translation', 'N/A')}")
-                print(f"🗣️ Pronunciation: {meaning.get('pronunciation', 'N/A')}")
-                print(
-                    f"📚 Definition (original): "
-                    f"{meaning.get('definition_original', 'N/A')[:100]}..."
-                )
-                print(
-                    f"📖 Definition (translated): "
-                    f"{meaning.get('definition_translated', 'N/A')[:100]}..."
-                )
-                print(f"🔄 Synonyms: {meaning.get('synonyms', 'N/A')}")
+            if data.meanings:
+                meaning = data.meanings[0]
+                print(f"🔤 Translation: {meaning.translation}")
+                print(f"🗣️ Pronunciation: {meaning.pronunciation}")
+                orig_def = meaning.definition_original[:100]
+                trans_def = meaning.definition_translated[:100]
+                print(f"📚 Definition (original): {orig_def}...")
+                print(f"📖 Definition (translated): {trans_def}...")
+                print(f"🔄 Synonyms: {meaning.synonyms}")
 
             # Validate required fields
-            required_fields = ["source_language", "meanings"]
-            missing_fields = [field for field in required_fields if field not in data]
-            if missing_fields:
-                print(f"❌ Missing required fields: {missing_fields}")
+            if not data.source_language:
+                print("❌ Missing source_language field")
                 return False
 
-            if not data["meanings"]:
+            if not data.meanings:
                 print("❌ Empty meanings array")
                 return False
 
-            meaning = data["meanings"][0]
-            meaning_required = [
-                "id",
-                "neutral_form",
-                "definition_original",
-                "definition_translated",
-                "translation",
-                "pronunciation",
-                "synonyms",
+            meaning = data.meanings[0]
+            # All fields are required in the dataclass, so we just need to check they exist
+            required_fields = [
+                meaning.id,
+                meaning.neutral_form,
+                meaning.definition_original,
+                meaning.definition_translated,
+                meaning.translation,
+                meaning.pronunciation,
+                meaning.synonyms,
             ]
-            missing_meaning_fields = [field for field in meaning_required if field not in meaning]
-            if missing_meaning_fields:
-                print(f"❌ Missing required meaning fields: {missing_meaning_fields}")
+            if not all(required_fields):
+                print("❌ Missing required meaning fields")
                 return False
 
             print("✅ All required fields present")
@@ -204,7 +242,7 @@ async def test_with_different_models():
     print("\n🔄 Testing with different models...")
 
     # Only test models we have API keys for
-    models_to_test = []
+    models_to_test: list[str] = []
 
     anthropic_key = os.getenv("ANTHROPIC_API_KEY")
     # openai_key = os.getenv("OPENAI_API_KEY")  # Not used currently
@@ -237,12 +275,14 @@ async def test_with_different_models():
                     },
                 )
 
-                if result.data and "meanings" in result.data:
-                    meaning = result.data["meanings"][0]
-                    print(
-                        f"✅ {model}: Generated '{meaning.get('neutral_form')}' -> "
-                        f"'{meaning.get('translation')}'"
-                    )
+                data_raw = cast(dict[str, object] | None, result.data)
+                if data_raw and "meanings" in data_raw:
+                    # Type-safe conversion to structured response
+                    data = convert_to_integration_response(data_raw)
+                    meaning = data.meanings[0]
+                    neutral = meaning.neutral_form
+                    translation = meaning.translation
+                    print(f"✅ {model}: Generated '{neutral}' -> '{translation}'")
                 else:
                     print(f"❌ {model}: Invalid response structure")
 
@@ -257,7 +297,6 @@ if __name__ == "__main__":
 
     # Check if we're in the right environment
     try:
-        import langtools.mcp  # noqa: F401
         # import langtools.ai  # Available through langtools-mcp dependency
 
         print("✅ Required packages found")
