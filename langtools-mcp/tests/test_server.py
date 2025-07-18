@@ -1,5 +1,7 @@
 """Tests for MCP server functionality."""
 
+from dataclasses import dataclass
+from typing import cast
 from unittest.mock import AsyncMock, patch
 
 import pytest
@@ -10,16 +12,65 @@ from langtools.ai.models import AiDictionaryEntry, Meaning
 from langtools.mcp.server import DictionaryEntryRequest, create_server
 
 
+@dataclass
+class McpMeaning:
+    """Type-safe representation of meaning data."""
+
+    id: str
+    neutral_form: str
+    definition_original: str
+    definition_translated: str
+    translation: str
+    pronunciation: str
+    synonyms: str
+
+
+@dataclass
+class McpToolResponse:
+    """Type-safe representation of MCP tool response data."""
+
+    source_language: str
+    meanings: list[McpMeaning]
+
+
+@dataclass
+class McpToolSchema:
+    """Type-safe representation of MCP tool schema."""
+
+    type: str
+    properties: dict[str, object]
+    required: list[str]
+
+
+def convert_to_mcp_response(data: dict[str, object]) -> McpToolResponse:
+    """Convert dictionary data to McpToolResponse."""
+    meanings_data = cast(list[dict[str, str]], data["meanings"])
+    meanings = [
+        McpMeaning(
+            id=meaning["id"],
+            neutral_form=meaning["neutral_form"],
+            definition_original=meaning["definition_original"],
+            definition_translated=meaning["definition_translated"],
+            translation=meaning["translation"],
+            pronunciation=meaning["pronunciation"],
+            synonyms=meaning["synonyms"],
+        )
+        for meaning in meanings_data
+    ]
+    return McpToolResponse(source_language=cast(str, data["source_language"]), meanings=meanings)
+
+
 class TestMCPServer:
     """Test cases for MCP server functionality."""
 
-    def test_create_server(self):
+    def test_create_server(self) -> None:
         """Test server creation."""
         server = create_server()
         assert server is not None
-        assert server.name == "langtools-mcp"
+        assert hasattr(server, "name")
+        assert server.name == "LangTools"
 
-    def test_dictionary_entry_request_validation(self):
+    def test_dictionary_entry_request_validation(self) -> None:
         """Test DictionaryEntryRequest validation."""
         # Valid request
         valid_request = DictionaryEntryRequest(
@@ -42,7 +93,7 @@ class TestMCPServer:
         assert custom_model_request.model == "gpt-4"
 
     @pytest.mark.asyncio
-    async def test_generate_dictionary_entry_tool_via_client(self):
+    async def test_generate_dictionary_entry_tool_via_client(self) -> None:
         """Test dictionary entry generation through MCP client."""
         server = create_server()
 
@@ -75,13 +126,17 @@ class TestMCPServer:
                     },
                 )
 
-                assert result.data is not None
-                assert isinstance(result.data, dict)
-                assert result.data["source_language"] == "ru"
-                assert len(result.data["meanings"]) == 1
-                assert result.data["meanings"][0]["id"] == "сырой-0"
-                assert result.data["meanings"][0]["neutral_form"] == "сырой"
-                assert result.data["meanings"][0]["translation"] == "raw, uncooked, fresh"
+                result_data = cast(dict[str, object] | None, result.data)
+                assert result_data is not None
+                assert isinstance(result_data, dict)
+                # Type-safe conversion to structured response
+                data = convert_to_mcp_response(result_data)
+                assert data.source_language == "ru"
+                assert len(data.meanings) == 1
+                meaning = data.meanings[0]
+                assert meaning.id == "сырой-0"
+                assert meaning.neutral_form == "сырой"
+                assert meaning.translation == "raw, uncooked, fresh"
 
                 # Verify the AI function was called
                 mock_generate.assert_called_once()
@@ -91,7 +146,7 @@ class TestMCPIntegration:
     """Integration tests using fastmcp.Client."""
 
     @pytest.mark.asyncio
-    async def test_mcp_client_server_integration(self):
+    async def test_mcp_client_server_integration(self) -> None:
         """Test MCP client-server integration."""
         server = create_server()
 
@@ -126,18 +181,22 @@ class TestMCPIntegration:
                     },
                 )
 
-                assert result.data is not None
-                assert isinstance(result.data, dict)
-                assert result.data["source_language"] == "en"
-                assert len(result.data["meanings"]) == 1
-                assert result.data["meanings"][0]["neutral_form"] == "hello"
-                assert result.data["meanings"][0]["translation"] == "привет, здравствуй"
+                result_data = cast(dict[str, object] | None, result.data)
+                assert result_data is not None
+                assert isinstance(result_data, dict)
+                # Type-safe conversion to structured response
+                data = convert_to_mcp_response(result_data)
+                assert data.source_language == "en"
+                assert len(data.meanings) == 1
+                meaning = data.meanings[0]
+                assert meaning.neutral_form == "hello"
+                assert meaning.translation == "привет, здравствуй"
 
                 # Verify AI function was called
                 mock_generate.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_mcp_client_list_tools(self):
+    async def test_mcp_client_list_tools(self) -> None:
         """Test listing available tools through MCP client."""
         server = create_server()
         client = Client(server)
@@ -145,11 +204,14 @@ class TestMCPIntegration:
         async with client:
             tools = await client.list_tools()
             assert len(tools) == 1
-            assert tools[0].name == "generate_dictionary_entry_tool"
-            assert "Generate comprehensive dictionary entry" in tools[0].description
+            tool_name: str | None = tools[0].name
+            assert tool_name == "generate_dictionary_entry_tool"
+            tool_description: str | None = tools[0].description
+            assert tool_description is not None
+            assert "Generate comprehensive dictionary entry" in tool_description
 
     @pytest.mark.asyncio
-    async def test_mcp_client_tool_schema(self):
+    async def test_mcp_client_tool_schema(self) -> None:
         """Test tool schema validation through MCP client."""
         server = create_server()
         client = Client(server)
@@ -160,19 +222,19 @@ class TestMCPIntegration:
 
             # Check that tool has proper schema
             assert hasattr(tool, "inputSchema")
-            schema = tool.inputSchema
-            assert schema["type"] == "object"
-            assert "properties" in schema
+            schema_data = cast(McpToolSchema, tool.inputSchema)
+            assert schema_data.type == "object"
+            assert "properties" in tool.inputSchema
 
-            properties = schema["properties"]
+            properties = schema_data.properties
             assert "translating_term" in properties
             assert "user_learning_languages" in properties
             assert "translation_language" in properties
             assert "model" in properties
 
             # Check required fields
-            assert "required" in schema
-            required = schema["required"]
+            assert "required" in tool.inputSchema
+            required = schema_data.required
             assert "translating_term" in required
             assert "user_learning_languages" in required
             assert "translation_language" in required

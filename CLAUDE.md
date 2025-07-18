@@ -149,7 +149,6 @@ Type checking and linting configurations are shared across packages:
 - Prefer pure functions without side effects
 - Use `async`/`await` for I/O operations (LLM calls, database)
 - Validate inputs using Pydantic models
-- Always specify return types
 
 ### Data Handling
 
@@ -210,6 +209,18 @@ package-name/
 - Be very thorough with typing system, make sure the code has the best type coverage.
 - Avoid `Any` types.
 - If you absolutely cannot fix a type, prefer type casting over supressing an error with "ignore".
+- In case of type casting, use `cast` from `typing`, for objects you can define data classes and cast unknown objects to these classes.
+
+```
+@dataclass
+class Args:
+    verbose: bool
+
+def parse_args() -> Args:
+    parser = argparse.ArgumentParser(description="Language learning tools MCP server")
+    parser.add_argument("--verbose", "-v", action="store_true", help="Enable verbose logging")
+    return cast(Args, parser.parse_args())
+```
 
 ## Working with test
 

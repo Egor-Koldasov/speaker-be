@@ -3,9 +3,10 @@
 import argparse
 import logging
 import sys
+from dataclasses import dataclass
+from typing import cast
 
 from .server import mcp
-
 
 # Configure logging
 logging.basicConfig(
@@ -14,12 +15,17 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def parse_args() -> argparse.Namespace:
+@dataclass
+class Args:
+    verbose: bool
+
+
+def parse_args() -> Args:
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(description="Language learning tools MCP server")
     parser.add_argument("--verbose", "-v", action="store_true", help="Enable verbose logging")
     parser.add_argument("--version", action="version", version="langtools-mcp 0.1.0")
-    return parser.parse_args()
+    return cast(Args, parser.parse_args())
 
 
 def main() -> None:

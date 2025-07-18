@@ -2,7 +2,6 @@
 
 import logging
 
-from typing import Any
 
 from fastmcp import FastMCP
 from pydantic import BaseModel, Field
@@ -24,7 +23,7 @@ logger = logging.getLogger(__name__)
 configure_debug_logging()
 
 # Initialize FastMCP server with comprehensive metadata
-mcp: FastMCP[Any] = FastMCP(
+mcp = FastMCP(
     name="LangTools",
     version="0.1.0",
     instructions=(
@@ -109,7 +108,7 @@ async def generate_dictionary_entry_tool(
     user_learning_languages: str,
     translation_language: str,
     model: str = "claude-4-0-sonnet",
-) -> dict[str, Any]:
+) -> dict[str, object]:
     """
     Generate comprehensive multilingual dictionary entry for enhanced language learning.
 
@@ -169,7 +168,7 @@ async def generate_dictionary_entry_tool(
         result: AiDictionaryEntry = await generate_dictionary_entry(params, model_type)
 
         # Convert Pydantic model to dict for MCP response
-        response: dict[str, Any] = result.model_dump()
+        response: dict[str, object] = result.model_dump()
 
         logger.info(f"Successfully generated dictionary entry with {len(result.meanings)} meanings")
         logger.debug(f"Response: {response}")
@@ -270,7 +269,7 @@ async def help_prompt() -> str:
     return HELP_PROMPT
 
 
-def create_server() -> FastMCP[Any]:
+def create_server():
     """Create and configure the MCP server."""
     return mcp
 
