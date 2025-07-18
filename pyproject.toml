@@ -1,0 +1,7 @@
+[tool.uv.workspace]
+members = [
+    "langtools-utils",
+    "langtools-ai", 
+    "langtools-main",
+    "langtools-mcp"
+]

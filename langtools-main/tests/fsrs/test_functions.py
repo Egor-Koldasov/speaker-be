@@ -48,9 +48,7 @@ class TestFSRSFunctions(unittest.TestCase):
         self.assertIsNotNone(updated_data.difficulty)
 
         # Should stay in learning or move to review state
-        self.assertIn(
-            updated_data.state, [FSRSCardState.LEARNING, FSRSCardState.REVIEW]
-        )
+        self.assertIn(updated_data.state, [FSRSCardState.LEARNING, FSRSCardState.REVIEW])
 
     def test_process_review_again(self):
         """Test processing a failed review."""
@@ -66,9 +64,7 @@ class TestFSRSFunctions(unittest.TestCase):
         self.assertEqual(updated_data.last_review, review_time)
 
         # Should be in learning or relearning state
-        self.assertIn(
-            updated_data.state, [FSRSCardState.LEARNING, FSRSCardState.RELEARNING]
-        )
+        self.assertIn(updated_data.state, [FSRSCardState.LEARNING, FSRSCardState.RELEARNING])
 
     def test_process_review_hard(self):
         """Test processing a hard review."""

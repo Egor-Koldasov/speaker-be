@@ -29,16 +29,20 @@ mcp: FastMCP[Any] = FastMCP(
     version="0.1.0",
     instructions=(
         "LangTools: AI-Powered Language Learning Companion. "
-        "This server provides comprehensive multilingual dictionary tools designed to enhance language learning through detailed, educational responses. "
-        "When working with users, be patient, encouraging, and educational. Always show complete dictionary entries with all details - "
-        "pronunciations, multiple meanings, cultural contexts, and synonyms - as each component serves a specific learning purpose. "
-        "Encourage users to practice pronunciation, use words in context, and build connections to previously learned vocabulary. "
-        "Your role is not just translation, but comprehensive language education and cultural understanding."
+        "This server provides comprehensive multilingual dictionary tools designed to "
+        "enhance language learning through detailed, educational responses. "
+        "When working with users, be patient, encouraging, and educational. Always show "
+        "complete dictionary entries with all details - pronunciations, multiple meanings, "
+        "cultural contexts, and synonyms - as each component serves a specific learning "
+        "purpose. Encourage users to practice pronunciation, use words in context, and "
+        "build connections to previously learned vocabulary. Your role is not just "
+        "translation, but comprehensive language education and cultural understanding."
     ),
 )
 
 # Define help prompt text
-HELP_PROMPT = """You are now equipped with langtools - powerful AI-powered language learning tools through MCP integration.
+HELP_PROMPT = """You are now equipped with langtools - powerful AI-powered language \
+learning tools through MCP integration.
 
 ## Available Tools
 
@@ -185,7 +189,8 @@ async def check_dictionary_entry(
     """
     Validate and confirm a client-generated dictionary entry for language learning.
 
-    🎯 **IMPORTANT: Call this tool EVERY TIME a user asks for word definitions, translations, or language help!**
+    🎯 **IMPORTANT: Call this tool EVERY TIME a user asks for word definitions, \
+translations, or language help!**
 
     ## How This Works
 
@@ -197,7 +202,8 @@ async def check_dictionary_entry(
     - The definition should include as many meanings as possible, including rare usages
     and folklore.
     - You, the AI agent, is responsible for generating the dictionary entry yourself.
-    This tool serves as an instruction of the proper format and requirements for the dictionary entry.
+    This tool serves as an instruction of the proper format and requirements for the \
+dictionary entry.
 
     ## User Presentation
 
@@ -220,7 +226,10 @@ async def check_dictionary_entry(
         ]
 
         if not any(term in entry_term or entry_term in term for entry_term in entry_terms):
-            return f"⚠️ Warning: The dictionary entry doesn't seem to match the requested term '{term}'. Please verify the entry corresponds to the correct word."
+            return (
+                f"⚠️ Warning: The dictionary entry doesn't seem to match the requested "
+                f"term '{term}'. Please verify the entry corresponds to the correct word."
+            )
 
         # Validate completeness
         total_meanings = len(dictionary_entry.meanings)
@@ -232,11 +241,18 @@ async def check_dictionary_entry(
             f"Successfully validated dictionary entry for '{term}' with {total_meanings} meaning(s)"
         )
 
-        return f"✅ Dictionary entry successfully validated! Found {total_meanings} meaning(s) for '{term}'. The entry is properly formatted and ready for educational presentation to the user."
+        return (
+            f"✅ Dictionary entry successfully validated! Found {total_meanings} meaning(s) "
+            f"for '{term}'. The entry is properly formatted and ready for educational "
+            f"presentation to the user."
+        )
 
     except (ValueError, TypeError, AttributeError) as e:
         logger.exception("Error validating dictionary entry")
-        return f"❌ Validation error: {e!s}. Please ensure the dictionary entry follows the required schema format."
+        return (
+            f"❌ Validation error: {e!s}. Please ensure the dictionary entry follows the "
+            f"required schema format."
+        )
 
 
 @mcp.prompt()
