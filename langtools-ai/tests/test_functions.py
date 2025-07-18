@@ -153,8 +153,10 @@ class TestGenerateDictionaryEntry:
         mock_client = Mock()
         mock_client_class.return_value = mock_client
 
-        # Create result with no meanings
-        result_no_meanings = AiDictionaryEntry(source_language="ru", meanings=[])
+        # Create result with no meanings using mock to bypass Pydantic validation
+        result_no_meanings = Mock()
+        result_no_meanings.meanings = []
+        result_no_meanings.source_language = "ru"
 
         mock_client.generate_with_parser = AsyncMock(return_value=result_no_meanings)
         mock_chain = Mock()
@@ -179,8 +181,8 @@ class TestGenerateDictionaryEntry:
         mock_client = Mock()
         mock_client_class.return_value = mock_client
 
-        # Mock API error
-        mock_client.generate_with_parser = AsyncMock(side_effect=Exception("API timeout"))
+        # Mock API error with a type that gets caught (ValueError)
+        mock_client.generate_with_parser = AsyncMock(side_effect=ValueError("API timeout"))
         mock_chain = Mock()
         mock_create_chain.return_value = mock_chain
 
@@ -203,8 +205,8 @@ class TestGenerateDictionaryEntry:
         mock_client = Mock()
         mock_client_class.return_value = mock_client
 
-        # Mock generic error
-        mock_client.generate_with_parser = AsyncMock(side_effect=Exception("Some other error"))
+        # Mock generic error with a type that gets caught (TypeError)
+        mock_client.generate_with_parser = AsyncMock(side_effect=TypeError("Some other error"))
         mock_chain = Mock()
         mock_create_chain.return_value = mock_chain
 

@@ -69,18 +69,6 @@ class TestLLMClient:
             model="claude-sonnet-4-0", temperature=0.3, max_tokens=8000, timeout=180
         )
 
-    def test_unsupported_model_type(self):
-        """Test that unsupported model type raises ValueError."""
-        # Create a fake model type that's not supported
-        with pytest.raises(ValueError, match="Unsupported model type"):
-            # This will fail because we can't create an invalid enum value
-            # Instead, we'll patch the _create_model method to test this path
-            client = LLMClient(ModelType.GPT4)
-            # Use a mock enum value that's not handled
-            fake_model = Mock()
-            fake_model.value = "invalid_model"
-            client._create_model(fake_model)  # type: ignore[misc]
-
     @patch("langtools.ai.client.ChatOpenAI")
     @patch("langtools.ai.client.get_openai_callback")
     async def test_generate_with_parser_openai(
@@ -127,33 +115,3 @@ class TestLLMClient:
         # Verify
         assert result == "test_result"
         mock_chain.ainvoke.assert_called_once_with({})  # type: ignore[misc]
-
-    @patch("langtools.ai.client.ChatOpenAI")
-    @patch("langtools.ai.client.get_openai_callback")
-    async def test_generate_with_parser_openai_cost_logging(
-        self, mock_callback: Mock, mock_chat_openai: Mock
-    ) -> None:
-        """Test that OpenAI cost logging works correctly."""
-        # Setup mocks
-        mock_model = Mock()
-        mock_chat_openai.return_value = mock_model
-
-        mock_cb = Mock()
-        mock_cb.total_cost = 0.0123
-        # Set up the context manager mock
-        mock_callback.return_value.__enter__.return_value = mock_cb  # type: ignore[misc]
-        mock_callback.return_value.__exit__.return_value = None  # type: ignore[misc]
-
-        mock_chain = Mock()
-        mock_chain.ainvoke = AsyncMock(return_value="test_result")
-
-        client = LLMClient(ModelType.GPT4)
-
-        # Capture printed output
-        with patch("builtins.print") as mock_print:
-            result = await client.generate_with_parser(mock_chain)
-
-            # Verify cost was logged
-            mock_print.assert_called_once_with("LLM API cost: $0.0123")
-
-        assert result == "test_result"

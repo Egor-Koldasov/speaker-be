@@ -9,7 +9,17 @@ import pytest
 from fastmcp.client import Client
 
 from langtools.ai.models import AiDictionaryEntry, Meaning
-from langtools.mcp.server import DictionaryEntryRequest, create_server
+from langtools.mcp.server import DictionaryEntryRequest, create_server, generate_dictionary_entry_tool
+
+
+@pytest.fixture(autouse=True)
+def enable_disabled_tool():
+    """Enable the disabled generate_dictionary_entry_tool for testing."""
+    # Enable the tool before each test
+    generate_dictionary_entry_tool.enable()
+    yield
+    # Disable it again after each test to maintain isolation
+    generate_dictionary_entry_tool.disable()
 
 
 @dataclass
@@ -203,12 +213,16 @@ class TestMCPIntegration:
 
         async with client:
             tools = await client.list_tools()
-            assert len(tools) == 1
-            tool_name: str | None = tools[0].name
-            assert tool_name == "generate_dictionary_entry_tool"
-            tool_description: str | None = tools[0].description
+            assert len(tools) == 2  # Both tools should be available now
+            tool_names = [tool.name for tool in tools]
+            assert "generate_dictionary_entry_tool" in tool_names
+            assert "check_dictionary_entry" in tool_names
+            
+            # Find the generate_dictionary_entry_tool and check its description
+            generate_tool = next(tool for tool in tools if tool.name == "generate_dictionary_entry_tool")
+            tool_description: str | None = generate_tool.description
             assert tool_description is not None
-            assert "Generate comprehensive dictionary entry" in tool_description
+            assert "Generate comprehensive multilingual dictionary entry" in tool_description
 
     @pytest.mark.asyncio
     async def test_mcp_client_tool_schema(self) -> None:
@@ -218,23 +232,24 @@ class TestMCPIntegration:
 
         async with client:
             tools = await client.list_tools()
-            tool = tools[0]
+            # Find the generate_dictionary_entry_tool specifically
+            tool = next(tool for tool in tools if tool.name == "generate_dictionary_entry_tool")
 
             # Check that tool has proper schema
             assert hasattr(tool, "inputSchema")
-            schema_data = cast(McpToolSchema, tool.inputSchema)
-            assert schema_data.type == "object"
-            assert "properties" in tool.inputSchema
+            schema_data = cast(dict[str, object], tool.inputSchema)
+            assert schema_data["type"] == "object"
+            assert "properties" in schema_data
 
-            properties = schema_data.properties
+            properties = cast(dict[str, object], schema_data["properties"])
             assert "translating_term" in properties
             assert "user_learning_languages" in properties
             assert "translation_language" in properties
             assert "model" in properties
 
             # Check required fields
-            assert "required" in tool.inputSchema
-            required = schema_data.required
+            assert "required" in schema_data
+            required = cast(list[str], schema_data["required"])
             assert "translating_term" in required
             assert "user_learning_languages" in required
             assert "translation_language" in required
