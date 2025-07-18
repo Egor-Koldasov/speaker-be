@@ -58,17 +58,11 @@ langtools-mcp → langtools-main → langtools-ai → langtools-utils
 Each package has its own scripts in `scripts/` directory:
 
 ```bash
-# Development setup (install, typecheck, lint, test)
-cd package-name && ./scripts/dev.sh
+# Run linters
+cd package-name && ./scripts/lint.sh
 
 # Run tests only
 cd package-name && ./scripts/test.sh
-
-# Build package
-cd package-name && ./scripts/build.sh
-
-# Clean build artifacts
-cd package-name && ./scripts/clean.sh
 ```
 
 ### Python Environment Setup
@@ -76,9 +70,8 @@ cd package-name && ./scripts/clean.sh
 The project uses modern `uv` with workspace configuration and no manual virtual environment management:
 
 ```bash
-# Install uv (if not already installed)
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
+# Install dependencies
+./scripts/langtools/uv-sync.sh
 # Inside package subfolders run any python command with uv
 uv run python script.py
 uv run scripts/lint.sh
@@ -98,14 +91,6 @@ uv run scripts/lint.sh
 ### Quality Gate Requirements
 
 All packages must maintain **zero-error quality gates** for CI integration. The lint scripts must pass with zero errors, warnings, and type checking issues.
-
-### Quality Gate Script
-
-Each package includes a `scripts/lint.sh` script. Run this script on every change:
-
-```bash
-cd package-name && ./scripts/lint.sh
-```
 
 ### Type Checking (basedpyright)
 
