@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Architecture
 
-This is a monorepo for language learning tools with a modular Python architecture designed for MCP (Model Context Protocol) integration.
+This is a monorepo for language learning tools with a modular Python architecture designed for MCP (Model Context Protocol) integration. The project uses uv workspace configuration for managing inter-package dependencies.
 
 ### Package Structure
 
@@ -73,7 +73,7 @@ cd package-name && ./scripts/clean.sh
 
 ### Python Environment Setup
 
-The project uses modern `uv` with no manual virtual environment management:
+The project uses modern `uv` with workspace configuration and no manual virtual environment management:
 
 ```bash
 # Install uv (if not already installed)
@@ -101,22 +101,15 @@ All packages must maintain **zero-error quality gates** for CI integration. The 
 
 ### Quality Gate Script
 
-Each package includes a `scripts/lint.sh` script that runs:
-
-1. **Dependencies**: `uv sync --extra dev`
-2. **Formatting**: `uv run ruff format src/ tests/`
-3. **Linting**: `uv run ruff check src/ tests/ --fix`
-4. **Type checking**: `uv run mypy src/ --show-error-codes`
-
-Run this script on every change:
+Each package includes a `scripts/lint.sh` script. Run this script on every change:
 
 ```bash
 cd package-name && ./scripts/lint.sh
 ```
 
-### Type Checking (mypy)
+### Type Checking (basedpyright)
 
-- **Strict mypy configuration**
+- **Strict basedpyright configuration**
 - **Full type annotations** for all functions and variables
 - **Async-aware** type checking for LLM operations
 - **Pydantic integration** for model validation
@@ -135,20 +128,18 @@ Each package includes in `pyproject.toml`:
 ```toml
 [project.optional-dependencies]
 dev = [
-    "mypy>=1.7.0",
+    "pytest>=7.0.0",
+    "basedpyright>=1.12.0",
     "ruff>=0.1.0",
     "pre-commit>=3.0.0",
-    "pytest>=7.0.0",
 ]
-
-[tool.mypy]
-strict = true
-python_version = "3.8"
-
-[tool.ruff]
-target-version = "py38"
-line-length = 88
 ```
+
+Type checking and linting configurations are shared across packages:
+
+- `langtools-utils/pyrightconfig.json` - Common basedpyright configuration
+- `langtools-utils/ruff.toml` - Common ruff configuration
+- Each package extends these configs with minimal `pyrightconfig.json` and `ruff.toml` files
 
 ## Code Design Guidelines
 
@@ -195,6 +186,8 @@ Each package follows this structure:
 ```
 package-name/
 ├── pyproject.toml
+├── pyrightconfig.json          # Extends ../langtools-utils/pyrightconfig.json
+├── ruff.toml                   # Extends ../langtools-utils/ruff.toml
 ├── src/
 │   └── langtools/
 │       └── package_name/
@@ -210,6 +203,7 @@ package-name/
 ```
 
 ## Working with types and linting tools
+
 - Make sure to run `lint.sh` scripts on every code change iteration to keep awareness of potential misses.
 - Avoid supressing linter errors, think about proper fixes.
 - Avoid workaround fixes, always attempt to resolve the root cause of the issue.

@@ -1,0 +1,25 @@
+# Increased line length for AI/ML code with long prompts and complex type annotations
+line-length = 100
+target-version = "py313" # Upgraded for better language features
+
+[lint]
+# Focus on performance and code integrity, not style
+select = [
+  # Core Python errors and issues
+  "E", # pycodestyle errors (syntax and indentation errors)
+  "F", # pyflakes (undefined names, unused imports, etc.)
+
+  # Type safety - only where inference fails
+  "ANN001", # Missing type annotation for function argument
+  "ANN002", # Missing type annotation for *args
+  "ANN003", # Missing type annotation for **kwargs
+  "ANN401", # Dynamically typed expressions (Any) are disallowed
+
+  # Resource management
+  "ARG", # flake8-unused-arguments (unused function arguments)
+]
+
+# Allow auto-fixing for safe rules
+fixable = [
+  "ALL",
+]

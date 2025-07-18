@@ -35,7 +35,7 @@ def create_mcp_client():
     """Create MCP client configuration with environment variables."""
     anthropic_key = os.getenv("ANTHROPIC_API_KEY")
     openai_key = os.getenv("OPENAI_API_KEY")
-    
+
     # Pass environment variables to subprocess
     env_vars = {}
     if anthropic_key:
@@ -43,14 +43,10 @@ def create_mcp_client():
     if openai_key:
         env_vars["OPENAI_API_KEY"] = openai_key
     env_vars["LANGTOOLS_DEBUG"] = "true"
-    
+
     config = {
         "mcpServers": {
-            "langtools": {
-                "command": "langtools-mcp",
-                "args": ["--verbose"],
-                "env": env_vars
-            }
+            "langtools": {"command": "langtools-mcp", "args": ["--verbose"], "env": env_vars}
         }
     }
     return Client(config)
@@ -141,7 +137,8 @@ async def test_real_integration():
 
             data = result.data
             print(
-                f"📖 Generated entry for: {data.get('meanings', [{}])[0].get('neutral_form', 'N/A')}"
+                f"📖 Generated entry for: "
+                f"{data.get('meanings', [{}])[0].get('neutral_form', 'N/A')}"
             )
             print(f"🌍 Source language: {data.get('source_language', 'N/A')}")
 
@@ -150,10 +147,12 @@ async def test_real_integration():
                 print(f"🔤 Translation: {meaning.get('translation', 'N/A')}")
                 print(f"🗣️ Pronunciation: {meaning.get('pronunciation', 'N/A')}")
                 print(
-                    f"📚 Definition (original): {meaning.get('definition_original', 'N/A')[:100]}..."
+                    f"📚 Definition (original): "
+                    f"{meaning.get('definition_original', 'N/A')[:100]}..."
                 )
                 print(
-                    f"📖 Definition (translated): {meaning.get('definition_translated', 'N/A')[:100]}..."
+                    f"📖 Definition (translated): "
+                    f"{meaning.get('definition_translated', 'N/A')[:100]}..."
                 )
                 print(f"🔄 Synonyms: {meaning.get('synonyms', 'N/A')}")
 
@@ -178,9 +177,7 @@ async def test_real_integration():
                 "pronunciation",
                 "synonyms",
             ]
-            missing_meaning_fields = [
-                field for field in meaning_required if field not in meaning
-            ]
+            missing_meaning_fields = [field for field in meaning_required if field not in meaning]
             if missing_meaning_fields:
                 print(f"❌ Missing required meaning fields: {missing_meaning_fields}")
                 return False
@@ -210,7 +207,7 @@ async def test_with_different_models():
     models_to_test = []
 
     anthropic_key = os.getenv("ANTHROPIC_API_KEY")
-    openai_key = os.getenv("OPENAI_API_KEY")
+    # openai_key = os.getenv("OPENAI_API_KEY")  # Not used currently
 
     if anthropic_key:
         models_to_test.append("claude-sonnet-4-0")
@@ -243,7 +240,8 @@ async def test_with_different_models():
                 if result.data and "meanings" in result.data:
                     meaning = result.data["meanings"][0]
                     print(
-                        f"✅ {model}: Generated '{meaning.get('neutral_form')}' -> '{meaning.get('translation')}'"
+                        f"✅ {model}: Generated '{meaning.get('neutral_form')}' -> "
+                        f"'{meaning.get('translation')}'"
                     )
                 else:
                     print(f"❌ {model}: Invalid response structure")
@@ -259,8 +257,8 @@ if __name__ == "__main__":
 
     # Check if we're in the right environment
     try:
-        import langtools.mcp
-        import langtools.ai
+        import langtools.mcp  # noqa: F401
+        # import langtools.ai  # Available through langtools-mcp dependency
 
         print("✅ Required packages found")
     except ImportError as e:
