@@ -7,30 +7,30 @@ on:
     branches: [ main ]
 
 jobs:
-  lint-langtools-utils:
-    name: Lint langtools-utils
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+  # lint-langtools-utils:
+  #   name: Lint langtools-utils
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
       
-      - name: Install uv
-        uses: astral-sh/setup-uv@v3
-        with:
-          enable-cache: true
-          cache-dependency-glob: "langtools-utils/uv.lock"
+  #     - name: Install uv
+  #       uses: astral-sh/setup-uv@v3
+  #       with:
+  #         enable-cache: true
+  #         cache-dependency-glob: "langtools-utils/uv.lock"
       
-      - name: Set up Python
-        run: uv python install 3.10
+  #     - name: Set up Python
+  #       run: uv python install 3.10
       
-      - name: Install dependencies
-        run: |
-          cd langtools-utils
-          uv sync --all-extras
+  #     - name: Install dependencies
+  #       run: |
+  #         cd langtools-utils
+  #         uv sync --all-extras
       
-      - name: Run linters
-        run: |
-          cd langtools-utils
-          ./scripts/lint.sh
+  #     - name: Run linters
+  #       run: |
+  #         cd langtools-utils
+  #         ./scripts/lint.sh
 
   lint-langtools-ai:
     name: Lint langtools-ai

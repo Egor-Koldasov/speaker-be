@@ -194,6 +194,14 @@ package-name/
 - Be very thorough with typing system, make sure the code has the best type coverage.
 - Avoid `Any` types.
 - If you absolutely cannot fix a type, prefer type casting over supressing an error with "ignore".
+  Avoid such code with ignore:
+  ```python
+    process_review(training_data, 5, review_time)  # type: ignore[arg-type] # Testing invalid input
+  ```
+  Prefer such code with casting:
+  ```python
+    process_review(training_data, cast(Rating, 5), review_time)  # Testing invalid input
+  ```
 - In case of type casting, use `cast` from `typing`, for objects you can define data classes and cast unknown objects to these classes.
 
 ```

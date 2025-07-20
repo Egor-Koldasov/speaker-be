@@ -2,6 +2,7 @@
 
 import unittest
 from datetime import datetime, timedelta, timezone
+from typing import cast
 
 from langtools.main.fsrs import FSRSCardState, Rating, new_training_data, process_review
 
@@ -101,10 +102,10 @@ class TestFSRSFunctions(unittest.TestCase):
         review_time = datetime.now(timezone.utc)
 
         with self.assertRaises(ValueError):
-            process_review(training_data, 0, review_time)  # Too low
+            process_review(training_data, cast(Rating, 0), review_time)  # Too low
 
         with self.assertRaises(ValueError):
-            process_review(training_data, 5, review_time)  # Too high
+            process_review(training_data, cast(Rating, 5), review_time)  # Too high
 
     def test_process_review_sequence(self):
         """Test a sequence of reviews."""

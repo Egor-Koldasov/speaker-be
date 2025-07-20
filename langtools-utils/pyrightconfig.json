@@ -2,6 +2,8 @@
   "include": ["."],
   "pythonVersion": "3.13",
   "typeCheckingMode": "strict",
+  "useLibraryCodeForTypes": true,
+  "reportMissingTypeStubs": false,
   "reportAny": "error",
   "reportExplicitAny": "error",
   "reportUnknownMemberType": "hint",

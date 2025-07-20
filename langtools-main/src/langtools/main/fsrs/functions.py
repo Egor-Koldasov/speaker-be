@@ -33,7 +33,7 @@ def new_training_data() -> FSRSTrainingData:
         stability=py_card.stability,  # None for new cards
         difficulty=py_card.difficulty,  # None for new cards
         state=FSRSCardState(py_card.state.value),
-        step=py_card.step,
+        step=py_card.step if py_card.step is not None else 0,
         last_review=py_card.last_review,  # None for new cards
         reps=0,
         lapses=0,
@@ -76,7 +76,7 @@ def process_review(
         stability=updated_py_card.stability,
         difficulty=updated_py_card.difficulty,
         state=FSRSCardState(updated_py_card.state.value),
-        step=updated_py_card.step,
+        step=updated_py_card.step if updated_py_card.step is not None else 0,
         last_review=updated_py_card.last_review,
         reps=new_reps,
         lapses=new_lapses,

@@ -22,7 +22,6 @@ def test_imports():
         assert Rating.EASY == 4
         print("✓ Rating enum values correct")
 
-        assert FSRSCardState.NEW == 0
         assert FSRSCardState.LEARNING == 1
         assert FSRSCardState.REVIEW == 2
         assert FSRSCardState.RELEARNING == 3
@@ -37,11 +36,11 @@ def test_imports():
             due=now,
             stability=2.0,
             difficulty=5.0,
-            elapsed_days=0,
-            scheduled_days=1,
+            state=FSRSCardState.LEARNING,
+            step=0,
+            last_review=None,
             reps=0,
             lapses=0,
-            state=FSRSCardState.NEW,
         )
         print("✓ FSRSTrainingData dataclass works")
 

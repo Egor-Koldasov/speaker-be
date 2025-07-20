@@ -1,0 +1,18 @@
+transfer_factor_matrix = {
+    ("reading", "reading"): 1.0,
+    ("reading", "writing"): 0.75,
+    ("reading", "listening"): 0.45,
+    ("reading", "speaking"): 0.35,
+    ("writing", "reading"): 0.70,
+    ("writing", "writing"): 1.0,
+    ("writing", "listening"): 0.40,
+    ("writing", "speaking"): 0.55,
+    ("listening", "reading"): 0.50,
+    ("listening", "writing"): 0.45,
+    ("listening", "listening"): 1.0,
+    ("listening", "speaking"): 0.65,
+    ("speaking", "reading"): 0.40,
+    ("speaking", "writing"): 0.60,
+    ("speaking", "listening"): 0.70,
+    ("speaking", "speaking"): 1.0,
+}

@@ -4,7 +4,6 @@ Tests for LLM client functionality.
 
 from unittest.mock import AsyncMock, Mock, patch
 
-import pytest
 
 from langtools.ai.client import LLMClient
 from langtools.ai.models import ModelType

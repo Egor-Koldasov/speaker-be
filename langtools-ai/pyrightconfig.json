@@ -1,3 +1,4 @@
 {
-  "extends": "../langtools-utils/pyrightconfig.json"
+  "extends": "../langtools-utils/pyrightconfig.json",
+  "include": ["."]
 }
