@@ -134,6 +134,7 @@ Type checking and linting configurations are shared across packages:
 - Prefer pure functions without side effects
 - Use `async`/`await` for I/O operations (LLM calls, database)
 - Validate inputs using Pydantic models
+- Be proactive at reading library documentation online and checking the project codebase to undestand the proper interfaces.
 
 ### Data Handling
 

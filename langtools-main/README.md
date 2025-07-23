@@ -41,6 +41,69 @@ print(f"Reviews completed: {training_data.reps}")
 - `FSRSCardState.REVIEW` (2): Review phase
 - `FSRSCardState.RELEARNING` (3): Relearning phase
 
+## API Server
+
+This package includes a complete FastAPI server with JWT authentication and PostgreSQL support.
+
+### Quick Start
+
+1. **Start the database:**
+   ```bash
+   ./scripts/db.sh start
+   ```
+
+2. **Run database migrations:**
+   ```bash
+   ./scripts/db.sh migrate
+   ```
+
+3. **Start the API server:**
+   ```bash
+   uv run python run_api.py
+   ```
+
+The API will be available at `http://localhost:8000` with automatic OpenAPI documentation at `http://localhost:8000/docs`.
+
+### Database Management
+
+The project includes a convenient database management script:
+
+```bash
+# Start PostgreSQL container
+./scripts/db.sh start
+
+# Run migrations
+./scripts/db.sh migrate
+
+# Check database status
+./scripts/db.sh status
+
+# Connect to database shell
+./scripts/db.sh shell
+
+# View all commands
+./scripts/db.sh help
+```
+
+See [DATABASE.md](DATABASE.md) for detailed database setup and management instructions.
+
+### API Endpoints
+
+- `POST /auth/register` - User registration
+- `POST /auth/login` - Password-based login
+- `POST /auth/passwordless/request` - Request OTP for passwordless login
+- `POST /auth/passwordless/verify` - Verify OTP and get token
+- `GET /auth/me` - Get current user information
+
+### Testing
+
+Run the full test suite:
+```bash
+uv run pytest tests/
+```
+
+Integration tests use live database with `is_e2e_test=True` flag for data isolation.
+
 ## Development
 
 ### Setup Environment
