@@ -4,11 +4,11 @@ from typing import TypedDict, cast
 
 import pytest
 from httpx import AsyncClient
-from sqlalchemy import select, delete
+from sqlalchemy import select
 
+from langtools.main.api.auth.otp import otp_store
 from langtools.main.api.database import engine
 from langtools.main.api.models import learner
-from langtools.main.api.auth.otp import otp_store
 
 
 class TestUserData(TypedDict):
@@ -30,13 +30,7 @@ class TestUserDataPasswordless(TypedDict):
 @pytest.mark.asyncio
 async def test_user_registration(client: AsyncClient, test_user_data: TestUserData) -> None:
     """Test user registration."""
-    # Clean up any existing test user
-    with engine.connect() as conn:
-        stmt = delete(learner).where(learner.c.email == test_user_data["email"])
-        conn.execute(stmt)
-        conn.commit()
-
-    # Register user
+    # Register user (no cleanup needed - using unique test data)
     response = await client.post("/auth/register", json=test_user_data)
     assert response.status_code == 200
 
@@ -64,7 +58,7 @@ async def test_user_registration_duplicate_email(
     response = await client.post("/auth/register", json=test_user_data)
     assert response.status_code == 200
 
-    # Second registration with same email should fail
+    # Second registration with same unique email should fail
     response = await client.post("/auth/register", json=test_user_data)
     assert response.status_code == 400
     assert "already registered" in response.json()["detail"]
@@ -111,13 +105,7 @@ async def test_passwordless_login_new_user(
     client: AsyncClient, test_user_data_passwordless: TestUserDataPasswordless
 ) -> None:
     """Test passwordless login for new user."""
-    # Clean up any existing test user
-    with engine.connect() as conn:
-        stmt = delete(learner).where(learner.c.email == test_user_data_passwordless["email"])
-        conn.execute(stmt)
-        conn.commit()
-
-    # Request passwordless login
+    # Request passwordless login (no cleanup needed - using unique test data)
     response = await client.post("/auth/passwordless/request", json=test_user_data_passwordless)
     assert response.status_code == 200
 

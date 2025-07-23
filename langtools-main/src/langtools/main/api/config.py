@@ -1,5 +1,6 @@
 """Configuration management for the API server."""
 
+import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -27,8 +28,11 @@ class Settings(BaseSettings):
     # E2E Test Settings
     allow_e2e_test_users: bool = True
 
+    # Test Configuration
+    test_api_url: str = "http://localhost:8000"
+
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=[".env", ".env.claude"] if os.getenv("CLAUDE_CODE") == "1" else [".env"],
         env_file_encoding="utf-8",
         case_sensitive=False,
     )

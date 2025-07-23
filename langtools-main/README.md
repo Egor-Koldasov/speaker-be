@@ -97,12 +97,43 @@ See [DATABASE.md](DATABASE.md) for detailed database setup and management instru
 
 ### Testing
 
-Run the full test suite:
+The test suite runs against a live API server (not mocked), allowing for true end-to-end testing.
+
+#### Running Tests Against Local Server
+
+1. **Start the API server:**
+   ```bash
+   uv run python run_api.py
+   ```
+
+2. **Run the test suite:**
+   ```bash
+   uv run pytest tests/
+   ```
+
+#### Running Tests Against Different Environments
+
+You can test against any deployed API server by setting the `TEST_API_URL` environment variable:
+
 ```bash
-uv run pytest tests/
+# Test against staging
+TEST_API_URL=https://staging-api.example.com uv run pytest tests/
+
+# Test against production (be careful!)
+TEST_API_URL=https://api.example.com uv run pytest tests/
+
+# Test against custom URL
+TEST_API_URL=http://localhost:3000 uv run pytest tests/
 ```
 
-Integration tests use live database with `is_e2e_test=True` flag for data isolation.
+#### Test Configuration
+
+Tests are configured to:
+- Use the `is_e2e_test=True` flag for data isolation
+- Only clean up test data (never production data)
+- Run against any API server that supports the authentication endpoints
+
+Set `ALLOW_E2E_TEST_USERS=false` on production servers to prevent test user creation.
 
 ## Development
 

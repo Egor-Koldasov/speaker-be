@@ -232,6 +232,7 @@ def parse_args() -> Args:
 - When doing a series of file updates, especially when it envolves changing requirements, new findings or debugging,
   think deeper about your recent changes and check if some of them are not relevant anymore or if some of them could be refactored,
   for example, to deal with duplicated code. Keep the codebase clean after your changes.
+- When you create scripts for testing, delete them after doing the testing.
 
 ## Working with Deprecated Code
 

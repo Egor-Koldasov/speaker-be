@@ -44,19 +44,21 @@ def register(user: UserCreate) -> UserDict:
     # Insert user
     with engine.connect() as conn:
         try:
-            stmt = insert(learner).values(
-                name=user.name,
-                email=user.email,
-                password=hashed_password,
-                is_e2e_test=user.is_e2e_test,
+            # Insert user and return the created row in one query
+            stmt = (
+                insert(learner)
+                .values(
+                    name=user.name,
+                    email=user.email,
+                    password=hashed_password,
+                    is_e2e_test=user.is_e2e_test,
+                )
+                .returning(learner)
             )
-            result = conn.execute(stmt)
-            conn.commit()
 
-            # Fetch the created user
-            user_id = result.lastrowid
-            stmt = select(learner).where(learner.c.id == user_id)
-            created_user = conn.execute(stmt).first()
+            result = conn.execute(stmt)
+            created_user = result.first()
+            conn.commit()
 
             # Convert Row to dict
             if created_user is None:
@@ -73,8 +75,16 @@ def register(user: UserCreate) -> UserDict:
             )
 
         except IntegrityError:
+            conn.rollback()
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered"
+            )
+        except Exception as e:
+            conn.rollback()
+            # Log the error for debugging (in production, use proper logging)
+            print(f"Registration error: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to create user"
             )
 
 
