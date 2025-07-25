@@ -30,13 +30,25 @@ RUN apt update && apt install -y less \
   fd-find \
   tree \
   htop \
-  vim
+  vim \
+  ca-certificates \
+  lsb-release \
+  postgresql-client
+
+# Install Docker
+RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg && \
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+  apt update && \
+  apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 # Ensure default node user has access to /usr/local/share
 RUN mkdir -p /usr/local/share/npm-global && \
   chown -R node:node /usr/local/share
 
 ARG USERNAME=node
+
+# Add node user to docker group for Docker socket access
+RUN usermod -aG docker $USERNAME
 
 # Persist bash history.
 RUN SNIPPET="export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhistory/.bash_history" \
@@ -100,6 +112,7 @@ USER node
 ENV VIRTUAL_ENV=""
 ENV UV_PROJECT_ENVIRONMENT="/tmp/venv"
 
+ENV CLAUDE_CODE=1
 # Copy and set up firewall script
 COPY init-firewall.sh /usr/local/bin/
 USER root
@@ -107,3 +120,14 @@ RUN chmod +x /usr/local/bin/init-firewall.sh && \
   echo "node ALL=(root) NOPASSWD: /usr/local/bin/init-firewall.sh" > /etc/sudoers.d/node-firewall && \
   chmod 0440 /etc/sudoers.d/node-firewall
 USER node
+
+# # Add improved Docker daemon startup script
+# USER root
+# COPY docker-daemon-start.sh /usr/local/bin/docker-daemon-start.sh
+# RUN chmod +x /usr/local/bin/docker-daemon-start.sh
+
+# USER node
+
+# USER root
+# RUN usermod -aG docker node
+# USER node

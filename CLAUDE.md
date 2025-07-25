@@ -244,3 +244,11 @@ The repository contains significant deprecated code outside the active packages:
 - Other experimental directories
 
 **Do not extend or modify deprecated code**. Only reference it if specifically needed for understanding legacy functionality.
+
+## Debugging API in langtools-main
+
+Assume that `langtools-api` container is running with a dev server.
+You can check the dev server logs with `docker logs langtools-api`, or in `langtools-main` folder with `docker compose logs api`.
+You can check the Postgres database logs with `docker logs langtools-postgres`, or in `langtools-main` folder with `docker compose logs postgres`.
+If you see the containers not running, suggest the user to start it.
+**Do not start or stop containers yourself, `docker compose up` will not work for you and you will break the setup!**
