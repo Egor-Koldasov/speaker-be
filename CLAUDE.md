@@ -84,6 +84,16 @@ uv run scripts/lint.sh
 - Use `uv run` for all Python commands
 - Each package manages its own dependencies independently
 
+### Dependency Management
+
+When adding new dependencies to any package:
+
+- **Always use the latest stable version** - Check PyPI for the most recent release
+- **Specify minimum version constraints** - Use `>=` for compatibility (e.g., `fastapi>=0.100.0`)
+- **Avoid exact version pinning** unless required for compatibility
+- **Update existing dependencies** - Keep dependencies up-to-date during development
+- **Test thoroughly** - Ensure new versions don't break existing functionality
+
 ## Code Quality Standards
 
 **All code must pass the quality gate checks before being committed.**
