@@ -227,6 +227,17 @@ def parse_args() -> Args:
   instead, think deeper about the blocker issue and if you can't find and answer,
   report your findings to the user and ask for the feedback.
 
+## Database Query Organization
+**All database queries must be wrapped in functions and organized by domain in `api/pg_queries/{domain}.py` files.**
+
+### Rules:
+- **No direct SQLAlchemy queries** in routers, business logic, or other modules
+- **All database operations** must go through query functions
+- **Organize by domain** - one file per table/related tables (e.g., `learner.py`, `otp.py`)
+- **Strong typing** - use TypedDict types for query results, avoid `dict[str, Any]`
+- **Descriptive function names** - `create_user()`, `find_user_by_email()`, etc.
+- **Proper error handling** - define custom exceptions for domain-specific errors
+
 ## Keeping the code clean
 
 - When doing a series of file updates, especially when it envolves changing requirements, new findings or debugging,
@@ -235,6 +246,8 @@ def parse_args() -> Args:
 - When you create scripts for testing, delete them after doing the testing.
 - Avoid duplicating data types, reuse types when possible. Keep the data modeling organized.
 - Keep the database models organized in one place. It's better to infer other data types from the database models.
+- Keep the documentation up to date.
+- Keep the documentation concise and modular, exclude the unnecessary details from the main README files. Keep the documentation files single-purposed.
 
 ## Working with Deprecated Code
 
