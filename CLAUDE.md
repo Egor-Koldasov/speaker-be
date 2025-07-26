@@ -255,6 +255,7 @@ def parse_args() -> Args:
   for example, to deal with duplicated code. Keep the codebase clean after your changes.
 - When you create scripts for testing, delete them after doing the testing.
 - Avoid duplicating data types, reuse types when possible. Keep the data modeling organized.
+- When reusing data types, model them from the bottom up. For example if an API returns a database model directly, reuse the database model in API, not the opposite way.
 - Keep the database models organized in one place. It's better to infer other data types from the database models.
 - Keep the documentation up to date.
 - Keep the documentation concise and modular, exclude the unnecessary details from the main README files. Keep the documentation files single-purposed.
