@@ -1,18 +1,36 @@
-"""OTP table definition using SQLAlchemy Core."""
+"""OTP SQLModel definition."""
 
-from sqlalchemy import Table, Column, Integer, String, DateTime, Boolean
-from sqlalchemy.sql import func
+from datetime import datetime
+from typing import Optional
+from sqlmodel import SQLModel, Field
 
-from ..database import metadata
+
+class OTPBase(SQLModel):
+    """Base OTP model with shared fields."""
+
+    email: str = Field(index=True, nullable=False)
+    code: str = Field(max_length=6, nullable=False)  # 6-digit OTP code
+    expires_at: datetime = Field(nullable=False)
+    used: bool = Field(default=False, nullable=False)
 
 
-otp = Table(
-    "otp",
-    metadata,
-    Column("id", Integer, primary_key=True, index=True),
-    Column("email", String, nullable=False, index=True),
-    Column("code", String(6), nullable=False),  # 6-digit OTP code
-    Column("expires_at", DateTime(timezone=True), nullable=False),
-    Column("used", Boolean, default=False, nullable=False),
-    Column("created_at", DateTime(timezone=True), server_default=func.now()),
-)
+class OTP(OTPBase, table=True):
+    """Database model for OTP table."""
+
+    id: Optional[int] = Field(default=None, primary_key=True, index=True)
+    created_at: Optional[datetime] = Field(
+        default=None, sa_column_kwargs={"server_default": "now()"}
+    )
+
+
+class OTPCreate(OTPBase):
+    """Model for creating a new OTP."""
+
+    pass
+
+
+class OTPPublic(OTPBase):
+    """Public OTP model for API responses."""
+
+    id: int
+    created_at: Optional[datetime] = None

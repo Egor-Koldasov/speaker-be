@@ -16,7 +16,8 @@ from ..auth.utils import (
     create_access_token,
 )
 from ..auth.otp import otp_store
-from ..auth.dependencies import get_current_user, UserDict
+from ..auth.dependencies import get_current_user
+from ..models.learner import Learner
 from ..config import settings
 from ..pg_queries.learner import (
     create_user,
@@ -30,7 +31,7 @@ router = APIRouter(prefix="/auth", tags=["authentication"])
 
 
 @router.post("/register", response_model=UserResponse)
-def register(user: UserCreate) -> UserDict:
+def register(user: UserCreate) -> UserResponse:
     """Register a new user."""
     # Check if E2E test users are allowed
     if user.is_e2e_test and not settings.allow_e2e_test_users:
@@ -49,12 +50,7 @@ def register(user: UserCreate) -> UserDict:
             is_e2e_test=user.is_e2e_test,
         )
 
-        return UserDict(
-            id=created_user["id"],
-            name=created_user["name"],
-            email=created_user["email"],
-            is_e2e_test=created_user["is_e2e_test"],
-        )
+        return created_user
 
     except EmailAlreadyExistsError:
         raise HTTPException(
@@ -81,7 +77,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()) -> dict[str, str]:
         )
 
     # Verify password
-    if not verify_password(form_data.password, user["password"]):
+    if not verify_password(form_data.password, user.password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",
@@ -89,7 +85,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()) -> dict[str, str]:
         )
 
     # Create access token
-    access_token = create_access_token(data={"sub": user["email"]})
+    access_token = create_access_token(data={"sub": user.email})
 
     return {"access_token": access_token, "token_type": "bearer"}
 
@@ -142,6 +138,6 @@ def verify_passwordless_login(verify: PasswordlessLoginVerify) -> dict[str, str]
 
 
 @router.get("/me", response_model=UserResponse)
-def get_me(current_user: UserDict = Depends(get_current_user)) -> UserDict:
+def get_me(current_user: Learner = Depends(get_current_user)) -> Learner:
     """Get current user information."""
     return current_user

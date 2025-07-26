@@ -1,6 +1,14 @@
 """Database models package."""
 
-from .learner import learner
-from .otp import otp
+from .learner import Learner, LearnerCreate, LearnerPublic, LearnerUpdate
+from .otp import OTP, OTPCreate, OTPPublic
 
-__all__ = ["learner", "otp"]
+__all__ = [
+    "Learner",
+    "LearnerCreate",
+    "LearnerPublic",
+    "LearnerUpdate",
+    "OTP",
+    "OTPCreate",
+    "OTPPublic",
+]

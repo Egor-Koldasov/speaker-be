@@ -4,11 +4,11 @@ from typing import TypedDict, cast
 
 import pytest
 from httpx import AsyncClient
-from sqlalchemy import select
+from sqlmodel import select
 
-from langtools.main.api.auth.otp import otp_store
-from langtools.main.api.database import engine
-from langtools.main.api.models import learner
+from langtools.main.api.pg_queries.otp import get_valid_otp_for_testing
+from langtools.main.api.database import get_session
+from langtools.main.api.models import Learner
 
 
 class TestUserData(TypedDict):
@@ -41,12 +41,12 @@ async def test_user_registration(client: AsyncClient, test_user_data: TestUserDa
     assert "password" not in data
 
     # Verify user exists in database
-    with engine.connect() as conn:
-        stmt = select(learner).where(learner.c.email == test_user_data["email"])
-        user = conn.execute(stmt).first()
+    with get_session() as session:
+        stmt = select(Learner).where(Learner.email == test_user_data["email"])
+        user = session.exec(stmt).first()
         assert user is not None
-        assert cast(str, user.email) == test_user_data["email"]
-        assert cast(bool, user.is_e2e_test) is True
+        assert user.email == test_user_data["email"]
+        assert user.is_e2e_test is True
 
 
 @pytest.mark.asyncio
@@ -109,8 +109,8 @@ async def test_passwordless_login_new_user(
     response = await client.post("/auth/passwordless/request", json=test_user_data_passwordless)
     assert response.status_code == 200
 
-    # Get OTP from store (in tests only)
-    otp = otp_store.get_otp_for_testing(test_user_data_passwordless["email"])
+    # Get OTP from database (in tests only)
+    otp = get_valid_otp_for_testing(test_user_data_passwordless["email"])
     assert otp is not None
 
     # Verify OTP
@@ -126,12 +126,12 @@ async def test_passwordless_login_new_user(
     assert data["token_type"] == "bearer"
 
     # Verify user was created in database
-    with engine.connect() as conn:
-        stmt = select(learner).where(learner.c.email == test_user_data_passwordless["email"])
-        user = conn.execute(stmt).first()
+    with get_session() as session:
+        stmt = select(Learner).where(Learner.email == test_user_data_passwordless["email"])
+        user = session.exec(stmt).first()
         assert user is not None
-        assert cast(str, user.email) == test_user_data_passwordless["email"]
-        assert cast(bool, user.is_e2e_test) is True
+        assert user.email == test_user_data_passwordless["email"]
+        assert user.is_e2e_test is True
 
 
 @pytest.mark.asyncio
@@ -150,8 +150,8 @@ async def test_passwordless_login_existing_user(
     response = await client.post("/auth/passwordless/request", json=request_data)
     assert response.status_code == 200
 
-    # Get OTP from store
-    otp = otp_store.get_otp_for_testing(test_user_data["email"])
+    # Get OTP from database
+    otp = get_valid_otp_for_testing(test_user_data["email"])
     assert otp is not None
 
     # Verify OTP

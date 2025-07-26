@@ -138,6 +138,14 @@ Type checking and linting configurations are shared across packages:
 
 ## Code Design Guidelines
 
+### Main priorities
+
+- Conciseness and simplicity. The lesser the code the better.
+- Single source of truth preference.
+- Full type coverage.
+- Modularity. Avoid big files, big functions, high coupling. Prefer cohesive single-purposed functions, files, modules.
+- Prefer functions over classes.
+
 ### Function Design
 
 - Single purpose functions

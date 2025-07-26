@@ -1,18 +1,19 @@
 """Database configuration and connection management."""
 
-from sqlalchemy import create_engine, MetaData
+from sqlmodel import create_engine, Session
 from sqlalchemy.engine import Engine
 
 from .config import settings
 
 
-# Create metadata instance
-metadata = MetaData()
-
-
 def get_engine() -> Engine:
-    """Create and return SQLAlchemy engine for PostgreSQL."""
+    """Create and return SQLModel engine for PostgreSQL."""
     return create_engine(settings.database_url)
+
+
+def get_session() -> Session:
+    """Create and return a new database session."""
+    return Session(get_engine())
 
 
 # Create engine instance

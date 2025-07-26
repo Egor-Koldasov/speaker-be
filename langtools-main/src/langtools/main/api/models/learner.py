@@ -1,19 +1,44 @@
-"""Learner table definition using SQLAlchemy Core."""
+"""Learner SQLModel definition."""
 
-from sqlalchemy import Table, Column, Integer, String, Boolean, DateTime
-from sqlalchemy.sql import func
+from datetime import datetime
+from typing import Optional
+from sqlmodel import SQLModel, Field
 
-from ..database import metadata
+
+class LearnerBase(SQLModel):
+    """Base learner model with shared fields."""
+
+    name: str = Field(nullable=False)
+    email: str = Field(unique=True, index=True, nullable=False)
+    is_e2e_test: bool = Field(default=False, nullable=False)
 
 
-learner = Table(
-    "learner",
-    metadata,
-    Column("id", Integer, primary_key=True, index=True),
-    Column("name", String, nullable=False),
-    Column("email", String, unique=True, index=True, nullable=False),
-    Column("password", String, nullable=False),  # Hashed password
-    Column("is_e2e_test", Boolean, default=False, nullable=False),
-    Column("created_at", DateTime(timezone=True), server_default=func.now()),
-    Column("updated_at", DateTime(timezone=True), onupdate=func.now()),
-)
+class Learner(LearnerBase, table=True):
+    """Database model for learner table."""
+
+    id: Optional[int] = Field(default=None, primary_key=True, index=True)
+    password: str = Field(nullable=False)  # Hashed password
+    created_at: Optional[datetime] = Field(
+        default=None, sa_column_kwargs={"server_default": "now()"}
+    )
+    updated_at: Optional[datetime] = Field(default=None, sa_column_kwargs={"onupdate": "now()"})
+
+
+class LearnerCreate(LearnerBase):
+    """Model for creating a new learner."""
+
+    password: str
+
+
+class LearnerPublic(LearnerBase):
+    """Public learner model without sensitive data."""
+
+    id: int
+    created_at: Optional[datetime] = None
+
+
+class LearnerUpdate(SQLModel):
+    """Model for updating learner data."""
+
+    name: Optional[str] = None
+    email: Optional[str] = None

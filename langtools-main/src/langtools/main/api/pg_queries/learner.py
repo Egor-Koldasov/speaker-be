@@ -1,12 +1,11 @@
-"""Learner table database queries."""
+"""Learner table database queries using SQLModel."""
 
-from typing import Optional, cast
-from sqlalchemy import select, insert
+from typing import Optional
 from sqlalchemy.exc import IntegrityError
+from sqlmodel import select
 
-from ..database import engine
-from ..models.learner import learner
-from .types import UserRow, UserPublic
+from ..database import get_session
+from ..models.learner import Learner, LearnerPublic
 
 
 class LearnerNotFoundError(Exception):
@@ -17,7 +16,9 @@ class EmailAlreadyExistsError(Exception):
     """Raised when trying to create a user with an existing email."""
 
 
-def create_user(name: str, email: str, password_hash: str, is_e2e_test: bool = False) -> UserPublic:
+def create_user(
+    name: str, email: str, password_hash: str, is_e2e_test: bool = False
+) -> LearnerPublic:
     """Create a new user and return the created user data.
 
     Args:
@@ -27,80 +28,65 @@ def create_user(name: str, email: str, password_hash: str, is_e2e_test: bool = F
         is_e2e_test: Whether this is an E2E test user
 
     Returns:
-        Dictionary containing user data (id, name, email, is_e2e_test)
+        LearnerPublic model with user data (excludes password)
 
     Raises:
         EmailAlreadyExistsError: If email already exists
         Exception: For other database errors
     """
-    with engine.connect() as conn:
+    with get_session() as session:
         try:
-            stmt = (
-                insert(learner)
-                .values(
-                    name=name,
-                    email=email,
-                    password=password_hash,
-                    is_e2e_test=is_e2e_test,
-                )
-                .returning(learner)
+            # Create new learner instance
+            learner = Learner(
+                name=name,
+                email=email,
+                password=password_hash,
+                is_e2e_test=is_e2e_test,
             )
 
-            result = conn.execute(stmt)
-            created_user = result.first()
-            conn.commit()
+            session.add(learner)
+            session.commit()
+            session.refresh(learner)
 
-            if created_user is None:
-                raise Exception("Failed to create user")
-
-            return UserPublic(
-                id=cast(int, created_user.id),
-                name=cast(str, created_user.name),
-                email=cast(str, created_user.email),
-                is_e2e_test=cast(bool, created_user.is_e2e_test),
+            # Return public data without password
+            return LearnerPublic(
+                id=learner.id or 0,  # id should be set after commit, fallback to 0
+                name=learner.name,
+                email=learner.email,
+                is_e2e_test=learner.is_e2e_test,
+                created_at=learner.created_at,
             )
 
         except IntegrityError as e:
-            conn.rollback()
+            session.rollback()
             raise EmailAlreadyExistsError("Email already registered") from e
         except Exception as e:
-            conn.rollback()
+            session.rollback()
             raise e
 
 
-def find_user_by_email(email: str) -> Optional[UserRow]:
+def find_user_by_email(email: str) -> Optional[Learner]:
     """Find a user by email address.
 
     Args:
         email: User's email address
 
     Returns:
-        Dictionary containing user data if found, None otherwise
+        Learner model if found, None otherwise
     """
-    with engine.connect() as conn:
-        stmt = select(learner).where(learner.c.email == email)
-        result = conn.execute(stmt).first()
-
-        if result is None:
-            return None
-
-        return UserRow(
-            id=cast(int, result.id),
-            name=cast(str, result.name),
-            email=cast(str, result.email),
-            password=cast(str, result.password),
-            is_e2e_test=cast(bool, result.is_e2e_test),
-        )
+    with get_session() as session:
+        statement = select(Learner).where(Learner.email == email)
+        return session.exec(statement).first()
 
 
-def get_user_by_email(email: str) -> UserRow:
+def get_user_by_email(email: str) -> Learner:
     """Get a user by email address, raising error if not found.
 
     Args:
         email: User's email address
 
     Returns:
-        Dictionary containing user data
+        Learner model
 
     Raises:
         LearnerNotFoundError: If user is not found
@@ -122,19 +108,21 @@ def create_passwordless_user(email: str, password_hash: str, is_e2e_test: bool =
         password_hash: Hashed empty password for passwordless users
         is_e2e_test: Whether this is an E2E test user
     """
-    with engine.connect() as conn:
+    with get_session() as session:
         try:
-            stmt = insert(learner).values(
+            learner = Learner(
                 name=email.split("@")[0],  # Use email prefix as name
                 email=email,
                 password=password_hash,
                 is_e2e_test=is_e2e_test,
             )
-            conn.execute(stmt)
-            conn.commit()
+
+            session.add(learner)
+            session.commit()
+
         except IntegrityError:
             # User already exists (race condition), ignore
-            conn.rollback()
+            session.rollback()
         except Exception as e:
-            conn.rollback()
+            session.rollback()
             raise e

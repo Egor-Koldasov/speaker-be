@@ -1,11 +1,11 @@
-"""OTP table database queries."""
+"""OTP table database queries using SQLModel."""
 
 from datetime import datetime, timezone
-from typing import Optional, cast
-from sqlalchemy import select, insert, update, delete
+from typing import Optional
+from sqlmodel import select
 
-from ..database import engine
-from ..models.otp import otp
+from ..database import get_session
+from ..models.otp import OTP
 
 
 def clean_and_create_otp(email: str, otp_code: str, expires_at: datetime) -> None:
@@ -16,20 +16,24 @@ def clean_and_create_otp(email: str, otp_code: str, expires_at: datetime) -> Non
         otp_code: The 6-digit OTP code
         expires_at: When the OTP expires
     """
-    with engine.connect() as conn:
+    with get_session() as session:
         # Clean up any existing unused OTPs for this email
-        delete_stmt = delete(otp).where((otp.c.email == email) & (otp.c.used == False))
-        conn.execute(delete_stmt)
+        statement = select(OTP).where((OTP.email == email) & (OTP.used == False))
+        old_otps = session.exec(statement).all()
 
-        # Insert new OTP
-        insert_stmt = insert(otp).values(
+        for old_otp in old_otps:
+            session.delete(old_otp)
+
+        # Create new OTP
+        new_otp = OTP(
             email=email,
             code=otp_code,
             expires_at=expires_at,
             used=False,
         )
-        conn.execute(insert_stmt)
-        conn.commit()
+
+        session.add(new_otp)
+        session.commit()
 
 
 def find_and_mark_otp_used(email: str, otp_code: str) -> bool:
@@ -44,23 +48,23 @@ def find_and_mark_otp_used(email: str, otp_code: str) -> bool:
     """
     now = datetime.now(timezone.utc)
 
-    with engine.connect() as conn:
+    with get_session() as session:
         # Find valid OTP
-        select_stmt = select(otp).where(
-            (otp.c.email == email)
-            & (otp.c.code == otp_code)
-            & (otp.c.used == False)
-            & (otp.c.expires_at > now)
+        statement = select(OTP).where(
+            (OTP.email == email)
+            & (OTP.code == otp_code)
+            & (OTP.used == False)
+            & (OTP.expires_at > now)
         )
-        result = conn.execute(select_stmt).first()
+        otp = session.exec(statement).first()
 
-        if result is None:
+        if otp is None:
             return False
 
         # Mark OTP as used
-        update_stmt = update(otp).where(otp.c.id == cast(int, result.id)).values(used=True)
-        conn.execute(update_stmt)
-        conn.commit()
+        otp.used = True
+        session.add(otp)
+        session.commit()
 
         return True
 
@@ -76,12 +80,10 @@ def get_valid_otp_for_testing(email: str) -> Optional[str]:
     """
     now = datetime.now(timezone.utc)
 
-    with engine.connect() as conn:
-        select_stmt = (
-            select(otp)
-            .where((otp.c.email == email) & (otp.c.used == False) & (otp.c.expires_at > now))
-            .order_by(otp.c.created_at.desc())
+    with get_session() as session:
+        statement = select(OTP).where(
+            (OTP.email == email) & (OTP.used == False) & (OTP.expires_at > now)
         )
 
-        result = conn.execute(select_stmt).first()
-        return cast(str, result.code) if result else None
+        otp = session.exec(statement).first()
+        return otp.code if otp else None

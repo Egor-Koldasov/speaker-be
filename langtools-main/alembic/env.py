@@ -4,18 +4,15 @@ from logging.config import fileConfig
 from pathlib import Path
 
 from sqlalchemy import engine_from_config, pool
+from sqlmodel import SQLModel
 
 from alembic import context
 
 sys.path.append(str(Path(__file__).parent.parent / "src"))
 
 from langtools.main.api.config import settings
-from langtools.main.api.database import metadata
 
 # Import models to ensure they're registered with metadata
-from langtools.main.api.models import (
-    __all__ as models,  # noqa: F401  # pyright: ignore [reportUnusedImport]
-)
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -31,7 +28,7 @@ if config.config_file_name is not None:
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-target_metadata = metadata
+target_metadata = SQLModel.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
