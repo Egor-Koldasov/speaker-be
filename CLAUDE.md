@@ -233,6 +233,8 @@ def parse_args() -> Args:
   think deeper about your recent changes and check if some of them are not relevant anymore or if some of them could be refactored,
   for example, to deal with duplicated code. Keep the codebase clean after your changes.
 - When you create scripts for testing, delete them after doing the testing.
+- Avoid duplicating data types, reuse types when possible. Keep the data modeling organized.
+- Keep the database models organized in one place. It's better to infer other data types from the database models.
 
 ## Working with Deprecated Code
 

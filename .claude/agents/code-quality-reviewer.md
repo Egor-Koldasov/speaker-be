@@ -42,6 +42,7 @@ When reviewing code changes, you will:
 - Recommend consolidation of similar functions or classes
 - Propose extraction of reusable components
 - Identify over-engineering and suggest simpler approaches
+- Identify obsolete, unused code
 
 **PROACTIVE IMPROVEMENT SUGGESTIONS**
 - Recommend performance optimizations

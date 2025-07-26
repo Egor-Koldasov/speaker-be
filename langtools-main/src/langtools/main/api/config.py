@@ -18,6 +18,14 @@ class Settings(BaseSettings):
     # Email/OTP Settings
     otp_expire_minutes: int = 10
 
+    # SMTP Settings
+    smtp_host: str = "smtp.gmail.com"
+    smtp_port: int = 587
+    smtp_username: str = ""
+    smtp_password: str = ""
+    smtp_use_tls: bool = True
+    from_email: str = "noreply@langtools.com"
+
     # API Settings
     api_title: str = "Langtools API"
     api_version: str = "0.1.0"

@@ -1,20 +1,21 @@
+# Import our metadata and settings
+import sys
 from logging.config import fileConfig
+from pathlib import Path
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
 
 from alembic import context
 
-# Import our metadata and settings
-import sys
-from pathlib import Path
-
 sys.path.append(str(Path(__file__).parent.parent / "src"))
 
-from langtools.main.api.database import metadata
 from langtools.main.api.config import settings
+from langtools.main.api.database import metadata
 
 # Import models to ensure they're registered with metadata
+from langtools.main.api.models import (
+    __all__ as models,  # noqa: F401  # pyright: ignore [reportUnusedImport]
+)
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

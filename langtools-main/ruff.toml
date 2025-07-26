@@ -1,1 +1,5 @@
 extend = "../langtools-utils/ruff.toml"
+
+[lint]
+# Disable E712 for SQLAlchemy boolean comparisons
+ignore = ["E712"]

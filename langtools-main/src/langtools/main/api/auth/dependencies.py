@@ -1,13 +1,11 @@
 """Authentication dependencies for FastAPI."""
 
-from typing import Optional, TypedDict, cast
+from typing import Optional, TypedDict
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy import select
 
-from ..database import engine
-from ..models import learner
+from ..pg_queries.learner import get_user_by_email, LearnerNotFoundError
 from .utils import decode_access_token
 
 
@@ -44,17 +42,13 @@ def get_current_user_email(token: str = Depends(oauth2_scheme)) -> str:
 
 def get_current_user(email: str = Depends(get_current_user_email)) -> UserDict:
     """Get the current user from the database."""
-    with engine.connect() as conn:
-        stmt = select(learner).where(learner.c.email == email)
-        result = conn.execute(stmt).first()
-
-        if result is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-
-        # Convert Row to dict with proper typing
+    try:
+        user = get_user_by_email(email)
         return UserDict(
-            id=cast(int, result.id),
-            name=cast(str, result.name),
-            email=cast(str, result.email),
-            is_e2e_test=cast(bool, result.is_e2e_test),
+            id=user["id"],
+            name=user["name"],
+            email=user["email"],
+            is_e2e_test=user["is_e2e_test"],
         )
+    except LearnerNotFoundError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")

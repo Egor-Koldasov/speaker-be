@@ -9,7 +9,11 @@ import pytest
 from fastmcp.client import Client
 
 from langtools.ai.models import AiDictionaryEntry, Meaning
-from langtools.mcp.server import DictionaryEntryRequest, create_server, generate_dictionary_entry_tool
+from langtools.mcp.server import (
+    DictionaryEntryRequest,
+    create_server,
+    generate_dictionary_entry_tool,
+)
 
 
 @pytest.fixture(autouse=True)
@@ -217,9 +221,11 @@ class TestMCPIntegration:
             tool_names = [tool.name for tool in tools]
             assert "generate_dictionary_entry_tool" in tool_names
             assert "check_dictionary_entry" in tool_names
-            
+
             # Find the generate_dictionary_entry_tool and check its description
-            generate_tool = next(tool for tool in tools if tool.name == "generate_dictionary_entry_tool")
+            generate_tool = next(
+                tool for tool in tools if tool.name == "generate_dictionary_entry_tool"
+            )
             tool_description: str | None = generate_tool.description
             assert tool_description is not None
             assert "Generate comprehensive multilingual dictionary entry" in tool_description
