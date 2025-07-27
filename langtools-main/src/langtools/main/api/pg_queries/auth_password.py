@@ -5,6 +5,7 @@ from sqlmodel import select
 
 from ..database import get_session
 from ..models.auth_password import AuthPassword
+from ..utils import generate_pg_uuid
 
 
 class AuthPasswordNotFoundError(Exception):
@@ -23,8 +24,13 @@ def create_auth_password(password_hash: str, auth_user_id: str) -> None:
     """
     with get_session() as session:
         try:
-            # Create new auth password instance
-            auth_password = AuthPassword(password_hash=password_hash, auth_user_id=auth_user_id)
+            # Explicitly generate ID
+            password_id = generate_pg_uuid()
+
+            # Create new auth password instance with explicit ID
+            auth_password = AuthPassword(
+                id=password_id, password_hash=password_hash, auth_user_id=auth_user_id
+            )
 
             session.add(auth_password)
             session.commit()

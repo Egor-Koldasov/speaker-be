@@ -27,16 +27,16 @@ def create_user(user_data: UserCreate, password_hash: str) -> UserResponse:
         Exception: For other database errors
     """
     try:
-        # Create auth_user
+        # Create auth_user (ID generated explicitly in query)
         auth_user = create_auth_user(user_data.email)
 
         # Use provided name or default to email prefix if empty
         name = user_data.name.strip() if user_data.name.strip() else user_data.email.split("@")[0]
 
-        # Create profile
+        # Create profile (ID generated explicitly in query)
         profile = create_profile(name, auth_user.id)
 
-        # Create auth_password
+        # Create auth_password (ID generated explicitly in query)
         create_auth_password(password_hash, auth_user.id)
 
         return UserResponse(auth_user=auth_user, profile=profile)
@@ -97,10 +97,4 @@ def get_complete_user_by_email(email: str) -> Optional[UserResponse]:
     if not profile:
         return None
 
-    from ..models.auth_user import AuthUserPublic
-    from ..models.profile import ProfilePublic
-
-    return UserResponse(
-        auth_user=AuthUserPublic(id=auth_user.id, email=auth_user.email),
-        profile=ProfilePublic(id=profile.id, name=profile.name, auth_user_id=profile.auth_user_id),
-    )
+    return UserResponse(auth_user=auth_user, profile=profile)

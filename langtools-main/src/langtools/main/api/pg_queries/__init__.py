@@ -22,7 +22,6 @@ from .profile import (
     create_profile,
     find_profile_by_auth_user_id,
     get_profile_by_auth_user_id,
-    update_profile,
     ProfileNotFoundError,
 )
 from .auth_password import (
@@ -53,7 +52,6 @@ __all__ = [
     "create_profile",
     "find_profile_by_auth_user_id",
     "get_profile_by_auth_user_id",
-    "update_profile",
     "ProfileNotFoundError",
     # Auth password operations
     "create_auth_password",

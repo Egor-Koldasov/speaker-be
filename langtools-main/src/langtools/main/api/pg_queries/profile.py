@@ -4,14 +4,15 @@ from typing import Optional
 from sqlmodel import select
 
 from ..database import get_session
-from ..models.profile import Profile, ProfilePublic, ProfileUpdate
+from ..models.profile import Profile
+from ..utils import generate_pg_uuid
 
 
 class ProfileNotFoundError(Exception):
     """Raised when a profile is not found."""
 
 
-def create_profile(name: str, auth_user_id: str) -> ProfilePublic:
+def create_profile(name: str, auth_user_id: str) -> Profile:
     """Create a new profile and return the created profile data.
 
     Args:
@@ -19,24 +20,24 @@ def create_profile(name: str, auth_user_id: str) -> ProfilePublic:
         auth_user_id: Reference to auth_user.id
 
     Returns:
-        ProfilePublic model with profile data
+        Profile model with profile data
 
     Raises:
         Exception: For database errors
     """
     with get_session() as session:
         try:
-            # Create new profile instance
-            profile = Profile(name=name, auth_user_id=auth_user_id)
+            # Explicitly generate ID
+            profile_id = generate_pg_uuid()
+
+            # Create new profile instance with explicit ID
+            profile = Profile(id=profile_id, name=name, auth_user_id=auth_user_id)
 
             session.add(profile)
             session.commit()
             session.refresh(profile)
 
-            # Return public data
-            return ProfilePublic(
-                id=profile.id, name=profile.name, auth_user_id=profile.auth_user_id
-            )
+            return profile
 
         except Exception as e:
             session.rollback()
@@ -73,41 +74,3 @@ def get_profile_by_auth_user_id(auth_user_id: str) -> Profile:
     if profile is None:
         raise ProfileNotFoundError(f"Profile for auth_user_id {auth_user_id} not found")
     return profile
-
-
-def update_profile(auth_user_id: str, update_data: ProfileUpdate) -> ProfilePublic:
-    """Update a profile and return the updated profile data.
-
-    Args:
-        auth_user_id: User's auth_user.id
-        update_data: ProfileUpdate model with fields to update
-
-    Returns:
-        ProfilePublic model with updated profile data
-
-    Raises:
-        ProfileNotFoundError: If profile is not found
-        Exception: For other database errors
-    """
-    with get_session() as session:
-        try:
-            profile = get_profile_by_auth_user_id(auth_user_id)
-
-            # Update fields that are provided
-            update_fields: dict[str, str] = update_data.model_dump(exclude_unset=True)
-            for field, value in update_fields.items():
-                if hasattr(profile, field):
-                    setattr(profile, field, value)
-
-            session.add(profile)
-            session.commit()
-            session.refresh(profile)
-
-            # Return public data
-            return ProfilePublic(
-                id=profile.id, name=profile.name, auth_user_id=profile.auth_user_id
-            )
-
-        except Exception as e:
-            session.rollback()
-            raise e

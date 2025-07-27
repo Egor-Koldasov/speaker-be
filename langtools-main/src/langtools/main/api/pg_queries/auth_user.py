@@ -5,7 +5,8 @@ from sqlalchemy.exc import IntegrityError
 from sqlmodel import select
 
 from ..database import get_session
-from ..models.auth_user import AuthUser, AuthUserPublic
+from ..models.auth_user import AuthUser
+from ..utils import generate_pg_uuid
 
 
 class AuthUserNotFoundError(Exception):
@@ -16,14 +17,14 @@ class EmailAlreadyExistsError(Exception):
     """Raised when trying to create a user with an existing email."""
 
 
-def create_auth_user(email: str) -> AuthUserPublic:
+def create_auth_user(email: str) -> AuthUser:
     """Create a new auth user and return the created user data.
 
     Args:
         email: User's email address (must be unique)
 
     Returns:
-        AuthUserPublic model with user data
+        AuthUser model with user data
 
     Raises:
         EmailAlreadyExistsError: If email already exists
@@ -31,15 +32,17 @@ def create_auth_user(email: str) -> AuthUserPublic:
     """
     with get_session() as session:
         try:
-            # Create new auth user instance
-            auth_user = AuthUser(email=email)
+            # Explicitly generate ID
+            user_id = generate_pg_uuid()
+
+            # Create new auth user instance with explicit ID
+            auth_user = AuthUser(id=user_id, email=email)
 
             session.add(auth_user)
             session.commit()
             session.refresh(auth_user)
 
-            # Return public data
-            return AuthUserPublic(id=auth_user.id, email=auth_user.email)
+            return auth_user
 
         except IntegrityError as e:
             session.rollback()

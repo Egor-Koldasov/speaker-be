@@ -178,6 +178,7 @@ Type checking and linting configurations are shared across packages:
 - Single source of truth preference.
 - Full type coverage.
 - Modularity. Avoid big files, big functions, high coupling. Prefer cohesive single-purposed functions, files, modules.
+- Write only the code that is needed in the implementation. Don't write the code that is not used anywhere. This includes data types and interfaces, design only the types that are immediately used.
 - Prefer functions over classes.
 - Prefer searching for the proper solutions and looking for the root cause of the issues. Avoid cutting the corners, making temporary solutions, workarounds and technical debt.
 - Prefer scalable, extendable, production-grade solutions with the minimum amount of technical debt.

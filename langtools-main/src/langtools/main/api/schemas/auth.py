@@ -1,12 +1,10 @@
 """Authentication schemas."""
 
-from typing import Optional
-
 from pydantic import BaseModel, EmailStr
 
-# Import SQLModel classes for direct use in API
-from ..models.auth_user import AuthUserPublic
-from ..models.profile import ProfilePublic
+# Import SQLModel classes for direct use in API - they contain only public-safe data
+from ..models.auth_user import AuthUser
+from ..models.profile import Profile
 
 
 class Token(BaseModel):
@@ -14,19 +12,6 @@ class Token(BaseModel):
 
     access_token: str
     token_type: str = "bearer"
-
-
-class TokenData(BaseModel):
-    """Token payload data."""
-
-    email: Optional[str] = None
-
-
-class UserLogin(BaseModel):
-    """User login request."""
-
-    email: EmailStr
-    password: str
 
 
 class UserCreate(BaseModel):
@@ -39,10 +24,14 @@ class UserCreate(BaseModel):
 
 
 class UserResponse(BaseModel):
-    """Complete user response with profile and auth data."""
+    """Complete user response with profile and auth data.
 
-    auth_user: AuthUserPublic
-    profile: ProfilePublic
+    Uses table models directly since they contain only public-safe data.
+    Sensitive data (password_hash, otp codes) is in separate tables.
+    """
+
+    auth_user: AuthUser
+    profile: Profile
 
 
 class PasswordlessLoginRequest(BaseModel):

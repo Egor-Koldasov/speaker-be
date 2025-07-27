@@ -1,35 +1,19 @@
 """AuthUser SQLModel definition."""
 
-from sqlmodel import SQLModel, Field
-import uuid6
+from typing import cast
+
+from sqlalchemy.orm import declared_attr
+from sqlmodel import Field, SQLModel
 
 
-def generate_uuidv7() -> str:
-    """Generate a UUIDv7 string."""
-    return str(uuid6.uuid7())
+class AuthUser(SQLModel, table=True):
+    """Database model for auth_user table.
 
+    Contains only public-safe data (id, email).
+    Sensitive data like password_hash is in separate auth_password table.
+    """
 
-class AuthUserBase(SQLModel):
-    """Base auth user model with shared fields."""
+    __tablename__ = cast(declared_attr[str], "auth_user")
 
+    id: str = Field(primary_key=True, index=True)
     email: str = Field(unique=True, index=True, nullable=False)
-
-
-class AuthUser(AuthUserBase, table=True):
-    """Database model for auth_user table."""
-
-    __tablename__: str = "auth_user"  # type: ignore
-
-    id: str = Field(default_factory=generate_uuidv7, primary_key=True, index=True)
-
-
-class AuthUserCreate(AuthUserBase):
-    """Model for creating a new auth user."""
-
-    pass
-
-
-class AuthUserPublic(AuthUserBase):
-    """Public auth user model for API responses."""
-
-    id: str
