@@ -30,6 +30,29 @@ project-hobby/
 langtools-mcp → langtools-main → langtools-ai → langtools-utils
 ```
 
+## Package Structure Template
+
+Each package follows this structure:
+
+```
+package-name/
+├── pyproject.toml
+├── pyrightconfig.json          # Extends ../langtools-utils/pyrightconfig.json
+├── ruff.toml                   # Extends ../langtools-utils/ruff.toml
+├── src/
+│   └── langtools/
+│       └── package_name/
+│           ├── __init__.py
+│           └── (modules)
+├── tests/
+├── scripts/
+│   ├── dev.sh, test.sh, build.sh, clean.sh
+├── .github/workflows/ci.yml
+├── .gitignore
+├── README.md
+└── Dockerfile (if needed)
+```
+
 ## Package Responsibilities
 
 ### langtools-utils
@@ -94,6 +117,17 @@ When adding new dependencies to any package:
 - **Update existing dependencies** - Keep dependencies up-to-date during development
 - **Test thoroughly** - Ensure new versions don't break existing functionality
 
+## Working with Deprecated Code
+
+The repository contains significant deprecated code outside the active packages:
+
+- `api-go/` - Deprecated Go API
+- `json-schema/` - Deprecated schema system
+- `termchain-mcp/` - Deprecated MCP implementation
+- Other experimental directories
+
+**Do not extend or modify deprecated code**. Only reference it if specifically needed for understanding legacy functionality.
+
 ## Code Quality Standards
 
 **All code must pass the quality gate checks before being committed.**
@@ -145,6 +179,8 @@ Type checking and linting configurations are shared across packages:
 - Full type coverage.
 - Modularity. Avoid big files, big functions, high coupling. Prefer cohesive single-purposed functions, files, modules.
 - Prefer functions over classes.
+- Prefer searching for the proper solutions and looking for the root cause of the issues. Avoid cutting the corners, making temporary solutions, workarounds and technical debt.
+- Prefer scalable, extendable, production-grade solutions with the minimum amount of technical debt.
 
 ### Function Design
 
@@ -156,7 +192,6 @@ Type checking and linting configurations are shared across packages:
 
 ### Data Handling
 
-- Use immutable data structures (dataclasses with `frozen=True`)
 - Pydantic models for validation and serialization
 - Avoid generic `Dict[str, Any]` - define specific models
 - Explicitly handle `None` values
@@ -182,29 +217,6 @@ Type checking and linting configurations are shared across packages:
 - Set reasonable timeouts for external API calls
 - Let async exceptions bubble up with proper context
 
-## Package Structure Template
-
-Each package follows this structure:
-
-```
-package-name/
-├── pyproject.toml
-├── pyrightconfig.json          # Extends ../langtools-utils/pyrightconfig.json
-├── ruff.toml                   # Extends ../langtools-utils/ruff.toml
-├── src/
-│   └── langtools/
-│       └── package_name/
-│           ├── __init__.py
-│           └── (modules)
-├── tests/
-├── scripts/
-│   ├── dev.sh, test.sh, build.sh, clean.sh
-├── .github/workflows/ci.yml
-├── .gitignore
-├── README.md
-└── Dockerfile (if needed)
-```
-
 ## Working with types and linting tools
 
 - Make sure to run `lint.sh` scripts on every code change iteration to keep awareness of potential misses.
@@ -222,6 +234,7 @@ package-name/
     process_review(training_data, cast(Rating, 5), review_time)  # Testing invalid input
   ```
 - In case of type casting, use `cast` from `typing`, for objects you can define data classes and cast unknown objects to these classes.
+- Never use generic `# type: ignore` comment that ignores all type checking
 
 ```
 @dataclass
@@ -268,17 +281,6 @@ def parse_args() -> Args:
 - Keep the documentation up to date.
 - Keep the documentation concise and modular, exclude the unnecessary details from the main README files. Keep the documentation files single-purposed.
 
-## Working with Deprecated Code
-
-The repository contains significant deprecated code outside the active packages:
-
-- `api-go/` - Deprecated Go API
-- `json-schema/` - Deprecated schema system
-- `termchain-mcp/` - Deprecated MCP implementation
-- Other experimental directories
-
-**Do not extend or modify deprecated code**. Only reference it if specifically needed for understanding legacy functionality.
-
 ## Debugging API in langtools-main
 
 Assume that `langtools-api` container is running with a dev server.
@@ -286,3 +288,8 @@ You can check the dev server logs with `docker logs langtools-api`, or in `langt
 You can check the Postgres database logs with `docker logs langtools-postgres`, or in `langtools-main` folder with `docker compose logs postgres`.
 If you see the containers not running, suggest the user to start it.
 **Do not start or stop containers yourself, `docker compose up` will not work for you and you will break the setup!**
+
+## Communication
+
+- If your solutions are not complete, if you skip an implementation, code fixes, test fixes or linter fixes, communicate this in the message summary at the end of the message. Note that by default it's best to avoid skipping such things in the first place, but at least keep the user aware of the limitations and provide the reasoning of why these limitations were chosen.
+- If you found limitations during an implementation and changed your solution because of the new discoveries, include that in the message summary at the end of the message.
