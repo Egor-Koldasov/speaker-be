@@ -6,9 +6,9 @@ import pytest
 from httpx import AsyncClient
 from sqlmodel import select
 
-from langtools.main.api.pg_queries.otp import get_valid_otp_for_testing
 from langtools.main.api.database import get_session
-from langtools.main.api.models import Learner
+from langtools.main.api.models import AuthUser
+from langtools.main.api.pg_queries.otp import get_valid_otp_for_testing
 
 
 class TestUserData(TypedDict):
@@ -34,19 +34,17 @@ async def test_user_registration(client: AsyncClient, test_user_data: TestUserDa
     response = await client.post("/auth/register", json=test_user_data)
     assert response.status_code == 200
 
-    data: dict[str, str | int | bool] = cast(dict[str, str | int | bool], response.json())
-    assert data["email"] == test_user_data["email"]
-    assert data["name"] == test_user_data["name"]
-    assert data["is_e2e_test"] is True
+    data: dict[str, dict[str, str]] = cast(dict[str, dict[str, str]], response.json())
+    assert data["auth_user"]["email"] == test_user_data["email"]
+    assert data["profile"]["name"] == test_user_data["name"]
     assert "password" not in data
 
     # Verify user exists in database
     with get_session() as session:
-        stmt = select(Learner).where(Learner.email == test_user_data["email"])
+        stmt = select(AuthUser).where(AuthUser.email == test_user_data["email"])
         user = session.exec(stmt).first()
         assert user is not None
         assert user.email == test_user_data["email"]
-        assert user.is_e2e_test is True
 
 
 @pytest.mark.asyncio
@@ -109,8 +107,14 @@ async def test_passwordless_login_new_user(
     response = await client.post("/auth/passwordless/request", json=test_user_data_passwordless)
     assert response.status_code == 200
 
+    # Verify user was created in database
+    with get_session() as session:
+        stmt = select(AuthUser).where(AuthUser.email == test_user_data_passwordless["email"])
+        auth_user = session.exec(stmt).first()
+        assert auth_user is not None
+
     # Get OTP from database (in tests only)
-    otp = get_valid_otp_for_testing(test_user_data_passwordless["email"])
+    otp = get_valid_otp_for_testing(auth_user.id)
     assert otp is not None
 
     # Verify OTP
@@ -124,14 +128,6 @@ async def test_passwordless_login_new_user(
     data: dict[str, str | int | bool] = cast(dict[str, str | int | bool], response.json())
     assert "access_token" in data
     assert data["token_type"] == "bearer"
-
-    # Verify user was created in database
-    with get_session() as session:
-        stmt = select(Learner).where(Learner.email == test_user_data_passwordless["email"])
-        user = session.exec(stmt).first()
-        assert user is not None
-        assert user.email == test_user_data_passwordless["email"]
-        assert user.is_e2e_test is True
 
 
 @pytest.mark.asyncio
@@ -150,8 +146,14 @@ async def test_passwordless_login_existing_user(
     response = await client.post("/auth/passwordless/request", json=request_data)
     assert response.status_code == 200
 
+    # Get auth_user_id for OTP lookup
+    with get_session() as session:
+        stmt = select(AuthUser).where(AuthUser.email == test_user_data["email"])
+        auth_user = session.exec(stmt).first()
+        assert auth_user is not None
+
     # Get OTP from database
-    otp = get_valid_otp_for_testing(test_user_data["email"])
+    otp = get_valid_otp_for_testing(auth_user.id)
     assert otp is not None
 
     # Verify OTP
@@ -204,10 +206,9 @@ async def test_get_current_user(client: AsyncClient, test_user_data: TestUserDat
     response = await client.get("/auth/me", headers=headers)
     assert response.status_code == 200
 
-    data: dict[str, str | int | bool] = cast(dict[str, str | int | bool], response.json())
-    assert data["email"] == test_user_data["email"]
-    assert data["name"] == test_user_data["name"]
-    assert data["is_e2e_test"] is True
+    data: dict[str, dict[str, str]] = cast(dict[str, dict[str, str]], response.json())
+    assert data["auth_user"]["email"] == test_user_data["email"]
+    assert data["profile"]["name"] == test_user_data["name"]
 
 
 @pytest.mark.asyncio

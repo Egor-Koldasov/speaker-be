@@ -5,8 +5,9 @@ from typing import Optional
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
-from ..models.learner import Learner
-from ..pg_queries.learner import get_user_by_email, LearnerNotFoundError
+from ..models.auth_user import AuthUser
+from ..schemas.auth import UserResponse
+from ..pg_queries import get_auth_user_by_email, get_complete_user_by_email, AuthUserNotFoundError
 from .utils import decode_access_token
 
 
@@ -32,9 +33,17 @@ def get_current_user_email(token: str = Depends(oauth2_scheme)) -> str:
     return email
 
 
-def get_current_user(email: str = Depends(get_current_user_email)) -> Learner:
-    """Get the current user from the database."""
+def get_current_auth_user(email: str = Depends(get_current_user_email)) -> AuthUser:
+    """Get the current auth user from the database."""
     try:
-        return get_user_by_email(email)
-    except LearnerNotFoundError:
+        return get_auth_user_by_email(email)
+    except AuthUserNotFoundError:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+
+def get_current_user_response(email: str = Depends(get_current_user_email)) -> UserResponse:
+    """Get the complete current user data (auth_user + profile) from the database."""
+    user_response = get_complete_user_by_email(email)
+    if user_response is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    return user_response

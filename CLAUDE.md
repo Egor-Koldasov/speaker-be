@@ -181,6 +181,7 @@ Type checking and linting configurations are shared across packages:
 - Prefer functions over classes.
 - Prefer searching for the proper solutions and looking for the root cause of the issues. Avoid cutting the corners, making temporary solutions, workarounds and technical debt.
 - Prefer scalable, extendable, production-grade solutions with the minimum amount of technical debt.
+- Avoid verbosity in the comments that only repeat the code.
 
 ### Function Design
 
@@ -275,6 +276,7 @@ def parse_args() -> Args:
   think deeper about your recent changes and check if some of them are not relevant anymore or if some of them could be refactored,
   for example, to deal with duplicated code. Keep the codebase clean after your changes.
 - When you create scripts for testing, delete them after doing the testing.
+- When you add debugging code, delete it after doing the testing.
 - Avoid duplicating data types, reuse types when possible. Keep the data modeling organized.
 - When reusing data types, model them from the bottom up. For example if an API returns a database model directly, reuse the database model in API, not the opposite way.
 - Keep the database models organized in one place. It's better to infer other data types from the database models.
@@ -286,6 +288,8 @@ def parse_args() -> Args:
 Assume that `langtools-api` container is running with a dev server.
 You can check the dev server logs with `docker logs langtools-api`, or in `langtools-main` folder with `docker compose logs api`.
 You can check the Postgres database logs with `docker logs langtools-postgres`, or in `langtools-main` folder with `docker compose logs postgres`.
+Use that to check the errors during integration testing.
+After adding new packages, api needs to be restarted: `docker compose restart api`.
 If you see the containers not running, suggest the user to start it.
 **Do not start or stop containers yourself, `docker compose up` will not work for you and you will break the setup!**
 

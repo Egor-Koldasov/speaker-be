@@ -5,7 +5,8 @@ from typing import Optional
 from pydantic import BaseModel, EmailStr
 
 # Import SQLModel classes for direct use in API
-from ..models.learner import LearnerCreate, LearnerPublic
+from ..models.auth_user import AuthUserPublic
+from ..models.profile import ProfilePublic
 
 
 class Token(BaseModel):
@@ -28,6 +29,22 @@ class UserLogin(BaseModel):
     password: str
 
 
+class UserCreate(BaseModel):
+    """User registration request."""
+
+    name: str
+    email: EmailStr
+    password: str
+    is_e2e_test: bool = False
+
+
+class UserResponse(BaseModel):
+    """Complete user response with profile and auth data."""
+
+    auth_user: AuthUserPublic
+    profile: ProfilePublic
+
+
 class PasswordlessLoginRequest(BaseModel):
     """Request for passwordless login - sends OTP to email."""
 
@@ -40,8 +57,3 @@ class PasswordlessLoginVerify(BaseModel):
 
     email: EmailStr
     otp: str
-
-
-# Use SQLModel classes directly for user data
-UserCreate = LearnerCreate
-UserResponse = LearnerPublic

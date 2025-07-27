@@ -5,10 +5,13 @@ Revises: ${down_revision | comma,n}
 Create Date: ${create_date}
 
 """
+# for `sqlmodel.sql` access
+# pyright: reportAttributeAccessIssue=false
 from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
+import sqlmodel
 ${imports if imports else ""}
 
 # revision identifiers, used by Alembic.

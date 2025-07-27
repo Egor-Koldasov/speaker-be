@@ -14,6 +14,7 @@ from ..pg_queries.otp import (
     find_and_mark_otp_used,
     get_valid_otp_for_testing,
 )
+from ..pg_queries.auth_user import find_auth_user_by_email
 
 
 class OTPStore:
@@ -24,17 +25,32 @@ class OTPStore:
         otp_code = "".join(random.choices(string.digits, k=6))
         expires_at = datetime.now(timezone.utc) + timedelta(minutes=settings.otp_expire_minutes)
 
-        clean_and_create_otp(email, otp_code, expires_at)
+        # Find auth_user by email to get the auth_user_id
+        auth_user = find_auth_user_by_email(email)
+        if not auth_user:
+            raise ValueError(f"No auth user found for email: {email}")
+
+        clean_and_create_otp(auth_user.id, otp_code, expires_at)
 
         return otp_code
 
     def verify_otp(self, email: str, otp_code: str) -> bool:
         """Verify an OTP for the given email."""
-        return find_and_mark_otp_used(email, otp_code)
+        # Find auth_user by email to get the auth_user_id
+        auth_user = find_auth_user_by_email(email)
+        if not auth_user:
+            return False
+
+        return find_and_mark_otp_used(auth_user.id, otp_code)
 
     def get_otp_for_testing(self, email: str) -> Optional[str]:
         """Get OTP for testing purposes only."""
-        return get_valid_otp_for_testing(email)
+        # Find auth_user by email to get the auth_user_id
+        auth_user = find_auth_user_by_email(email)
+        if not auth_user:
+            return None
+
+        return get_valid_otp_for_testing(auth_user.id)
 
     def send_otp_email(self, email: str, otp_code: str) -> bool:
         """Send OTP via email."""

@@ -10,9 +10,10 @@ from alembic import context
 
 sys.path.append(str(Path(__file__).parent.parent / "src"))
 
-from langtools.main.api.config import settings
-
 # Import models to ensure they're registered with metadata
+# Don't remove "noqa: F401" here, since otherwise the whole line will be remove by ruff autofix
+import langtools.main.api.models  # noqa: F401 # type: ignore[reportAttributeAccessIssue]
+from langtools.main.api.config import settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

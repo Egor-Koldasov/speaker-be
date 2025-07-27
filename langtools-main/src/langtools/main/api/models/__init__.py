@@ -1,13 +1,21 @@
 """Database models package."""
 
-from .learner import Learner, LearnerCreate, LearnerPublic, LearnerUpdate
+from .auth_user import AuthUser, AuthUserCreate, AuthUserPublic
+from .profile import Profile, ProfileCreate, ProfileUpdate, ProfilePublic
+from .auth_password import AuthPassword, AuthPasswordCreate, AuthPasswordUpdate
 from .otp import OTP, OTPCreate, OTPPublic
 
 __all__ = [
-    "Learner",
-    "LearnerCreate",
-    "LearnerPublic",
-    "LearnerUpdate",
+    "AuthUser",
+    "AuthUserCreate",
+    "AuthUserPublic",
+    "Profile",
+    "ProfileCreate",
+    "ProfileUpdate",
+    "ProfilePublic",
+    "AuthPassword",
+    "AuthPasswordCreate",
+    "AuthPasswordUpdate",
     "OTP",
     "OTPCreate",
     "OTPPublic",

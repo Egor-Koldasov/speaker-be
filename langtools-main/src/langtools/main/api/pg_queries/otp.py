@@ -8,17 +8,17 @@ from ..database import get_session
 from ..models.otp import OTP
 
 
-def clean_and_create_otp(email: str, otp_code: str, expires_at: datetime) -> None:
-    """Clean old unused OTPs for email and create a new one.
+def clean_and_create_otp(auth_user_id: str, otp_code: str, expires_at: datetime) -> None:
+    """Clean old unused OTPs for auth user and create a new one.
 
     Args:
-        email: User's email address
+        auth_user_id: User's auth_user.id
         otp_code: The 6-digit OTP code
         expires_at: When the OTP expires
     """
     with get_session() as session:
-        # Clean up any existing unused OTPs for this email
-        statement = select(OTP).where((OTP.email == email) & (OTP.used == False))
+        # Clean up any existing unused OTPs for this auth user
+        statement = select(OTP).where((OTP.auth_user_id == auth_user_id) & (OTP.used == False))
         old_otps = session.exec(statement).all()
 
         for old_otp in old_otps:
@@ -26,8 +26,8 @@ def clean_and_create_otp(email: str, otp_code: str, expires_at: datetime) -> Non
 
         # Create new OTP
         new_otp = OTP(
-            email=email,
             code=otp_code,
+            auth_user_id=auth_user_id,
             expires_at=expires_at,
             used=False,
         )
@@ -36,11 +36,11 @@ def clean_and_create_otp(email: str, otp_code: str, expires_at: datetime) -> Non
         session.commit()
 
 
-def find_and_mark_otp_used(email: str, otp_code: str) -> bool:
+def find_and_mark_otp_used(auth_user_id: str, otp_code: str) -> bool:
     """Find a valid OTP and mark it as used.
 
     Args:
-        email: User's email address
+        auth_user_id: User's auth_user.id
         otp_code: The OTP code to verify
 
     Returns:
@@ -51,7 +51,7 @@ def find_and_mark_otp_used(email: str, otp_code: str) -> bool:
     with get_session() as session:
         # Find valid OTP
         statement = select(OTP).where(
-            (OTP.email == email)
+            (OTP.auth_user_id == auth_user_id)
             & (OTP.code == otp_code)
             & (OTP.used == False)
             & (OTP.expires_at > now)
@@ -69,11 +69,11 @@ def find_and_mark_otp_used(email: str, otp_code: str) -> bool:
         return True
 
 
-def get_valid_otp_for_testing(email: str) -> Optional[str]:
+def get_valid_otp_for_testing(auth_user_id: str) -> Optional[str]:
     """Get a valid OTP for testing purposes.
 
     Args:
-        email: User's email address
+        auth_user_id: User's auth_user.id
 
     Returns:
         The OTP code if found and valid, None otherwise
@@ -82,7 +82,7 @@ def get_valid_otp_for_testing(email: str) -> Optional[str]:
 
     with get_session() as session:
         statement = select(OTP).where(
-            (OTP.email == email) & (OTP.used == False) & (OTP.expires_at > now)
+            (OTP.auth_user_id == auth_user_id) & (OTP.used == False) & (OTP.expires_at > now)
         )
 
         otp = session.exec(statement).first()
