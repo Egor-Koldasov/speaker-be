@@ -3,12 +3,14 @@
 import logging
 
 
-from fastmcp import FastMCP
+from fastmcp import Context, FastMCP
 from pydantic import BaseModel, Field
 
 from langtools.ai.debug import configure_debug_logging
 from langtools.ai.functions import generate_dictionary_entry
 from langtools.ai.models import AiDictionaryEntry, DictionaryEntryParams, ModelType
+
+from langtools.mcp.query_auth_middleware import QueryAuthMiddleware
 
 
 class DictionaryGenerationError(Exception):
@@ -38,6 +40,8 @@ mcp = FastMCP(
         "translation, but comprehensive language education and cultural understanding."
     ),
 )
+
+mcp.add_middleware(QueryAuthMiddleware())
 
 # Define help prompt text
 HELP_PROMPT = """You are now equipped with langtools - powerful AI-powered language \
@@ -252,6 +256,43 @@ dictionary entry.
             f"❌ Validation error: {e!s}. Please ensure the dictionary entry follows the "
             f"required schema format."
         )
+
+
+@mcp.tool()
+async def me(context: Context) -> dict[str, object]:
+    """
+    Get current user information using authentication token from MCP context.
+
+    This tool extracts the Bearer token from the MCP context and calls the
+    langtools API /auth/me endpoint to retrieve the current user's profile
+    and authentication information.
+
+    Returns:
+        Dictionary containing user profile and authentication data
+
+    Raises:
+        ValueError: If no authentication token is found in MCP context
+        Exception: If API request fails or user is not authenticated
+    """
+    try:
+        from .api import call_api_with_token
+
+        logger.info("Getting current user info via /auth/me endpoint")
+
+        # Call the API with the token from context
+        user_data = await call_api_with_token(context=context, endpoint="/auth/me", method="GET")
+
+        auth_user = user_data.get("auth_user", {})
+        email = auth_user.get("email", "unknown") if isinstance(auth_user, dict) else "unknown"
+        logger.info(f"Successfully retrieved user info for: {email}")
+        return user_data
+
+    except ValueError as e:
+        logger.error(f"Authentication error: {e}")
+        raise Exception(f"Authentication required: {e}") from e
+    except Exception as e:
+        logger.exception("Failed to get current user info")
+        raise Exception(f"Failed to retrieve user information: {e}") from e
 
 
 @mcp.prompt()

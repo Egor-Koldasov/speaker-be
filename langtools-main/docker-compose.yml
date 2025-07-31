@@ -19,47 +19,47 @@ services:
       timeout: 5s
       retries: 5
 
-  hydra-migrate:
-    image: oryd/hydra:v2.2.0
-    container_name: langtools-hydra-migrate
-    environment:
-      - DSN=postgres://langtools:langtools_dev_password@postgres:5432/langtools?sslmode=disable
-    command: migrate sql -e --yes
-    restart: on-failure
-    depends_on:
-      postgres:
-        condition: service_healthy
+  # hydra-migrate:
+  #   image: oryd/hydra:v2.2.0
+  #   container_name: langtools-hydra-migrate
+  #   environment:
+  #     - DSN=postgres://langtools:langtools_dev_password@postgres:5432/langtools?sslmode=disable
+  #   command: migrate sql -e --yes
+  #   restart: on-failure
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
 
-  hydra:
-    image: oryd/hydra:v2.2.0
-    container_name: langtools-hydra
-    restart: unless-stopped
-    ports:
-      - "4444:4444"  # Public API (clients use this)
-      - "4445:4445"  # Admin API (your API uses this)
-    environment:
-      - DSN=postgres://langtools:langtools_dev_password@postgres:5432/langtools?sslmode=disable
-      - URLS_SELF_ISSUER=${HYDRA_PUBLIC_URL:-http://localhost:4444}/
-      - URLS_CONSENT=${LOGIN_UI_URL:-http://localhost:3000}/consent
-      - URLS_LOGIN=${LOGIN_UI_URL:-http://localhost:3000}/login
-      - URLS_LOGOUT=${LOGIN_UI_URL:-http://localhost:3000}/logout
-      - URLS_ERROR=${LOGIN_UI_URL:-http://localhost:3000}/error
-      - SECRETS_SYSTEM=${HYDRA_SYSTEM_SECRET:-this-is-a-very-insecure-secret-change-it}
-      - OIDC_SUBJECT_IDENTIFIERS_SUPPORTED_TYPES=public,pairwise
-      - OIDC_SUBJECT_IDENTIFIERS_PAIRWISE_SALT=${HYDRA_PAIRWISE_SALT:-some-random-salt}
-      - LOG_LEVEL=${HYDRA_LOG_LEVEL:-debug}
-      - LOG_FORMAT=json
-      - SERVE_COOKIES_SAME_SITE_MODE=Lax
-      - SERVE_PUBLIC_ALLOW_DYNAMIC_REGISTRATION=true
-      - OIDC_DYNAMIC_CLIENT_REGISTRATION_ENABLED=true
-    command: serve all --dev
-    depends_on:
-      - hydra-migrate
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4444/health/ready"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+  # hydra:
+  #   image: oryd/hydra:v2.2.0
+  #   container_name: langtools-hydra
+  #   restart: unless-stopped
+  #   ports:
+  #     - "4444:4444"  # Public API (clients use this)
+  #     - "4445:4445"  # Admin API (your API uses this)
+  #   environment:
+  #     - DSN=postgres://langtools:langtools_dev_password@postgres:5432/langtools?sslmode=disable
+  #     - URLS_SELF_ISSUER=${HYDRA_PUBLIC_URL:-http://localhost:4444}/
+  #     - URLS_CONSENT=${LOGIN_UI_URL:-http://localhost:3000}/consent
+  #     - URLS_LOGIN=${LOGIN_UI_URL:-http://localhost:3000}/login
+  #     - URLS_LOGOUT=${LOGIN_UI_URL:-http://localhost:3000}/logout
+  #     - URLS_ERROR=${LOGIN_UI_URL:-http://localhost:3000}/error
+  #     - SECRETS_SYSTEM=${HYDRA_SYSTEM_SECRET:-this-is-a-very-insecure-secret-change-it}
+  #     - OIDC_SUBJECT_IDENTIFIERS_SUPPORTED_TYPES=public,pairwise
+  #     - OIDC_SUBJECT_IDENTIFIERS_PAIRWISE_SALT=${HYDRA_PAIRWISE_SALT:-some-random-salt}
+  #     - LOG_LEVEL=${HYDRA_LOG_LEVEL:-debug}
+  #     - LOG_FORMAT=json
+  #     - SERVE_COOKIES_SAME_SITE_MODE=Lax
+  #     - SERVE_PUBLIC_ALLOW_DYNAMIC_REGISTRATION=true
+  #     - OIDC_DYNAMIC_CLIENT_REGISTRATION_ENABLED=true
+  #   command: serve all --dev
+  #   depends_on:
+  #     - hydra-migrate
+  #   healthcheck:
+  #     test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4444/health/ready"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
 
   api:
     build:
@@ -78,8 +78,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      hydra:
-        condition: service_healthy
+      # hydra:
+      #   condition: service_healthy
     working_dir: /workspace
     command: uv run python run_api.py
 

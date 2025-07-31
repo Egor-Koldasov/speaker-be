@@ -39,7 +39,7 @@ def main() -> None:
 
     try:
         logger.info("Starting langtools-mcp server...")
-        mcp.run(transport="sse", port=8030)
+        mcp.run(transport="streamable-http", port=8030)
     except KeyboardInterrupt:
         logger.info("Server stopped by user")
     except Exception:

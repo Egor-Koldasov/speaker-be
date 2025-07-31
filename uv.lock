@@ -1250,6 +1250,7 @@ version = "0.1.0"
 source = { editable = "langtools-mcp" }
 dependencies = [
     { name = "fastmcp" },
+    { name = "httpx" },
     { name = "langtools-ai" },
     { name = "mcp" },
     { name = "pydantic" },
@@ -1269,6 +1270,7 @@ dev = [
 requires-dist = [
     { name = "basedpyright", marker = "extra == 'dev'", specifier = ">=1.12.0" },
     { name = "fastmcp", specifier = ">=2.0.0" },
+    { name = "httpx", specifier = ">=0.25.0" },
     { name = "langtools-ai", editable = "langtools-ai" },
     { name = "mcp", specifier = ">=1.2.0" },
     { name = "pre-commit", marker = "extra == 'dev'", specifier = ">=3.0.0" },

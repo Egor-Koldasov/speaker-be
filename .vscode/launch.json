@@ -5,6 +5,17 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Debug langtools MCP",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "langtools.mcp.main",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/langtools-mcp",
+      "env": {
+          "PYTHONPATH": "${workspaceFolder}/langtools-mcp/src:${workspaceFolder}/langtools-main/src:${workspaceFolder}/langtools-ai/src:${workspaceFolder}/langtools-utils/src"
+      }
+    },
+    {
       "name":"Python Debugger: Current File",
       "type":"debugpy",
       "request":"launch",
