@@ -72,11 +72,11 @@ class Meaning(BaseModel):
         description="Formality level: formal, informal, colloquial, archaic, technical, vulgar"
     )
     frequency: str = Field(
-        description="Usage frequency: very_common, common, uncommon, rare, archaic"
+        description="Usage frequency: very common, common, uncommon, rare, archaic"
     )
     etymology: str = Field(description="A detailed explanation of the word's etymology")
     difficulty_level: str = Field(
-        description="Difficulty: beginner, elementary, intermediate, upper_intermediate, advanced"
+        description="Difficulty: beginner, elementary, intermediate, upper intermediate, advanced"
     )
     learning_priority: str = Field(description="Learning priority: essential, high, medium, low")
     common_mistakes: Optional[List[str]] = Field(default=None, description="Typical learner errors")
@@ -160,7 +160,7 @@ class AiDictionaryEntry(BaseModel):
 
 
 class MeaningTranslation(BaseModel):
-    """Translations of Meaning"""
+    """Translation of `Meaning`."""
 
     meaning_id: str = Field(description="Meaning.id of the original meaning")
 
@@ -175,8 +175,8 @@ class MeaningTranslation(BaseModel):
     translation: str = Field(
         description="Translation to target language, multiple words separated by comma"
     )
-    definition: str = Field(description="Clear, comprehensive definition in original language")
-    part_of_speech: str = Field(description="Part of speech in original language")
+    definition: str = Field(description="Clear, comprehensive definition")
+    part_of_speech: str = Field(description="Part of speech")
     semantic_field: Optional[str] = Field(
         default=None, description="Semantic domain (medicine, technology, sports, etc.)"
     )
@@ -192,11 +192,11 @@ class MeaningTranslation(BaseModel):
         description="Formality level: formal, informal, colloquial, archaic, technical, vulgar"
     )
     frequency: str = Field(
-        description="Usage frequency: very_common, common, uncommon, rare, archaic"
+        description="Usage frequency: very common, common, uncommon, rare, archaic"
     )
     etymology: str = Field(description="Word's etymology")
     difficulty_level: str = Field(
-        description="Difficulty: beginner, elementary, intermediate, upper_intermediate, advanced"
+        description="Difficulty: beginner, elementary, intermediate, upper intermediate, advanced"
     )
     learning_priority: str = Field(description="Learning priority: essential, high, medium, low")
     common_mistakes: Optional[List[str]] = Field(default=None, description="Typical learner errors")
@@ -207,6 +207,8 @@ class MeaningTranslation(BaseModel):
         default=None, description="Suggested practice methods"
     )
     example_sentences_translations: List[str] = Field(
-        description="Translations of the original meaning examples", min_length=2, max_length=5
+        description="Translations of the original meaning's examples", min_length=2, max_length=5
     )
-    collocations: Optional[List[str]] = Field(default=None, description="Common word combinations")
+    collocations: Optional[List[str]] = Field(
+        default=None, description="Translations of the original meaning's common word combinations"
+    )

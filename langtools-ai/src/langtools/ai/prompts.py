@@ -5,7 +5,6 @@ Prompt templates for AI functions using LangChain.
 from __future__ import annotations
 
 import json
-
 from typing import cast
 
 from langchain_core.language_models import BaseChatModel
@@ -115,7 +114,8 @@ You are a stateless software function named `GenerateBaseDictionaryEntry`.
 You will be given a set of input parameters.
 
 The purpose of this function is to generate a comprehensive dictionary entry in the original \
-language only (no translations). Focus on:
+language only. All fields including classification categories should be in original language.\
+Focus on:
 
 - Detecting the correct source language based on the term and user preferences
 - Providing multiple meanings ordered from most to least common
@@ -123,8 +123,6 @@ language only (no translations). Focus on:
 - Detailed definitions, pronunciations, morphology, etymology
 - Example sentences in the original language
 - Synonyms, antonyms, collocations in the original language
-
-DO NOT include any translations - this will be handled in a separate step.
                 """.strip(),
             ),
             ("user", "{parameters_json}"),
@@ -167,11 +165,12 @@ def create_meaning_translations_chain(
             (
                 "system",
                 """
-You are a stateless software function named `GenerateMeaningTranslations`.
+You are a computational linguist and lexicographer tasked with translating a dictionary entry from
+a language foreign to the user.
 
 You will be given a dictionary entry and a target language.
 
-The purpose of this function is to create high-quality translations for each meaning in the \
+Create high-quality translations for each meaning in the \
 dictionary entry. For each meaning, provide:
 
 - Accurate translations of the term into the target language
@@ -180,6 +179,7 @@ dictionary entry. For each meaning, provide:
 - Example sentence translations that maintain meaning and context
 - Linguistic metadata adapted for the target language context
 
+All the related data should be about the original word in original language, not about translations.
 Ensure translations are contextually appropriate and consider register, formality, and usage \
 patterns in the target language.
                 """.strip(),
