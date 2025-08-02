@@ -76,7 +76,7 @@ async def test_workflow_russian_to_english():
             print(f"   Example Translations: {translation.example_sentences_translations}")
 
     except Exception as e:
-        logger.error(f"Test failed: {e}")
+        print(f"❌ Test failed: {e}")
         raise
 
 

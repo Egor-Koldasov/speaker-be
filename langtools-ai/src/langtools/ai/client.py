@@ -32,24 +32,37 @@ class LLMClient:
 
     def _create_model(self, model_type: ModelType) -> BaseChatModel:
         """Create appropriate LangChain model based on type."""
-        if model_type in [ModelType.GPT4, ModelType.GPT3_5]:
+        if model_type in [
+            ModelType.GPT4,
+            ModelType.GPT3_5,
+            ModelType.GTP4_1_MINI,
+            ModelType.GTP4_O_MINI,
+        ]:
             # Use fewer tokens for GPT models to avoid context length issues
-            max_tokens = 4000 if model_type == ModelType.GPT3_5 else 6000
             return ChatOpenAI(
                 model=model_type.value,
                 temperature=0.3,
-                max_tokens=max_tokens,  # type: ignore[call-arg]
+                max_tokens=32768  # type: ignore[call-arg]
+                if model_type == ModelType.GTP4_1_MINI
+                else 16384
+                if model_type == ModelType.GTP4_O_MINI
+                else 64000,
                 timeout=180,  # type: ignore[call-arg]
             )
-        if model_type in [ModelType.CLAUDE_SONNET, ModelType.CLAUDE_SONNET_4]:
+        if model_type in [ModelType.CLAUDE_SONNET_3_5, ModelType.CLAUDE_SONNET_4]:
+            # Enable thinking only for Sonnet 4.0
+            thinking_config = None
+            if model_type == ModelType.CLAUDE_SONNET_4:
+                thinking_config = {
+                    "type": "enabled",
+                    "budget_tokens": 32000,
+                }
+
             return ChatAnthropic(
                 model=model_type.value,  # type: ignore[call-arg]
                 max_tokens=64000,  # type: ignore[call-arg]
                 timeout=180,  # type: ignore[call-arg]
-                thinking={
-                    "type": "enabled",
-                    "budget_tokens": 32000,
-                },
+                thinking=thinking_config,
             )
 
         error_msg = f"Unsupported model type: {model_type}"

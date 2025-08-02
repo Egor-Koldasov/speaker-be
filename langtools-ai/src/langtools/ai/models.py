@@ -15,7 +15,9 @@ class ModelType(Enum):
 
     GPT4 = "gpt-4"
     GPT3_5 = "gpt-3.5-turbo"
-    CLAUDE_SONNET = "claude-3-5-sonnet-20241022"
+    GTP4_1_MINI = "gpt-4.1-mini-2025-04-14"
+    GTP4_O_MINI = "gpt-4o-mini-2024-07-18"
+    CLAUDE_SONNET_3_5 = "claude-3-5-haiku-latest"
     CLAUDE_SONNET_4 = "claude-sonnet-4-0"
 
 
@@ -186,6 +188,13 @@ class MeaningTranslation(BaseModel):
     )
     tone_notation: Optional[str] = Field(
         default=None, description="Tone markers (Mandarin: xuéxí, Vietnamese: học tập)"
+    )
+    tone_tips: Optional[str] = Field(
+        default=None,
+        description=(
+            "Include for tonal languages: tone tips in translation language "
+            "in beginner-friendly way"
+        ),
     )
     morphology: str = Field(description="The list of all the morphological features")
     register: str = Field(

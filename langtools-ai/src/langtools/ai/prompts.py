@@ -71,7 +71,7 @@ Think deeply about the best structure of meanings.
     )
 
     # Partial the prompt template with our values first
-    parameters_json = json.dumps(parameter_definitions, indent=2)
+    parameters_json = json.dumps(parameter_definitions, indent=2, ensure_ascii=False)
 
     prompt = prompt_template.partial(parameters_json=parameters_json)
 
@@ -130,7 +130,7 @@ Focus on:
     )
 
     # Partial the prompt template with our values first
-    parameters_json = json.dumps(parameter_definitions, indent=2)
+    parameters_json = json.dumps(parameter_definitions, indent=2, ensure_ascii=False)
 
     prompt = prompt_template.partial(parameters_json=parameters_json)
 
@@ -189,7 +189,7 @@ patterns in the target language.
     )
 
     # Partial the prompt template with our values first
-    parameters_json = json.dumps(parameter_definitions, indent=2)
+    parameters_json = json.dumps(parameter_definitions, indent=2, ensure_ascii=False)
 
     prompt = prompt_template.partial(parameters_json=parameters_json)
 

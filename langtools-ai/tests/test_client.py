@@ -4,7 +4,6 @@ Tests for LLM client functionality.
 
 from unittest.mock import AsyncMock, Mock, patch
 
-
 from langtools.ai.client import LLMClient
 from langtools.ai.models import ModelType
 
@@ -46,9 +45,9 @@ class TestLLMClient:
         mock_model = Mock()
         mock_chat_anthropic.return_value = mock_model
 
-        client = LLMClient(ModelType.CLAUDE_SONNET)
+        client = LLMClient(ModelType.CLAUDE_SONNET_3_5)
 
-        assert client.model_type == ModelType.CLAUDE_SONNET
+        assert client.model_type == ModelType.CLAUDE_SONNET_3_5
         assert client.model == mock_model
         mock_chat_anthropic.assert_called_once_with(
             model="claude-3-5-sonnet-20241022", temperature=0.3, max_tokens=8000, timeout=180
@@ -106,7 +105,7 @@ class TestLLMClient:
         mock_chain = Mock()
         mock_chain.ainvoke = AsyncMock(return_value="test_result")
 
-        client = LLMClient(ModelType.CLAUDE_SONNET)
+        client = LLMClient(ModelType.CLAUDE_SONNET_3_5)
 
         # Execute
         result = await client.generate_with_parser(mock_chain)
