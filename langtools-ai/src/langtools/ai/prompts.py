@@ -57,6 +57,8 @@ dictionary entry.
 accuracy.
 - The definition should include as many meanings as possible, including rare usages\
 and folklore.
+
+Think deeply about the best structure of meanings.
                 """.strip(),
             ),
             ("user", "{parameters_json}"),

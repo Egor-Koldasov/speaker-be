@@ -43,9 +43,17 @@ class DictionaryEntryParams(BaseModel):
 class Meaning(BaseModel):
     """A single meaning of a dictionary entry."""
 
-    id: str = Field(description="Unique identifier for the meaning in format {neutralForm}-{index}")
+    id: str = Field(
+        description="Unique identifier for the meaning in format {neutralForm}-{index} starting from 1"
+    )
     neutral_form: str = Field(
         description="The word in a neutral grammatic form of the original language"
+    )
+    part_of_speech_original: str = Field(
+        description="The part of speech of the word in the original language"
+    )
+    part_of_speech_translated: str = Field(
+        description="The part of speech of the word in the target language"
     )
     definition_original: str = Field(
         description="A detailed definition of the word in the original language"
@@ -58,6 +66,7 @@ class Meaning(BaseModel):
     )
     pronunciation: str = Field(description="Comma separated list of pronunciations in IPA format")
     synonyms: str = Field(description="Common synonyms in the original language")
+    etymology: str = Field(description="A detailed explanation of the word's etymology")
 
 
 class AiDictionaryEntry(BaseModel):

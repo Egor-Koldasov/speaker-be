@@ -89,7 +89,7 @@ def _raise_no_meanings_error() -> None:
 def _validate_and_fix_meaning_ids(result: AiDictionaryEntry) -> AiDictionaryEntry:
     """Validate and fix meaning IDs in the result."""
     # Validate meaning IDs follow the expected format
-    for i, meaning in enumerate(result.meanings):
+    for i, meaning in enumerate(result.meanings, start=1):
         expected_id = f"{meaning.neutral_form}-{i}"
         if meaning.id != expected_id:
             meaning.id = expected_id  # Fix the ID if it's incorrect

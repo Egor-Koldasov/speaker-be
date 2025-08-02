@@ -12,9 +12,13 @@ from langchain_core.language_models import BaseChatModel
 from langchain_core.runnables import Runnable
 from langchain_openai import ChatOpenAI
 
+from langtools.ai.debug import configure_debug_logging
+
 from .models import AiDictionaryEntry, ModelType
 
 logger = logging.getLogger(__name__)
+
+configure_debug_logging()
 
 
 class LLMClient:
@@ -39,9 +43,12 @@ class LLMClient:
         if model_type in [ModelType.CLAUDE_SONNET, ModelType.CLAUDE_SONNET_4]:
             return ChatAnthropic(
                 model=model_type.value,  # type: ignore[call-arg]
-                temperature=0.3,
-                max_tokens=8000,  # type: ignore[call-arg]
+                max_tokens=64000,  # type: ignore[call-arg]
                 timeout=180,  # type: ignore[call-arg]
+                thinking={
+                    "type": "enabled",
+                    "budget_tokens": 32000,
+                },
             )
 
         error_msg = f"Unsupported model type: {model_type}"

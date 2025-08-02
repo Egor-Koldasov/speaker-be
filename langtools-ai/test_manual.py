@@ -5,15 +5,27 @@ Tests the generate_dictionary_entry function with Russian examples.
 """
 
 import asyncio
+import logging
 import os
 
 from dotenv import load_dotenv
 
+from langtools.ai.debug import configure_debug_logging
 from langtools.ai.functions import generate_dictionary_entry
 from langtools.ai.models import DictionaryEntryParams, ModelType
 
 # Load environment variables from .env file
-load_dotenv("src/langtools/.env")
+load_dotenv()
+
+# Configure logging to see langtools logs in normal execution
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
+# Enable LangChain debug logging (same as debug mode)
+os.environ["LANGTOOLS_DEBUG"] = "true"
+configure_debug_logging()
 
 
 async def test_russian_word() -> None:
@@ -29,7 +41,7 @@ async def test_russian_word() -> None:
 
     # Create parameters for Russian word (from design document example)
     params = DictionaryEntryParams(
-        translating_term="жёсткий",
+        translating_term="ทางออก",
         user_learning_languages="en:1,ru:2",
         translation_language="en",
     )
