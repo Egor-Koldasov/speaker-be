@@ -109,12 +109,12 @@ def create_base_dictionary_chain(
             (
                 "system",
                 """
-You are a stateless software function named `GenerateBaseDictionaryEntry`.
+You are a computational linguist and lexicographer tasked with generating a comprehensive \
+dictionary entry in the original language only. All fields including classification categories \
+should be in original language.\
 
 You will be given a set of input parameters.
 
-The purpose of this function is to generate a comprehensive dictionary entry in the original \
-language only. All fields including classification categories should be in original language.\
 Focus on:
 
 - Detecting the correct source language based on the term and user preferences
