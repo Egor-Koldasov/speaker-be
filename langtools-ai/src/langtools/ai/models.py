@@ -51,7 +51,7 @@ class Meaning(BaseModel):
         description="Unique identifier for the meaning in format {headword}-{index} starting from 1"
     )
     canonical_form: str = Field(
-        description="Standard dictionary form - base/citation form (infinitive, nominative singular, etc.)"
+        description="Standard dictionary form - base/citation form (infinitive, nominative, etc.)"
     )
     alternate_spellings: List[str] = Field(description="Other valid spellings or representations")
     definition: str = Field(description="Clear, comprehensive definition in original language")
@@ -76,7 +76,7 @@ class Meaning(BaseModel):
     )
     etymology: str = Field(description="A detailed explanation of the word's etymology")
     difficulty_level: str = Field(
-        description="Difficulty level: beginner, elementary, intermediate, upper_intermediate, advanced, proficient"
+        description="Difficulty: beginner, elementary, intermediate, upper_intermediate, advanced"
     )
     learning_priority: str = Field(description="Learning priority: essential, high, medium, low")
     common_mistakes: Optional[List[str]] = Field(default=None, description="Typical learner errors")
@@ -93,6 +93,54 @@ class Meaning(BaseModel):
     collocations: Optional[List[str]] = Field(default=None, description="Common word combinations")
     synonyms: Optional[List[str]] = Field(default=None, description="Synonyms in original language")
     antonyms: Optional[List[str]] = Field(default=None, description="Antonyms in original language")
+
+
+class BaseDictionaryParams(BaseModel):
+    """Input parameters for base dictionary entry generation (step 1 of workflow)."""
+
+    translating_term: str = Field(description="The word or phrase to define")
+    user_learning_languages: str = Field(
+        description="User's language preferences in format 'en:1,ru:2'"
+    )
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "translating_term": "сырой",
+                "user_learning_languages": "en:1,ru:2",
+            }
+        }
+    }
+
+
+class TranslationParams(BaseModel):
+    """Input parameters for meaning translations generation (step 2 of workflow)."""
+
+    entry: AiDictionaryEntry = Field(description="Base dictionary entry to translate")
+    translation_language: str = Field(
+        description="Target language for translations in BCP 47 format"
+    )
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "translation_language": "en",
+            }
+        }
+    }
+
+
+class MeaningTranslationList(BaseModel):
+    """Wrapper for list of meaning translations to work with LangChain structured output."""
+
+    translations: List[MeaningTranslation] = Field(description="List of meaning translations")
+
+
+class DictionaryWorkflowResult(BaseModel):
+    """Complete result from dictionary workflow with base entry and translations."""
+
+    entry: AiDictionaryEntry = Field(description="Base dictionary entry")
+    translations: List[MeaningTranslation] = Field(description="Translations for all meanings")
 
 
 class AiDictionaryEntry(BaseModel):
@@ -120,7 +168,7 @@ class MeaningTranslation(BaseModel):
         description="Word form as users encounter it (can be inflected, variant spelling, etc.)"
     )
     canonical_form: str = Field(
-        description="Standard dictionary form - base/citation form (infinitive, nominative singular, etc.)"
+        description="Standard dictionary form - base/citation form (infinitive, nominative, etc.)"
     )
     translation_language: str = Field(description="Translation language in BCP 47 format")
 
@@ -134,7 +182,7 @@ class MeaningTranslation(BaseModel):
     )
     pronunciation: str = Field(description="Comma separated list of pronunciations in IPA format")
     pronunciation_tips: str = Field(
-        description="Tips on the word's pronunciation in the translation language in a beginner-friendly way"
+        description="Pronunciation tips in translation language in beginner-friendly way"
     )
     tone_notation: Optional[str] = Field(
         default=None, description="Tone markers (Mandarin: xuéxí, Vietnamese: học tập)"
@@ -148,7 +196,7 @@ class MeaningTranslation(BaseModel):
     )
     etymology: str = Field(description="Word's etymology")
     difficulty_level: str = Field(
-        description="Difficulty level: beginner, elementary, intermediate, upper_intermediate, advanced, proficient"
+        description="Difficulty: beginner, elementary, intermediate, upper_intermediate, advanced"
     )
     learning_priority: str = Field(description="Learning priority: essential, high, medium, low")
     common_mistakes: Optional[List[str]] = Field(default=None, description="Typical learner errors")

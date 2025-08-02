@@ -12,7 +12,13 @@ from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import Runnable
 
-from .models import AiDictionaryEntry, DictionaryEntryParams
+from .models import (
+    AiDictionaryEntry,
+    BaseDictionaryParams,
+    DictionaryEntryParams,
+    MeaningTranslationList,
+    TranslationParams,
+)
 
 
 def create_dictionary_entry_chain(
@@ -75,3 +81,122 @@ Think deeply about the best structure of meanings.
     )
 
     return cast(Runnable[dict[str, str], AiDictionaryEntry], prompt | model_with_structured_output)
+
+
+def create_base_dictionary_chain(
+    model: BaseChatModel, params: BaseDictionaryParams
+) -> Runnable[dict[str, str], AiDictionaryEntry]:
+    """Create a LangChain chain for base dictionary entry generation (step 1 of workflow)."""
+
+    # Create parameter definitions
+    parameter_definitions = [
+        {
+            "name": "translatingTerm",
+            "description": "The word or phrase to define",
+            "value": params.translating_term,
+        },
+        {
+            "name": "userLearningLanguages",
+            "description": (
+                "User's language preferences in format 'lang:priority' "
+                "to guide source language detection"
+            ),
+            "value": params.user_learning_languages,
+        },
+    ]
+
+    prompt_template = ChatPromptTemplate.from_messages(  # type: ignore[misc]
+        [
+            (
+                "system",
+                """
+You are a stateless software function named `GenerateBaseDictionaryEntry`.
+
+You will be given a set of input parameters.
+
+The purpose of this function is to generate a comprehensive dictionary entry in the original \
+language only (no translations). Focus on:
+
+- Detecting the correct source language based on the term and user preferences
+- Providing multiple meanings ordered from most to least common
+- Including comprehensive linguistic metadata for language learning
+- Detailed definitions, pronunciations, morphology, etymology
+- Example sentences in the original language
+- Synonyms, antonyms, collocations in the original language
+
+DO NOT include any translations - this will be handled in a separate step.
+                """.strip(),
+            ),
+            ("user", "{parameters_json}"),
+        ]
+    )
+
+    # Partial the prompt template with our values first
+    parameters_json = json.dumps(parameter_definitions, indent=2)
+
+    prompt = prompt_template.partial(parameters_json=parameters_json)
+
+    model_with_structured_output = model.with_structured_output(  # type: ignore[misc]
+        schema=AiDictionaryEntry, method="function_calling"
+    )
+
+    return cast(Runnable[dict[str, str], AiDictionaryEntry], prompt | model_with_structured_output)
+
+
+def create_meaning_translations_chain(
+    model: BaseChatModel, params: TranslationParams
+) -> Runnable[dict[str, str], MeaningTranslationList]:
+    """Create a LangChain chain for meaning translations generation (step 2 of workflow)."""
+
+    # Create parameter definitions
+    parameter_definitions = [
+        {
+            "name": "dictionaryEntry",
+            "description": "Base dictionary entry with meanings to translate",
+            "value": params.entry.model_dump(),
+        },
+        {
+            "name": "translationLanguage",
+            "description": "Target language for translations in BCP 47 format",
+            "value": params.translation_language,
+        },
+    ]
+
+    prompt_template = ChatPromptTemplate.from_messages(  # type: ignore[misc]
+        [
+            (
+                "system",
+                """
+You are a stateless software function named `GenerateMeaningTranslations`.
+
+You will be given a dictionary entry and a target language.
+
+The purpose of this function is to create high-quality translations for each meaning in the \
+dictionary entry. For each meaning, provide:
+
+- Accurate translations of the term into the target language
+- Clear definitions in the target language (not just translations of original definitions)
+- Pronunciation guidance specific to the target language
+- Example sentence translations that maintain meaning and context
+- Linguistic metadata adapted for the target language context
+
+Ensure translations are contextually appropriate and consider register, formality, and usage \
+patterns in the target language.
+                """.strip(),
+            ),
+            ("user", "{parameters_json}"),
+        ]
+    )
+
+    # Partial the prompt template with our values first
+    parameters_json = json.dumps(parameter_definitions, indent=2)
+
+    prompt = prompt_template.partial(parameters_json=parameters_json)
+
+    model_with_structured_output = model.with_structured_output(  # type: ignore[misc]
+        schema=MeaningTranslationList, method="function_calling"
+    )
+
+    return cast(
+        Runnable[dict[str, str], MeaningTranslationList], prompt | model_with_structured_output
+    )

@@ -5,6 +5,7 @@ LLM client management for AI functions.
 from __future__ import annotations
 
 import logging
+from typing import List
 
 from langchain_anthropic import ChatAnthropic
 from langchain_community.callbacks.manager import get_openai_callback
@@ -14,7 +15,7 @@ from langchain_openai import ChatOpenAI
 
 from langtools.ai.debug import configure_debug_logging
 
-from .models import AiDictionaryEntry, ModelType
+from .models import AiDictionaryEntry, MeaningTranslation, MeaningTranslationList, ModelType
 
 logger = logging.getLogger(__name__)
 
@@ -70,3 +71,37 @@ class LLMClient:
             result = await chain.ainvoke({})
             logger.info("✅ LLM chain execution completed successfully")
             return result
+
+    async def generate_with_parser_base(
+        self, chain: Runnable[dict[str, str], AiDictionaryEntry]
+    ) -> AiDictionaryEntry:
+        """Execute base dictionary chain with cost logging."""
+        logger.info("🚀 Executing base dictionary LLM chain...")
+
+        if self.model_type in [ModelType.GPT4, ModelType.GPT3_5]:
+            with get_openai_callback() as cb:
+                result = await chain.ainvoke({})
+                # Log cost information for monitoring
+                logger.info(f"💰 Base dictionary API cost: ${cb.total_cost:.4f}")
+                return result
+        else:
+            result = await chain.ainvoke({})
+            logger.info("✅ Base dictionary chain execution completed successfully")
+            return result
+
+    async def generate_with_parser_translations(
+        self, chain: Runnable[dict[str, str], MeaningTranslationList]
+    ) -> List[MeaningTranslation]:
+        """Execute translation chain with cost logging."""
+        logger.info("🚀 Executing translation LLM chain...")
+
+        if self.model_type in [ModelType.GPT4, ModelType.GPT3_5]:
+            with get_openai_callback() as cb:
+                result = await chain.ainvoke({})
+                # Log cost information for monitoring
+                logger.info(f"💰 Translation API cost: ${cb.total_cost:.4f}")
+                return result.translations
+        else:
+            result = await chain.ainvoke({})
+            logger.info("✅ Translation chain execution completed successfully")
+            return result.translations

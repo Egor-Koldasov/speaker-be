@@ -7,8 +7,13 @@ from fastmcp import Context, FastMCP
 from pydantic import BaseModel, Field
 
 from langtools.ai.debug import configure_debug_logging
-from langtools.ai.functions import generate_dictionary_entry
-from langtools.ai.models import AiDictionaryEntry, DictionaryEntryParams, ModelType
+from langtools.ai.functions import generate_dictionary_workflow
+from langtools.ai.models import (
+    AiDictionaryEntry,
+    DictionaryEntryParams,
+    DictionaryWorkflowResult,
+    ModelType,
+)
 
 from langtools.mcp.query_auth_middleware import QueryAuthMiddleware
 
@@ -168,13 +173,16 @@ async def generate_dictionary_entry_tool(
             model_type = ModelType.CLAUDE_SONNET
             logger.warning(f"Invalid model {model}, using default: {model_type.value}")
 
-        # Call the AI function
-        result: AiDictionaryEntry = await generate_dictionary_entry(params, model_type)
+        # Call the AI workflow function
+        result: DictionaryWorkflowResult = await generate_dictionary_workflow(params, model_type)
 
         # Convert Pydantic model to dict for MCP response
         response: dict[str, object] = result.model_dump()
 
-        logger.info(f"Successfully generated dictionary entry with {len(result.meanings)} meanings")
+        logger.info(
+            f"Successfully generated dictionary workflow with {len(result.entry.meanings)} meanings "
+            f"and {len(result.translations)} translations"
+        )
         logger.debug(f"Response: {response}")
         return response
 
@@ -225,7 +233,7 @@ dictionary entry.
         # Validate that the entry matches the generation parameters
         term = generation_parameters.translating_term.lower().strip()
         entry_terms = [
-            meaning.neutral_form.lower().strip() for meaning in dictionary_entry.meanings
+            meaning.canonical_form.lower().strip() for meaning in dictionary_entry.meanings
         ]
 
         if not any(term in entry_term or entry_term in term for entry_term in entry_terms):

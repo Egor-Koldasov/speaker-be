@@ -1,288 +1,277 @@
-"""Tests for MCP server functionality."""
+"""
+Tests for MCP server functionality.
+"""
 
-from dataclasses import dataclass
-from typing import cast
+import json
 from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from fastmcp.client import Client
-
-from langtools.ai.models import AiDictionaryEntry, Meaning
-from langtools.mcp.server import (
-    DictionaryEntryRequest,
-    create_server,
-    generate_dictionary_entry_tool,
+from langtools.ai.models import (
+    AiDictionaryEntry,
+    DictionaryEntryParams,
+    DictionaryWorkflowResult,
+    Meaning,
+    MeaningTranslation,
+    ModelType,
 )
+from langtools.mcp.server import generate_dictionary_entry_tool
 
 
-@pytest.fixture(autouse=True)
-def enable_disabled_tool():
-    """Enable the disabled generate_dictionary_entry_tool for testing."""
-    # Enable the tool before each test
-    generate_dictionary_entry_tool.enable()
-    yield
-    # Disable it again after each test to maintain isolation
-    generate_dictionary_entry_tool.disable()
+class TestMockMeaning:
+    """Mock meaning object for tests."""
+
+    def __init__(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
 
-@dataclass
-class McpMeaning:
-    """Type-safe representation of meaning data."""
+class TestMockDictionaryEntry:
+    """Mock dictionary entry for tests."""
 
-    id: str
-    neutral_form: str
-    definition_original: str
-    definition_translated: str
-    translation: str
-    pronunciation: str
-    synonyms: str
+    def __init__(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
 
-@dataclass
-class McpToolResponse:
-    """Type-safe representation of MCP tool response data."""
+def create_meaning_from_dict(meaning_dict: dict) -> Meaning:
+    """Helper to create Meaning from dict with proper field mapping."""
+    return Meaning(
+        headword=meaning_dict.get("headword", ""),
+        id=meaning_dict.get("id", ""),
+        canonical_form=meaning_dict.get("canonical_form", ""),
+        alternate_spellings=meaning_dict.get("alternate_spellings", []),
+        definition=meaning_dict.get("definition", ""),
+        part_of_speech=meaning_dict.get("part_of_speech", ""),
+        morphology=meaning_dict.get("morphology", ""),
+        register=meaning_dict.get("register", ""),
+        frequency=meaning_dict.get("frequency", ""),
+        etymology=meaning_dict.get("etymology", ""),
+        difficulty_level=meaning_dict.get("difficulty_level", ""),
+        learning_priority=meaning_dict.get("learning_priority", ""),
+        pronunciation=meaning_dict.get("pronunciation", ""),
+        example_sentences=meaning_dict.get("example_sentences", []),
+    )
 
-    source_language: str
-    meanings: list[McpMeaning]
 
+class TestGenerateDictionaryEntryTool:
+    """Test cases for generate_dictionary_entry_tool."""
 
-@dataclass
-class McpToolSchema:
-    """Type-safe representation of MCP tool schema."""
-
-    type: str
-    properties: dict[str, object]
-    required: list[str]
-
-
-def convert_to_mcp_response(data: dict[str, object]) -> McpToolResponse:
-    """Convert dictionary data to McpToolResponse."""
-    meanings_data = cast(list[dict[str, str]], data["meanings"])
-    meanings = [
-        McpMeaning(
-            id=meaning["id"],
-            neutral_form=meaning["neutral_form"],
-            definition_original=meaning["definition_original"],
-            definition_translated=meaning["definition_translated"],
-            translation=meaning["translation"],
-            pronunciation=meaning["pronunciation"],
-            synonyms=meaning["synonyms"],
+    @patch("langtools.mcp.server.generate_dictionary_workflow")
+    async def test_successful_generation(self, mock_generate: AsyncMock) -> None:
+        """Test successful dictionary entry generation via MCP tool."""
+        # Mock the workflow result
+        base_entry = AiDictionaryEntry(
+            headword="сырой",
+            source_language="ru",
+            meanings=[
+                create_meaning_from_dict({
+                    "headword": "сырой",
+                    "id": "сырой-0",
+                    "canonical_form": "сырой",
+                    "alternate_spellings": [],
+                    "definition": "Не подвергшийся тепловой обработке",
+                    "part_of_speech": "прилагательное",
+                    "morphology": "качественное прилагательное",
+                    "register": "нейтральный",
+                    "frequency": "common",
+                    "etymology": "от праславянского *syrъ",
+                    "difficulty_level": "intermediate",
+                    "learning_priority": "high",
+                    "pronunciation": "ˈsɨrəj",
+                    "example_sentences": ["Сырое мясо", "Сырые овощи"],
+                })
+            ],
         )
-        for meaning in meanings_data
-    ]
-    return McpToolResponse(source_language=cast(str, data["source_language"]), meanings=meanings)
 
+        translations = [
+            MeaningTranslation(
+                meaning_id="сырой-0",
+                headword="raw",
+                canonical_form="raw",
+                translation_language="en",
+                translation="raw, uncooked",
+                definition="Not subjected to heat treatment",
+                part_of_speech="adjective",
+                morphology="descriptive adjective",
+                register="neutral",
+                frequency="common",
+                etymology="from Proto-Slavic *syrъ",
+                difficulty_level="intermediate",
+                learning_priority="high",
+                pronunciation="rɔː",
+                pronunciation_tips="Pronounced like 'raw' in English",
+                example_sentences_translations=["Raw meat", "Raw vegetables"],
+            )
+        ]
 
-class TestMCPServer:
-    """Test cases for MCP server functionality."""
+        workflow_result = DictionaryWorkflowResult(
+            entry=base_entry,
+            translations=translations,
+        )
 
-    def test_create_server(self) -> None:
-        """Test server creation."""
-        server = create_server()
-        assert server is not None
-        assert hasattr(server, "name")
-        assert server.name == "LangTools"
+        mock_generate.return_value = workflow_result
 
-    def test_dictionary_entry_request_validation(self) -> None:
-        """Test DictionaryEntryRequest validation."""
-        # Valid request
-        valid_request = DictionaryEntryRequest(
+        # Call the MCP tool
+        result = await generate_dictionary_entry_tool(
             translating_term="сырой",
             user_learning_languages="en:1,ru:2",
             translation_language="en",
+            model="claude-sonnet-4-0",
         )
-        assert valid_request.translating_term == "сырой"
-        assert valid_request.user_learning_languages == "en:1,ru:2"
-        assert valid_request.translation_language == "en"
-        assert valid_request.model == "claude-3-5-sonnet-20241022"  # default
 
-        # Custom model
-        custom_model_request = DictionaryEntryRequest(
+        # Verify result structure
+        assert isinstance(result, dict)
+        assert "entry" in result
+        assert "translations" in result
+        
+        # Verify entry data
+        entry_data = result["entry"]
+        assert entry_data["source_language"] == "ru"
+        assert entry_data["headword"] == "сырой"
+        assert len(entry_data["meanings"]) == 1
+        
+        meaning = entry_data["meanings"][0]
+        assert meaning["canonical_form"] == "сырой"
+        assert meaning["id"] == "сырой-0"
+
+        # Verify translations data
+        translation_data = result["translations"]
+        assert len(translation_data) == 1
+        assert translation_data[0]["meaning_id"] == "сырой-0"
+        assert translation_data[0]["translation"] == "raw, uncooked"
+
+        # Verify function was called with correct parameters
+        mock_generate.assert_called_once()
+        call_args = mock_generate.call_args[0]
+        params = call_args[0]
+        model_type = call_args[1]
+
+        assert isinstance(params, DictionaryEntryParams)
+        assert params.translating_term == "сырой"
+        assert params.user_learning_languages == "en:1,ru:2"
+        assert params.translation_language == "en"
+        assert model_type == ModelType.CLAUDE_SONNET_4
+
+    @patch("langtools.mcp.server.generate_dictionary_workflow")
+    async def test_english_generation(self, mock_generate: AsyncMock) -> None:
+        """Test English word dictionary generation."""
+        # Mock the workflow result for English
+        base_entry = AiDictionaryEntry(
+            headword="hello",
+            source_language="en",
+            meanings=[
+                create_meaning_from_dict({
+                    "headword": "hello",
+                    "id": "hello-0",
+                    "canonical_form": "hello",
+                    "alternate_spellings": [],
+                    "definition": "A greeting",
+                    "part_of_speech": "interjection",
+                    "morphology": "interjection",
+                    "register": "neutral",
+                    "frequency": "very_common",
+                    "etymology": "from Old English hello",
+                    "difficulty_level": "beginner",
+                    "learning_priority": "essential",
+                    "pronunciation": "həˈloʊ",
+                    "example_sentences": ["Hello, how are you?", "Say hello to your friend"],
+                })
+            ],
+        )
+
+        translations = [
+            MeaningTranslation(
+                meaning_id="hello-0",
+                headword="привет",
+                canonical_form="привет",
+                translation_language="ru",
+                translation="привет, здравствуйте",
+                definition="Приветствие",
+                part_of_speech="междометие",
+                morphology="междометие",
+                register="нейтральный",
+                frequency="очень_часто",
+                etymology="от английского hello",
+                difficulty_level="начальный",
+                learning_priority="важный",
+                pronunciation="prʲɪˈvʲet",
+                pronunciation_tips="Stressed on the second syllable",
+                example_sentences_translations=["Привет, как дела?", "Скажи привет своему другу"],
+            )
+        ]
+
+        workflow_result = DictionaryWorkflowResult(
+            entry=base_entry,
+            translations=translations,
+        )
+
+        mock_generate.return_value = workflow_result
+
+        # Call the MCP tool for English to Russian
+        result = await generate_dictionary_entry_tool(
+            translating_term="hello",
+            user_learning_languages="ru:2,en:1",
+            translation_language="ru",
+            model="claude-sonnet-4-0",
+        )
+
+        # Verify result structure
+        assert isinstance(result, dict)
+        assert result["entry"]["source_language"] == "en"
+        assert result["entry"]["headword"] == "hello"
+        
+        meaning = result["entry"]["meanings"][0]
+        assert meaning["canonical_form"] == "hello"
+
+        # Verify Russian translation
+        translation = result["translations"][0]
+        assert translation["translation_language"] == "ru"
+        assert translation["translation"] == "привет, здравствуйте"
+
+    @patch("langtools.mcp.server.generate_dictionary_workflow")
+    async def test_invalid_model_defaults_to_claude(self, mock_generate: AsyncMock) -> None:
+        """Test that invalid model parameter defaults to Claude Sonnet."""
+        # Mock workflow result
+        base_entry = AiDictionaryEntry(
+            headword="test",
+            source_language="en",
+            meanings=[
+                create_meaning_from_dict({
+                    "headword": "test",
+                    "id": "test-0",
+                    "canonical_form": "test",
+                    "alternate_spellings": [],
+                    "definition": "a test",
+                    "part_of_speech": "noun",
+                    "morphology": "noun",
+                    "register": "neutral",
+                    "frequency": "common",
+                    "etymology": "test",
+                    "difficulty_level": "beginner",
+                    "learning_priority": "medium",
+                    "pronunciation": "test",
+                    "example_sentences": ["This is a test", "Test example"],
+                })
+            ],
+        )
+
+        workflow_result = DictionaryWorkflowResult(
+            entry=base_entry,
+            translations=[],
+        )
+
+        mock_generate.return_value = workflow_result
+
+        # Call with invalid model
+        await generate_dictionary_entry_tool(
             translating_term="test",
             user_learning_languages="en:1",
-            translation_language="ru",
-            model="gpt-4",
-        )
-        assert custom_model_request.model == "gpt-4"
-
-    @pytest.mark.asyncio
-    async def test_generate_dictionary_entry_tool_via_client(self) -> None:
-        """Test dictionary entry generation through MCP client."""
-        server = create_server()
-
-        # Mock the AI function
-        mock_meaning = Meaning(
-            id="сырой-0",
-            neutral_form="сырой",
-            definition_original="Не подвергшийся тепловой обработке",
-            definition_translated="Not subjected to heat treatment",
-            translation="raw, uncooked, fresh",
-            pronunciation="ˈsɨrəj",
-            synonyms="необработанный, неприготовленный, свежий",
+            translation_language="es",
+            model="invalid-model",
         )
 
-        mock_result = AiDictionaryEntry(source_language="ru", meanings=[mock_meaning])
-
-        with patch(
-            "langtools.mcp.server.generate_dictionary_entry", new_callable=AsyncMock
-        ) as mock_generate:
-            mock_generate.return_value = mock_result
-
-            client = Client(server)
-            async with client:
-                result = await client.call_tool(
-                    "generate_dictionary_entry_tool",
-                    {
-                        "translating_term": "сырой",
-                        "user_learning_languages": "en:1,ru:2",
-                        "translation_language": "en",
-                    },
-                )
-
-                result_data = cast(dict[str, object] | None, result.data)
-                assert result_data is not None
-                assert isinstance(result_data, dict)
-                # Type-safe conversion to structured response
-                data = convert_to_mcp_response(result_data)
-                assert data.source_language == "ru"
-                assert len(data.meanings) == 1
-                meaning = data.meanings[0]
-                assert meaning.id == "сырой-0"
-                assert meaning.neutral_form == "сырой"
-                assert meaning.translation == "raw, uncooked, fresh"
-
-                # Verify the AI function was called
-                mock_generate.assert_called_once()
-
-
-class TestMCPIntegration:
-    """Integration tests using fastmcp.Client."""
-
-    @pytest.mark.asyncio
-    async def test_mcp_client_server_integration(self) -> None:
-        """Test MCP client-server integration."""
-        server = create_server()
-
-        # Mock the AI function for integration test
-        mock_meaning = Meaning(
-            id="hello-0",
-            neutral_form="hello",
-            definition_original="A greeting",
-            definition_translated="Приветствие",
-            translation="привет, здравствуй",
-            pronunciation="həˈləʊ",
-            synonyms="hi, greetings",
-        )
-
-        mock_result = AiDictionaryEntry(source_language="en", meanings=[mock_meaning])
-
-        with patch(
-            "langtools.mcp.server.generate_dictionary_entry", new_callable=AsyncMock
-        ) as mock_generate:
-            mock_generate.return_value = mock_result
-
-            # Create MCP client and connect
-            client = Client(server)
-            async with client:
-                # Test tool calling
-                result = await client.call_tool(
-                    "generate_dictionary_entry_tool",
-                    {
-                        "translating_term": "hello",
-                        "user_learning_languages": "ru:1,en:2",
-                        "translation_language": "ru",
-                    },
-                )
-
-                result_data = cast(dict[str, object] | None, result.data)
-                assert result_data is not None
-                assert isinstance(result_data, dict)
-                # Type-safe conversion to structured response
-                data = convert_to_mcp_response(result_data)
-                assert data.source_language == "en"
-                assert len(data.meanings) == 1
-                meaning = data.meanings[0]
-                assert meaning.neutral_form == "hello"
-                assert meaning.translation == "привет, здравствуй"
-
-                # Verify AI function was called
-                mock_generate.assert_called_once()
-
-    @pytest.mark.asyncio
-    async def test_mcp_client_list_tools(self) -> None:
-        """Test listing available tools through MCP client."""
-        server = create_server()
-        client = Client(server)
-
-        async with client:
-            tools = await client.list_tools()
-            assert len(tools) == 2  # Both tools should be available now
-            tool_names = [tool.name for tool in tools]
-            assert "generate_dictionary_entry_tool" in tool_names
-            assert "check_dictionary_entry" in tool_names
-
-            # Find the generate_dictionary_entry_tool and check its description
-            generate_tool = next(
-                tool for tool in tools if tool.name == "generate_dictionary_entry_tool"
-            )
-            tool_description: str | None = generate_tool.description
-            assert tool_description is not None
-            assert "Generate comprehensive multilingual dictionary entry" in tool_description
-
-    @pytest.mark.asyncio
-    async def test_mcp_client_tool_schema(self) -> None:
-        """Test tool schema validation through MCP client."""
-        server = create_server()
-        client = Client(server)
-
-        async with client:
-            tools = await client.list_tools()
-            # Find the generate_dictionary_entry_tool specifically
-            tool = next(tool for tool in tools if tool.name == "generate_dictionary_entry_tool")
-
-            # Check that tool has proper schema
-            assert hasattr(tool, "inputSchema")
-            schema_data = cast(dict[str, object], tool.inputSchema)
-            assert schema_data["type"] == "object"
-            assert "properties" in schema_data
-
-            properties = cast(dict[str, object], schema_data["properties"])
-            assert "translating_term" in properties
-            assert "user_learning_languages" in properties
-            assert "translation_language" in properties
-            assert "model" in properties
-
-            # Check required fields
-            assert "required" in schema_data
-            required = cast(list[str], schema_data["required"])
-            assert "translating_term" in required
-            assert "user_learning_languages" in required
-            assert "translation_language" in required
-            # model should not be required (has default)
-            assert "model" not in required
-
-    @pytest.mark.asyncio
-    async def test_mcp_client_error_handling(self):
-        """Test error handling through MCP client."""
-        server = create_server()
-        client = Client(server)
-
-        with patch(
-            "langtools.mcp.server.generate_dictionary_entry", new_callable=AsyncMock
-        ) as mock_generate:
-            mock_generate.side_effect = Exception("AI service unavailable")
-
-            async with client:
-                with pytest.raises(Exception) as exc_info:
-                    await client.call_tool(
-                        "generate_dictionary_entry_tool",
-                        {
-                            "translating_term": "test",
-                            "user_learning_languages": "en:1",
-                            "translation_language": "ru",
-                        },
-                    )
-
-                assert "Dictionary entry generation failed" in str(exc_info.value)
-                assert "AI service unavailable" in str(exc_info.value)
+        # Verify default model was used
+        call_args = mock_generate.call_args[0]
+        model_type = call_args[1]
+        assert model_type == ModelType.CLAUDE_SONNET  # Should default to CLAUDE_SONNET

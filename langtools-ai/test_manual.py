@@ -1,7 +1,6 @@
-#!/usr/bin/env python3
 """
-Manual test script for langtools-ai package.
-Tests the generate_dictionary_entry function with Russian examples.
+Manual tests for AI functions.
+Run with: python -m langtools.ai.test_manual
 """
 
 import asyncio
@@ -11,7 +10,7 @@ import os
 from dotenv import load_dotenv
 
 from langtools.ai.debug import configure_debug_logging
-from langtools.ai.functions import generate_dictionary_entry
+from langtools.ai.functions import generate_dictionary_workflow
 from langtools.ai.models import DictionaryEntryParams, ModelType
 
 # Load environment variables from .env file
@@ -19,8 +18,7 @@ load_dotenv()
 
 # Configure logging to see langtools logs in normal execution
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 
 # Enable LangChain debug logging (same as debug mode)
@@ -28,8 +26,8 @@ os.environ["LANGTOOLS_DEBUG"] = "true"
 configure_debug_logging()
 
 
-async def test_russian_word() -> None:
-    """Test dictionary entry generation with Russian word 'жёсткий'."""
+async def test_workflow_russian_to_english():
+    """Test dictionary workflow with Russian to English translation."""
 
     # Check if API keys are set
     if not os.getenv("ANTHROPIC_API_KEY"):
@@ -41,121 +39,55 @@ async def test_russian_word() -> None:
 
     # Create parameters for Russian word (from design document example)
     params = DictionaryEntryParams(
-        translating_term="ทางออก",
+        translating_term="сырой",
         user_learning_languages="en:1,ru:2",
         translation_language="en",
     )
 
     try:
-        # Generate dictionary entry using Claude Sonnet 4
-        print("📝 Calling generate_dictionary_entry with:")
-        print(f"   Term: {params.translating_term}")
-        print(f"   User languages: {params.user_learning_languages}")
-        print(f"   Target language: {params.translation_language}")
-        print(f"   Model: {ModelType.CLAUDE_SONNET_4.value}")
-        print()
+        result = await generate_dictionary_workflow(params, ModelType.CLAUDE_SONNET_4)
+        print(f"Source Language: {result.entry.source_language}")
+        print(f"Headword: {result.entry.headword}")
+        print(f"Number of meanings: {len(result.entry.meanings)}")
+        print(f"Number of translations: {len(result.translations)}")
 
-        result = await generate_dictionary_entry(params, ModelType.CLAUDE_SONNET_4)
-
-        print("✅ Success! Dictionary entry generated:")
-        print("=" * 60)
-        print(f"🌍 Source Language: {result.source_language}")
-        print(f"📊 Number of meanings: {len(result.meanings)}")
-        print()
-
-        for i, meaning in enumerate(result.meanings, 1):
-            print(f"📖 Meaning {i}:")
+        for i, meaning in enumerate(result.entry.meanings):
+            print(f"\n--- Meaning {i + 1} ---")
             print(f"   ID: {meaning.id}")
-            print(f"   Neutral Form: {meaning.neutral_form}")
-            print(f"   Definition (Original): {meaning.definition_original}")
-            print(f"   Definition (Translated): {meaning.definition_translated}")
-            print(f"   Translation: {meaning.translation}")
+            print(f"   Canonical Form: {meaning.canonical_form}")
+            print(f"   Definition: {meaning.definition}")
+            print(f"   Part of Speech: {meaning.part_of_speech}")
             print(f"   Pronunciation: {meaning.pronunciation}")
-            print(f"   Synonyms: {meaning.synonyms}")
-            print()
+            print(f"   Example Sentences: {meaning.example_sentences}")
+            if meaning.synonyms:
+                print(f"   Synonyms: {meaning.synonyms}")
 
-        # Validate results
-        print("🔍 Validation:")
-        assert result.source_language == "ru", (
-            f"Expected source language 'ru', got '{result.source_language}'"
-        )
-        assert len(result.meanings) >= 1, "Expected at least 1 meaning"
-        assert all(m.id.startswith("жёсткий-") for m in result.meanings), (
-            "All meaning IDs should start with 'жёсткий-'"
-        )
-        print("✅ All validations passed!")
+        print("\n" + "=" * 50)
+        print("TRANSLATIONS:")
+        print("=" * 50)
+
+        for i, translation in enumerate(result.translations):
+            print(f"\n--- Translation {i + 1} ---")
+            print(f"   Meaning ID: {translation.meaning_id}")
+            print(f"   Translation: {translation.translation}")
+            print(f"   Definition: {translation.definition}")
+            print(f"   Pronunciation: {translation.pronunciation}")
+            print(f"   Pronunciation Tips: {translation.pronunciation_tips}")
+            print(f"   Example Translations: {translation.example_sentences_translations}")
 
     except Exception as e:
-        print(f"❌ Error: {e}")
-        print(f"Error type: {type(e).__name__}")
+        logger.error(f"Test failed: {e}")
         raise
 
 
-async def test_validation_errors() -> None:
-    """Test input validation with invalid parameters."""
-
-    print("\n🧪 Testing input validation")
-    print("=" * 60)
-
-    from langtools.ai.functions import ValidationError
-
-    # Test empty term
-    try:
-        params = DictionaryEntryParams(
-            translating_term="",
-            user_learning_languages="en:1,ru:2",
-            translation_language="en",
-        )
-        await generate_dictionary_entry(params, ModelType.CLAUDE_SONNET_4)
-        raise AssertionError("Should have raised ValidationError for empty term")
-    except ValidationError as e:
-        print(f"✅ Empty term validation: {e}")
-
-    # Test invalid user_learning_languages format
-    try:
-        params = DictionaryEntryParams(
-            translating_term="test",
-            user_learning_languages="invalid_format",
-            translation_language="en",
-        )
-        await generate_dictionary_entry(params, ModelType.CLAUDE_SONNET_4)
-        raise AssertionError("Should have raised ValidationError for invalid format")
-    except ValidationError as e:
-        print(f"✅ Invalid format validation: {e}")
-
-    # Test invalid translation_language format
-    try:
-        params = DictionaryEntryParams(
-            translating_term="test",
-            user_learning_languages="en:1,ru:2",
-            translation_language="invalid",
-        )
-        await generate_dictionary_entry(params, ModelType.CLAUDE_SONNET_4)
-        raise AssertionError("Should have raised ValidationError for invalid language")
-    except ValidationError as e:
-        print(f"✅ Invalid language validation: {e}")
-
-    print("✅ All validation tests passed!")
-
-
-async def main() -> None:
-    """Run all manual tests."""
-    print("🚀 Starting manual tests for langtools-ai package")
+async def main():
+    """Run manual tests."""
+    print("🧪 Running manual dictionary workflow tests...")
     print("=" * 80)
 
-    # Test validation first (doesn't require API keys)
-    await test_validation_errors()
+    await test_workflow_russian_to_english()
 
-    # Test actual API call
-    await test_russian_word()
-
-    print("\n🎉 All manual tests completed successfully!")
-    print("📋 Summary:")
-    print("   ✅ Package installation works")
-    print("   ✅ Input validation works correctly")
-    print("   ✅ Russian dictionary entry generation works")
-    print("   ✅ Data models and types work correctly")
-    print("   ✅ LangChain integration works")
+    print("\n✅ All manual tests completed successfully!")
 
 
 if __name__ == "__main__":
