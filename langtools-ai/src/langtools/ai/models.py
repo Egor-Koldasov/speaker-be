@@ -26,7 +26,10 @@ class DictionaryEntryParams(BaseModel):
 
     translating_term: str = Field(description="The word or phrase to define and translate")
     user_learning_languages: str = Field(
-        description="User's language preferences in format 'en:1,ru:2'"
+        description=
+            "A list of languages that the user is learning. The format is `${language1Bcp47Code}:${language1Priority},${language2Bcp47Code}:${language2Priority}`,"
+			" where `languageBcp47Code` is a BCP 47 language code and `priority` is a natural number the higher the more important."
+			" Priority can be both positive and negative and multiple languages can have the same priority."
     )
     translation_language: str = Field(
         description="Target language for translations in BCP 47 format"
@@ -102,7 +105,10 @@ class BaseDictionaryParams(BaseModel):
 
     translating_term: str = Field(description="The word or phrase to define")
     user_learning_languages: str = Field(
-        description="User's language preferences in format 'en:1,ru:2'"
+        description=
+            "A list of languages that the user is learning. The format is `${language1Bcp47Code}:${language1Priority},${language2Bcp47Code}:${language2Priority}`,"
+			" where `languageBcp47Code` is a BCP 47 language code and `priority` is a natural number the higher the more important."
+			" Priority can be both positive and negative and multiple languages can have the same priority."
     )
 
     model_config = {

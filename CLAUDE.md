@@ -291,8 +291,8 @@ You can check the dev server logs with `docker logs langtools-api`, or in `langt
 You can check the Postgres database logs with `docker logs langtools-postgres`, or in `langtools-main` folder with `docker compose logs postgres`.
 Use that to check the errors during integration testing.
 After adding new packages, api needs to be restarted: `docker compose restart api`.
-If you see the containers not running, suggest the user to start it.
-**Do not start or stop containers yourself, `docker compose up` will not work for you and you will break the setup!**
+
+## Running bash commands
 Don't run commands with `&` at the end to run the process in the backround. It does not work in claude code environment! It will make the response stuck for 2 minutes until it reaches the timeout!
 
 ## Communication

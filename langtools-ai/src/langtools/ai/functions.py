@@ -57,7 +57,7 @@ async def generate_base_dictionary_entry(
         raise ValidationError("Translating term too long (max 100 characters)")
 
     # Validate user_learning_languages format (e.g., "en:1,ru:2")
-    if not re.match(r"^[a-z]{2}:\d+(,[a-z]{2}:\d+)*$", params.user_learning_languages):
+    if params.user_learning_languages and not re.match(r"^[a-z]{2}:\d+(,[a-z]{2}:\d+)*$", params.user_learning_languages):
         raise ValidationError("Invalid user_learning_languages format. Expected: 'en:1,ru:2'")
 
     try:

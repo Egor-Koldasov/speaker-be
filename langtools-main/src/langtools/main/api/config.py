@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     # Database (PostgreSQL)
     database_url: str = "postgresql://langtools:langtools_dev_password@localhost:5433/langtools"
 
+    ANTHROPIC_API_KEY: str = ""
+    OPENAI_API_KEY: str = ""
+
     # JWT Settings
     secret_key: str = "your-secret-key-change-in-production"
     algorithm: str = "HS256"
@@ -48,3 +51,9 @@ class Settings(BaseSettings):
 
 # Create a singleton instance
 settings = Settings()
+
+# Set API keys as environment variables so child modules can access them
+if settings.ANTHROPIC_API_KEY:
+    os.environ['ANTHROPIC_API_KEY'] = settings.ANTHROPIC_API_KEY
+if settings.OPENAI_API_KEY:
+    os.environ['OPENAI_API_KEY'] = settings.OPENAI_API_KEY

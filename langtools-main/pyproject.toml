@@ -5,6 +5,9 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["src/langtools"]
 
+[tool.hatch.metadata]
+allow-direct-references = true
+
 [project]
 name = "langtools-main"
 version = "0.1.0"
@@ -25,6 +28,7 @@ classifiers = [
 ]
 requires-python = ">=3.10"
 dependencies = [
+    "langtools-ai",
     "fsrs>=1.0.0",
     "fastapi>=0.100.0",
     "uvicorn[standard]>=0.23.0",
@@ -50,6 +54,9 @@ dev = [
     "ruff>=0.1.0",
     "pre-commit>=3.0.0",
 ]
+
+[tool.uv.sources]
+langtools-ai = { workspace = true }
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

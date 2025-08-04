@@ -1,5 +1,5 @@
 """API routers."""
 
-from . import auth
+from . import auth, dictionary
 
-__all__ = ["auth"]
+__all__ = ["auth", "dictionary"]

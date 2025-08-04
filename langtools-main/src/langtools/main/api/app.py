@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import settings
-from .routers import auth
+from .routers import auth, dictionary
 
 # Database tables are managed by Alembic migrations
 # Run: uv run alembic upgrade head
@@ -29,6 +29,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(auth.router)
+app.include_router(dictionary.router)
 
 
 @app.get("/")
