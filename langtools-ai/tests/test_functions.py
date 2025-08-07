@@ -18,8 +18,8 @@ from langtools.ai.models import (
     BaseDictionaryParams,
     DictionaryEntryParams,
     DictionaryWorkflowResult,
-    Meaning,
-    MeaningTranslation,
+    AiMeaning,
+    AiMeaningTranslation,
     ModelType,
     TranslationParams,
 )
@@ -70,9 +70,9 @@ class TestGenerateBaseDictionaryEntry:
             headword="сырой",
             source_language="ru",
             meanings=[
-                Meaning(
+                AiMeaning(
                     headword="сырой",
-                    id="сырой-0",
+                    local_id="сырой-0",
                     canonical_form="сырой",
                     alternate_spellings=[],
                     definition="Не подвергшийся тепловой обработке",
@@ -103,7 +103,7 @@ class TestGenerateBaseDictionaryEntry:
         assert result == expected_result
         assert result.source_language == "ru"
         assert len(result.meanings) == 1
-        assert result.meanings[0].id == "сырой-0"
+        assert result.meanings[0].local_id == "сырой-0"
 
         # Verify mocks were called correctly
         mock_client_class.assert_called_once_with(ModelType.CLAUDE_SONNET_4)
@@ -130,9 +130,9 @@ class TestGenerateMeaningTranslations:
             headword="test",
             source_language="ru",
             meanings=[
-                Meaning(
+                AiMeaning(
                     headword="test",
-                    id="test-0",
+                    local_id="test-0",
                     canonical_form="test",
                     alternate_spellings=[],
                     definition="test definition",
@@ -168,9 +168,9 @@ class TestGenerateDictionaryWorkflow:
             headword="сырой",
             source_language="ru",
             meanings=[
-                Meaning(
+                AiMeaning(
                     headword="сырой",
-                    id="сырой-0",
+                    local_id="сырой-0",
                     canonical_form="сырой",
                     alternate_spellings=[],
                     definition="Не подвергшийся тепловой обработке",
@@ -188,8 +188,8 @@ class TestGenerateDictionaryWorkflow:
         )
 
         translations = [
-            MeaningTranslation(
-                meaning_id="сырой-0",
+            AiMeaningTranslation(
+                meaning_local_id="сырой-0",
                 headword="raw",
                 canonical_form="raw",
                 translation_language="en",

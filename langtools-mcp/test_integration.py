@@ -10,11 +10,11 @@ import os
 from typing import Dict, Any
 
 from langtools.ai.models import (
-    AiDictionaryEntry, 
+    AiDictionaryEntry,
     DictionaryEntryParams,
     DictionaryWorkflowResult,
-    Meaning,
-    MeaningTranslation,
+    AiMeaning,
+    AiMeaningTranslation,
     ModelType,
 )
 from langtools.mcp.server import generate_dictionary_entry_tool
@@ -93,36 +93,42 @@ async def test_mcp_tool_integration():
         )
 
         print(f"✅ MCP tool returned result type: {type(result)}")
-        
+
         if isinstance(result, dict):
             print(f"📊 Result keys: {list(result.keys())}")
-            
+
             if "entry" in result:
                 entry = result["entry"]
                 print(f"🔍 Entry headword: {entry.get('headword', 'N/A')}")
                 print(f"🌍 Source language: {entry.get('source_language', 'N/A')}")
-                
+
                 meanings = entry.get("meanings", [])
                 print(f"📚 Number of meanings: {len(meanings)}")
-                
+
                 if meanings:
                     meaning = meanings[0]
-                    print(f"📖 First meaning canonical form: {meaning.get('canonical_form', 'N/A')}")
-                    print(f"📝 First meaning definition: {meaning.get('definition', 'N/A')[:100]}...")
+                    print(
+                        f"📖 First meaning canonical form: {meaning.get('canonical_form', 'N/A')}"
+                    )
+                    print(
+                        f"📝 First meaning definition: {meaning.get('definition', 'N/A')[:100]}..."
+                    )
 
             if "translations" in result:
                 translations = result["translations"]
                 print(f"🌐 Number of translations: {len(translations)}")
-                
+
                 if translations:
                     translation = translations[0]
                     print(f"🔤 First translation: {translation.get('translation', 'N/A')}")
-                    print(f"🗣️ First translation pronunciation: {translation.get('pronunciation', 'N/A')}")
+                    print(
+                        f"🗣️ First translation pronunciation: {translation.get('pronunciation', 'N/A')}"
+                    )
 
         # Test English to Spanish
         print("\n" + "=" * 50)
         print("📝 Testing English to Spanish dictionary generation...")
-        
+
         result2 = await generate_dictionary_entry_tool(
             translating_term="beautiful",
             user_learning_languages="en:1,es:2",
@@ -134,7 +140,7 @@ async def test_mcp_tool_integration():
             entry = result2["entry"]
             print(f"✅ English test - headword: {entry.get('headword', 'N/A')}")
             print(f"🌍 Source language: {entry.get('source_language', 'N/A')}")
-            
+
             if "translations" in result2:
                 translations = result2["translations"]
                 if translations:
@@ -152,7 +158,7 @@ async def test_mcp_tool_integration():
 async def test_mock_workflow_result():
     """Test creating mock workflow results for development."""
     print("\n🔧 Testing mock workflow result creation...")
-    
+
     # Create mock base entry
     base_entry_dict = {
         "headword": "test",
@@ -173,7 +179,7 @@ async def test_mock_workflow_result():
                 pronunciation="test",
                 example_sentences=["This is a test", "The test was difficult"],
             )
-        ]
+        ],
     }
 
     # Create mock translations
@@ -212,7 +218,7 @@ async def main():
     # Check for required environment variables
     required_env_vars = ["ANTHROPIC_API_KEY", "OPENAI_API_KEY"]
     missing_vars = [var for var in required_env_vars if not os.getenv(var)]
-    
+
     if missing_vars:
         print(f"⚠️ Warning: Missing environment variables: {missing_vars}")
         print("Some tests may fail without proper API keys.")

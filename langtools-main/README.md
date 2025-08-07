@@ -97,17 +97,16 @@ print(f"Reviews completed: {training_data.reps}")
 
 ## Database
 
-### Schema
+### Table Structure
 
-**learner** table:
-- User accounts with email/password authentication
-- E2E test isolation support
-- Automatic timestamps
+#### Common table columns
 
-**otp** table:
-- One-time passwords for passwordless authentication
-- Automatic expiration and cleanup
-- Usage tracking
+- `id` - Primary key. String. uuid-v7. No default values in Postgres and SQLAlchemy models, the value should be generated in code and passed explicitly. Can be generated on the frontend.
+- `table_name_id` - Foreign keys.
+- `json_data` - JSONB column for storing additional data of complex models.
+- `created_at` - Timestamp of record creation. Generated automatically by Postgres.
+- `updated_at` - Timestamp of record update. Generated automatically by Postgres.
+
 
 ### Database Management
 
@@ -149,6 +148,10 @@ created_user = create_user(user.name, user.email, hashed_password)
 - All database operations use query functions
 - Strong typing with TypedDict for results
 - Custom exceptions for domain errors
+
+### Mutations
+
+- Endpoints that mutate the database should run queries in transaction.
 
 ## Development
 

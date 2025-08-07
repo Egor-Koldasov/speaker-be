@@ -299,3 +299,7 @@ Don't run commands with `&` at the end to run the process in the backround. It d
 
 - If your solutions are not complete, if you skip an implementation, code fixes, test fixes or linter fixes, communicate this in the message summary at the end of the message. Note that by default it's best to avoid skipping such things in the first place, but at least keep the user aware of the limitations and provide the reasoning of why these limitations were chosen.
 - If you found limitations during an implementation and changed your solution because of the new discoveries, include that in the message summary at the end of the message.
+
+## Documentation awareness
+- Search for related documentation before making changes to the codebase. Always check README files of the packages you are working with in the codebase.
+- Keep the documentation up to date.

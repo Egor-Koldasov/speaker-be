@@ -53,7 +53,7 @@ async def test_workflow_russian_to_english():
 
         for i, meaning in enumerate(result.entry.meanings):
             print(f"\n--- Meaning {i + 1} ---")
-            print(f"   ID: {meaning.id}")
+            print(f"   ID: {meaning.local_id}")
             print(f"   Canonical Form: {meaning.canonical_form}")
             print(f"   Definition: {meaning.definition}")
             print(f"   Part of Speech: {meaning.part_of_speech}")
@@ -68,7 +68,7 @@ async def test_workflow_russian_to_english():
 
         for i, translation in enumerate(result.translations):
             print(f"\n--- Translation {i + 1} ---")
-            print(f"   Meaning ID: {translation.meaning_id}")
+            print(f"   Meaning ID: {translation.meaning_local_id}")
             print(f"   Translation: {translation.translation}")
             print(f"   Definition: {translation.definition}")
             print(f"   Pronunciation: {translation.pronunciation}")

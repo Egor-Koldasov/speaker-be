@@ -54,6 +54,6 @@ settings = Settings()
 
 # Set API keys as environment variables so child modules can access them
 if settings.ANTHROPIC_API_KEY:
-    os.environ['ANTHROPIC_API_KEY'] = settings.ANTHROPIC_API_KEY
+    os.environ["ANTHROPIC_API_KEY"] = settings.ANTHROPIC_API_KEY
 if settings.OPENAI_API_KEY:
-    os.environ['OPENAI_API_KEY'] = settings.OPENAI_API_KEY
+    os.environ["OPENAI_API_KEY"] = settings.OPENAI_API_KEY

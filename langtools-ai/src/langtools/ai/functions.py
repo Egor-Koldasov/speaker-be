@@ -12,7 +12,7 @@ from .models import (
     BaseDictionaryParams,
     DictionaryEntryParams,
     DictionaryWorkflowResult,
-    MeaningTranslation,
+    AiMeaningTranslation,
     ModelType,
     TranslationParams,
 )
@@ -57,7 +57,9 @@ async def generate_base_dictionary_entry(
         raise ValidationError("Translating term too long (max 100 characters)")
 
     # Validate user_learning_languages format (e.g., "en:1,ru:2")
-    if params.user_learning_languages and not re.match(r"^[a-z]{2}:\d+(,[a-z]{2}:\d+)*$", params.user_learning_languages):
+    if params.user_learning_languages and not re.match(
+        r"^[a-z]{2}:\d+(,[a-z]{2}:\d+)*$", params.user_learning_languages
+    ):
         raise ValidationError("Invalid user_learning_languages format. Expected: 'en:1,ru:2'")
 
     try:
@@ -85,7 +87,7 @@ async def generate_base_dictionary_entry(
 
 async def generate_meaning_translations(
     params: TranslationParams, model: ModelType
-) -> List[MeaningTranslation]:
+) -> List[AiMeaningTranslation]:
     """
     Generate translations for all meanings in a dictionary entry (step 2 of workflow).
 
@@ -218,8 +220,8 @@ def _validate_and_fix_meaning_ids(result: AiDictionaryEntry) -> AiDictionaryEntr
     # Validate meaning IDs follow the expected format
     for i, meaning in enumerate(result.meanings, start=1):
         expected_id = f"{meaning.canonical_form}-{i}"
-        if meaning.id != expected_id:
-            meaning.id = expected_id  # Fix the ID if it's incorrect
+        if meaning.local_id != expected_id:
+            meaning.local_id = expected_id  # Fix the ID if it's incorrect
     return result
 
 

@@ -15,7 +15,7 @@ from langchain_openai import ChatOpenAI
 
 from langtools.ai.debug import configure_debug_logging
 
-from .models import AiDictionaryEntry, MeaningTranslation, MeaningTranslationList, ModelType
+from .models import AiDictionaryEntry, AiMeaningTranslation, MeaningTranslationList, ModelType
 
 logger = logging.getLogger(__name__)
 
@@ -104,7 +104,7 @@ class LLMClient:
 
     async def generate_with_parser_translations(
         self, chain: Runnable[dict[str, str], MeaningTranslationList]
-    ) -> List[MeaningTranslation]:
+    ) -> List[AiMeaningTranslation]:
         """Execute translation chain with cost logging."""
         logger.info("🚀 Executing translation LLM chain...")
 

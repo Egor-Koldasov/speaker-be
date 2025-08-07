@@ -26,10 +26,9 @@ class DictionaryEntryParams(BaseModel):
 
     translating_term: str = Field(description="The word or phrase to define and translate")
     user_learning_languages: str = Field(
-        description=
-            "A list of languages that the user is learning. The format is `${language1Bcp47Code}:${language1Priority},${language2Bcp47Code}:${language2Priority}`,"
-			" where `languageBcp47Code` is a BCP 47 language code and `priority` is a natural number the higher the more important."
-			" Priority can be both positive and negative and multiple languages can have the same priority."
+        description="A list of languages that the user is learning. The format is `${language1Bcp47Code}:${language1Priority},${language2Bcp47Code}:${language2Priority}`,"
+        " where `languageBcp47Code` is a BCP 47 language code and `priority` is a natural number the higher the more important."
+        " Priority can be both positive and negative and multiple languages can have the same priority."
     )
     translation_language: str = Field(
         description="Target language for translations in BCP 47 format"
@@ -46,13 +45,13 @@ class DictionaryEntryParams(BaseModel):
     }
 
 
-class Meaning(BaseModel):
+class AiMeaning(BaseModel):
     """A single meaning of a dictionary entry."""
 
     headword: str = Field(
         description="Word form as users encounter it (can be inflected, variant spelling, etc.)"
     )
-    id: str = Field(
+    local_id: str = Field(
         description="Unique identifier for the meaning in format {headword}-{index} starting from 1"
     )
     canonical_form: str = Field(
@@ -105,10 +104,9 @@ class BaseDictionaryParams(BaseModel):
 
     translating_term: str = Field(description="The word or phrase to define")
     user_learning_languages: str = Field(
-        description=
-            "A list of languages that the user is learning. The format is `${language1Bcp47Code}:${language1Priority},${language2Bcp47Code}:${language2Priority}`,"
-			" where `languageBcp47Code` is a BCP 47 language code and `priority` is a natural number the higher the more important."
-			" Priority can be both positive and negative and multiple languages can have the same priority."
+        description="A list of languages that the user is learning. The format is `${language1Bcp47Code}:${language1Priority},${language2Bcp47Code}:${language2Priority}`,"
+        " where `languageBcp47Code` is a BCP 47 language code and `priority` is a natural number the higher the more important."
+        " Priority can be both positive and negative and multiple languages can have the same priority."
     )
 
     model_config = {
@@ -141,14 +139,14 @@ class TranslationParams(BaseModel):
 class MeaningTranslationList(BaseModel):
     """Wrapper for list of meaning translations to work with LangChain structured output."""
 
-    translations: List[MeaningTranslation] = Field(description="List of meaning translations")
+    translations: List[AiMeaningTranslation] = Field(description="List of meaning translations")
 
 
 class DictionaryWorkflowResult(BaseModel):
     """Complete result from dictionary workflow with base entry and translations."""
 
     entry: AiDictionaryEntry = Field(description="Base dictionary entry")
-    translations: List[MeaningTranslation] = Field(description="Translations for all meanings")
+    translations: List[AiMeaningTranslation] = Field(description="Translations for all meanings")
 
 
 class AiDictionaryEntry(BaseModel):
@@ -161,16 +159,16 @@ class AiDictionaryEntry(BaseModel):
     source_language: str = Field(
         description="Original language in BCP 47 format, guessed from word and user preferences"
     )
-    meanings: list[Meaning] = Field(
+    meanings: list[AiMeaning] = Field(
         description="List of all meanings/senses ordered from most to least common usage",
         min_length=1,
     )
 
 
-class MeaningTranslation(BaseModel):
+class AiMeaningTranslation(BaseModel):
     """Translation of `Meaning`."""
 
-    meaning_id: str = Field(description="Meaning.id of the original meaning")
+    meaning_local_id: str = Field(description="Meaning.id of the original meaning")
 
     headword: str = Field(
         description="Word form as users encounter it (can be inflected, variant spelling, etc.)"

@@ -11,8 +11,8 @@ from langtools.ai.models import (
     AiDictionaryEntry,
     DictionaryEntryParams,
     DictionaryWorkflowResult,
-    Meaning,
-    MeaningTranslation,
+    AiMeaning,
+    AiMeaningTranslation,
     ModelType,
 )
 from langtools.mcp.server import generate_dictionary_entry_tool
@@ -34,11 +34,11 @@ class TestMockDictionaryEntry:
             setattr(self, key, value)
 
 
-def create_meaning_from_dict(meaning_dict: dict) -> Meaning:
+def create_meaning_from_dict(meaning_dict: dict) -> AiMeaning:
     """Helper to create Meaning from dict with proper field mapping."""
-    return Meaning(
+    return AiMeaning(
         headword=meaning_dict.get("headword", ""),
-        id=meaning_dict.get("id", ""),
+        local_id=meaning_dict.get("id", ""),
         canonical_form=meaning_dict.get("canonical_form", ""),
         alternate_spellings=meaning_dict.get("alternate_spellings", []),
         definition=meaning_dict.get("definition", ""),
@@ -65,28 +65,30 @@ class TestGenerateDictionaryEntryTool:
             headword="сырой",
             source_language="ru",
             meanings=[
-                create_meaning_from_dict({
-                    "headword": "сырой",
-                    "id": "сырой-0",
-                    "canonical_form": "сырой",
-                    "alternate_spellings": [],
-                    "definition": "Не подвергшийся тепловой обработке",
-                    "part_of_speech": "прилагательное",
-                    "morphology": "качественное прилагательное",
-                    "register": "нейтральный",
-                    "frequency": "common",
-                    "etymology": "от праславянского *syrъ",
-                    "difficulty_level": "intermediate",
-                    "learning_priority": "high",
-                    "pronunciation": "ˈsɨrəj",
-                    "example_sentences": ["Сырое мясо", "Сырые овощи"],
-                })
+                create_meaning_from_dict(
+                    {
+                        "headword": "сырой",
+                        "id": "сырой-0",
+                        "canonical_form": "сырой",
+                        "alternate_spellings": [],
+                        "definition": "Не подвергшийся тепловой обработке",
+                        "part_of_speech": "прилагательное",
+                        "morphology": "качественное прилагательное",
+                        "register": "нейтральный",
+                        "frequency": "common",
+                        "etymology": "от праславянского *syrъ",
+                        "difficulty_level": "intermediate",
+                        "learning_priority": "high",
+                        "pronunciation": "ˈsɨrəj",
+                        "example_sentences": ["Сырое мясо", "Сырые овощи"],
+                    }
+                )
             ],
         )
 
         translations = [
-            MeaningTranslation(
-                meaning_id="сырой-0",
+            AiMeaningTranslation(
+                meaning_local_id="сырой-0",
                 headword="raw",
                 canonical_form="raw",
                 translation_language="en",
@@ -124,13 +126,13 @@ class TestGenerateDictionaryEntryTool:
         assert isinstance(result, dict)
         assert "entry" in result
         assert "translations" in result
-        
+
         # Verify entry data
         entry_data = result["entry"]
         assert entry_data["source_language"] == "ru"
         assert entry_data["headword"] == "сырой"
         assert len(entry_data["meanings"]) == 1
-        
+
         meaning = entry_data["meanings"][0]
         assert meaning["canonical_form"] == "сырой"
         assert meaning["id"] == "сырой-0"
@@ -161,28 +163,30 @@ class TestGenerateDictionaryEntryTool:
             headword="hello",
             source_language="en",
             meanings=[
-                create_meaning_from_dict({
-                    "headword": "hello",
-                    "id": "hello-0",
-                    "canonical_form": "hello",
-                    "alternate_spellings": [],
-                    "definition": "A greeting",
-                    "part_of_speech": "interjection",
-                    "morphology": "interjection",
-                    "register": "neutral",
-                    "frequency": "very_common",
-                    "etymology": "from Old English hello",
-                    "difficulty_level": "beginner",
-                    "learning_priority": "essential",
-                    "pronunciation": "həˈloʊ",
-                    "example_sentences": ["Hello, how are you?", "Say hello to your friend"],
-                })
+                create_meaning_from_dict(
+                    {
+                        "headword": "hello",
+                        "id": "hello-0",
+                        "canonical_form": "hello",
+                        "alternate_spellings": [],
+                        "definition": "A greeting",
+                        "part_of_speech": "interjection",
+                        "morphology": "interjection",
+                        "register": "neutral",
+                        "frequency": "very_common",
+                        "etymology": "from Old English hello",
+                        "difficulty_level": "beginner",
+                        "learning_priority": "essential",
+                        "pronunciation": "həˈloʊ",
+                        "example_sentences": ["Hello, how are you?", "Say hello to your friend"],
+                    }
+                )
             ],
         )
 
         translations = [
-            MeaningTranslation(
-                meaning_id="hello-0",
+            AiMeaningTranslation(
+                meaning_local_id="hello-0",
                 headword="привет",
                 canonical_form="привет",
                 translation_language="ru",
@@ -220,7 +224,7 @@ class TestGenerateDictionaryEntryTool:
         assert isinstance(result, dict)
         assert result["entry"]["source_language"] == "en"
         assert result["entry"]["headword"] == "hello"
-        
+
         meaning = result["entry"]["meanings"][0]
         assert meaning["canonical_form"] == "hello"
 
@@ -237,22 +241,24 @@ class TestGenerateDictionaryEntryTool:
             headword="test",
             source_language="en",
             meanings=[
-                create_meaning_from_dict({
-                    "headword": "test",
-                    "id": "test-0",
-                    "canonical_form": "test",
-                    "alternate_spellings": [],
-                    "definition": "a test",
-                    "part_of_speech": "noun",
-                    "morphology": "noun",
-                    "register": "neutral",
-                    "frequency": "common",
-                    "etymology": "test",
-                    "difficulty_level": "beginner",
-                    "learning_priority": "medium",
-                    "pronunciation": "test",
-                    "example_sentences": ["This is a test", "Test example"],
-                })
+                create_meaning_from_dict(
+                    {
+                        "headword": "test",
+                        "id": "test-0",
+                        "canonical_form": "test",
+                        "alternate_spellings": [],
+                        "definition": "a test",
+                        "part_of_speech": "noun",
+                        "morphology": "noun",
+                        "register": "neutral",
+                        "frequency": "common",
+                        "etymology": "test",
+                        "difficulty_level": "beginner",
+                        "learning_priority": "medium",
+                        "pronunciation": "test",
+                        "example_sentences": ["This is a test", "Test example"],
+                    }
+                )
             ],
         )
 
