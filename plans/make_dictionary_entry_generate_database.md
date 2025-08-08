@@ -22,3 +22,6 @@ The endpoint should verify that all meanings have translations with proper `mean
 The data saved into the database should not store foreign languages as unicode escape sequences. It should store them as proper utf-8 characters.
 The implementation should include alembic migrations.
 The implementation should include integration tests.
+The endpoint should only be accessible to authenticated users.
+The endpoint should only check the records of the current users.
+The endpoint should use `generate_dictionary_workflow` which needs to be updated to include optional hooks to retrieve the data. The function itself does not work with database, it just executes hooks and bypasses the AI calls when they return valid data.
