@@ -293,7 +293,10 @@ Use that to check the errors during integration testing.
 After adding new packages, api needs to be restarted: `docker compose restart api`.
 
 ## Running bash commands
-Don't run commands with `&` at the end to run the process in the backround. It does not work in claude code environment! It will make the response stuck for 2 minutes until it reaches the timeout!
+- Don't run commands with `&` at the end to run the process in the backround. It does not work in claude code environment! It will make the response stuck for 2 minutes until it reaches the timeout!
+- Don't run commands with `&` at the end to run the process in the backround. It does not work in claude code environment! It will make the response stuck for 2 minutes until it reaches the timeout!
+- Don't run commands with `&` at the end to run the process in the backround. It does not work in claude code environment! It will make the response stuck for 2 minutes until it reaches the timeout!
+- This is repeated three times to make sure you understand the importance of this rule.
 
 ## Communication
 
