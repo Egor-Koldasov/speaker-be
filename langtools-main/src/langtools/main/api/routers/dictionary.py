@@ -1,7 +1,7 @@
 """Dictionary endpoints router."""
 
 import traceback
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status
 from langtools.ai import (
     DictionaryEntryParams,
     DictionaryWorkflowResult,
@@ -11,14 +11,6 @@ from langtools.ai import (
     generate_dictionary_workflow,
 )
 from pydantic import BaseModel, Field
-from ..auth.dependencies import get_current_auth_user
-from ..pg_queries import (
-    create_dictionary_entry_with_fsrs,
-    DictionaryEntryError,
-    InvalidMeaningTranslationError,
-)
-from ..models.auth_user import AuthUser
-from ..models.dictionary_entry import DictionaryEntry
 
 
 class GenerateDictionaryRequest(BaseModel):
@@ -79,51 +71,6 @@ async def generate_dictionary_entry(
     except Exception as e:
         # Log unexpected errors with stack trace
         traceback.print_exc()  # Print full stack trace to console
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Internal server error: {str(e)}",
-        )
-
-
-@router.post("", response_model=DictionaryEntry)
-async def create_dictionary_entry(
-    workflow_result: DictionaryWorkflowResult,
-    current_user: AuthUser = Depends(get_current_auth_user),
-) -> DictionaryEntry:
-    """
-    Save a dictionary workflow result to the database with FSRS training data.
-
-    Args:
-        workflow_result: Complete dictionary workflow result with entry and translations
-        current_user: Authenticated user (from JWT token)
-
-    Returns:
-        Created dictionary entry
-
-    Raises:
-        HTTPException: If validation fails or database errors occur
-    """
-    try:
-        # Create the dictionary entry with all related data
-        dictionary_entry = create_dictionary_entry_with_fsrs(
-            auth_user_id=current_user.id, workflow_result=workflow_result
-        )
-
-        return dictionary_entry
-
-    except InvalidMeaningTranslationError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Invalid meaning translations: {str(e)}",
-        )
-    except DictionaryEntryError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Dictionary entry error: {str(e)}",
-        )
-    except Exception as e:
-        # Log unexpected errors with stack trace
-        traceback.print_exc()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Internal server error: {str(e)}",

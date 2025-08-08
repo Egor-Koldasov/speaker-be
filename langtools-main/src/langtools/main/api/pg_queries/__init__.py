@@ -33,12 +33,6 @@ from .auth_password import (
     AuthPasswordNotFoundError,
 )
 from .otp import clean_and_create_otp, find_and_mark_otp_used, get_valid_otp_for_testing
-from .dictionary_entry import (
-    create_dictionary_entry_with_fsrs,
-    get_user_dictionary_entries,
-    DictionaryEntryError,
-    InvalidMeaningTranslationError,
-)
 
 __all__ = [
     # User operations
@@ -70,9 +64,4 @@ __all__ = [
     "clean_and_create_otp",
     "find_and_mark_otp_used",
     "get_valid_otp_for_testing",
-    # Dictionary entry operations
-    "create_dictionary_entry_with_fsrs",
-    "get_user_dictionary_entries",
-    "DictionaryEntryError",
-    "InvalidMeaningTranslationError",
 ]
