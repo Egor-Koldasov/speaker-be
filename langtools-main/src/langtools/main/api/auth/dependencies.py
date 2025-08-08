@@ -47,17 +47,3 @@ def get_current_user_response(email: str = Depends(get_current_user_email)) -> U
     if user_response is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return user_response
-
-
-def get_current_user_optional(
-    token: Optional[str] = Depends(OAuth2PasswordBearer(tokenUrl="/auth/login", auto_error=False)),
-) -> Optional[AuthUser]:
-    """Get the current auth user from the database if authenticated, None otherwise."""
-    if token is None:
-        return None
-
-    try:
-        email = get_current_user_email(token)
-        return get_auth_user_by_email(email)
-    except (HTTPException, AuthUserNotFoundError):
-        return None

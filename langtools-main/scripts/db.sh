@@ -26,26 +26,26 @@ show_help() {
 
 start_db() {
     echo "🐘 Starting PostgreSQL container..."
-    docker compose up -d postgres
+    docker-compose up -d postgres
     echo "✅ PostgreSQL is starting up. Use '$0 logs' to monitor startup."
     echo "💡 Run '$0 migrate' to apply database migrations."
 }
 
 stop_db() {
     echo "🛑 Stopping PostgreSQL container..."
-    docker compose stop postgres
+    docker-compose stop postgres
     echo "✅ PostgreSQL stopped."
 }
 
 restart_db() {
     echo "🔄 Restarting PostgreSQL container..."
-    docker compose restart postgres
+    docker-compose restart postgres
     echo "✅ PostgreSQL restarted."
 }
 
 show_logs() {
     echo "📋 PostgreSQL container logs:"
-    docker compose logs -f postgres
+    docker-compose logs -f postgres
 }
 
 run_migrations() {
@@ -59,9 +59,9 @@ reset_database() {
     read -p "Are you sure? Type 'yes' to continue: " confirm
     if [ "$confirm" = "yes" ]; then
         echo "🗑️  Resetting database..."
-        docker compose down postgres
+        docker-compose down postgres
         docker volume rm langtools-main_postgres_data 2>/dev/null || true
-        docker compose up -d postgres
+        docker-compose up -d postgres
         echo "⏳ Waiting for database to be ready..."
         sleep 5
         run_migrations
@@ -73,24 +73,24 @@ reset_database() {
 
 connect_shell() {
     echo "🐘 Connecting to PostgreSQL shell..."
-    docker compose exec postgres psql -U langtools -d langtools
+    docker-compose exec postgres psql -U langtools -d langtools
 }
 
 show_status() {
     echo "📊 Database Status:"
     echo ""
     
-    if docker compose ps postgres | grep -q "Up"; then
+    if docker-compose ps postgres | grep -q "Up"; then
         echo "✅ PostgreSQL container: Running"
         
         # Check if database is responding
-        if docker compose exec -T postgres pg_isready -U langtools -d langtools >/dev/null 2>&1; then
+        if docker-compose exec -T postgres pg_isready -U langtools -d langtools >/dev/null 2>&1; then
             echo "✅ Database connection: OK"
             
             # Show basic stats
             echo ""
             echo "Database info:"
-            docker compose exec -T postgres psql -U langtools -d langtools -c "
+            docker-compose exec -T postgres psql -U langtools -d langtools -c "
                 SELECT 
                     current_database() as database,
                     current_user as user,
