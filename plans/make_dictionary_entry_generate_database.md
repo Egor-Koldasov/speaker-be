@@ -16,4 +16,9 @@ The AI function data will be stored in json columns called `json_data`.
 
 `dictionary_entry_translation` will have `id`, `dictionary_entry_id`, `translation_language`, timestamps and `json_data` containing `AiMeaningTranslation[]` model list. `meaning_local_id` field in `AiMeaningTranslation` should be indexed.
 
+
+## Requirements
 The endpoint should verify that all meanings have translations with proper `meaning_local_id` fields before saving.
+The data saved into the database should not store foreign languages as unicode escape sequences. It should store them as proper utf-8 characters.
+The implementation should include alembic migrations.
+The implementation should include integration tests.
