@@ -36,12 +36,13 @@ class LLMClient:
             ModelType.GPT4,
             ModelType.GPT3_5,
             ModelType.GTP4_1_MINI,
+            ModelType.GTP5_MINI,
             ModelType.GTP4_O_MINI,
         ]:
             # Use fewer tokens for GPT models to avoid context length issues
             return ChatOpenAI(
                 model=model_type.value,
-                temperature=0.3,
+                temperature=1 if model_type == ModelType.GTP5_MINI else 0.3,
                 max_tokens=32768  # type: ignore[call-arg]
                 if model_type == ModelType.GTP4_1_MINI
                 else 16384
