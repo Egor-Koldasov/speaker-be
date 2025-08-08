@@ -11,6 +11,6 @@ The models will store this data in json columns called `json_data`.
 
 `dictionary_entry_translation` will have `id`, `dictionary_entry_id`, timestamps and `json_data` containing `AiMeaningTranslation[]` model list.
 
-`meaning_fsrs` will have `id`, `dictionary_entry_id`, timestamps and all fields from `FSRSTrainingData` model as separate columns.
+`meaning_fsrs` will have `id`, `dictionary_entry_id`, `meaning_local_id`, timestamps and all fields from `FSRSTrainingData` model as separate columns.
 
 The endpoint should verify that all meanings have translations with proper `meaning_local_id` fields before saving. Then save into all four tables.
