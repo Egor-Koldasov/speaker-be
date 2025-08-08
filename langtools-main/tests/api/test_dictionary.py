@@ -11,7 +11,12 @@ from langtools.ai.models import (
     AiMeaning,
     AiMeaningTranslation,
 )
-from langtools.main.api.schemas.dictionary import AddDictionaryEntryResponse
+from langtools.main.api.schemas.dictionary import (
+    AddDictionaryEntryResponse,
+    DictionaryEntryResponse,
+    DictionaryEntryListResponse,
+    DictionaryEntryFSRSResponse,
+)
 
 
 @pytest.fixture
@@ -210,3 +215,288 @@ async def test_add_dictionary_entry_unauthenticated(
 
     response = await client.post("/dictionary_entry", json=request_data)
     assert response.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_get_dictionary_entry(
+    client: AsyncClient,
+    test_dict_user_data: dict[str, str | bool],
+    sample_dictionary_entry: AiDictionaryEntry,
+    sample_translations: list[AiMeaningTranslation],
+) -> None:
+    """Test getting a dictionary entry by ID."""
+    # Register and login user
+    await client.post("/auth/register", json=test_dict_user_data)
+
+    login_data = {
+        "username": test_dict_user_data["email"],
+        "password": test_dict_user_data["password"],
+    }
+    login_response = await client.post("/auth/login", data=login_data)
+    token = cast(dict[str, str], login_response.json())["access_token"]
+
+    # Add a dictionary entry first
+    headers = {"Authorization": f"Bearer {token}"}
+    request_data = {
+        "entry": sample_dictionary_entry.model_dump(),
+        "translations": [trans.model_dump() for trans in sample_translations],
+    }
+
+    add_response = await client.post("/dictionary_entry", json=request_data, headers=headers)
+    entry_id = cast(dict[str, str], add_response.json())["dictionary_entry_id"]
+
+    # Get the dictionary entry
+    get_response = await client.get(f"/dictionary_entry/{entry_id}", headers=headers)
+    assert get_response.status_code == 200
+
+    result = DictionaryEntryResponse.model_validate(get_response.json())
+    assert result.id == entry_id
+    assert result.entry.headword == sample_dictionary_entry.headword
+
+
+@pytest.mark.asyncio
+async def test_get_dictionary_entry_not_found(
+    client: AsyncClient,
+    test_dict_user_data: dict[str, str | bool],
+) -> None:
+    """Test getting a non-existent dictionary entry."""
+    # Register and login user
+    await client.post("/auth/register", json=test_dict_user_data)
+
+    login_data = {
+        "username": test_dict_user_data["email"],
+        "password": test_dict_user_data["password"],
+    }
+    login_response = await client.post("/auth/login", data=login_data)
+    token = cast(dict[str, str], login_response.json())["access_token"]
+
+    # Try to get non-existent entry
+    headers = {"Authorization": f"Bearer {token}"}
+    response = await client.get("/dictionary_entry/non-existent-id", headers=headers)
+    assert response.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_list_dictionary_entries(
+    client: AsyncClient,
+    test_dict_user_data: dict[str, str | bool],
+    sample_dictionary_entry: AiDictionaryEntry,
+    sample_translations: list[AiMeaningTranslation],
+) -> None:
+    """Test listing user's dictionary entries."""
+    # Register and login user
+    await client.post("/auth/register", json=test_dict_user_data)
+
+    login_data = {
+        "username": test_dict_user_data["email"],
+        "password": test_dict_user_data["password"],
+    }
+    login_response = await client.post("/auth/login", data=login_data)
+    token = cast(dict[str, str], login_response.json())["access_token"]
+
+    # Add a dictionary entry first
+    headers = {"Authorization": f"Bearer {token}"}
+    request_data = {
+        "entry": sample_dictionary_entry.model_dump(),
+        "translations": [trans.model_dump() for trans in sample_translations],
+    }
+
+    await client.post("/dictionary_entry", json=request_data, headers=headers)
+
+    # List entries
+    list_response = await client.get("/dictionary_entry", headers=headers)
+    assert list_response.status_code == 200
+
+    result = DictionaryEntryListResponse.model_validate(list_response.json())
+    assert result.total >= 1
+    assert len(result.entries) >= 1
+    assert result.entries[0].headword == sample_dictionary_entry.headword
+
+
+@pytest.mark.asyncio
+async def test_list_dictionary_entries_pagination(
+    client: AsyncClient,
+    test_dict_user_data: dict[str, str | bool],
+) -> None:
+    """Test pagination in dictionary entries list."""
+    # Register and login user
+    await client.post("/auth/register", json=test_dict_user_data)
+
+    login_data = {
+        "username": test_dict_user_data["email"],
+        "password": test_dict_user_data["password"],
+    }
+    login_response = await client.post("/auth/login", data=login_data)
+    token = cast(dict[str, str], login_response.json())["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # List with pagination params
+    list_response = await client.get("/dictionary_entry?page=1&page_size=5", headers=headers)
+    assert list_response.status_code == 200
+
+    result = DictionaryEntryListResponse.model_validate(list_response.json())
+    assert result.page == 1
+    assert result.page_size == 5
+
+
+@pytest.mark.asyncio
+async def test_get_dictionary_entry_fsrs(
+    client: AsyncClient,
+    test_dict_user_data: dict[str, str | bool],
+    sample_dictionary_entry: AiDictionaryEntry,
+    sample_translations: list[AiMeaningTranslation],
+) -> None:
+    """Test getting FSRS data for dictionary entry."""
+    # Register and login user
+    await client.post("/auth/register", json=test_dict_user_data)
+
+    login_data = {
+        "username": test_dict_user_data["email"],
+        "password": test_dict_user_data["password"],
+    }
+    login_response = await client.post("/auth/login", data=login_data)
+    token = cast(dict[str, str], login_response.json())["access_token"]
+
+    # Add a dictionary entry first
+    headers = {"Authorization": f"Bearer {token}"}
+    request_data = {
+        "entry": sample_dictionary_entry.model_dump(),
+        "translations": [trans.model_dump() for trans in sample_translations],
+    }
+
+    add_response = await client.post("/dictionary_entry", json=request_data, headers=headers)
+    entry_id = cast(dict[str, str], add_response.json())["dictionary_entry_id"]
+
+    # Get FSRS data
+    fsrs_response = await client.get(f"/dictionary_entry/{entry_id}/fsrs", headers=headers)
+    assert fsrs_response.status_code == 200
+
+    result = DictionaryEntryFSRSResponse.model_validate(fsrs_response.json())
+    assert result.dictionary_entry_id == entry_id
+    assert len(result.meanings_fsrs) == len(sample_dictionary_entry.meanings)
+
+
+@pytest.mark.asyncio
+async def test_update_dictionary_entry(
+    client: AsyncClient,
+    test_dict_user_data: dict[str, str | bool],
+    sample_dictionary_entry: AiDictionaryEntry,
+    sample_translations: list[AiMeaningTranslation],
+) -> None:
+    """Test updating a dictionary entry."""
+    # Register and login user
+    await client.post("/auth/register", json=test_dict_user_data)
+
+    login_data = {
+        "username": test_dict_user_data["email"],
+        "password": test_dict_user_data["password"],
+    }
+    login_response = await client.post("/auth/login", data=login_data)
+    token = cast(dict[str, str], login_response.json())["access_token"]
+
+    # Add a dictionary entry first
+    headers = {"Authorization": f"Bearer {token}"}
+    request_data = {
+        "entry": sample_dictionary_entry.model_dump(),
+        "translations": [trans.model_dump() for trans in sample_translations],
+    }
+
+    add_response = await client.post("/dictionary_entry", json=request_data, headers=headers)
+    entry_id = cast(dict[str, str], add_response.json())["dictionary_entry_id"]
+
+    # Update the entry
+    updated_entry = sample_dictionary_entry.model_copy(deep=True)
+    updated_entry.meanings[0].definition = "Updated definition"
+
+    update_data = {
+        "entry": updated_entry.model_dump(),
+        "translations": [trans.model_dump() for trans in sample_translations],
+    }
+
+    update_response = await client.put(
+        f"/dictionary_entry/{entry_id}", json=update_data, headers=headers
+    )
+    assert update_response.status_code == 200
+
+    # Verify the update
+    get_response = await client.get(f"/dictionary_entry/{entry_id}", headers=headers)
+    result = DictionaryEntryResponse.model_validate(get_response.json())
+    assert result.entry.meanings[0].definition == "Updated definition"
+
+
+@pytest.mark.asyncio
+async def test_update_dictionary_entry_not_found(
+    client: AsyncClient,
+    test_dict_user_data: dict[str, str | bool],
+    sample_dictionary_entry: AiDictionaryEntry,
+    sample_translations: list[AiMeaningTranslation],
+) -> None:
+    """Test updating a non-existent dictionary entry."""
+    # Register and login user
+    await client.post("/auth/register", json=test_dict_user_data)
+
+    login_data = {
+        "username": test_dict_user_data["email"],
+        "password": test_dict_user_data["password"],
+    }
+    login_response = await client.post("/auth/login", data=login_data)
+    token = cast(dict[str, str], login_response.json())["access_token"]
+
+    # Try to update non-existent entry
+    headers = {"Authorization": f"Bearer {token}"}
+    update_data = {
+        "entry": sample_dictionary_entry.model_dump(),
+        "translations": [trans.model_dump() for trans in sample_translations],
+    }
+
+    response = await client.put(
+        "/dictionary_entry/non-existent-id", json=update_data, headers=headers
+    )
+    assert response.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_update_meaning_fsrs(
+    client: AsyncClient,
+    test_dict_user_data: dict[str, str | bool],
+    sample_dictionary_entry: AiDictionaryEntry,
+    sample_translations: list[AiMeaningTranslation],
+) -> None:
+    """Test updating FSRS data for a meaning."""
+    # Register and login user
+    await client.post("/auth/register", json=test_dict_user_data)
+
+    login_data = {
+        "username": test_dict_user_data["email"],
+        "password": test_dict_user_data["password"],
+    }
+    login_response = await client.post("/auth/login", data=login_data)
+    token = cast(dict[str, str], login_response.json())["access_token"]
+
+    # Add a dictionary entry first
+    headers = {"Authorization": f"Bearer {token}"}
+    request_data = {
+        "entry": sample_dictionary_entry.model_dump(),
+        "translations": [trans.model_dump() for trans in sample_translations],
+    }
+
+    add_response = await client.post("/dictionary_entry", json=request_data, headers=headers)
+    entry_id = cast(dict[str, str], add_response.json())["dictionary_entry_id"]
+
+    # Get FSRS data to find meaning_fsrs_id
+    fsrs_response = await client.get(f"/dictionary_entry/{entry_id}/fsrs", headers=headers)
+    fsrs_result = DictionaryEntryFSRSResponse.model_validate(fsrs_response.json())
+    meaning_fsrs_id = fsrs_result.meanings_fsrs[0].meaning_fsrs_id
+
+    # Update FSRS data (simulate review)
+    from datetime import datetime, timezone
+
+    review_data = {
+        "rating": 3,  # Good rating
+        "review_time": datetime.now(timezone.utc).isoformat(),
+    }
+
+    update_response = await client.put(
+        f"/dictionary_entry/{entry_id}/fsrs/{meaning_fsrs_id}", json=review_data, headers=headers
+    )
+    assert update_response.status_code == 200
