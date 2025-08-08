@@ -3,7 +3,7 @@
 from datetime import datetime
 from typing import Any, cast
 
-from sqlalchemy import JSON, func
+from sqlalchemy import JSON, func, text
 from sqlalchemy.orm import declared_attr
 from sqlmodel import Field, SQLModel
 

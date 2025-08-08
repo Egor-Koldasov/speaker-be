@@ -8,6 +8,7 @@ from ..models import DictionaryEntry, DictionaryEntryTranslation, RUserDictionar
 from ..utils.id_generation import generate_pg_uuid
 
 
+
 async def find_dictionary_entry_by_term(
     session: Session,
     term: str,
@@ -23,18 +24,22 @@ async def find_dictionary_entry_by_term(
     Returns:
         Most recent DictionaryEntry or None if not found
     """
-    statement = select(DictionaryEntry).where(
-        DictionaryEntry.json_data["headword"].as_string() == term,  # type: ignore[attr-defined]
+    statement = (
+        select(DictionaryEntry)
+        .where(
+            DictionaryEntry.json_data["headword"].as_string() == term,  # type: ignore[attr-defined]
+        )
     )
-
+    
     # Filter by user association if user is authenticated
     if auth_user_id:
-        statement = statement.join(
-            RUserDictionaryEntry, RUserDictionaryEntry.dictionary_entry_id == DictionaryEntry.id
-        ).where(RUserDictionaryEntry.auth_user_id == auth_user_id)
-
+        statement = statement.join(RUserDictionaryEntry).where(
+            RUserDictionaryEntry.auth_user_id == auth_user_id
+        )
+    
     statement = statement.order_by(desc(DictionaryEntry.updated_at))
     return session.exec(statement).first()
+
 
 
 async def find_dictionary_entry_translations(
@@ -54,24 +59,23 @@ async def find_dictionary_entry_translations(
     Returns:
         Most recent DictionaryEntryTranslation or None if not found
     """
-    statement = select(DictionaryEntryTranslation).where(
-        DictionaryEntryTranslation.dictionary_entry_id == dictionary_entry_id,
-        DictionaryEntryTranslation.translation_language == translation_language,
+    statement = (
+        select(DictionaryEntryTranslation)
+        .where(
+            DictionaryEntryTranslation.dictionary_entry_id == dictionary_entry_id,
+            DictionaryEntryTranslation.translation_language == translation_language,
+        )
     )
-
+    
     # Filter by user association if user is authenticated
     if auth_user_id:
-        statement = (
-            statement.join(
-                DictionaryEntry,
-                DictionaryEntry.id == DictionaryEntryTranslation.dictionary_entry_id,
-            )
-            .join(
-                RUserDictionaryEntry, RUserDictionaryEntry.dictionary_entry_id == DictionaryEntry.id
-            )
-            .where(RUserDictionaryEntry.auth_user_id == auth_user_id)
+        statement = statement.join(
+            DictionaryEntry, 
+            DictionaryEntry.id == DictionaryEntryTranslation.dictionary_entry_id
+        ).join(RUserDictionaryEntry).where(
+            RUserDictionaryEntry.auth_user_id == auth_user_id
         )
-
+    
     statement = statement.order_by(desc(DictionaryEntryTranslation.updated_at))
     return session.exec(statement).first()
 
@@ -92,7 +96,7 @@ async def create_dictionary_entry(
     # Use direct model_dump to avoid JSON serialization issues
     dictionary_entry = DictionaryEntry(
         id=generate_pg_uuid(),
-        json_data=ai_entry.model_dump(mode="python"),
+        json_data=ai_entry.model_dump(mode='python'),
     )
 
     session.add(dictionary_entry)
@@ -120,7 +124,7 @@ async def create_dictionary_entry_translations(
         Created DictionaryEntryTranslation
     """
     # Use direct model_dump to avoid JSON serialization issues
-    translations_data = [t.model_dump(mode="python") for t in translations]
+    translations_data = [t.model_dump(mode='python') for t in translations]
     entry_translation = DictionaryEntryTranslation(
         id=generate_pg_uuid(),
         dictionary_entry_id=dictionary_entry_id,
