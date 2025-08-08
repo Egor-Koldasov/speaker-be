@@ -1,7 +1,8 @@
 """Dictionary endpoints router."""
 
 import traceback
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlmodel import Session
 from langtools.ai import (
     DictionaryEntryParams,
     DictionaryWorkflowResult,
@@ -11,6 +12,12 @@ from langtools.ai import (
     generate_dictionary_workflow,
 )
 from pydantic import BaseModel, Field
+
+from ..auth.dependencies import get_current_user_response
+from ..database import get_session
+from ..schemas.auth import UserResponse
+from ..schemas.dictionary import AddDictionaryEntryRequest, AddDictionaryEntryResponse
+from ..pg_queries.dictionary import create_dictionary_entry
 
 
 class GenerateDictionaryRequest(BaseModel):
@@ -74,4 +81,52 @@ async def generate_dictionary_entry(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Internal server error: {str(e)}",
+        )
+
+
+@router.post("", response_model=AddDictionaryEntryResponse)
+async def add_dictionary_entry(
+    request: AddDictionaryEntryRequest,
+    current_user: UserResponse = Depends(get_current_user_response),
+    db: Session = Depends(get_session),
+) -> AddDictionaryEntryResponse:
+    """
+    Store a dictionary entry with translations in the database.
+
+    This endpoint accepts the same models as DictionaryWorkflowResult and stores them
+    in the database with proper relationships.
+
+    Args:
+        request: Dictionary entry data with translations
+        current_user: Authenticated user (injected)
+        db: Database session (injected)
+
+    Returns:
+        Response with the created dictionary entry ID
+
+    Raises:
+        HTTPException: If validation fails or database errors occur
+    """
+    try:
+        # Create the dictionary entry and all related data
+        dictionary_entry_id = await create_dictionary_entry(
+            db=db,
+            auth_user_id=current_user.auth_user.id,
+            entry=request.entry,
+            translations=request.translations,
+        )
+
+        return AddDictionaryEntryResponse(dictionary_entry_id=dictionary_entry_id)
+
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )
+    except Exception as e:
+        # Log unexpected errors with stack trace
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to save dictionary entry: {str(e)}",
         )
