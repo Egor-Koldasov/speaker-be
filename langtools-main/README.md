@@ -281,6 +281,16 @@ ALLOW_E2E_TEST_USERS=false  # Disable in production
 - **API Documentation** - Automatic OpenAPI/Swagger documentation
 - **Health Checks** - Built-in endpoints for monitoring
 
+### Database Query Organization
+
+- All database queries must be wrapped in functions and organized by domain in `api/pg_queries/{domain}.py` files.
+
+- **No direct SQLAlchemy queries** in routers, business logic, or other modules.
+
+- **All database operations** must go through query functions.
+
+- **Organize by domain** - one file per table or related tables.
+
 ---
 
 **Part of the langtools ecosystem** - See the main repository for MCP integration and additional language learning tools.

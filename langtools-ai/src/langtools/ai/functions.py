@@ -4,13 +4,14 @@ Core AI functions for language learning tools with LangGraph workflow.
 
 import logging
 import re
-from typing import List, NoReturn
+from typing import List, NoReturn, Optional
 
 from .client import LLMClient
 from .models import (
     AiDictionaryEntry,
     BaseDictionaryParams,
     DictionaryEntryParams,
+    DictionaryWorkflowHooks,
     DictionaryWorkflowResult,
     AiMeaningTranslation,
     ModelType,
@@ -135,7 +136,7 @@ async def generate_meaning_translations(
 
 
 async def generate_dictionary_workflow(
-    params: DictionaryEntryParams, model: ModelType
+    params: DictionaryEntryParams, model: ModelType, hooks: Optional[DictionaryWorkflowHooks] = None
 ) -> DictionaryWorkflowResult:
     """
     Complete dictionary generation workflow with base entry and translations.
@@ -161,8 +162,19 @@ async def generate_dictionary_workflow(
     )
 
     logger.info("Step 1: Generating base dictionary entry...")
-    base_entry = await generate_base_dictionary_entry(base_params, model)
-    logger.info(f"Generated base entry with {len(base_entry.meanings)} meanings")
+
+    # Check if we have a hook to retrieve cached base entry
+    base_entry = None
+    if hooks and hooks.retrieve_base_entry:
+        logger.info("Checking for cached base entry...")
+        base_entry = await hooks.retrieve_base_entry(base_params)
+        if base_entry:
+            logger.info(f"Retrieved cached base entry with {len(base_entry.meanings)} meanings")
+
+    # Generate if not cached
+    if not base_entry:
+        base_entry = await generate_base_dictionary_entry(base_params, model)
+        logger.info(f"Generated base entry with {len(base_entry.meanings)} meanings")
 
     # Step 2: Generate translations
     translation_params = TranslationParams(
@@ -171,8 +183,19 @@ async def generate_dictionary_workflow(
     )
 
     logger.info("Step 2: Generating translations...")
-    translations = await generate_meaning_translations(translation_params, model)
-    logger.info(f"Generated {len(translations)} translations")
+
+    # Check if we have a hook to retrieve cached translations
+    translations = None
+    if hooks and hooks.retrieve_translations:
+        logger.info("Checking for cached translations...")
+        translations = await hooks.retrieve_translations(translation_params)
+        if translations:
+            logger.info(f"Retrieved cached {len(translations)} translations")
+
+    # Generate if not cached
+    if not translations:
+        translations = await generate_meaning_translations(translation_params, model)
+        logger.info(f"Generated {len(translations)} translations")
 
     logger.info("Dictionary workflow completed successfully")
     return DictionaryWorkflowResult(entry=base_entry, translations=translations)

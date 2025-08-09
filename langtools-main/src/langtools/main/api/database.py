@@ -1,5 +1,6 @@
 """Database configuration and connection management."""
 
+import json
 from sqlmodel import create_engine, Session
 from sqlalchemy.engine import Engine
 
@@ -8,7 +9,9 @@ from .config import settings
 
 def get_engine() -> Engine:
     """Create and return SQLModel engine for PostgreSQL."""
-    return create_engine(settings.database_url)
+    return create_engine(
+        settings.database_url, json_serializer=lambda obj: json.dumps(obj, ensure_ascii=False)
+    )
 
 
 def get_session() -> Session:
