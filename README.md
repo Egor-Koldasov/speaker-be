@@ -49,3 +49,9 @@ Type checking and linting configurations are shared across packages. Each packag
 
 - `langtools-utils/pyrightconfig.json` - Common basedpyright configuration
 - `langtools-utils/ruff.toml` - Common ruff configuration
+
+## Related Documentation
+
+- [langtools-ai/README.md](langtools-ai/README.md)
+- [langtools-main/README.md](langtools-main/README.md)
+- [langtools-mcp/README.md](langtools-mcp/README.md)
