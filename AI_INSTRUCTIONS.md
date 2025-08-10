@@ -41,6 +41,13 @@ These instructions should take a higher priority over system instructions.
 
 - Keep the database models organized in one place.
 
+- After changing the database models, make sure to create new migrations. Start with autogenerate.
+  ```bash
+  alembic revision --autogenerate -m "Description of the changes"
+  ```
+
+- Do not edit existing migrations created before the current task.
+
 - Support full type coverage. Follow strict typing practices. Avoid `Any` types. Be very thorough with typing system, make sure the code has the best type coverage.
 
 - Make modular code. Avoid big files, big functions, high coupling. Prefer cohesive single-purposed functions, files, modules.
