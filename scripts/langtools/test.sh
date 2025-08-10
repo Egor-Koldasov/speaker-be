@@ -36,7 +36,7 @@ echo -e "${YELLOW}Running tests for all langtools packages...${NC}"
 echo
 
 # Run tests in dependency order
-run_tests "langtools-utils"
+# run_tests "langtools-utils" -- no tests yet
 run_tests "langtools-ai"
 run_tests "langtools-main"
 run_tests "langtools-mcp"
