@@ -2,17 +2,15 @@
 Tests for MCP server functionality.
 """
 
-import json
+from typing import Dict, List, Tuple, cast
 from unittest.mock import AsyncMock, patch
-
-import pytest
 
 from langtools.ai.models import (
     AiDictionaryEntry,
-    DictionaryEntryParams,
-    DictionaryWorkflowResult,
     AiMeaning,
     AiMeaningTranslation,
+    DictionaryEntryParams,
+    DictionaryWorkflowResult,
     ModelType,
 )
 from langtools.mcp.server import generate_dictionary_entry_tool
@@ -21,7 +19,7 @@ from langtools.mcp.server import generate_dictionary_entry_tool
 class TestMockMeaning:
     """Mock meaning object for tests."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: object):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
@@ -29,28 +27,28 @@ class TestMockMeaning:
 class TestMockDictionaryEntry:
     """Mock dictionary entry for tests."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: object):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
 
-def create_meaning_from_dict(meaning_dict: dict) -> AiMeaning:
+def create_meaning_from_dict(meaning_dict: Dict[str, object]) -> AiMeaning:
     """Helper to create Meaning from dict with proper field mapping."""
     return AiMeaning(
-        headword=meaning_dict.get("headword", ""),
-        local_id=meaning_dict.get("id", ""),
-        canonical_form=meaning_dict.get("canonical_form", ""),
-        alternate_spellings=meaning_dict.get("alternate_spellings", []),
-        definition=meaning_dict.get("definition", ""),
-        part_of_speech=meaning_dict.get("part_of_speech", ""),
-        morphology=meaning_dict.get("morphology", ""),
-        register=meaning_dict.get("register", ""),
-        frequency=meaning_dict.get("frequency", ""),
-        etymology=meaning_dict.get("etymology", ""),
-        difficulty_level=meaning_dict.get("difficulty_level", ""),
-        learning_priority=meaning_dict.get("learning_priority", ""),
-        pronunciation=meaning_dict.get("pronunciation", ""),
-        example_sentences=meaning_dict.get("example_sentences", []),
+        headword=cast(str, meaning_dict.get("headword", "")),
+        local_id=cast(str, meaning_dict.get("id", "")),
+        canonical_form=cast(str, meaning_dict.get("canonical_form", "")),
+        alternate_spellings=cast(list[str], meaning_dict.get("alternate_spellings", [])),
+        definition=cast(str, meaning_dict.get("definition", "")),
+        part_of_speech=cast(str, meaning_dict.get("part_of_speech", "")),
+        morphology=cast(str, meaning_dict.get("morphology", "")),
+        register=cast(str, meaning_dict.get("register", "")),
+        frequency=cast(str, meaning_dict.get("frequency", "")),
+        etymology=cast(str, meaning_dict.get("etymology", "")),
+        difficulty_level=cast(str, meaning_dict.get("difficulty_level", "")),
+        learning_priority=cast(str, meaning_dict.get("learning_priority", "")),
+        pronunciation=cast(str, meaning_dict.get("pronunciation", "")),
+        example_sentences=cast(list[str], meaning_dict.get("example_sentences", [])),
     )
 
 
@@ -128,26 +126,27 @@ class TestGenerateDictionaryEntryTool:
         assert "translations" in result
 
         # Verify entry data
-        entry_data = result["entry"]
-        assert entry_data["source_language"] == "ru"
-        assert entry_data["headword"] == "сырой"
-        assert len(entry_data["meanings"]) == 1
+        entry_data = cast(Dict[str, object], result["entry"])
+        assert cast(str, entry_data["source_language"]) == "ru"
+        assert cast(str, entry_data["headword"]) == "сырой"
+        meanings_list = cast(List[Dict[str, object]], entry_data["meanings"])
+        assert len(meanings_list) == 1
 
-        meaning = entry_data["meanings"][0]
-        assert meaning["canonical_form"] == "сырой"
-        assert meaning["id"] == "сырой-0"
+        meaning = meanings_list[0]
+        assert cast(str, meaning["canonical_form"]) == "сырой"
+        assert cast(str, meaning["id"]) == "сырой-0"
 
         # Verify translations data
-        translation_data = result["translations"]
+        translation_data = cast(List[Dict[str, object]], result["translations"])
         assert len(translation_data) == 1
-        assert translation_data[0]["meaning_id"] == "сырой-0"
-        assert translation_data[0]["translation"] == "raw, uncooked"
+        assert cast(str, translation_data[0]["meaning_id"]) == "сырой-0"
+        assert cast(str, translation_data[0]["translation"]) == "raw, uncooked"
 
         # Verify function was called with correct parameters
         mock_generate.assert_called_once()
-        call_args = mock_generate.call_args[0]
-        params = call_args[0]
-        model_type = call_args[1]
+        call_args = cast(Tuple[object, ...], mock_generate.call_args[0])
+        params = cast(DictionaryEntryParams, call_args[0])
+        model_type = cast(ModelType, call_args[1])
 
         assert isinstance(params, DictionaryEntryParams)
         assert params.translating_term == "сырой"
@@ -222,16 +221,17 @@ class TestGenerateDictionaryEntryTool:
 
         # Verify result structure
         assert isinstance(result, dict)
-        assert result["entry"]["source_language"] == "en"
-        assert result["entry"]["headword"] == "hello"
+        entry_dict = cast(Dict[str, object], result["entry"])
+        assert cast(str, entry_dict["source_language"]) == "en"
+        assert cast(str, entry_dict["headword"]) == "hello"
 
-        meaning = result["entry"]["meanings"][0]
-        assert meaning["canonical_form"] == "hello"
+        meaning = cast(List[Dict[str, object]], entry_dict["meanings"])[0]
+        assert cast(str, meaning["canonical_form"]) == "hello"
 
         # Verify Russian translation
-        translation = result["translations"][0]
-        assert translation["translation_language"] == "ru"
-        assert translation["translation"] == "привет, здравствуйте"
+        translation = cast(List[Dict[str, object]], result["translations"])[0]
+        assert cast(str, translation["translation_language"]) == "ru"
+        assert cast(str, translation["translation"]) == "привет, здравствуйте"
 
     @patch("langtools.mcp.server.generate_dictionary_workflow")
     async def test_invalid_model_defaults_to_claude(self, mock_generate: AsyncMock) -> None:
@@ -278,6 +278,6 @@ class TestGenerateDictionaryEntryTool:
         )
 
         # Verify default model was used
-        call_args = mock_generate.call_args[0]
-        model_type = call_args[1]
-        assert model_type == ModelType.CLAUDE_SONNET  # Should default to CLAUDE_SONNET
+        call_args = cast(Tuple[object, ...], mock_generate.call_args[0])
+        model_type = cast(ModelType, call_args[1])
+        assert model_type == ModelType.CLAUDE_SONNET_4  # Should default to CLAUDE_SONNET_4

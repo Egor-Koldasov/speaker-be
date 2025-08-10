@@ -4,28 +4,18 @@ Run with: python -m langtools.mcp.test_integration
 """
 
 import asyncio
-import json
 import logging
 import os
-from typing import Dict, Any
+from typing import Dict, List, cast
 
-from langtools.ai.models import (
-    AiDictionaryEntry,
-    DictionaryEntryParams,
-    DictionaryWorkflowResult,
-    AiMeaning,
-    AiMeaningTranslation,
-    ModelType,
-)
 from langtools.mcp.server import generate_dictionary_entry_tool
-
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def create_mock_meaning(**kwargs) -> Dict[str, Any]:
+def create_mock_meaning(**kwargs: object) -> Dict[str, object]:
     """Create a mock meaning dict for testing."""
     return {
         "headword": kwargs.get("headword", ""),
@@ -50,12 +40,12 @@ def create_mock_meaning(**kwargs) -> Dict[str, Any]:
 class MockMeaning:
     """Mock meaning object for tests."""
 
-    def __init__(self, **kwargs):
-        for key, value in kwargs.items():
-            setattr(self, key, value)
+    def __init__(self, **kwargs: object):
+        self.canonical_form = cast(str, kwargs.get("canonical_form", ""))
+        self.definition = cast(str, kwargs.get("definition", ""))
 
 
-def create_meaning_obj_from_dict(meaning_dict: dict) -> MockMeaning:
+def create_meaning_obj_from_dict(meaning_dict: Dict[str, object]) -> MockMeaning:
     """Helper to create MockMeaning from dict."""
     return MockMeaning(
         headword=meaning_dict.get("headword", ""),
@@ -94,36 +84,32 @@ async def test_mcp_tool_integration():
 
         print(f"✅ MCP tool returned result type: {type(result)}")
 
-        if isinstance(result, dict):
-            print(f"📊 Result keys: {list(result.keys())}")
+        result_dict: Dict[str, object] = result
+        print(f"📊 Result keys: {list(result_dict.keys())}")
 
-            if "entry" in result:
-                entry = result["entry"]
-                print(f"🔍 Entry headword: {entry.get('headword', 'N/A')}")
-                print(f"🌍 Source language: {entry.get('source_language', 'N/A')}")
+        if "entry" in result_dict:
+            entry = cast(Dict[str, object], result_dict["entry"])
+            print(f"🔍 Entry headword: {entry.get('headword', 'N/A')}")
+            print(f"🌍 Source language: {entry.get('source_language', 'N/A')}")
 
-                meanings = entry.get("meanings", [])
-                print(f"📚 Number of meanings: {len(meanings)}")
+            meanings = cast(List[Dict[str, object]], entry.get("meanings", []))
+            print(f"📚 Number of meanings: {len(meanings)}")
 
-                if meanings:
-                    meaning = meanings[0]
-                    print(
-                        f"📖 First meaning canonical form: {meaning.get('canonical_form', 'N/A')}"
-                    )
-                    print(
-                        f"📝 First meaning definition: {meaning.get('definition', 'N/A')[:100]}..."
-                    )
+            if meanings:
+                meaning = meanings[0]
+                print(f"📖 First meaning canonical form: {meaning.get('canonical_form', 'N/A')}")
+                definition_short = cast(str, meaning.get("definition", "N/A"))[:100]
+                print(f"📝 First meaning definition: {definition_short}...")
 
-            if "translations" in result:
-                translations = result["translations"]
-                print(f"🌐 Number of translations: {len(translations)}")
+        if "translations" in result_dict:
+            translations = cast(List[Dict[str, object]], result_dict["translations"])
+            print(f"🌐 Number of translations: {len(translations)}")
 
-                if translations:
-                    translation = translations[0]
-                    print(f"🔤 First translation: {translation.get('translation', 'N/A')}")
-                    print(
-                        f"🗣️ First translation pronunciation: {translation.get('pronunciation', 'N/A')}"
-                    )
+            if translations:
+                translation = translations[0]
+                print(f"🔤 First translation: {translation.get('translation', 'N/A')}")
+                pron = translation.get("pronunciation", "N/A")
+                print(f"🗣️ First translation pronunciation: {pron}")
 
         # Test English to Spanish
         print("\n" + "=" * 50)
@@ -136,15 +122,16 @@ async def test_mcp_tool_integration():
             model="claude-sonnet-4-0",
         )
 
-        if isinstance(result2, dict) and "entry" in result2:
-            entry = result2["entry"]
+        if "entry" in result2:
+            entry = cast(Dict[str, object], result2["entry"])
             print(f"✅ English test - headword: {entry.get('headword', 'N/A')}")
             print(f"🌍 Source language: {entry.get('source_language', 'N/A')}")
 
             if "translations" in result2:
-                translations = result2["translations"]
+                translations = cast(List[Dict[str, object]], result2["translations"])
                 if translations:
-                    print(f"🇪🇸 Spanish translation: {translations[0].get('translation', 'N/A')}")
+                    first_translation = translations[0]
+                    print(f"🇪🇸 Spanish translation: {first_translation.get('translation', 'N/A')}")
 
         print("\n✅ All MCP integration tests completed successfully!")
         return True
@@ -168,7 +155,9 @@ async def test_mock_workflow_result():
                 headword="test",
                 id="test-0",
                 canonical_form="test",
-                definition="A procedure intended to establish the quality or reliability of something",
+                definition=(
+                    "A procedure intended to establish the quality or reliability of something"
+                ),
                 part_of_speech="noun",
                 morphology="countable noun",
                 register="neutral",
@@ -182,30 +171,33 @@ async def test_mock_workflow_result():
         ],
     }
 
-    # Create mock translations
-    translations_dict = [
-        {
-            "meaning_id": "test-0",
-            "headword": "prueba",
-            "canonical_form": "prueba",
-            "translation_language": "es",
-            "translation": "prueba, examen",
-            "definition": "Procedimiento para establecer la calidad de algo",
-            "part_of_speech": "sustantivo",
-            "morphology": "sustantivo femenino",
-            "register": "neutral",
-            "frequency": "común",
-            "etymology": "del latín proba",
-            "difficulty_level": "intermedio",
-            "learning_priority": "medio",
-            "pronunciation": "ˈpɾweβa",
-            "pronunciation_tips": "Stressed on first syllable",
-            "example_sentences_translations": ["Esta es una prueba", "La prueba fue difícil"],
-        }
-    ]
+    # Example mock translations (not used further, shown for reference)
+    # translations_list = [
+    #     {
+    #         "meaning_id": "test-0",
+    #         "headword": "prueba",
+    #         "canonical_form": "prueba",
+    #         "translation_language": "es",
+    #         "translation": "prueba, examen",
+    #         "definition": "Procedimiento para establecer la calidad de algo",
+    #         "part_of_speech": "sustantivo",
+    #         "morphology": "sustantivo femenino",
+    #         "register": "neutral",
+    #         "frequency": "común",
+    #         "etymology": "del latín proba",
+    #         "difficulty_level": "intermedio",
+    #         "learning_priority": "medio",
+    #         "pronunciation": "ˈpɾweβa",
+    #         "pronunciation_tips": "Stressed on first syllable",
+    #         "example_sentences_translations": ["Esta es una prueba", "La prueba fue difícil"],
+    #     }
+    # ]
 
     # Convert to objects for inspection
-    meanings = [create_meaning_obj_from_dict(m) for m in base_entry_dict["meanings"]]
+    meanings = [
+        create_meaning_obj_from_dict(cast(Dict[str, object], m))
+        for m in base_entry_dict["meanings"]
+    ]
     if meanings:
         print(f"📚 Mock meaning canonical form: {meanings[0].canonical_form}")
         print(f"📖 Mock meaning definition: {meanings[0].definition}")

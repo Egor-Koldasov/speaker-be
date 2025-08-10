@@ -2,7 +2,6 @@
 
 import logging
 
-
 from fastmcp import Context, FastMCP
 from pydantic import BaseModel, Field
 
@@ -14,7 +13,6 @@ from langtools.ai.models import (
     DictionaryWorkflowResult,
     ModelType,
 )
-
 from langtools.mcp.query_auth_middleware import QueryAuthMiddleware
 
 
@@ -111,7 +109,6 @@ class DictionaryEntryRequest(BaseModel):
     )
 
 
-@mcp.tool(enabled=False)
 async def generate_dictionary_entry_tool(
     translating_term: str,
     user_learning_languages: str,
@@ -169,8 +166,8 @@ async def generate_dictionary_entry_tool(
         try:
             model_type = ModelType(model)
         except ValueError:
-            # Default to Claude Sonnet if invalid model provided
-            model_type = ModelType.CLAUDE_SONNET
+            # Default to Claude Sonnet 4 if invalid model provided
+            model_type = ModelType.CLAUDE_SONNET_4
             logger.warning(f"Invalid model {model}, using default: {model_type.value}")
 
         # Call the AI workflow function
@@ -180,8 +177,9 @@ async def generate_dictionary_entry_tool(
         response: dict[str, object] = result.model_dump()
 
         logger.info(
-            f"Successfully generated dictionary workflow with {len(result.entry.meanings)} meanings "
-            f"and {len(result.translations)} translations"
+            "Successfully generated dictionary workflow with %d meanings and %d translations",
+            len(result.entry.meanings),
+            len(result.translations),
         )
         logger.debug(f"Response: {response}")
         return response
@@ -190,6 +188,10 @@ async def generate_dictionary_entry_tool(
         logger.exception("Failed to generate dictionary entry")
         error_msg = f"Dictionary entry generation failed: {e!s}"
         raise DictionaryGenerationError(error_msg) from e
+
+
+# Register the tool without wrapping the function reference (preserve callability in tests)
+mcp.tool(enabled=False)(generate_dictionary_entry_tool)
 
 
 @mcp.tool()
