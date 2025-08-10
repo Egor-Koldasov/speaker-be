@@ -15,11 +15,11 @@ from langtools.ai.functions import (
 )
 from langtools.ai.models import (
     AiDictionaryEntry,
+    AiMeaning,
+    AiMeaningTranslation,
     BaseDictionaryParams,
     DictionaryEntryParams,
     DictionaryWorkflowResult,
-    AiMeaning,
-    AiMeaningTranslation,
     ModelType,
     TranslationParams,
 )
@@ -72,7 +72,7 @@ class TestGenerateBaseDictionaryEntry:
             meanings=[
                 AiMeaning(
                     headword="сырой",
-                    local_id="сырой-0",
+                    local_id="сырой-1",
                     canonical_form="сырой",
                     alternate_spellings=[],
                     definition="Не подвергшийся тепловой обработке",
@@ -103,7 +103,7 @@ class TestGenerateBaseDictionaryEntry:
         assert result == expected_result
         assert result.source_language == "ru"
         assert len(result.meanings) == 1
-        assert result.meanings[0].local_id == "сырой-0"
+        assert result.meanings[0].local_id == "сырой-1"
 
         # Verify mocks were called correctly
         mock_client_class.assert_called_once_with(ModelType.CLAUDE_SONNET_4)
@@ -116,7 +116,30 @@ class TestGenerateMeaningTranslations:
 
     async def test_validate_empty_meanings(self) -> None:
         """Test validation fails for entry with no meanings."""
-        base_entry = AiDictionaryEntry(headword="test", source_language="ru", meanings=[])
+        # Construct a valid entry then clear meanings to simulate invalid state
+        base_entry = AiDictionaryEntry(
+            headword="test",
+            source_language="ru",
+            meanings=[
+                AiMeaning(
+                    headword="test",
+                    local_id="test-1",
+                    canonical_form="test",
+                    alternate_spellings=[],
+                    definition="test definition",
+                    part_of_speech="noun",
+                    morphology="noun",
+                    register="neutral",
+                    frequency="common",
+                    etymology="test",
+                    difficulty_level="beginner",
+                    learning_priority="high",
+                    pronunciation="test",
+                    example_sentences=["test", "example"],
+                )
+            ],
+        )
+        base_entry.meanings = []  # simulate empty meanings after construction
         params = TranslationParams(entry=base_entry, translation_language="en")
 
         with pytest.raises(
@@ -237,7 +260,28 @@ class TestLegacyGenerateDictionaryEntry:
     @patch("langtools.ai.functions.generate_base_dictionary_entry")
     async def test_legacy_function_calls_base_entry(self, mock_base_entry: Mock) -> None:
         """Test that legacy function calls the base entry generator."""
-        base_entry = AiDictionaryEntry(headword="test", source_language="en", meanings=[])
+        base_entry = AiDictionaryEntry(
+            headword="test",
+            source_language="en",
+            meanings=[
+                AiMeaning(
+                    headword="test",
+                    local_id="test-1",
+                    canonical_form="test",
+                    alternate_spellings=[],
+                    definition="test",
+                    part_of_speech="noun",
+                    morphology="noun",
+                    register="neutral",
+                    frequency="common",
+                    etymology="test",
+                    difficulty_level="beginner",
+                    learning_priority="high",
+                    pronunciation="tɛst",
+                    example_sentences=["a test", "another"],
+                )
+            ],
+        )
         mock_base_entry.return_value = base_entry
 
         params = DictionaryEntryParams(
