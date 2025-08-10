@@ -19,7 +19,7 @@ async def client() -> AsyncIterator[AsyncClient]:
     - Staging environment (https://staging-api.example.com)
     - Production environment (https://api.example.com)
     """
-    async with AsyncClient(base_url=settings.test_api_url, timeout=30.0) as ac:
+    async with AsyncClient(base_url=settings.test_api_url, timeout=10.0) as ac:
         yield ac
 
 
