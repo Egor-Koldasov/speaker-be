@@ -9,11 +9,11 @@ from typing import List, NoReturn, Optional
 from .client import LLMClient
 from .models import (
     AiDictionaryEntry,
+    AiMeaningTranslation,
     BaseDictionaryParams,
     DictionaryEntryParams,
     DictionaryWorkflowHooks,
     DictionaryWorkflowResult,
-    AiMeaningTranslation,
     ModelType,
     TranslationParams,
 )
@@ -136,7 +136,10 @@ async def generate_meaning_translations(
 
 
 async def generate_dictionary_workflow(
-    params: DictionaryEntryParams, model: ModelType, hooks: Optional[DictionaryWorkflowHooks] = None
+    params: DictionaryEntryParams,
+    model: ModelType,
+    hooks: Optional[DictionaryWorkflowHooks] = None,
+    cache_only: bool = False,
 ) -> DictionaryWorkflowResult:
     """
     Complete dictionary generation workflow with base entry and translations.
@@ -173,6 +176,9 @@ async def generate_dictionary_workflow(
 
     # Generate if not cached
     if not base_entry:
+        if cache_only:
+            # Do not call AI when cache-only mode is enabled
+            raise LLMAPIError("AI calls are disabled for this request")
         base_entry = await generate_base_dictionary_entry(base_params, model)
         logger.info(f"Generated base entry with {len(base_entry.meanings)} meanings")
 
@@ -194,6 +200,9 @@ async def generate_dictionary_workflow(
 
     # Generate if not cached
     if not translations:
+        if cache_only:
+            # Do not call AI when cache-only mode is enabled
+            raise LLMAPIError("AI calls are disabled for this request")
         translations = await generate_meaning_translations(translation_params, model)
         logger.info(f"Generated {len(translations)} translations")
 

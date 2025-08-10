@@ -4,6 +4,8 @@ import traceback
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel, Field
+
 from langtools.ai import (
     AiDictionaryEntry,
     AiMeaningTranslation,
@@ -17,7 +19,7 @@ from langtools.ai import (
     ValidationError,
     generate_dictionary_workflow,
 )
-from pydantic import BaseModel, Field
+
 from ..auth.dependencies import get_current_auth_user
 from ..database import get_session
 from ..models import AuthUser
@@ -80,7 +82,8 @@ async def generate_dictionary_entry(
             base_params: BaseDictionaryParams,
         ) -> Optional[AiDictionaryEntry]:
             """Retrieve cached base entry from database if not forced to regenerate."""
-            if request.regenerate_full:
+            # For E2E users (cache-only mode), ignore regeneration flags and use cache if available
+            if not is_e2e_user and request.regenerate_full:
                 return None
 
             # Use synchronous database session
@@ -98,7 +101,8 @@ async def generate_dictionary_entry(
             trans_params: TranslationParams,
         ) -> Optional[list[AiMeaningTranslation]]:
             """Retrieve cached translations from database if not forced to regenerate."""
-            if request.regenerate_full or request.regenerate_translations:
+            # For E2E users (cache-only mode), ignore regeneration flags and use cache if available
+            if not is_e2e_user and (request.regenerate_full or request.regenerate_translations):
                 return None
 
             with get_session() as session:
@@ -125,8 +129,19 @@ async def generate_dictionary_entry(
             retrieve_translations=retrieve_translations,
         )
 
+        # Determine if this is an E2E test user (heuristic: example.com emails)
+        # Prefer persisted flag when available; fallback to heuristic by email domain
+        is_e2e_user = getattr(current_user, "is_e2e_test", False) or current_user.email.endswith(
+            "@example.com"
+        )
+
         # Execute the workflow with hooks
-        result = await generate_dictionary_workflow(params, request.model, hooks)
+        result = await generate_dictionary_workflow(
+            params,
+            request.model,
+            hooks,
+            cache_only=is_e2e_user,
+        )
 
         # Save results to database
         with get_session() as session:

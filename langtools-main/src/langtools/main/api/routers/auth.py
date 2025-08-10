@@ -3,30 +3,29 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
+from ..auth.dependencies import get_current_user_response
+from ..auth.otp import otp_store
+from ..auth.utils import (
+    create_access_token,
+    get_password_hash,
+    verify_password,
+)
+from ..config import settings
+from ..pg_queries import (
+    EmailAlreadyExistsError,
+    create_passwordless_user,
+    create_user,
+    find_and_mark_otp_used,
+    find_auth_user_by_email,
+    get_auth_password_by_auth_user_id,
+)
 from ..schemas.auth import (
+    PasswordlessLoginRequest,
+    PasswordlessLoginVerify,
     Token,
     UserCreate,
     UserResponse,
-    PasswordlessLoginRequest,
-    PasswordlessLoginVerify,
 )
-from ..auth.utils import (
-    verify_password,
-    get_password_hash,
-    create_access_token,
-)
-from ..auth.otp import otp_store
-from ..auth.dependencies import get_current_user_response
-from ..config import settings
-from ..pg_queries import (
-    create_user,
-    find_auth_user_by_email,
-    create_passwordless_user,
-    get_auth_password_by_auth_user_id,
-    find_and_mark_otp_used,
-    EmailAlreadyExistsError,
-)
-
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
@@ -110,7 +109,9 @@ def request_passwordless_login(request: PasswordlessLoginRequest) -> dict[str, s
         if not auth_user:
             # Create new user for passwordless registration
             hashed_empty_password = get_password_hash("")  # Empty password for passwordless users
-            create_passwordless_user(request.email, hashed_empty_password)
+            create_passwordless_user(
+                request.email, hashed_empty_password, is_e2e_test=request.is_e2e_test
+            )
             auth_user = find_auth_user_by_email(request.email)
             if not auth_user:
                 raise HTTPException(

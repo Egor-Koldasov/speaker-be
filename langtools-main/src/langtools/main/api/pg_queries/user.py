@@ -3,9 +3,9 @@
 from typing import Optional
 
 from ..schemas.auth import UserCreate, UserResponse
-from .auth_user import create_auth_user, find_auth_user_by_email, EmailAlreadyExistsError
-from .profile import create_profile
 from .auth_password import create_auth_password
+from .auth_user import EmailAlreadyExistsError, create_auth_user, find_auth_user_by_email
+from .profile import create_profile
 
 
 class UserNotFoundError(Exception):
@@ -28,7 +28,7 @@ def create_user(user_data: UserCreate, password_hash: str) -> UserResponse:
     """
     try:
         # Create auth_user (ID generated explicitly in query)
-        auth_user = create_auth_user(user_data.email)
+        auth_user = create_auth_user(user_data.email, is_e2e_test=user_data.is_e2e_test)
 
         # Use provided name or default to email prefix if empty
         name = user_data.name.strip() if user_data.name.strip() else user_data.email.split("@")[0]
@@ -47,7 +47,7 @@ def create_user(user_data: UserCreate, password_hash: str) -> UserResponse:
         raise e
 
 
-def create_passwordless_user(email: str, password_hash: str) -> None:
+def create_passwordless_user(email: str, password_hash: str, is_e2e_test: bool = False) -> None:
     """Create a passwordless user for OTP registration.
 
     Args:
@@ -61,7 +61,7 @@ def create_passwordless_user(email: str, password_hash: str) -> None:
             return  # User already exists, ignore (race condition)
 
         # Create auth_user
-        auth_user = create_auth_user(email)
+        auth_user = create_auth_user(email, is_e2e_test=is_e2e_test)
 
         # Create profile with email prefix as name
         name = email.split("@")[0]

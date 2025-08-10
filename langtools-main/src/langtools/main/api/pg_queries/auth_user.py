@@ -1,6 +1,7 @@
 """AuthUser table database queries using SQLModel."""
 
 from typing import Optional
+
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import select
 
@@ -17,7 +18,7 @@ class EmailAlreadyExistsError(Exception):
     """Raised when trying to create a user with an existing email."""
 
 
-def create_auth_user(email: str) -> AuthUser:
+def create_auth_user(email: str, is_e2e_test: bool = False) -> AuthUser:
     """Create a new auth user and return the created user data.
 
     Args:
@@ -36,7 +37,7 @@ def create_auth_user(email: str) -> AuthUser:
             user_id = generate_pg_uuid()
 
             # Create new auth user instance with explicit ID
-            auth_user = AuthUser(id=user_id, email=email)
+            auth_user = AuthUser(id=user_id, email=email, is_e2e_test=is_e2e_test)
 
             session.add(auth_user)
             session.commit()

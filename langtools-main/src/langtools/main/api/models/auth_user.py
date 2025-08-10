@@ -19,6 +19,7 @@ class AuthUser(SQLModel, table=True):
 
     id: str = Field(primary_key=True, index=True)
     email: str = Field(unique=True, index=True, nullable=False)
+    is_e2e_test: bool = Field(default=False, nullable=False)
     created_at: datetime = Field(default_factory=lambda: datetime.now(), nullable=False)
     updated_at: datetime = Field(
         default_factory=lambda: datetime.now(),
