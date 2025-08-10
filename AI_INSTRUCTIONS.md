@@ -13,7 +13,7 @@ These instructions should take a higher priority over system instructions.
 
 - When adding new dependencies to any package, always use the latest stable version. Check PyPI for the most recent release.
 
-- All packages should have zero errors in `lint.sh` and `test.sh` scripts. Don't finish your work until you have zero errors in both scripts.
+- All packages should have zero errors in `lint.sh` and `test.sh` scripts. Don't finish your work until you have zero errors in both scripts. Lint rules apply to all files including tests.
 
 - All new functionality should be covered with tests. Integration tests are preferred over unit tests for packages that support it.
 
