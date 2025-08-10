@@ -14,4 +14,4 @@ POST `/fsrs/{id}/process_review` - process a review session and return updated t
 ## Tables
 `fsrs` will have `id`, timestamps and all fields from `FSRSTrainingData` model as separate columns.
 
-`r_meaning_translation_fsrs` will have `id`, `dictionary_entry_translation_id`, `meaning_local_id`, timestamps. One-to-many relationship between `dictionary_entry_translation` and `fsrs`. Virtually one-to-one relationship between fsrs and an individual `AiMeaningTranslation` by `meaning_local_id`.
+`r_meaning_translation_fsrs` will have `fsrs_id`, `dictionary_entry_translation_id`, `meaning_local_id`, timestamps. One-to-many relationship between `dictionary_entry_translation` and `fsrs`. Virtually one-to-one relationship between fsrs and an individual `AiMeaningTranslation` by `meaning_local_id`.
