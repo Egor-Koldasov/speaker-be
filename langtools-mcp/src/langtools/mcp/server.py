@@ -173,8 +173,25 @@ async def generate_dictionary_entry_tool(
         # Call the AI workflow function
         result: DictionaryWorkflowResult = await generate_dictionary_workflow(params, model_type)
 
-        # Convert Pydantic model to dict for MCP response
-        response: dict[str, object] = result.model_dump()
+        # Convert Pydantic models to dicts and add compatibility fields expected by clients/tests
+        entry_dict: dict[str, object] = result.entry.model_dump()
+        meanings = entry_dict.get("meanings", [])
+        if isinstance(meanings, list):
+            for meaning in meanings:
+                if isinstance(meaning, dict) and "local_id" in meaning:
+                    # Backward-compatible field name expected by consumers/tests
+                    meaning["id"] = meaning["local_id"]
+
+        translations_list: list[dict[str, object]] = [t.model_dump() for t in result.translations]
+        for t in translations_list:
+            if "meaning_local_id" in t:
+                # Backward-compatible field name expected by consumers/tests
+                t["meaning_id"] = t["meaning_local_id"]
+
+        response: dict[str, object] = {
+            "entry": entry_dict,
+            "translations": translations_list,
+        }
 
         logger.info(
             "Successfully generated dictionary workflow with %d meanings and %d translations",

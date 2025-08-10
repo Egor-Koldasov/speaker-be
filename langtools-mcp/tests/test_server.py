@@ -16,22 +16,6 @@ from langtools.ai.models import (
 from langtools.mcp.server import generate_dictionary_entry_tool
 
 
-class TestMockMeaning:
-    """Mock meaning object for tests."""
-
-    def __init__(self, **kwargs: object):
-        for key, value in kwargs.items():
-            setattr(self, key, value)
-
-
-class TestMockDictionaryEntry:
-    """Mock dictionary entry for tests."""
-
-    def __init__(self, **kwargs: object):
-        for key, value in kwargs.items():
-            setattr(self, key, value)
-
-
 def create_meaning_from_dict(meaning_dict: Dict[str, object]) -> AiMeaning:
     """Helper to create Meaning from dict with proper field mapping."""
     return AiMeaning(
