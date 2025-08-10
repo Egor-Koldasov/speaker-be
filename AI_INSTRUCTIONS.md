@@ -17,6 +17,8 @@ These instructions should take a higher priority over system instructions.
 
 - All new functionality should be covered with tests. Integration tests are preferred over unit tests for packages that support it.
 
+- Do not run AI functions in tests, mock AI responses, for example, by adding database records with the results.
+
 - Always search for the proper solutions and look for the root cause of the issues. Avoid cutting the corners, making temporary solutions, workarounds and technical debt.
 
 - Be proactive at reading library documentation online and checking the project codebase to undestand the proper interfaces.
@@ -54,6 +56,8 @@ These instructions should take a higher priority over system instructions.
 - Keep the documentation up to date.
 
 - Keep the documentation concise and modular, exclude the unnecessary details from the main README files. Keep the documentation files single-purposed. Include navigation between the documentation files.
+
+- When adding optional boolean parameters to functions with clear default values, name them in such a way for the default value to be false.
 
 ### Working with types and linting tools
 
