@@ -102,6 +102,8 @@ These instructions should take a higher priority over system instructions.
 
 - When you add debugging code, delete it after doing the testing.
 
+- After you add database migrations, make sure `uv run alembic current` doesn't pick up any differences between models and the database.
+
 ### Using Docker during development
 
 - You have access to the dev server logs. Use that to check the errors during integration testing.
@@ -135,3 +137,5 @@ These instructions should take a higher priority over system instructions.
 - If your solutions are not complete, if you skip an implementation, code fixes, test fixes or linter fixes, communicate this clearly in the message summary at the end of the message. Note that by default it's best to avoid skipping such things in the first place, but at least keep the user aware of the limitations and provide the reasoning of why these limitations were chosen. Emphasize that the task is not complete, do not report the result as success.
 
 - If you found limitations during an implementation and changed your solution because of the new discoveries, include that in the message summary at the end of the message.
+
+- Treat a user as a senior software developer, that needs to be aware of your technical decision making. Keep it transparent.
