@@ -43,7 +43,7 @@ These instructions should take a higher priority over system instructions.
 
 - Keep the database models organized in one place.
 
-- After changing the database models, make sure to create new migrations. Start with autogenerate.
+- After changing the database models, make sure to create new migrations. Don't create database migrations manually. Start with autogenerate.
   ```bash
   alembic revision --autogenerate -m "Description of the changes"
   ```
@@ -135,7 +135,7 @@ These instructions should take a higher priority over system instructions.
   docker compose restart api
   ```
 
-### Running bash commands
+### Common mistakes
 
 - Don't run commands with `&` at the end to run the process in the backround. It does not work in claude code environment! It will make the response stuck for 2 minutes until it reaches the timeout!
 
