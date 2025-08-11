@@ -1,103 +1,39 @@
 # langtools-main
 
-**Complete business logic package for language learning applications with FSRS spaced repetition, JWT authentication, and PostgreSQL integration.**
+**Complete business logic package for language learning applications with an api server.**
 
 Part of the langtools monorepo ecosystem, designed for MCP (Model Context Protocol) integration and production deployment.
 
-## Features
-
-- **🧠 FSRS Algorithm** - Advanced spaced repetition scheduler (20-30% more efficient than traditional methods)
-- **🔐 Complete Authentication** - JWT tokens, password hashing, OTP-based passwordless login
-- **🚀 Production-Ready API** - FastAPI server with async support and comprehensive validation
-- **🗃️ Database Integration** - PostgreSQL with Alembic migrations and organized query functions
-- **✅ Zero-Error Quality** - Strict type checking, linting, and comprehensive testing
-- **📧 Email Integration** - SMTP-based OTP delivery for passwordless authentication
-
-## Technology Stack
-
-- **API**: FastAPI with async/await support
-- **Database**: PostgreSQL with SQLAlchemy Core (not ORM)
-- **Authentication**: JWT (python-jose) + bcrypt password hashing
-- **Validation**: Pydantic v2 for request/response models
-- **Package Management**: UV for modern Python dependency management
-- **Quality**: basedpyright (type checking) + ruff (linting/formatting)
-- **Testing**: pytest with live database integration
-
 ## Quick Start
 
-### 1. Install Dependencies
 ```bash
-cd langtools-main
-uv sync --extra dev
+docker compose up -d
 ```
 
-### 2. Start Database
-```bash
-./scripts/db.sh start
-./scripts/db.sh migrate
-```
+Project uses Docker Compose to manage the development environment.
 
-### 3. Run API Server
-```bash
-uv run python run_api.py
-```
+  ```bash
+  # Check API logs
+  docker compose logs api
+
+  # Check Postgres logs
+  docker compose logs postgres
+
+  # After adding new packages, api needs to be restarted.
+  docker compose restart api
+  ```
 
 **API Documentation**: Visit `http://localhost:8000/docs` for interactive OpenAPI documentation.
 
-## FSRS Spaced Repetition
+## Architecture
 
-Simple functional API for the Free Spaced Repetition Scheduler algorithm:
-
-```python
-from langtools.main.fsrs import new_training_data, process_review, Rating
-from datetime import datetime, timezone
-
-# Create initial training data
-training_data = new_training_data()
-
-# Process a review
-review_time = datetime.now(timezone.utc)
-training_data = process_review(training_data, Rating.GOOD, review_time)
-
-print(f"Next review due: {training_data.due}")
-print(f"Reviews completed: {training_data.reps}")
-```
-
-### FSRS API Reference
-
-**Functions:**
-- `new_training_data() -> FSRSTrainingData` - Create initial training data
-- `process_review(training_data, rating, review_time) -> FSRSTrainingData` - Process review
-
-**Rating Enum:**
-- `Rating.AGAIN (1)` - Forgot the item
-- `Rating.HARD (2)` - Remembered with difficulty
-- `Rating.GOOD (3)` - Remembered after hesitation
-- `Rating.EASY (4)` - Remembered easily
-
-## Authentication API
-
-### Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `POST` | `/auth/register` | User registration with email/password |
-| `POST` | `/auth/login` | Password-based authentication (OAuth2 compatible) |
-| `POST` | `/auth/passwordless/request` | Request OTP for passwordless login |
-| `POST` | `/auth/passwordless/verify` | Verify OTP and receive JWT token |
-| `GET` | `/auth/me` | Get current authenticated user information |
-
-### Authentication Features
-
-- **JWT Tokens** - Configurable expiration with HS256 algorithm
-- **Password Security** - bcrypt hashing with automatic salt generation
-- **Passwordless Login** - Email-based OTP system with SMTP integration
-- **OAuth2 Compatible** - Standard password flow support
-- **E2E Test Support** - Isolated test users for development
+**Separation of Concerns** - Clear boundaries between API, business logic, and database.
 
 ## Database
 
 ### Table Structure
+
+Tables are organized to separate data with different access levels. Fields with different access levels are stored in separate tables.
 
 #### Common table columns
 
@@ -110,26 +46,22 @@ print(f"Reviews completed: {training_data.reps}")
 
 ### Database Management
 
+alembic is used for database migrations.
+
 ```bash
-# Start PostgreSQL container
-./scripts/db.sh start
+# Apply all migrations
+uv run alembic upgrade head
 
-# Run migrations
-./scripts/db.sh migrate
+# Generate a new migration
+uv run alembic revision --autogenerate -m "Description of the changes"
 
-# Check status
-./scripts/db.sh status
-
-# Connect to database shell
-./scripts/db.sh shell
-
-# Reset database (development only)
-./scripts/db.sh reset
+# Check if database migrations are up to date with the models
+uv run alembic check
 ```
 
 ### Query Organization
 
-All database queries are organized in domain-specific modules:
+All database queries are wrapped in functions and organized by domain in `api/pg_queries/{domain}.py` files. All database operations are executed through query functions. Direct SQLAlchemy queries in business logic are forbidden.
 
 ```python
 # In pg_queries/learner.py
@@ -143,154 +75,40 @@ from ..pg_queries.learner import create_user
 created_user = create_user(user.name, user.email, hashed_password)
 ```
 
-**Rules:**
-- No direct SQLAlchemy queries in business logic
-- All database operations use query functions
-- Strong typing with TypedDict for results
-- Custom exceptions for domain errors
-
 ### Mutations
 
-- Endpoints that mutate the database should run queries in transaction.
+Endpoints that mutate the database should run queries in transaction.
 
-## Development
+## Endpoint data format
 
-### Quality Standards
-
-This project maintains **zero-error quality gates**:
-
-```bash
-# Run full quality checks
-./scripts/lint.sh
-
-# Run test suite
-./scripts/test.sh
+Endpoint data is structured to the keep data shape changes minimal. A typical endpoint item is a flat object with property names identical to the DB table names with column names unchanged and without extra properties.
+```json
+{
+  "auth_user": {
+    "is_e2e_test": false,
+    "email": "koldasov3@gmail.com",
+    "id": "01988a87-117f-75f9-88d1-aca75a7f4e0b",
+    "created_at": "2025-08-08T16:32:44.417217",
+    "updated_at": "2025-08-08T16:32:44.417223"
+  },
+  "profile": {
+    "name": "Egor",
+    "id": "01988a87-1192-72f0-b969-bb58a27cfe11",
+    "created_at": "2025-08-08T16:32:44.435024",
+    "auth_user_id": "01988a87-117f-75f9-88d1-aca75a7f4e0b",
+    "updated_at": "2025-08-08T16:32:44.435030"
+  }
+}
 ```
 
-**Quality Tools:**
-- **basedpyright** - Strict type checking (no `Any` types allowed)
-- **ruff** - Fast linting and formatting
-- **pytest** - Comprehensive testing with live database
-
-### Testing
+## Testing
 
 Tests run against **live API servers** (not mocked) for true end-to-end validation:
 
 ```bash
 # Test against local server
-uv run pytest tests/
-
-# Test against staging environment
-TEST_API_URL=https://staging-api.example.com uv run pytest tests/
-
-# Test against custom environment
-TEST_API_URL=http://localhost:3000 uv run pytest tests/
+./scripts/test.sh
 ```
 
-**Test Features:**
-- E2E test isolation with `is_e2e_test=True` flag
-- Live database integration
-- Environment-configurable API endpoints
-- Production-safe (only cleans test data)
+Test users are created with `is_e2e_test=true` column in `auth_user` table.
 
-### Package Management
-
-Uses modern **UV** for dependency management:
-
-```bash
-# Install dependencies
-uv sync --extra dev
-
-# Run commands with uv
-uv run python script.py
-uv run pytest tests/
-uv run alembic upgrade head
-```
-
-**No manual virtual environment management required.**
-
-## Architecture
-
-### Clean Architecture Principles
-
-- **Separation of Concerns** - Clear boundaries between API, business logic, and database
-- **Dependency Injection** - FastAPI's dependency system for auth and configuration
-- **Type Safety** - Comprehensive type hints throughout the codebase
-- **Async-First** - Full async/await support for optimal performance
-
-### Project Structure
-
-```
-src/langtools/main/
-├── api/                 # FastAPI application
-│   ├── routers/        # API endpoint definitions
-│   ├── auth/           # Authentication logic
-│   ├── models/         # SQLAlchemy table definitions
-│   ├── pg_queries/     # Domain-organized database queries
-│   └── schemas/        # Pydantic validation models
-├── fsrs/               # Spaced repetition algorithm
-└── tests/              # Comprehensive test suite
-```
-
-### Configuration
-
-Environment-based configuration with secure defaults:
-
-- **Database**: PostgreSQL connection settings
-- **JWT**: Secret key, algorithm, and expiration settings
-- **SMTP**: Email server configuration for OTP delivery
-- **API**: Server settings and CORS configuration
-
-## Production Deployment
-
-### Docker Support
-
-```bash
-# Start with Docker Compose
-docker-compose up -d
-
-# The API will be available at http://localhost:8000
-```
-
-### Environment Variables
-
-Key configuration variables for production:
-
-```bash
-# Database
-DATABASE_URL=postgresql://user:pass@host:5432/db
-
-# JWT Authentication
-SECRET_KEY=your-secret-key
-ACCESS_TOKEN_EXPIRE_MINUTES=30
-
-# SMTP (for OTP emails)
-SMTP_HOST=smtp.gmail.com
-SMTP_USERNAME=your-email@gmail.com
-SMTP_PASSWORD=your-app-password
-
-# Security
-ALLOW_E2E_TEST_USERS=false  # Disable in production
-```
-
-### Production Features
-
-- **Security Hardened** - bcrypt password hashing, JWT tokens, CORS configuration
-- **Database Migrations** - Alembic for schema versioning
-- **Error Handling** - Comprehensive exception handling with proper HTTP status codes
-- **API Documentation** - Automatic OpenAPI/Swagger documentation
-- **Health Checks** - Built-in endpoints for monitoring
-
-### Database Query Organization
-
-- All database queries must be wrapped in functions and organized by domain in `api/pg_queries/{domain}.py` files.
-
-- **No direct SQLAlchemy queries** in routers, business logic, or other modules.
-
-- **All database operations** must go through query functions.
-
-- **Organize by domain** - one file per table or related tables.
-
----
-
-**Part of the langtools ecosystem** - See the main repository for MCP integration and additional language learning tools.
