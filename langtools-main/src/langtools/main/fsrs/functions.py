@@ -1,6 +1,6 @@
 """FSRS functions for spaced repetition training data management."""
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from fsrs import Card as PyFSRSCard
 from fsrs import Rating as PyFSRSRating
@@ -86,10 +86,22 @@ def process_review(
 def _to_py_card(training_data: FSRSTrainingData) -> PyFSRSCard:
     """Convert FSRSTrainingData to py-fsrs Card."""
     card = PyFSRSCard()
-    card.due = training_data.due
+    # py-fsrs expects timezone-aware UTC datetimes
+    card.due = (
+        training_data.due.replace(tzinfo=timezone.utc)
+        if training_data.due.tzinfo is None
+        else training_data.due.astimezone(timezone.utc)
+    )
     card.stability = training_data.stability
     card.difficulty = training_data.difficulty
     card.state = PyFSRSState(training_data.state.value)
     card.step = training_data.step
-    card.last_review = training_data.last_review
+    if training_data.last_review is not None:
+        card.last_review = (
+            training_data.last_review.replace(tzinfo=timezone.utc)
+            if training_data.last_review.tzinfo is None
+            else training_data.last_review.astimezone(timezone.utc)
+        )
+    else:
+        card.last_review = None
     return card
