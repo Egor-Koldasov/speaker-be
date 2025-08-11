@@ -1,6 +1,7 @@
 # Unstructured upcoming plans
 
-## Store `is_e2e_test` in `auth_user` table
+## `/generate` endpoint should return db table rows in the response.
+`dictionary_entry`, `dictionary_entry_translation`, `r_user_dictionary_entry`.
 
 ## Draft training prompts
 
