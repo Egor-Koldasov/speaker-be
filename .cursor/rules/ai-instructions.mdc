@@ -2,6 +2,14 @@
 alwaysApply: true
 ---
 
-Follow `AI_INSTRUCTIONS.md` file instructions. You should read the file before doing anything else. Read the file before doing any action, making any reasoning and giving any answer.
+MANDATORY FIRST STEP: Read these instruction files and confirm you've read them:
+- [README.md](/README.md)
+- [AI_INSTRUCTIONS.md](/AI_INSTRUCTIONS.md)
 
-@AI_INSTRUCTIONS.md
+You must explicitly state "I have read the README and AI instructions" before proceeding with any task.
+
+
+
+
+
+
