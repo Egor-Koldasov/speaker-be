@@ -145,6 +145,23 @@ These instructions should take a higher priority over system instructions.
 
 - The rule above is repeated three times to make sure you understand the importance of this rule.
 
+- Don't create database migrations manually. Start with autogenerate.
+  ```bash
+  alembic revision --autogenerate -m "Description of the changes"
+  ```
+
+- Don't create database migrations manually. Start with autogenerate.
+  ```bash
+  alembic revision --autogenerate -m "Description of the changes"
+  ```
+
+- Don't create database migrations manually. Start with autogenerate.
+  ```bash
+  alembic revision --autogenerate -m "Description of the changes"
+  ```
+
+- The rule above is repeated three times to make sure you understand the importance of this rule.
+
 ### Communication
 
 - If your solutions are not complete, if you skip an implementation, code fixes, test fixes or linter fixes, communicate this clearly in the message summary at the end of the message. Note that by default it's best to avoid skipping such things in the first place, but at least keep the user aware of the limitations and provide the reasoning of why these limitations were chosen. Emphasize that the task is not complete, do not report the result as success.
