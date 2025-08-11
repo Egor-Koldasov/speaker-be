@@ -3,11 +3,12 @@
 from datetime import datetime
 from typing import Any, cast
 
-from langtools.ai import AiDictionaryEntry, AiMeaningTranslation
 import sqlalchemy as sa
 from sqlalchemy import JSON, func
 from sqlalchemy.orm import declared_attr
 from sqlmodel import Field, SQLModel
+
+from langtools.ai import AiDictionaryEntry, AiMeaningTranslation
 
 
 class DictionaryEntry(SQLModel, table=True):
@@ -41,8 +42,8 @@ class RUserDictionaryEntry(SQLModel, table=True):
     __tablename__ = cast(declared_attr[str], "r_user_dictionary_entry")
 
     id: str = Field(primary_key=True, index=True)
-    auth_user_id: str = Field(index=True, nullable=False)
-    dictionary_entry_id: str = Field(index=True, nullable=False)
+    auth_user_id: str = Field(foreign_key="auth_user.id", index=True, nullable=False)
+    dictionary_entry_id: str = Field(foreign_key="dictionary_entry.id", index=True, nullable=False)
     created_at: datetime = Field(default_factory=lambda: datetime.now(), nullable=False)
     updated_at: datetime = Field(
         default_factory=lambda: datetime.now(),
@@ -60,7 +61,7 @@ class DictionaryEntryTranslation(SQLModel, table=True):
     __tablename__ = cast(declared_attr[str], "dictionary_entry_translation")
 
     id: str = Field(primary_key=True, index=True)
-    dictionary_entry_id: str = Field(index=True, nullable=False)
+    dictionary_entry_id: str = Field(foreign_key="dictionary_entry.id", index=True, nullable=False)
     translation_language: str = Field(index=True, nullable=False)
     json_data: list[dict[str, Any]] = Field(sa_column=sa.Column(JSON, nullable=False))  # type: ignore[valid-type]
     created_at: datetime = Field(default_factory=lambda: datetime.now(), nullable=False)
