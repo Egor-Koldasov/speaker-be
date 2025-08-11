@@ -5,6 +5,13 @@ from typing import TypedDict, cast
 import pytest
 from httpx import AsyncClient
 
+from langtools.ai.models import AiDictionaryEntry, AiMeaning, AiMeaningTranslation
+
+# DB seeding helpers to avoid AI calls in tests (cache-only mode for e2e users)
+from langtools.main.api.database import get_session
+from langtools.main.api.pg_queries import dictionary as dictionary_queries
+from langtools.main.api.pg_queries.auth_user import find_auth_user_by_email
+
 
 class TestUserData(TypedDict):
     """Test user data type."""
@@ -13,6 +20,103 @@ class TestUserData(TypedDict):
     email: str
     password: str
     is_e2e_test: bool
+
+
+def _make_ai_entry(term: str, source_language: str = "en") -> AiDictionaryEntry:
+    """Create a minimal valid AiDictionaryEntry with one meaning."""
+    meaning = AiMeaning(
+        headword=term,
+        local_id=f"{term}-1",
+        canonical_form=term,
+        alternate_spellings=[],
+        definition=f"Definition of {term}",
+        part_of_speech="noun",
+        semantic_field=None,
+        pronunciation="/term/",
+        tone_notation=None,
+        syllable_count=None,
+        phonetic_variations=None,
+        morphology="N/A",
+        register="neutral",
+        frequency="common",
+        etymology="N/A",
+        difficulty_level="beginner",
+        learning_priority="essential",
+        common_mistakes=None,
+        mnemonic_hints=None,
+        practice_suggestions=None,
+        example_sentences=[f"{term} example 1.", f"{term} example 2."],
+        collocations=None,
+        synonyms=None,
+        antonyms=None,
+    )
+    return AiDictionaryEntry(headword=term, source_language=source_language, meanings=[meaning])
+
+
+def _make_ai_translations(
+    entry: AiDictionaryEntry, translation_language: str
+) -> list[AiMeaningTranslation]:
+    """Create minimal valid translations for each meaning in entry."""
+    translations: list[AiMeaningTranslation] = []
+    for m in entry.meanings:
+        translations.append(
+            AiMeaningTranslation(
+                meaning_local_id=m.local_id,
+                headword=m.headword,
+                canonical_form=f"{m.canonical_form}-{translation_language}",
+                translation_language=translation_language,
+                translation=f"{m.headword}-{translation_language}",
+                definition=f"Translation of {m.headword} to {translation_language}",
+                part_of_speech=m.part_of_speech,
+                semantic_field=None,
+                pronunciation="/tr/",
+                pronunciation_tips="Tip",
+                tone_notation=None,
+                tone_tips=None,
+                morphology="N/A",
+                register="neutral",
+                frequency="common",
+                etymology="N/A",
+                difficulty_level="beginner",
+                learning_priority="essential",
+                common_mistakes=None,
+                mnemonic_hints=None,
+                practice_suggestions=None,
+                example_sentences_translations=[
+                    f"{m.headword} {translation_language} ex1",
+                    f"{m.headword} {translation_language} ex2",
+                ],
+                collocations=None,
+            )
+        )
+    return translations
+
+
+def _seed_entry_and_optional_translation(
+    user_email: str, term: str, translation_language: str | None
+) -> None:
+    """Seed base entry and optionally a translation for the specified user."""
+    auth_user = find_auth_user_by_email(user_email)
+    assert auth_user is not None
+
+    with get_session() as session:
+        # Reuse existing entry for this term if present to attach multiple translations
+        existing_entry = dictionary_queries.find_latest_dictionary_entry_for_user(
+            session, auth_user.id, term
+        )
+        if existing_entry:
+            entry = existing_entry
+            # Use the stored AI entry for translation generation consistency
+            ai_entry = existing_entry.get_ai_dictionary_entry()
+        else:
+            ai_entry = _make_ai_entry(term)
+            entry = dictionary_queries.create_dictionary_entry(session, auth_user.id, ai_entry)
+        if translation_language:
+            ai_translations = _make_ai_translations(ai_entry, translation_language)
+            dictionary_queries.create_dictionary_translation(
+                session, entry.id, translation_language, ai_translations
+            )
+        session.commit()
 
 
 async def get_auth_token(client: AsyncClient, test_user_data: TestUserData) -> str:
@@ -40,6 +144,9 @@ async def test_generate_dictionary_entry_basic(
     # Get auth token
     token = await get_auth_token(client, test_user_data)
     headers = {"Authorization": f"Bearer {token}"}
+
+    # Seed cached data first (base + translation) so cache-only path returns 200
+    _seed_entry_and_optional_translation(test_user_data["email"], "hello", "es")
 
     # Generate dictionary entry
     request_data = {
@@ -79,6 +186,9 @@ async def test_generate_dictionary_entry_cached(
     token = await get_auth_token(client, test_user_data)
     headers = {"Authorization": f"Bearer {token}"}
 
+    # Seed cached data first (base + translation)
+    _seed_entry_and_optional_translation(test_user_data["email"], "test", "fr")
+
     # Generate dictionary entry first time
     request_data = {
         "term": "test",
@@ -115,6 +225,9 @@ async def test_generate_dictionary_entry_regenerate_full(
     token = await get_auth_token(client, test_user_data)
     headers = {"Authorization": f"Bearer {token}"}
 
+    # Seed cached data first (base + translation)
+    _seed_entry_and_optional_translation(test_user_data["email"], "computer", "de")
+
     # Generate dictionary entry first time
     request_data = {
         "term": "computer",
@@ -145,6 +258,9 @@ async def test_generate_dictionary_entry_regenerate_translations_only(
     # Get auth token
     token = await get_auth_token(client, test_user_data)
     headers = {"Authorization": f"Bearer {token}"}
+
+    # Seed cached data first (base + translation)
+    _seed_entry_and_optional_translation(test_user_data["email"], "book", "ja")
 
     # Generate dictionary entry first time
     request_data = {
@@ -184,6 +300,10 @@ async def test_generate_dictionary_entry_different_languages(
     headers = {"Authorization": f"Bearer {token}"}
 
     term = "water"
+
+    # Seed cached data (base + translations for both languages) so responses come from cache
+    _seed_entry_and_optional_translation(test_user_data["email"], term, "es")
+    _seed_entry_and_optional_translation(test_user_data["email"], term, "fr")
 
     # Generate for Spanish
     response_es = await client.post(
