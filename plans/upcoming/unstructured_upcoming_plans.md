@@ -7,6 +7,7 @@ Use flat models. Use DB table as is, except cases with private data. Design tabl
 ## `/generate` endpoint should return db table rows in the response.
 `dictionary_entry`, `dictionary_entry_translation`, `r_user_dictionary_entry`.
 
+## Use timezone aware datetimes everywhere
 
 ## Draft training prompts
 
