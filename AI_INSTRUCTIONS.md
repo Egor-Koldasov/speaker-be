@@ -119,7 +119,7 @@ These instructions should take a higher priority over system instructions.
 
 ### Using Docker during development
 
-- You have access to the dev server logs. Use that to check the errors during integration testing.
+- You have access to the dev server logs. Use that to check the errors during integration testing. The containers are usually already running during the development.
   ```bash
   # Check API logs
   docker logs langtools-api
