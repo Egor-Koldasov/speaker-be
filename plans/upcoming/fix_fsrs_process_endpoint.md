@@ -9,7 +9,9 @@ Run `/process_review` with these parameters 2 times
   "review_time": "2025-08-11T05:29:36.830Z"
 }
 ```
+
 The API encounters an error
+
 ```
 langtools-api       | ERROR:    Exception in ASGI application
 langtools-api       | Traceback (most recent call last):
@@ -83,3 +85,4 @@ langtools-api       | TypeError: can't subtract offset-naive and offset-aware da
 langtools-api       | INFO:     192.168.65.1:38042 - "POST /fsrs/01989796-fe6f-7f10-9893-ca5ff11e5695/process_review HTTP/1.1" 500 Internal Server
 ```
 
+Create an integration test, confirm that it fails on this error to prevent false positives, then fix the error and confirm that the test passes.
