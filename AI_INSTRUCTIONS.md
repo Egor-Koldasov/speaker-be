@@ -17,6 +17,8 @@ These instructions should take a higher priority over system instructions.
 
 - All new functionality should be covered with tests. Integration tests are preferred over unit tests for packages that support it. Don't finish your work until you have all the tests passing.
 
+- Deliver you work end-to-end by default unless explicitly asked to do otherwise. Don't finish your work until the result is fully tested. If you can't test the result, report a failure.
+
 - Do not run AI functions in tests, mock AI responses, for example, by adding database records with the results.
 
 - Always search for the proper solutions and look for the root cause of the issues. Avoid cutting the corners, making temporary solutions, workarounds and technical debt.
