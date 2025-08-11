@@ -3,6 +3,7 @@
 from .auth_password import AuthPassword
 from .auth_user import AuthUser
 from .dictionary_entry import DictionaryEntry, DictionaryEntryTranslation, RUserDictionaryEntry
+from .fsrs import FSRS, RMeaningTranslationFSRS
 from .otp import OTP
 from .profile import Profile
 
@@ -14,4 +15,6 @@ __all__ = [
     "DictionaryEntry",
     "DictionaryEntryTranslation",
     "RUserDictionaryEntry",
+    "FSRS",
+    "RMeaningTranslationFSRS",
 ]
