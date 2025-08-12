@@ -26,7 +26,7 @@ async def test_mcp_tool_integration():
         print("🌐 Then call the API-based MCP tools with real endpoints")
 
         print("🎯 Available MCP tools to test:")
-        print("   • generate_dictionary_entry_tool")
+        print("   • generate_dictionary_entry")
         print("   • get_fsrs_records")
         print("   • create_fsrs_record")
         print("   • process_fsrs_review")

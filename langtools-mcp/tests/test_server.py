@@ -4,11 +4,11 @@ Tests for MCP server functionality.
 
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from langtools.mcp.server import generate_dictionary_entry_tool
+from langtools.mcp.server import generate_dictionary_entry
 
 
 class TestGenerateDictionaryEntryTool:
-    """Test cases for generate_dictionary_entry_tool."""
+    """Test cases for generate_dictionary_entry."""
 
     @patch("langtools.mcp.api.call_api_with_token")
     async def test_successful_generation(self, mock_api_call: AsyncMock) -> None:
@@ -33,7 +33,7 @@ class TestGenerateDictionaryEntryTool:
         mock_context = MagicMock()
 
         # Call the MCP tool
-        result = await generate_dictionary_entry_tool(
+        result = await generate_dictionary_entry(
             context=mock_context,
             translating_term="сырой",
             translation_language="en",
@@ -81,7 +81,7 @@ class TestGenerateDictionaryEntryTool:
         mock_context = MagicMock()
 
         # Call the MCP tool for English to Russian
-        result = await generate_dictionary_entry_tool(
+        result = await generate_dictionary_entry(
             context=mock_context,
             translating_term="hello",
             translation_language="ru",
@@ -119,7 +119,7 @@ class TestGenerateDictionaryEntryTool:
         mock_context = MagicMock()
 
         # Test with regeneration flags
-        result = await generate_dictionary_entry_tool(
+        result = await generate_dictionary_entry(
             context=mock_context,
             translating_term="test",
             translation_language="en",

@@ -52,7 +52,7 @@ learning tools through MCP integration.
 ## Available Tools
 
 ### Dictionary Generation
-- **Tool**: `generate_dictionary_entry_tool`
+- **Tool**: `generate_dictionary_entry`
 - **Purpose**: Generate comprehensive multilingual dictionary entries
 - **Usage**: Provide a term, your language preferences, and target language
 - **Features**:
@@ -108,7 +108,7 @@ class DictionaryEntryRequest(BaseModel):
     )
 
 
-async def generate_dictionary_entry_tool(
+async def generate_dictionary_entry(
     context: Context,
     translating_term: str,
     translation_language: str,
@@ -190,7 +190,7 @@ async def generate_dictionary_entry_tool(
 
 
 # Register the tool as enabled
-mcp.tool()(generate_dictionary_entry_tool)
+mcp.tool()(generate_dictionary_entry)
 
 
 # @mcp.tool()  # Disabled
