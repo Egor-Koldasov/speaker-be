@@ -1,7 +1,6 @@
 # Unstructured upcoming plans
 
-## Use timezone aware datetimes everywhere
-Refactor the main package to use timezone aware datetime type everywhere
+## Fix fsrs list endpoint output format
 
 ## Draft training prompts
 
