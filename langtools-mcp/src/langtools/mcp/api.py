@@ -19,6 +19,7 @@ async def call_api_with_token(
     method: str = "GET",
     json_data: dict[str, object] | None = None,
     base_url: str = "http://localhost:8000",
+    timeout: float = 60.0,
 ) -> dict[str, object]:
     """
     Make authenticated API request using Bearer token from MCP context.
@@ -29,6 +30,7 @@ async def call_api_with_token(
         method: HTTP method (GET, POST, etc.)
         json_data: Optional JSON payload for POST/PUT requests
         base_url: Base URL of the API server
+        timeout: Request timeout in seconds (default: 60.0)
 
     Returns:
         JSON response from the API
@@ -45,7 +47,7 @@ async def call_api_with_token(
 
     url = f"{base_url.rstrip('/')}/{endpoint.lstrip('/')}"
 
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=timeout) as client:
         if method.upper() == "GET":
             response = await client.get(url, headers=headers)
         elif method.upper() == "POST":

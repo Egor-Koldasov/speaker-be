@@ -171,12 +171,13 @@ async def generate_dictionary_entry_tool(
             "regenerate_translations": regenerate_translations,
         }
 
-        # Call the API
+        # Call the API with 5-minute timeout for dictionary generation
         response = await call_api_with_token(
             context=context,
             endpoint="/dictionary_entry/generate",
             method="POST",
             json_data=request_data,
+            timeout=300.0,  # 5 minutes
         )
 
         logger.info(f"Successfully generated dictionary entry for: {translating_term}")

@@ -55,6 +55,7 @@ class TestGenerateDictionaryEntryTool:
                 "regenerate_full": False,
                 "regenerate_translations": False,
             },
+            timeout=300.0,
         )
 
     @patch("langtools.mcp.api.call_api_with_token")
@@ -102,6 +103,7 @@ class TestGenerateDictionaryEntryTool:
                 "regenerate_full": False,
                 "regenerate_translations": False,
             },
+            timeout=300.0,
         )
 
     @patch("langtools.mcp.api.call_api_with_token")
@@ -139,4 +141,5 @@ class TestGenerateDictionaryEntryTool:
                 "regenerate_full": True,
                 "regenerate_translations": True,
             },
+            timeout=300.0,
         )
