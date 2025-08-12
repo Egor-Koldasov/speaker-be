@@ -1,6 +1,7 @@
 # Unstructured upcoming plans
 
 ## Use timezone aware datetimes everywhere
+Refactor the main package to use timezone aware datetime type everywhere
 
 ## Draft training prompts
 

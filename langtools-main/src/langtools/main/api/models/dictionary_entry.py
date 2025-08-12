@@ -1,10 +1,10 @@
 """Dictionary entry SQLModel definitions."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, cast
 
 import sqlalchemy as sa
-from sqlalchemy import JSON, func
+from sqlalchemy import DateTime, JSON, func
 from sqlalchemy.orm import declared_attr
 from sqlmodel import Field, SQLModel
 
@@ -21,11 +21,13 @@ class DictionaryEntry(SQLModel, table=True):
 
     id: str = Field(primary_key=True, index=True)
     json_data: dict[str, Any] = Field(sa_column=sa.Column(JSON, nullable=False))  # type: ignore[valid-type]
-    created_at: datetime = Field(default_factory=lambda: datetime.now(), nullable=False)
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column=sa.Column(DateTime(timezone=True), nullable=False),
+    )
     updated_at: datetime = Field(
-        default_factory=lambda: datetime.now(),
-        sa_column_kwargs={"onupdate": func.now()},
-        nullable=False,
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column=sa.Column(DateTime(timezone=True), nullable=False, onupdate=func.now()),
     )
 
     def get_ai_dictionary_entry(self) -> AiDictionaryEntry:
@@ -44,11 +46,13 @@ class RUserDictionaryEntry(SQLModel, table=True):
     id: str = Field(primary_key=True, index=True)
     auth_user_id: str = Field(foreign_key="auth_user.id", index=True, nullable=False)
     dictionary_entry_id: str = Field(foreign_key="dictionary_entry.id", index=True, nullable=False)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(), nullable=False)
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column=sa.Column(DateTime(timezone=True), nullable=False),
+    )
     updated_at: datetime = Field(
-        default_factory=lambda: datetime.now(),
-        sa_column_kwargs={"onupdate": func.now()},
-        nullable=False,
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column=sa.Column(DateTime(timezone=True), nullable=False, onupdate=func.now()),
     )
 
 
@@ -64,11 +68,13 @@ class DictionaryEntryTranslation(SQLModel, table=True):
     dictionary_entry_id: str = Field(foreign_key="dictionary_entry.id", index=True, nullable=False)
     translation_language: str = Field(index=True, nullable=False)
     json_data: list[dict[str, Any]] = Field(sa_column=sa.Column(JSON, nullable=False))  # type: ignore[valid-type]
-    created_at: datetime = Field(default_factory=lambda: datetime.now(), nullable=False)
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column=sa.Column(DateTime(timezone=True), nullable=False),
+    )
     updated_at: datetime = Field(
-        default_factory=lambda: datetime.now(),
-        sa_column_kwargs={"onupdate": func.now()},
-        nullable=False,
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column=sa.Column(DateTime(timezone=True), nullable=False, onupdate=func.now()),
     )
 
     def get_ai_meaning_translations(self) -> list[AiMeaningTranslation]:

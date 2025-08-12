@@ -4,12 +4,13 @@ import json
 from datetime import datetime
 from typing import Any, Optional
 
-from langtools.ai import AiDictionaryEntry, AiMeaningTranslation
 from sqlalchemy import func, select
 from sqlmodel import Session
 
-from ..models import DictionaryEntry, DictionaryEntryTranslation, RUserDictionaryEntry
+from langtools.ai import AiDictionaryEntry, AiMeaningTranslation
 from langtools.main.api.utils.id_generation import generate_pg_uuid
+
+from ..models import DictionaryEntry, DictionaryEntryTranslation, RUserDictionaryEntry
 
 
 def _serialize_with_unicode(obj: dict[str, Any]) -> dict[str, Any]:  # type: ignore[misc]

@@ -30,12 +30,12 @@
   "reportUnnecessaryContains": "warning",
   "reportAssertAlwaysTrue": "warning",
   "reportSelfClsParameterName": "warning",
-  "reportImplicitStringConcatenation": "warning",
+  "reportImplicitStringConcatenation": "none",
   "strictListInference": true,
   "strictDictionaryInference": true,
   "strictSetInference": true,
   "strictParameterNoneValue": true,
   "enableExperimentalFeatures": true,
   "reportImplicitRelativeImport": "error",
-  "reportUnsafeMultipleInheritance": "warning"
+  "reportUnsafeMultipleInheritance": "warning",
 }

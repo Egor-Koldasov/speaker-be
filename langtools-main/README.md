@@ -34,6 +34,7 @@ Project uses Docker Compose to manage the development environment.
 ### Table Structure
 
 Tables are organized to separate data with different access levels. Fields with different access levels are stored in separate tables.
+All datetime columns are timezone-aware.
 
 #### Common table columns
 
