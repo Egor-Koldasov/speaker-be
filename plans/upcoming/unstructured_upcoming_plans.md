@@ -2,14 +2,14 @@
 
 ## Fix fsrs list endpoint output format
 
-## Draft training prompts
+## Attach context usages
 
-### Assess language level by the current vocabulary
+## Manage custom user info as a summary text
 
-- Get the list of the latest due words. Items have all the data.
+## Manage custom user info as a vector database collection
+Store grammar mistakes and a history of improvements chronologically.
 
-- Get a longer list 
-
+## Get a longer list of words with smaller objects for big vocabularies
 
 ---
 
@@ -29,3 +29,4 @@
 
 ## Add speech verification
 
+## Allow AI assistant to suggest response choices.

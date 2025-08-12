@@ -11,3 +11,9 @@ Use flat models. Use DB table as is, except cases with private data. Design tabl
 
 ## Use timezone aware datetimes everywhere
 Refactor the main package to use timezone aware datetime type everywhere
+
+## Draft training prompts
+
+### Assess language level by the current vocabulary
+
+- Get the list of the latest due words. Items have all the data.
