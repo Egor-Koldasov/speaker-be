@@ -41,6 +41,7 @@ mcp = FastMCP(
         "build connections to previously learned vocabulary. Your role is not just "
         "translation, but comprehensive language education and cultural understanding."
     ),
+    stateless_http=True,
 )
 
 mcp.add_middleware(QueryAuthMiddleware())

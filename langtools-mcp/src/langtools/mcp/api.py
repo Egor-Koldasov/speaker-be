@@ -1,10 +1,14 @@
 """API client utilities for making authenticated requests."""
 
+import logging
+import os
 from typing import cast
 
 import httpx
 from fastmcp import Context
 from starlette.requests import Request as StarletteRequest
+
+logger = logging.getLogger(__name__)
 
 
 def get_token_from_context(context: Context) -> str | None:
@@ -18,7 +22,7 @@ async def call_api_with_token(
     endpoint: str,
     method: str = "GET",
     json_data: dict[str, object] | None = None,
-    base_url: str = "http://localhost:8000",
+    base_url: str | None = None,
     timeout: float = 60.0,
 ) -> dict[str, object]:
     """
@@ -29,7 +33,7 @@ async def call_api_with_token(
         endpoint: API endpoint path (e.g., "/auth/me")
         method: HTTP method (GET, POST, etc.)
         json_data: Optional JSON payload for POST/PUT requests
-        base_url: Base URL of the API server
+        base_url: Base URL of the API server (defaults to LANGTOOLS_API_URL env var or http://localhost:8000)
         timeout: Request timeout in seconds (default: 60.0)
 
     Returns:
@@ -42,6 +46,10 @@ async def call_api_with_token(
     token = get_token_from_context(context)
     if not token:
         raise ValueError("No authentication token found in MCP context")
+
+    # Use provided base_url or fall back to environment variable or localhost default
+    if base_url is None:
+        base_url = os.getenv("LANGTOOLS_API_URL", "http://localhost:8000")
 
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
 
@@ -59,6 +67,24 @@ async def call_api_with_token(
         else:
             raise ValueError(f"Unsupported HTTP method: {method}")
 
-        response.raise_for_status()
+        try:
+            response.raise_for_status()
+        except httpx.HTTPStatusError as e:
+            logger.error(f"API request failed: {method} {url}")
+            logger.error(f"Status: {e.response.status_code}")
+            logger.error(f"Response body: {e.response.text}")
+            raise Exception(
+                f"API request failed: {e.response.status_code} {e.response.text}"
+            ) from e
+        except httpx.ConnectError as e:
+            logger.error(f"Failed to connect to API server: {url}")
+            logger.error(f"Connection error: {e}")
+            raise Exception(
+                f"Failed to connect to API server at {base_url}. Check if the API server is running and accessible."
+            ) from e
+        except httpx.TimeoutException as e:
+            logger.error(f"API request timed out: {method} {url}")
+            raise Exception(f"API request timed out after {timeout}s") from e
+
         # httpx response.json() returns Any, cast to expected type
         return cast(dict[str, object], response.json())

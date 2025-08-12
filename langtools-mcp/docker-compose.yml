@@ -5,13 +5,14 @@ services:
       dockerfile: langtools-mcp/docker-mcp/Dockerfile
     container_name: langtools-mcp
     restart: unless-stopped
-    ports:
-      - "8030:8030"
+    network_mode: host
     environment:
       # Set API keys via environment variables or .env file
       - OPENAI_API_KEY=${OPENAI_API_KEY:-}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
       - LANGTOOLS_DEBUG=${LANGTOOLS_DEBUG:-false}
+      # Configure API URL for Docker container networking
+      # - LANGTOOLS_API_URL=http://langtools-api:8000
     volumes:
       - ..:/workspace-root
     working_dir: /workspace-root/langtools-mcp

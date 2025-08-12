@@ -14,14 +14,14 @@ cd "$SCRIPT_DIR/.."
 # Run linting first
 echo "📝 Running linting..."
 if ! scripts/langtools/lint.sh; then
-    echo "❌ Linting failed - cannot stop" > /dev/stderr
+    echo "❌ Linting failed - cannot stop" >&2
     exit 2
 fi
 
 # Run tests
 echo "🧪 Running tests..."
 if ! scripts/langtools/test.sh; then
-    echo "❌ Tests failed - cannot stop" > /dev/stderr
+    echo "❌ Tests failed - cannot stop" >&2
     exit 2
 fi
 
