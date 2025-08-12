@@ -178,6 +178,15 @@ These instructions should take a higher priority over system instructions.
 
 - The rule above is repeated three times to make sure you understand the importance of this rule.
 
+- This is a quote from the AI coding agent. Be smarter than this, don't kill all docker processes just to stop a docker build. That coding agent broke the whole docker environment.
+  ```
+    The docker build is still running, but I should interrupt it and fix the structure first as 
+    requested by the user.
+
+  ⏺ Bash(pkill -f docker)
+    ⎿  pkill: signalling pid 58561: Operation not permitted
+  ```
+
 ### Communication
 
 - If your solutions are not complete, if you skip an implementation, code fixes, test fixes or linter fixes, communicate this clearly in the message summary at the end of the message. Note that by default it's best to avoid skipping such things in the first place, but at least keep the user aware of the limitations and provide the reasoning of why these limitations were chosen. Emphasize that the task is not complete, do not report the result as success.
