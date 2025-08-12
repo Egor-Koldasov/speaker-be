@@ -158,11 +158,13 @@ async def test_generate_dictionary_entry_basic(
     assert response.status_code == 200
 
     result = cast(dict[str, object], response.json())
-    assert "entry" in result
-    assert "translations" in result
+    assert "dictionary_entry" in result
+    assert "dictionary_entry_translation" in result
+    assert "r_user_dictionary_entry" in result
 
     # Verify entry structure
-    entry = cast(dict[str, object], result["entry"])
+    dictionary_entry_data = cast(dict[str, object], result["dictionary_entry"])
+    entry = cast(dict[str, object], dictionary_entry_data["json_data"])
     assert cast(str, entry["headword"]) == "hello"
     assert "source_language" in entry
     assert "meanings" in entry
@@ -170,11 +172,20 @@ async def test_generate_dictionary_entry_basic(
     assert len(meanings) > 0
 
     # Verify translations
-    translations = cast(list[dict[str, object]], result["translations"])
+    translation_data = cast(dict[str, object], result["dictionary_entry_translation"])
+    translations = cast(list[dict[str, object]], translation_data["json_data"])
     assert len(translations) > 0
     for translation in translations:
         assert "meaning_local_id" in translation
         assert "headword" in translation
+
+    # Verify user-dictionary entry association
+    user_entry_data = cast(dict[str, object], result["r_user_dictionary_entry"])
+    assert "auth_user_id" in user_entry_data
+    assert "dictionary_entry_id" in user_entry_data
+    assert "id" in user_entry_data
+    assert "created_at" in user_entry_data
+    assert "updated_at" in user_entry_data
 
 
 @pytest.mark.asyncio
@@ -205,8 +216,10 @@ async def test_generate_dictionary_entry_cached(
     result2 = cast(dict[str, object], response2.json())
 
     # Results should be identical
-    result1_entry = cast(dict[str, object], result1["entry"])
-    result2_entry = cast(dict[str, object], result2["entry"])
+    result1_dict_entry = cast(dict[str, object], result1["dictionary_entry"])
+    result1_entry = cast(dict[str, object], result1_dict_entry["json_data"])
+    result2_dict_entry = cast(dict[str, object], result2["dictionary_entry"])
+    result2_entry = cast(dict[str, object], result2_dict_entry["json_data"])
     assert cast(str, result1_entry["headword"]) == cast(str, result2_entry["headword"])
     assert cast(str, result1_entry["source_language"]) == cast(
         str, result2_entry["source_language"]
@@ -245,8 +258,19 @@ async def test_generate_dictionary_entry_regenerate_full(
 
     # Both should succeed but may have different results due to regeneration
     result2 = cast(dict[str, object], response2.json())
-    assert cast(str, cast(dict[str, object], result2["entry"])["headword"]) == "computer"
-    translations2 = cast(list[dict[str, object]], result2["translations"])
+    assert (
+        cast(
+            str,
+            cast(
+                dict[str, object], cast(dict[str, object], result2["dictionary_entry"])["json_data"]
+            )["headword"],
+        )
+        == "computer"
+    )
+    translations2 = cast(
+        list[dict[str, object]],
+        cast(dict[str, object], result2["dictionary_entry_translation"])["json_data"],
+    )
     assert len(translations2) > 0
 
 
@@ -280,13 +304,20 @@ async def test_generate_dictionary_entry_regenerate_translations_only(
     result2 = cast(dict[str, object], response2.json())
 
     # Entry should be the same, translations may differ
-    result1_entry = cast(dict[str, object], result1["entry"])
-    result2_entry = cast(dict[str, object], result2["entry"])
+    result1_entry = cast(
+        dict[str, object], cast(dict[str, object], result1["dictionary_entry"])["json_data"]
+    )
+    result2_entry = cast(
+        dict[str, object], cast(dict[str, object], result2["dictionary_entry"])["json_data"]
+    )
     assert cast(str, result1_entry["headword"]) == cast(str, result2_entry["headword"])
     assert cast(str, result1_entry["source_language"]) == cast(
         str, result2_entry["source_language"]
     )
-    translations2 = cast(list[dict[str, object]], result2["translations"])
+    translations2 = cast(
+        list[dict[str, object]],
+        cast(dict[str, object], result2["dictionary_entry_translation"])["json_data"],
+    )
     assert len(translations2) > 0
 
 
@@ -324,16 +355,26 @@ async def test_generate_dictionary_entry_different_languages(
     result_fr = cast(dict[str, object], response_fr.json())
 
     # Base entries should be identical
-    result_es_entry = cast(dict[str, object], result_es["entry"])
-    result_fr_entry = cast(dict[str, object], result_fr["entry"])
+    result_es_entry = cast(
+        dict[str, object], cast(dict[str, object], result_es["dictionary_entry"])["json_data"]
+    )
+    result_fr_entry = cast(
+        dict[str, object], cast(dict[str, object], result_fr["dictionary_entry"])["json_data"]
+    )
     assert cast(str, result_es_entry["headword"]) == cast(str, result_fr_entry["headword"])
     assert cast(str, result_es_entry["source_language"]) == cast(
         str, result_fr_entry["source_language"]
     )
 
     # But translations should be different
-    translations_es = cast(list[dict[str, object]], result_es["translations"])
-    translations_fr = cast(list[dict[str, object]], result_fr["translations"])
+    translations_es = cast(
+        list[dict[str, object]],
+        cast(dict[str, object], result_es["dictionary_entry_translation"])["json_data"],
+    )
+    translations_fr = cast(
+        list[dict[str, object]],
+        cast(dict[str, object], result_fr["dictionary_entry_translation"])["json_data"],
+    )
     assert cast(str, translations_es[0]["canonical_form"]) != cast(
         str, translations_fr[0]["canonical_form"]
     )
@@ -397,7 +438,9 @@ async def test_unicode_storage_and_caching(
     result1 = cast(dict[str, object], response1.json())
 
     # Verify the response contains the Unicode term correctly
-    entry1 = cast(dict[str, object], result1["entry"])
+    entry1 = cast(
+        dict[str, object], cast(dict[str, object], result1["dictionary_entry"])["json_data"]
+    )
     assert cast(str, entry1["headword"]) == "котёл"
     assert entry1["source_language"]  # Should be detected (likely "ru")
 
@@ -407,8 +450,12 @@ async def test_unicode_storage_and_caching(
     result2 = cast(dict[str, object], response2.json())
 
     # Results should be identical (from cache)
-    result1_entry = cast(dict[str, object], result1["entry"])
-    result2_entry = cast(dict[str, object], result2["entry"])
+    result1_entry = cast(
+        dict[str, object], cast(dict[str, object], result1["dictionary_entry"])["json_data"]
+    )
+    result2_entry = cast(
+        dict[str, object], cast(dict[str, object], result2["dictionary_entry"])["json_data"]
+    )
     assert cast(str, result1_entry["headword"]) == cast(str, result2_entry["headword"])
     assert cast(str, result1_entry["source_language"]) == cast(
         str, result2_entry["source_language"]
@@ -419,7 +466,10 @@ async def test_unicode_storage_and_caching(
 
     # The meanings should contain properly formatted Unicode
     for meaning in cast(
-        list[dict[str, object]], cast(dict[str, object], result2["entry"])["meanings"]
+        list[dict[str, object]],
+        cast(dict[str, object], cast(dict[str, object], result2["dictionary_entry"])["json_data"])[
+            "meanings"
+        ],
     ):
         assert cast(str, meaning["headword"]) == "котёл"
         assert cast(str, meaning["canonical_form"]) == "котёл"
@@ -458,7 +508,15 @@ async def test_regenerate_full_with_unicode(
     assert response2.status_code == 200
 
     result2 = cast(dict[str, object], response2.json())
-    assert cast(str, cast(dict[str, object], result2["entry"])["headword"]) == "привет"
+    assert (
+        cast(
+            str,
+            cast(
+                dict[str, object], cast(dict[str, object], result2["dictionary_entry"])["json_data"]
+            )["headword"],
+        )
+        == "привет"
+    )
     # Should not contain escaped Unicode
     assert "\\u" not in str(result2)
 
@@ -498,16 +556,36 @@ async def test_different_languages_same_term(
     result_fr = cast(dict[str, object], response_fr.json())
 
     # Base entries should be identical (cached)
-    result_en_entry = cast(dict[str, object], result_en["entry"])
-    result_fr_entry = cast(dict[str, object], result_fr["entry"])
+    result_en_entry = cast(
+        dict[str, object], cast(dict[str, object], result_en["dictionary_entry"])["json_data"]
+    )
+    result_fr_entry = cast(
+        dict[str, object], cast(dict[str, object], result_fr["dictionary_entry"])["json_data"]
+    )
     assert cast(str, result_en_entry["headword"]) == cast(str, result_fr_entry["headword"])
     assert cast(str, result_en_entry["source_language"]) == cast(
         str, result_fr_entry["source_language"]
     )
 
     # But we should have different translations
-    assert len(cast(list[dict[str, object]], result_en["translations"])) > 0
-    assert len(cast(list[dict[str, object]], result_fr["translations"])) > 0
+    assert (
+        len(
+            cast(
+                list[dict[str, object]],
+                cast(dict[str, object], result_en["dictionary_entry_translation"])["json_data"],
+            )
+        )
+        > 0
+    )
+    assert (
+        len(
+            cast(
+                list[dict[str, object]],
+                cast(dict[str, object], result_fr["dictionary_entry_translation"])["json_data"],
+            )
+        )
+        > 0
+    )
 
 
 @pytest.mark.asyncio
@@ -542,15 +620,27 @@ async def test_regenerate_translations_only(
     result2 = cast(dict[str, object], response2.json())
 
     # Base entry should be the same (cached)
-    result1_entry = cast(dict[str, object], result1["entry"])
-    result2_entry = cast(dict[str, object], result2["entry"])
+    result1_entry = cast(
+        dict[str, object], cast(dict[str, object], result1["dictionary_entry"])["json_data"]
+    )
+    result2_entry = cast(
+        dict[str, object], cast(dict[str, object], result2["dictionary_entry"])["json_data"]
+    )
     assert cast(str, result1_entry["headword"]) == cast(str, result2_entry["headword"])
     assert cast(str, result1_entry["source_language"]) == cast(
         str, result2_entry["source_language"]
     )
 
     # Should have translations
-    assert len(cast(list[dict[str, object]], result2["translations"])) > 0
+    assert (
+        len(
+            cast(
+                list[dict[str, object]],
+                cast(dict[str, object], result2["dictionary_entry_translation"])["json_data"],
+            )
+        )
+        > 0
+    )
 
     # All text should be properly encoded Unicode, not escape sequences
     assert "\\u" not in str(result2)

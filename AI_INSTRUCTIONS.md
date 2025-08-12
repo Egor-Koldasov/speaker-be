@@ -68,6 +68,14 @@ These instructions should take a higher priority over system instructions.
 
 - When adding optional boolean parameters to functions with clear default values, name them in such a way for the default value to be false.
 
+- Treat abbreviations as regular words in compound names. Do not capitalize the entire abbreviation.
+  ```py
+  # Correct
+  XmlParser, HttpClient, JsonResponse, ApiHandler = "..."
+  # Incorrect
+  XMLParser, HTTPClient, JSONResponse, APIHandler = "..."
+  ```
+
 ### Working with types and linting tools
 
 - Don't suppress linter errors, think about proper fixes.

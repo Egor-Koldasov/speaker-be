@@ -129,3 +129,44 @@ def associate_user_with_dictionary_entry(
     session.add(user_entry)
     session.flush()
     return user_entry
+
+
+def get_dictionary_entry_by_id(session: Session, entry_id: str) -> DictionaryEntry:
+    """Get a dictionary entry by its ID."""
+    stmt = select(DictionaryEntry).where(DictionaryEntry.id == entry_id)  # type: ignore[arg-type]
+    result = session.exec(stmt)  # type: ignore[arg-type]
+    entry = result.scalar_one_or_none()
+    if not entry:
+        raise ValueError(f"Dictionary entry with id {entry_id} not found")
+    return entry
+
+
+def get_dictionary_translation_by_id(
+    session: Session, translation_id: str
+) -> DictionaryEntryTranslation:
+    """Get a dictionary translation by its ID."""
+    stmt = select(DictionaryEntryTranslation).where(DictionaryEntryTranslation.id == translation_id)  # type: ignore[arg-type]
+    result = session.exec(stmt)  # type: ignore[arg-type]
+    translation = result.scalar_one_or_none()
+    if not translation:
+        raise ValueError(f"Dictionary translation with id {translation_id} not found")
+    return translation
+
+
+def get_user_dictionary_entry_association(
+    session: Session, auth_user_id: str, dictionary_entry_id: str
+) -> RUserDictionaryEntry:
+    """Get the user-dictionary entry association by user and entry IDs."""
+    stmt = (
+        select(RUserDictionaryEntry)
+        .where(RUserDictionaryEntry.auth_user_id == auth_user_id)  # type: ignore[arg-type]
+        .where(RUserDictionaryEntry.dictionary_entry_id == dictionary_entry_id)  # type: ignore[arg-type]
+    )
+    result = session.exec(stmt)  # type: ignore[arg-type]
+    association = result.scalar_one_or_none()
+    if not association:
+        raise ValueError(
+            f"User-dictionary entry association not found for user {auth_user_id} "
+            f"and entry {dictionary_entry_id}"
+        )
+    return association

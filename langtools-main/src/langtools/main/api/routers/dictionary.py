@@ -12,7 +12,6 @@ from langtools.ai import (
     BaseDictionaryParams,
     DictionaryEntryParams,
     DictionaryWorkflowHooks,
-    DictionaryWorkflowResult,
     LLMAPIError,
     ModelType,
     TranslationParams,
@@ -22,7 +21,7 @@ from langtools.ai import (
 
 from ..auth.dependencies import get_current_auth_user
 from ..database import get_session
-from ..models import AuthUser
+from ..models import AuthUser, DictionaryEntry, DictionaryEntryTranslation, RUserDictionaryEntry
 from ..pg_queries import dictionary as dictionary_queries
 
 
@@ -47,14 +46,26 @@ class GenerateDictionaryRequest(BaseModel):
     )
 
 
+class GenerateDictionaryResponse(BaseModel):
+    """Response model for dictionary generation endpoint following main package format."""
+
+    dictionary_entry: DictionaryEntry = Field(description="Dictionary entry database record")
+    dictionary_entry_translation: DictionaryEntryTranslation = Field(
+        description="Dictionary translation database record"
+    )
+    r_user_dictionary_entry: RUserDictionaryEntry = Field(
+        description="User-dictionary entry association record"
+    )
+
+
 router = APIRouter(prefix="/dictionary_entry", tags=["dictionary"])
 
 
-@router.post("/generate", response_model=DictionaryWorkflowResult)
+@router.post("/generate", response_model=GenerateDictionaryResponse)
 async def generate_dictionary_entry(
     request: GenerateDictionaryRequest,
     current_user: AuthUser = Depends(get_current_auth_user),
-) -> DictionaryWorkflowResult:
+) -> GenerateDictionaryResponse:
     """
     Generate a dictionary entry with translations for a given term.
 
@@ -174,13 +185,29 @@ async def generate_dictionary_entry(
                 or request.regenerate_full
             ):
                 # Create new translation
-                dictionary_queries.create_dictionary_translation(
+                new_translation = dictionary_queries.create_dictionary_translation(
                     session, entry_id, request.translation_language, result.translations
                 )
+                translation_id = new_translation.id
+            else:
+                translation_id = existing_translation.id
 
             session.commit()
 
-        return result
+            # Retrieve the final database records for response
+            final_entry = dictionary_queries.get_dictionary_entry_by_id(session, entry_id)
+            final_translation = dictionary_queries.get_dictionary_translation_by_id(
+                session, translation_id
+            )
+            final_user_entry = dictionary_queries.get_user_dictionary_entry_association(
+                session, current_user.id, entry_id
+            )
+
+        return GenerateDictionaryResponse(
+            dictionary_entry=final_entry,
+            dictionary_entry_translation=final_translation,
+            r_user_dictionary_entry=final_user_entry,
+        )
 
     except ValidationError as e:
         raise HTTPException(
