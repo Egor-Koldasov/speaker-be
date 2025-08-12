@@ -192,7 +192,7 @@ async def generate_dictionary_entry_tool(
 mcp.tool()(generate_dictionary_entry_tool)
 
 
-@mcp.tool()
+# @mcp.tool()  # Disabled
 async def check_dictionary_entry(
     generation_parameters: DictionaryEntryParams,
     dictionary_entry: AiDictionaryEntry,
