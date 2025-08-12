@@ -3,6 +3,10 @@
 # Exit on error
 set -e
 
+# Change to project root directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR/../.."
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -40,6 +44,13 @@ run_linter "langtools-utils"
 run_linter "langtools-ai"
 run_linter "langtools-main"
 run_linter "langtools-mcp"
+
+if (cd langtools-main && uv run alembic check); then
+    echo "✓ Database schema state check passed"
+else
+    echo "✗ Database schema state check failed"
+    FAILED=1
+fi
 
 # Summary
 if [ $FAILED -eq 0 ]; then
