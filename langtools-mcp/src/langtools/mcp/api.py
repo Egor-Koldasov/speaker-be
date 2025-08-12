@@ -1,7 +1,8 @@
 """API client utilities for making authenticated requests."""
 
-import httpx
 from typing import cast
+
+import httpx
 from fastmcp import Context
 from starlette.requests import Request as StarletteRequest
 

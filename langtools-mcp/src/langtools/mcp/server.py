@@ -2,15 +2,14 @@
 
 import logging
 
+from datetime import datetime
 from fastmcp import Context, FastMCP
 from pydantic import BaseModel, Field
 
 from langtools.ai.debug import configure_debug_logging
-from langtools.ai.functions import generate_dictionary_workflow
 from langtools.ai.models import (
     AiDictionaryEntry,
     DictionaryEntryParams,
-    DictionaryWorkflowResult,
     ModelType,
 )
 from langtools.mcp.query_auth_middleware import QueryAuthMiddleware
@@ -110,13 +109,15 @@ class DictionaryEntryRequest(BaseModel):
 
 
 async def generate_dictionary_entry_tool(
+    context: Context,
     translating_term: str,
-    user_learning_languages: str,
     translation_language: str,
     model: str = "claude-4-0-sonnet",
+    regenerate_full: bool = False,
+    regenerate_translations: bool = False,
 ) -> dict[str, object]:
     """
-    Generate comprehensive multilingual dictionary entry for enhanced language learning.
+    Generate comprehensive multilingual dictionary entry using the langtools API.
 
     This tool creates detailed dictionary entries with multiple meanings, accurate translations,
     IPA pronunciations, and contextual synonyms. The output is designed to be educational and
@@ -131,18 +132,13 @@ async def generate_dictionary_entry_tool(
     - Connect new words to previously learned vocabulary when possible
     - Be patient and encouraging - language learning is a gradual process
 
-    EDUCATIONAL VALUE:
-    - Multiple meanings: Help users understand nuanced usage
-    - Pronunciations: Enable proper speaking and listening skills
-    - Synonyms: Expand vocabulary and provide alternatives
-    - Definitions: Support reading comprehension and writing skills
-    - Cultural context: Enable appropriate usage in different situations
-
     Args:
         translating_term: The word or phrase to define and translate
-        user_learning_languages: User's language preferences in format 'en:1,ru:2'
         translation_language: Target language for translations in BCP 47 format
         model: LLM model to use for generation
+        regenerate_full: Force regeneration of the complete dictionary entry
+        regenerate_translations: Force regeneration of translations only
+        context: MCP context for authentication
 
     Returns:
         Dictionary containing comprehensive multilingual information with meanings,
@@ -153,52 +149,37 @@ async def generate_dictionary_entry_tool(
         Exception: If generation fails due to validation or API errors
     """
     try:
+        from .api import call_api_with_token
+
         logger.info(f"Generating dictionary entry for: {translating_term}")
 
-        # Convert parameters to DictionaryEntryParams
-        params = DictionaryEntryParams(
-            translating_term=translating_term,
-            user_learning_languages=user_learning_languages,
-            translation_language=translation_language,
-        )
-
-        # Convert model string to ModelType enum
+        # Convert model string to ModelType enum for validation
         try:
             model_type = ModelType(model)
+            model_value = model_type.value
         except ValueError:
             # Default to Claude Sonnet 4 if invalid model provided
-            model_type = ModelType.CLAUDE_SONNET_4
-            logger.warning(f"Invalid model {model}, using default: {model_type.value}")
+            model_value = ModelType.CLAUDE_SONNET_4.value
+            logger.warning(f"Invalid model {model}, using default: {model_value}")
 
-        # Call the AI workflow function
-        result: DictionaryWorkflowResult = await generate_dictionary_workflow(params, model_type)
-
-        # Convert Pydantic models to dicts and add compatibility fields expected by clients/tests
-        entry_dict: dict[str, object] = result.entry.model_dump()
-        meanings = entry_dict.get("meanings", [])
-        if isinstance(meanings, list):
-            for meaning in meanings:
-                if isinstance(meaning, dict) and "local_id" in meaning:
-                    # Backward-compatible field name expected by consumers/tests
-                    meaning["id"] = meaning["local_id"]
-
-        translations_list: list[dict[str, object]] = [t.model_dump() for t in result.translations]
-        for t in translations_list:
-            if "meaning_local_id" in t:
-                # Backward-compatible field name expected by consumers/tests
-                t["meaning_id"] = t["meaning_local_id"]
-
-        response: dict[str, object] = {
-            "entry": entry_dict,
-            "translations": translations_list,
+        # Prepare request data
+        request_data: dict[str, object] = {
+            "term": translating_term,
+            "translation_language": translation_language,
+            "model": model_value,
+            "regenerate_full": regenerate_full,
+            "regenerate_translations": regenerate_translations,
         }
 
-        logger.info(
-            "Successfully generated dictionary workflow with %d meanings and %d translations",
-            len(result.entry.meanings),
-            len(result.translations),
+        # Call the API
+        response = await call_api_with_token(
+            context=context,
+            endpoint="/dictionary_entry/generate",
+            method="POST",
+            json_data=request_data,
         )
-        logger.debug(f"Response: {response}")
+
+        logger.info(f"Successfully generated dictionary entry for: {translating_term}")
         return response
 
     except Exception as e:
@@ -207,8 +188,8 @@ async def generate_dictionary_entry_tool(
         raise DictionaryGenerationError(error_msg) from e
 
 
-# Register the tool without wrapping the function reference (preserve callability in tests)
-mcp.tool(enabled=False)(generate_dictionary_entry_tool)
+# Register the tool as enabled
+mcp.tool()(generate_dictionary_entry_tool)
 
 
 @mcp.tool()
@@ -283,6 +264,191 @@ dictionary entry.
             f"❌ Validation error: {e!s}. Please ensure the dictionary entry follows the "
             f"required schema format."
         )
+
+
+@mcp.tool()
+async def get_fsrs_records(
+    context: Context,
+    page: int = 1,
+    page_size: int = 20,
+) -> dict[str, object]:
+    """
+    Get paginated list of FSRS spaced repetition records for the current user.
+
+    FSRS (Free Spaced Repetition Scheduler) records contain spaced repetition training data
+    for vocabulary learning. Records are sorted by due date (soonest due first) and include
+    full dictionary entry and translation data for comprehensive learning support.
+
+    Args:
+        context: MCP context for authentication
+        page: Page number (1-based, default: 1)
+        page_size: Number of items per page (1-100, default: 20)
+
+    Returns:
+        Dictionary containing:
+        - items: List of FSRS records with dictionary data and training metrics
+        - total: Total number of records
+        - page: Current page number
+        - page_size: Items per page
+        - has_next: Whether there are more pages
+        - has_prev: Whether there are previous pages
+
+    Raises:
+        Exception: If API request fails or user is not authenticated
+    """
+    try:
+        from .api import call_api_with_token
+
+        logger.info(f"Getting FSRS records for user, page {page}, size {page_size}")
+
+        # Validate parameters
+        page = max(1, page)
+        page_size = max(1, min(100, page_size))
+
+        # Call the API with query parameters
+        endpoint = f"/fsrs?page={page}&page_size={page_size}"
+        response = await call_api_with_token(
+            context=context,
+            endpoint=endpoint,
+            method="GET",
+        )
+
+        logger.info(f"Successfully retrieved FSRS records: {response.get('total', 0)} total")
+        return response
+
+    except Exception as e:
+        logger.exception("Failed to get FSRS records")
+        raise Exception(f"Failed to retrieve FSRS records: {e}") from e
+
+
+@mcp.tool()
+async def create_fsrs_record(
+    context: Context,
+    dictionary_entry_translation_id: str,
+    meaning_local_id: str,
+) -> dict[str, object]:
+    """
+    Create a new FSRS spaced repetition record for vocabulary training.
+
+    This tool creates a new FSRS (Free Spaced Repetition Scheduler) record that binds
+    spaced repetition training data to a specific meaning translation within a dictionary
+    entry. This enables systematic vocabulary learning with optimized review scheduling.
+
+    Args:
+        context: MCP context for authentication
+        dictionary_entry_translation_id: ID of the dictionary entry translation
+        meaning_local_id: Local ID of the specific meaning to train
+
+    Returns:
+        Dictionary containing initial FSRS training data:
+        - fsrs_id: Unique identifier for the FSRS record
+        - due: Next review due date
+        - stability: Memory stability (initially None)
+        - difficulty: Learning difficulty (initially None)
+        - state: Current learning state
+        - step: Current learning step
+        - reps: Number of repetitions completed
+        - lapses: Number of times forgotten
+
+    Raises:
+        Exception: If meaning translation doesn't exist, record already exists, or API fails
+    """
+    try:
+        from .api import call_api_with_token
+
+        logger.info(f"Creating FSRS record for meaning {meaning_local_id}")
+
+        # Prepare request data
+        request_data: dict[str, object] = {
+            "dictionary_entry_translation_id": dictionary_entry_translation_id,
+            "meaning_local_id": meaning_local_id,
+        }
+
+        # Call the API
+        response = await call_api_with_token(
+            context=context,
+            endpoint="/fsrs",
+            method="POST",
+            json_data=request_data,
+        )
+
+        logger.info(f"Successfully created FSRS record: {response.get('fsrs_id')}")
+        return response
+
+    except Exception as e:
+        logger.exception("Failed to create FSRS record")
+        raise Exception(f"Failed to create FSRS record: {e}") from e
+
+
+@mcp.tool()
+async def process_fsrs_review(
+    context: Context,
+    fsrs_id: str,
+    rating: int,
+    review_time: str | None = None,
+) -> dict[str, object]:
+    """
+    Process a spaced repetition review session and update training data.
+
+    This tool processes a review session using the FSRS algorithm to update spaced repetition
+    training data. The algorithm adapts future review scheduling based on your performance,
+    optimizing long-term retention of vocabulary.
+
+    Args:
+        context: MCP context for authentication
+        fsrs_id: ID of the FSRS record to update
+        rating: Review rating (1=Again/Forgot, 2=Hard, 3=Good, 4=Easy)
+        review_time: When the review occurred (ISO format, defaults to now)
+
+    Returns:
+        Dictionary containing updated FSRS training data:
+        - fsrs_id: FSRS record identifier
+        - due: Next review due date (optimized based on performance)
+        - stability: Updated memory stability
+        - difficulty: Updated learning difficulty
+        - state: Updated learning state
+        - step: Updated learning step
+        - reps: Total repetitions completed
+        - lapses: Total times forgotten
+
+    Raises:
+        Exception: If FSRS record not found, access denied, or invalid rating
+    """
+    try:
+        from .api import call_api_with_token
+
+        logger.info(f"Processing review for FSRS record {fsrs_id} with rating {rating}")
+
+        # Validate rating
+        if rating not in [1, 2, 3, 4]:
+            raise ValueError(
+                f"Invalid rating {rating}. Must be 1 (Again), 2 (Hard), 3 (Good), or 4 (Easy)"
+            )
+
+        # Use current time if not provided
+        if review_time is None:
+            review_time = datetime.now().isoformat()
+
+        # Prepare request data
+        request_data: dict[str, object] = {
+            "rating": rating,
+            "review_time": review_time,
+        }
+
+        # Call the API
+        response = await call_api_with_token(
+            context=context,
+            endpoint=f"/fsrs/{fsrs_id}/process_review",
+            method="POST",
+            json_data=request_data,
+        )
+
+        logger.info(f"Successfully processed review for FSRS record: {fsrs_id}")
+        return response
+
+    except Exception as e:
+        logger.exception("Failed to process FSRS review")
+        raise Exception(f"Failed to process review: {e}") from e
 
 
 @mcp.tool()
