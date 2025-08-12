@@ -1,1 +1,7 @@
-AI_INSTRUCTIONS.md
+# CLAUDE.md
+
+MANDATORY FIRST STEP: Read these instruction files and confirm you've read them:
+- [README.md](/README.md)
+- [AI_INSTRUCTIONS.md](/AI_INSTRUCTIONS.md)
+
+You must explicitly state "I have read the README and AI instructions" before proceeding with any task.
