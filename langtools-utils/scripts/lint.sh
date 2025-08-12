@@ -41,6 +41,15 @@ else
 fi
 
 echo ""
+echo "🔍 Step 4: Checking database schema state with alembic..."
+if uv run alembic check; then
+    echo "✓ Database schema state check passed"
+else
+    echo "✗ Database schema state check failed"
+    FAILED=1
+fi
+
+echo ""
 if [ $FAILED -eq 0 ]; then
     echo "✅ All quality checks passed!"
     exit 0

@@ -7,6 +7,14 @@ from .auth import (
     PasswordlessLoginVerify,
     UserResponse,
 )
+from .fsrs import (
+    FsrsCreate,
+    ProcessReviewRequest,
+    ProcessReviewResponse,
+    FsrsItemResponse,
+    FsrsListResponse,
+    PaginationParams,
+)
 
 __all__ = [
     "Token",
@@ -14,4 +22,10 @@ __all__ = [
     "PasswordlessLoginRequest",
     "PasswordlessLoginVerify",
     "UserResponse",
+    "FsrsCreate",
+    "ProcessReviewRequest",
+    "ProcessReviewResponse",
+    "FsrsItemResponse",
+    "FsrsListResponse",
+    "PaginationParams",
 ]
