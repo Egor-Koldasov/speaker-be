@@ -387,7 +387,6 @@ async def process_fsrs_review(
     context: Context,
     fsrs_id: str,
     rating: int,
-    review_time: str | None = None,
 ) -> dict[str, object]:
     """
     Process a spaced repetition review session and update training data.
@@ -400,7 +399,6 @@ async def process_fsrs_review(
         context: MCP context for authentication
         fsrs_id: ID of the FSRS record to update
         rating: Review rating (1=Again/Forgot, 2=Hard, 3=Good, 4=Easy)
-        review_time: When the review occurred (ISO format, defaults to now)
 
     Returns:
         Dictionary containing updated FSRS training data:
@@ -427,9 +425,7 @@ async def process_fsrs_review(
                 f"Invalid rating {rating}. Must be 1 (Again), 2 (Hard), 3 (Good), or 4 (Easy)"
             )
 
-        # Use current time if not provided
-        if review_time is None:
-            review_time = datetime.now().isoformat()
+        review_time = datetime.now().astimezone().isoformat()
 
         # Prepare request data
         request_data: dict[str, object] = {
