@@ -80,7 +80,8 @@ async def call_api_with_token(
             logger.error(f"Failed to connect to API server: {url}")
             logger.error(f"Connection error: {e}")
             raise Exception(
-                f"Failed to connect to API server at {base_url}. Check if the API server is running and accessible."
+                f"Failed to connect to API server at {base_url}. "
+                f"Check if the API server is running and accessible."
             ) from e
         except httpx.TimeoutException as e:
             logger.error(f"API request timed out: {method} {url}")

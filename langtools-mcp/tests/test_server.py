@@ -2,9 +2,11 @@
 Tests for MCP server functionality.
 """
 
+import re
+from datetime import datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from langtools.mcp.server import generate_dictionary_entry
+from langtools.mcp.server import DatetimeNowResponse, datetime_now, generate_dictionary_entry
 
 
 class TestGenerateDictionaryEntryTool:
@@ -142,4 +144,42 @@ class TestGenerateDictionaryEntryTool:
                 "regenerate_translations": True,
             },
             timeout=300.0,
+        )
+
+
+class TestDatetimeNowTool:
+    """Test cases for datetime_now."""
+
+    async def test_returns_iso_format_string(self) -> None:
+        """Test that datetime_now returns a valid ISO format string with timezone."""
+        result = await datetime_now()
+
+        # Should be a string
+        assert isinstance(result, DatetimeNowResponse)
+
+        # Should match ISO 8601 format with timezone (YYYY-MM-DDTHH:MM:SS.ssssss+HH:MM)
+        iso_pattern = r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}[+-]\d{2}:\d{2}$"
+        assert re.match(iso_pattern, result.datetime_iso), (
+            f"Result '{result}' doesn't match ISO format with timezone"
+        )
+
+        # Should be parseable as a datetime
+        parsed_datetime = datetime.fromisoformat(result.datetime_iso)
+        assert isinstance(parsed_datetime, datetime)
+
+        # Should have timezone information
+        assert parsed_datetime.tzinfo is not None, "Datetime should include timezone information"
+
+    async def test_returns_current_datetime(self) -> None:
+        """Test that datetime_now returns a datetime close to the current time."""
+        before = datetime.now().astimezone()
+        result = await datetime_now()
+        after = datetime.now().astimezone()
+
+        # Parse the result
+        parsed_datetime = datetime.fromisoformat(result.datetime_iso)
+
+        # Should be between before and after timestamps (within a reasonable range)
+        assert before <= parsed_datetime <= after, (
+            f"Returned datetime {parsed_datetime} not within expected range {before} - {after}"
         )

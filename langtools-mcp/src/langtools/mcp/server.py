@@ -1,8 +1,8 @@
 """MCP server implementation for language learning tools."""
 
 import logging
-
 from datetime import datetime
+
 from fastmcp import Context, FastMCP
 from pydantic import BaseModel, Field
 
@@ -488,6 +488,27 @@ async def me(context: Context) -> dict[str, object]:
     except Exception as e:
         logger.exception("Failed to get current user info")
         raise Exception(f"Failed to retrieve user information: {e}") from e
+
+
+class DatetimeNowResponse(BaseModel):
+    """Response model for datetime_now tool."""
+
+    datetime_iso: str = Field(description="Current datetime in ISO 8601 format with timezone")
+
+
+async def datetime_now() -> DatetimeNowResponse:
+    """
+    Get the current datetime in ISO format with timezone information.
+
+    Returns:
+        Current datetime as an ISO 8601 formatted string with timezone
+        (YYYY-MM-DDTHH:MM:SS.ssssss+HH:MM)
+    """
+    return DatetimeNowResponse(datetime_iso=datetime.now().astimezone().isoformat())
+
+
+# Register datetime_now tool
+mcp.tool()(datetime_now)
 
 
 @mcp.prompt()
