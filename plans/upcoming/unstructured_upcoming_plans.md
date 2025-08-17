@@ -5,10 +5,6 @@ Design writing/reading combination approach.
 
 ## Fix fsrs list endpoint output format
 
-## Create datetime MCP tool
-
-## Don't require review time in MCP tools
-
 ## Attach context usages
 
 ## Manage custom user info as a summary text

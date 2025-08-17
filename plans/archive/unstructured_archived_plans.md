@@ -17,3 +17,7 @@ Refactor the main package to use timezone aware datetime type everywhere
 ### Assess language level by the current vocabulary
 
 - Get the list of the latest due words. Items have all the data.
+
+## Create datetime MCP tool
+
+## Don't require review time in MCP tools
