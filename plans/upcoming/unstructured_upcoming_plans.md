@@ -3,6 +3,14 @@
 ## Create a workflow prompt for FSRS training session with AI generated questions.
 Design writing/reading combination approach.
 
+## Make tool calls typed.
+
+## Add model structure to the prompt for more specific references.
+
+## Write a more specific template for training messages.
+
+## Make fsrs db record relate to a dictionary entry too. Make translation relation optional.
+
 ## Fix fsrs list endpoint output format
 
 ## Attach context usages
