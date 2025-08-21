@@ -113,7 +113,7 @@ async def generate_dictionary_entry(
     context: Context,
     translating_term: str,
     translation_language: str,
-    model: str = "claude-4-0-sonnet",
+    model: str = "gpt-5-mini",
     regenerate_full: bool = False,
     regenerate_translations: bool = False,
 ) -> dict[str, object]:
@@ -160,7 +160,7 @@ async def generate_dictionary_entry(
             model_value = model_type.value
         except ValueError:
             # Default to Claude Sonnet 4 if invalid model provided
-            model_value = ModelType.CLAUDE_SONNET_4.value
+            model_value = ModelType.GTP5_MINI.value
             logger.warning(f"Invalid model {model}, using default: {model_value}")
 
         # Prepare request data
