@@ -13,12 +13,12 @@ from pydantic import BaseModel, Field
 class ModelType(Enum):
     """Supported LLM model types."""
 
-    GPT4 = "gpt-4"
-    GPT3_5 = "gpt-3.5-turbo"
-    GTP4_1_MINI = "gpt-4.1-mini-2025-04-14"
-    GTP4_O_MINI = "gpt-4o-mini-2024-07-18"
-    GTP5_MINI = "gpt-5-mini"
-    CLAUDE_SONNET_3_5 = "claude-3-5-haiku-latest"
+    # GPT4 = "gpt-4"
+    # GPT3_5 = "gpt-3.5-turbo"
+    # GTP4_1_MINI = "gpt-4.1-mini-2025-04-14"
+    # GTP4_O_MINI = "gpt-4o-mini-2024-07-18"
+    GPT5_MINI = "gpt-5-mini"
+    CLAUDE_HAIKU_3_5 = "claude-3-5-haiku-latest"
     CLAUDE_SONNET_4 = "claude-sonnet-4-0"
 
 

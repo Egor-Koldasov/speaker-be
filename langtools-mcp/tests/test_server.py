@@ -121,7 +121,7 @@ class TestGenerateDictionaryEntryTool:
             method="POST",
             json_data={
                 "term": "test",
-                "model": "gpt-5-mini",
+                "model": "claude-sonnet-4-0",
                 "regenerate_full": True,
             },
             timeout=300.0,

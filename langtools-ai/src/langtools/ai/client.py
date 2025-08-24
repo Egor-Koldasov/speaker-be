@@ -33,24 +33,20 @@ class LLMClient:
     def _create_model(self, model_type: ModelType) -> BaseChatModel:
         """Create appropriate LangChain model based on type."""
         if model_type in [
-            ModelType.GPT4,
-            ModelType.GPT3_5,
-            ModelType.GTP4_1_MINI,
-            ModelType.GTP5_MINI,
-            ModelType.GTP4_O_MINI,
+            # ModelType.GPT4,
+            # ModelType.GPT3_5,
+            # ModelType.GTP4_1_MINI,
+            # ModelType.GTP4_O_MINI,
+            ModelType.GPT5_MINI,
         ]:
             # Use fewer tokens for GPT models to avoid context length issues
             return ChatOpenAI(
                 model=model_type.value,
-                temperature=1 if model_type == ModelType.GTP5_MINI else 0.3,
-                max_tokens=32768  # type: ignore[call-arg]
-                if model_type == ModelType.GTP4_1_MINI
-                else 16384
-                if model_type == ModelType.GTP4_O_MINI
-                else 64000,
+                temperature=1 if model_type == ModelType.GPT5_MINI else 0.3,
+                max_tokens=64000,  # type: ignore[call-arg]
                 timeout=180,  # type: ignore[call-arg]
             )
-        if model_type in [ModelType.CLAUDE_SONNET_3_5, ModelType.CLAUDE_SONNET_4]:
+        if model_type in [ModelType.CLAUDE_HAIKU_3_5, ModelType.CLAUDE_SONNET_4]:
             # Enable thinking only for Sonnet 4.0
             thinking_config = None
             if model_type == ModelType.CLAUDE_SONNET_4:
@@ -61,7 +57,7 @@ class LLMClient:
 
             return ChatAnthropic(
                 model=model_type.value,  # type: ignore[call-arg]
-                max_tokens=64000,  # type: ignore[call-arg]
+                max_tokens=8192 if model_type == ModelType.CLAUDE_HAIKU_3_5 else 64000,  # type: ignore[call-arg]
                 timeout=180,  # type: ignore[call-arg]
                 thinking=thinking_config,
             )
@@ -75,7 +71,7 @@ class LLMClient:
         """Execute LangChain chain with cost logging."""
         logger.info("🚀 Executing LLM chain...")
 
-        if self.model_type in [ModelType.GPT4, ModelType.GPT3_5]:
+        if self.model_type in [ModelType.GPT5_MINI]:
             with get_openai_callback() as cb:
                 result = await chain.ainvoke({})
                 # Log cost information for monitoring
@@ -92,7 +88,7 @@ class LLMClient:
         """Execute base dictionary chain with cost logging."""
         logger.info("🚀 Executing base dictionary LLM chain...")
 
-        if self.model_type in [ModelType.GPT4, ModelType.GPT3_5]:
+        if self.model_type in [ModelType.GPT5_MINI]:
             with get_openai_callback() as cb:
                 result = await chain.ainvoke({})
                 # Log cost information for monitoring
@@ -109,7 +105,7 @@ class LLMClient:
         """@deprecated Execute translation chain with cost logging."""
         logger.info("🚀 Executing translation LLM chain...")
 
-        if self.model_type in [ModelType.GPT4, ModelType.GPT3_5]:
+        if self.model_type in [ModelType.GPT5_MINI]:
             with get_openai_callback() as cb:
                 result = await chain.ainvoke({})
                 # Log cost information for monitoring

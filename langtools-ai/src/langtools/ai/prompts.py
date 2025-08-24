@@ -104,20 +104,17 @@ def create_base_dictionary_chain(
             (
                 "system",
                 """
-You are a computational linguist and lexicographer tasked with generating a comprehensive \
-dictionary entry in the original language only. All fields including classification categories \
-should be in original language.\
+You are a professional linguist and lexicographer tasked with writing a comprehensive
+dictionary entry in the original language of the provided term.
+All JSON values should be in original language.
 
 You will be given a set of input parameters.
 
 Focus on:
 
 - Detecting the correct source language based on the term and user preferences
-- Providing multiple meanings ordered from most to least common
-- Including comprehensive linguistic metadata for language learning
-- Detailed definitions, pronunciations, morphology, etymology
-- Example sentences in the original language
-- Synonyms, antonyms, collocations in the original language
+- Including all meanings known ordered from most to least common
+- Writing detailed definitions that reflect each meaning and their distinctions
                 """.strip(),
             ),
             ("user", "{parameters_json}"),

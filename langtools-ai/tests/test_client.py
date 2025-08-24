@@ -18,33 +18,15 @@ class TestLLMClient:
         mock_model = Mock()
         mock_chat_openai.return_value = mock_model
 
-        client = LLMClient(ModelType.GPT4)
+        client = LLMClient(ModelType.GPT5_MINI)
 
-        assert client.model_type == ModelType.GPT4
+        assert client.model_type == ModelType.GPT5_MINI
         assert client.model == mock_model
         # Only verify model selection; do not check temperature or token limits
         assert mock_chat_openai.call_count == 1
         call_args = cast(tuple[tuple[object, ...], dict[str, object]], mock_chat_openai.call_args)
         kwargs = call_args[1]
-        assert kwargs.get("model") == "gpt-4"
-
-    @patch("langtools.ai.client.ChatOpenAI")
-    def test_create_gpt35_model(self, mock_chat_openai: Mock) -> None:
-        """Test creating GPT-3.5 model."""
-        mock_model = Mock()
-        mock_chat_openai.return_value = mock_model
-
-        client = LLMClient(ModelType.GPT3_5)
-
-        assert client.model_type == ModelType.GPT3_5
-        assert client.model == mock_model
-        # Only verify model selection; do not check temperature or token limits
-        assert mock_chat_openai.call_count == 1
-        call_args = cast(tuple[tuple[object, ...], dict[str, object]], mock_chat_openai.call_args)
-        kwargs = call_args[1]
-        assert kwargs.get("model") == "gpt-3.5-turbo"
-
-    # Removed CLAUDE_SONNET_3_5 test as it is no longer used
+        assert kwargs.get("model") == "gpt-5-mini"
 
     @patch("langtools.ai.client.ChatAnthropic")
     def test_create_claude_sonnet_4_model(self, mock_chat_anthropic: Mock) -> None:
@@ -82,7 +64,7 @@ class TestLLMClient:
         mock_chain = Mock()
         mock_chain.ainvoke = AsyncMock(return_value="test_result")
 
-        client = LLMClient(ModelType.GPT4)
+        client = LLMClient(ModelType.GPT5_MINI)
 
         # Execute
         result = await client.generate_with_parser(mock_chain)
@@ -102,7 +84,7 @@ class TestLLMClient:
         mock_chain = Mock()
         mock_chain.ainvoke = AsyncMock(return_value="test_result")
 
-        client = LLMClient(ModelType.CLAUDE_SONNET_3_5)
+        client = LLMClient(ModelType.CLAUDE_HAIKU_3_5)
 
         # Execute
         result = await client.generate_with_parser(mock_chain)
