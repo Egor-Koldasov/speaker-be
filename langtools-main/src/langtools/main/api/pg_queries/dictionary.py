@@ -7,10 +7,10 @@ from typing import Any, Optional
 from sqlalchemy import func, select
 from sqlmodel import Session
 
-from langtools.ai import AiDictionaryEntry, AiMeaningTranslation
+from langtools.ai import AiDictionaryEntry
 from langtools.main.api.utils.id_generation import generate_pg_uuid
 
-from ..models import DictionaryEntry, DictionaryEntryTranslation, RUserDictionaryEntry
+from ..models import DictionaryEntry, RUserDictionaryEntry
 
 
 def _serialize_with_unicode(obj: dict[str, Any]) -> dict[str, Any]:  # type: ignore[misc]
@@ -44,21 +44,6 @@ def find_latest_dictionary_entry_for_user(
     return result.scalar_one_or_none()
 
 
-def find_latest_translation_for_entry(
-    session: Session, dictionary_entry_id: str, translation_language: str
-) -> Optional[DictionaryEntryTranslation]:
-    """Find the latest translation for a dictionary entry in a specific language."""
-    stmt = (
-        select(DictionaryEntryTranslation)
-        .where(DictionaryEntryTranslation.dictionary_entry_id == dictionary_entry_id)  # type: ignore[arg-type]
-        .where(DictionaryEntryTranslation.translation_language == translation_language)  # type: ignore[arg-type]
-        .order_by(DictionaryEntryTranslation.updated_at.desc())  # type: ignore[attr-defined]
-        .limit(1)
-    )
-    result = session.exec(stmt)  # type: ignore[arg-type]
-    return result.scalar_one_or_none()
-
-
 def create_dictionary_entry(
     session: Session, auth_user_id: str, ai_entry: AiDictionaryEntry
 ) -> DictionaryEntry:
@@ -80,27 +65,6 @@ def create_dictionary_entry(
 
     session.flush()
     return entry
-
-
-def create_dictionary_translation(
-    session: Session,
-    dictionary_entry_id: str,
-    translation_language: str,
-    translations: list[AiMeaningTranslation],
-) -> DictionaryEntryTranslation:
-    """Create a new translation for a dictionary entry."""
-    # Serialize translations with proper Unicode handling
-    translation_data = [_serialize_with_unicode(t.model_dump()) for t in translations]
-
-    translation = DictionaryEntryTranslation(
-        id=generate_pg_uuid(),
-        dictionary_entry_id=dictionary_entry_id,
-        translation_language=translation_language,
-        json_data=translation_data,
-    )
-    session.add(translation)
-    session.flush()
-    return translation
 
 
 def associate_user_with_dictionary_entry(
@@ -140,18 +104,6 @@ def get_dictionary_entry_by_id(session: Session, entry_id: str) -> DictionaryEnt
     if not entry:
         raise ValueError(f"Dictionary entry with id {entry_id} not found")
     return entry
-
-
-def get_dictionary_translation_by_id(
-    session: Session, translation_id: str
-) -> DictionaryEntryTranslation:
-    """Get a dictionary translation by its ID."""
-    stmt = select(DictionaryEntryTranslation).where(DictionaryEntryTranslation.id == translation_id)  # type: ignore[arg-type]
-    result = session.exec(stmt)  # type: ignore[arg-type]
-    translation = result.scalar_one_or_none()
-    if not translation:
-        raise ValueError(f"Dictionary translation with id {translation_id} not found")
-    return translation
 
 
 def get_user_dictionary_entry_association(

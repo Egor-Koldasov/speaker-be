@@ -6,13 +6,13 @@ from typing import TypedDict, cast
 import pytest
 from httpx import AsyncClient
 
-from langtools.ai import AiDictionaryEntry, AiMeaning, AiMeaningTranslation
-from langtools.main.fsrs import Rating
+from langtools.ai import AiDictionaryEntry, AiMeaning
 
 # DB setup helpers
 from langtools.main.api.database import get_session
 from langtools.main.api.pg_queries import dictionary as dictionary_queries
 from langtools.main.api.pg_queries.auth_user import find_auth_user_by_email
+from langtools.main.fsrs import Rating
 
 
 class TestUserData(TypedDict):
@@ -30,72 +30,34 @@ def _make_ai_entry(term: str, source_language: str = "en") -> AiDictionaryEntry:
         headword=term,
         local_id=f"{term}-1",
         canonical_form=term,
-        alternate_spellings=[],
         definition=f"Definition of {term}",
         part_of_speech="noun",
-        semantic_field=None,
-        pronunciation="/term/",
-        tone_notation=None,
-        syllable_count=None,
-        phonetic_variations=None,
-        morphology="N/A",
-        register="neutral",
-        frequency="common",
-        etymology="N/A",
-        difficulty_level="beginner",
-        learning_priority="essential",
-        common_mistakes=None,
-        mnemonic_hints=None,
-        practice_suggestions=None,
-        example_sentences=[f"{term} example 1.", f"{term} example 2."],
-        collocations=None,
-        synonyms=None,
-        antonyms=None,
+        # alternate_spellings=[],
+        # semantic_field=None,
+        # pronunciation="/term/",
+        # tone_notation=None,
+        # syllable_count=None,
+        # phonetic_variations=None,
+        # morphology="N/A",
+        # register="neutral",
+        # frequency="common",
+        # etymology="N/A",
+        # difficulty_level="beginner",
+        # learning_priority="essential",
+        # common_mistakes=None,
+        # mnemonic_hints=None,
+        # practice_suggestions=None,
+        # example_sentences=[f"{term} example 1.", f"{term} example 2."],
+        # collocations=None,
+        # synonyms=None,
+        # antonyms=None,
     )
     return AiDictionaryEntry(headword=term, source_language=source_language, meanings=[meaning])
 
 
-def _make_ai_translations(
-    entry: AiDictionaryEntry, translation_language: str
-) -> list[AiMeaningTranslation]:
-    """Create minimal valid translations for each meaning in entry."""
-    translations: list[AiMeaningTranslation] = []
-    for m in entry.meanings:
-        translations.append(
-            AiMeaningTranslation(
-                meaning_local_id=m.local_id,
-                headword=m.headword,
-                canonical_form=f"{m.canonical_form}-{translation_language}",
-                translation_language=translation_language,
-                translation=f"{m.headword}-{translation_language}",
-                definition=f"Translation of {m.headword} to {translation_language}",
-                part_of_speech=m.part_of_speech,
-                semantic_field=None,
-                pronunciation="/tr/",
-                pronunciation_tips="Tip",
-                tone_notation=None,
-                tone_tips=None,
-                morphology="N/A",
-                register="neutral",
-                frequency="common",
-                etymology="N/A",
-                difficulty_level="beginner",
-                learning_priority="essential",
-                common_mistakes=None,
-                mnemonic_hints=None,
-                practice_suggestions=None,
-                example_sentences_translations=[
-                    f"{m.headword} {translation_language} ex1",
-                    f"{m.headword} {translation_language} ex2",
-                ],
-                collocations=None,
-            )
-        )
-    return translations
-
-
-def _seed_dictionary_data(user_email: str, term: str, translation_language: str) -> tuple[str, str]:
-    """Seed dictionary entry and translation data.
+def _seed_dictionary_data(user_email: str, term: str) -> tuple[str, str]:
+    """
+    Seed dictionary entry and translation data.
 
     Returns entry_translation_id and meaning_local_id.
     """
@@ -107,16 +69,10 @@ def _seed_dictionary_data(user_email: str, term: str, translation_language: str)
         ai_entry = _make_ai_entry(term)
         entry = dictionary_queries.create_dictionary_entry(session, auth_user.id, ai_entry)
 
-        # Create translation
-        ai_translations = _make_ai_translations(ai_entry, translation_language)
-        translation = dictionary_queries.create_dictionary_translation(
-            session, entry.id, translation_language, ai_translations
-        )
-
         session.commit()
 
         # Return translation ID and first meaning's meaning_local_id for FSRS creation
-        return translation.id, ai_translations[0].meaning_local_id
+        return entry.id, ai_entry.meanings[0].local_id
 
 
 async def get_auth_token(client: AsyncClient, test_user_data: TestUserData) -> str:
@@ -144,11 +100,11 @@ async def test_create_fsrs_record_basic(client: AsyncClient, test_user_data: Tes
     headers = {"Authorization": f"Bearer {token}"}
 
     # Seed dictionary data
-    translation_id, meaning_local_id = _seed_dictionary_data(test_user_data["email"], "hello", "es")
+    dictionary_entry_id, meaning_local_id = _seed_dictionary_data(test_user_data["email"], "hello")
 
     # Create FSRS record
     request_data = {
-        "dictionary_entry_translation_id": translation_id,
+        "dictionary_entry_id": dictionary_entry_id,
         "meaning_local_id": meaning_local_id,
     }
 
@@ -181,11 +137,11 @@ async def test_create_fsrs_record_duplicate(
     headers = {"Authorization": f"Bearer {token}"}
 
     # Seed dictionary data
-    translation_id, meaning_local_id = _seed_dictionary_data(test_user_data["email"], "test", "fr")
+    dictionary_entry_id, meaning_local_id = _seed_dictionary_data(test_user_data["email"], "test")
 
     # Create FSRS record
     request_data = {
-        "dictionary_entry_translation_id": translation_id,
+        "dictionary_entry_id": dictionary_entry_id,
         "meaning_local_id": meaning_local_id,
     }
 
@@ -209,11 +165,11 @@ async def test_create_fsrs_record_invalid_meaning(
     headers = {"Authorization": f"Bearer {token}"}
 
     # Seed dictionary data
-    translation_id, _ = _seed_dictionary_data(test_user_data["email"], "word", "de")
+    dictionary_entry_id, _ = _seed_dictionary_data(test_user_data["email"], "word")
 
     # Try to create FSRS record with invalid meaning_local_id
     request_data = {
-        "dictionary_entry_translation_id": translation_id,
+        "dictionary_entry_id": dictionary_entry_id,
         "meaning_local_id": "nonexistent-meaning-id",
     }
 
@@ -223,17 +179,17 @@ async def test_create_fsrs_record_invalid_meaning(
 
 
 @pytest.mark.asyncio
-async def test_create_fsrs_record_nonexistent_translation(
+async def test_create_fsrs_record_nonexistent_dictionary_entry(
     client: AsyncClient, test_user_data: TestUserData
 ) -> None:
-    """Test creating FSRS record with nonexistent translation ID."""
+    """Test creating FSRS record with nonexistent dictionary entry ID."""
     # Get auth token
     token = await get_auth_token(client, test_user_data)
     headers = {"Authorization": f"Bearer {token}"}
 
-    # Try to create FSRS record with nonexistent translation ID
+    # Try to create FSRS record with nonexistent dictionary entry ID
     request_data = {
-        "dictionary_entry_translation_id": "nonexistent-translation-id",
+        "dictionary_entry_id": "nonexistent-dictionary-entry-id",
         "meaning_local_id": "any-meaning-id",
     }
 
@@ -246,7 +202,7 @@ async def test_create_fsrs_record_nonexistent_translation(
 async def test_create_fsrs_record_unauthenticated(client: AsyncClient) -> None:
     """Test that unauthenticated requests are rejected."""
     request_data = {
-        "dictionary_entry_translation_id": "some-id",
+        "dictionary_entry_id": "some-id",
         "meaning_local_id": "some-meaning-id",
     }
 
@@ -262,13 +218,13 @@ async def test_process_review_basic(client: AsyncClient, test_user_data: TestUse
     headers = {"Authorization": f"Bearer {token}"}
 
     # Seed dictionary data and create FSRS record
-    translation_id, meaning_local_id = _seed_dictionary_data(test_user_data["email"], "study", "ja")
+    dictionary_entry_id, meaning_local_id = _seed_dictionary_data(test_user_data["email"], "study")
 
     # Create FSRS record
     create_response = await client.post(
         "/fsrs",
         json={
-            "dictionary_entry_translation_id": translation_id,
+            "dictionary_entry_id": dictionary_entry_id,
             "meaning_local_id": meaning_local_id,
         },
         headers=headers,
@@ -306,15 +262,15 @@ async def test_process_review_failed_card(
     headers = {"Authorization": f"Bearer {token}"}
 
     # Seed dictionary data and create FSRS record
-    translation_id, meaning_local_id = _seed_dictionary_data(
-        test_user_data["email"], "difficult", "ko"
+    dictionary_entry_id, meaning_local_id = _seed_dictionary_data(
+        test_user_data["email"], "difficult"
     )
 
     # Create FSRS record
     create_response = await client.post(
         "/fsrs",
         json={
-            "dictionary_entry_translation_id": translation_id,
+            "dictionary_entry_id": dictionary_entry_id,
             "meaning_local_id": meaning_local_id,
         },
         headers=headers,
@@ -350,13 +306,13 @@ async def test_process_review_invalid_rating(
     headers = {"Authorization": f"Bearer {token}"}
 
     # Seed dictionary data and create FSRS record
-    translation_id, meaning_local_id = _seed_dictionary_data(test_user_data["email"], "test", "zh")
+    dictionary_entry_id, meaning_local_id = _seed_dictionary_data(test_user_data["email"], "test")
 
     # Create FSRS record
     create_response = await client.post(
         "/fsrs",
         json={
-            "dictionary_entry_translation_id": translation_id,
+            "dictionary_entry_id": dictionary_entry_id,
             "meaning_local_id": meaning_local_id,
         },
         headers=headers,
@@ -409,14 +365,14 @@ async def test_process_review_access_denied(
     token1 = await get_auth_token(client, test_user_data)
     headers1 = {"Authorization": f"Bearer {token1}"}
 
-    translation_id, meaning_local_id = _seed_dictionary_data(
-        test_user_data["email"], "private", "it"
+    dictionary_entry_id, meaning_local_id = _seed_dictionary_data(
+        test_user_data["email"], "private"
     )
 
     create_response = await client.post(
         "/fsrs",
         json={
-            "dictionary_entry_translation_id": translation_id,
+            "dictionary_entry_id": dictionary_entry_id,
             "meaning_local_id": meaning_local_id,
         },
         headers=headers1,
@@ -481,13 +437,11 @@ async def test_get_fsrs_records_with_data(
     # Create multiple FSRS records
     terms = ["word1", "word2", "word3"]
     for term in terms:
-        translation_id, meaning_local_id = _seed_dictionary_data(
-            test_user_data["email"], term, "es"
-        )
+        dictionary_entry_id, meaning_local_id = _seed_dictionary_data(test_user_data["email"], term)
         create_response = await client.post(
             "/fsrs",
             json={
-                "dictionary_entry_translation_id": translation_id,
+                "dictionary_entry_id": dictionary_entry_id,
                 "meaning_local_id": meaning_local_id,
             },
             headers=headers,
@@ -508,18 +462,12 @@ async def test_get_fsrs_records_with_data(
     assert "fsrs_id" in item
     assert "due" in item
     assert "dictionary_entry" in item
-    assert "dictionary_entry_translation" in item
     assert "meaning_local_id" in item
 
     # Verify dictionary data is included
     dictionary_entry = cast(dict[str, object], item["dictionary_entry"])
     assert "headword" in dictionary_entry
     assert "meanings" in dictionary_entry
-
-    dictionary_translation = cast(list[dict[str, object]], item["dictionary_entry_translation"])
-    assert len(dictionary_translation) > 0
-    assert "meaning_local_id" in dictionary_translation[0]
-    assert "translation" in dictionary_translation[0]
 
 
 @pytest.mark.asyncio
@@ -533,13 +481,13 @@ async def test_get_fsrs_records_pagination(
 
     # Create 5 FSRS records
     for i in range(5):
-        translation_id, meaning_local_id = _seed_dictionary_data(
-            test_user_data["email"], f"term{i}", "fr"
+        dictionary_entry_id, meaning_local_id = _seed_dictionary_data(
+            test_user_data["email"], f"term{i}"
         )
         create_response = await client.post(
             "/fsrs",
             json={
-                "dictionary_entry_translation_id": translation_id,
+                "dictionary_entry_id": dictionary_entry_id,
                 "meaning_local_id": meaning_local_id,
             },
             headers=headers,
@@ -586,15 +534,15 @@ async def test_fsrs_workflow_end_to_end(client: AsyncClient, test_user_data: Tes
     headers = {"Authorization": f"Bearer {token}"}
 
     # Seed dictionary data
-    translation_id, meaning_local_id = _seed_dictionary_data(
-        test_user_data["email"], "workflow", "pt"
+    dictionary_entry_id, meaning_local_id = _seed_dictionary_data(
+        test_user_data["email"], "workflow"
     )
 
     # 1. Create FSRS record
     create_response = await client.post(
         "/fsrs",
         json={
-            "dictionary_entry_translation_id": translation_id,
+            "dictionary_entry_id": dictionary_entry_id,
             "meaning_local_id": meaning_local_id,
         },
         headers=headers,
@@ -653,5 +601,4 @@ async def test_fsrs_workflow_end_to_end(client: AsyncClient, test_user_data: Tes
 
     # Verify complete dictionary data is included
     assert "dictionary_entry" in item
-    assert "dictionary_entry_translation" in item
     assert cast(str, item["meaning_local_id"]) == meaning_local_id

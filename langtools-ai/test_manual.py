@@ -49,7 +49,6 @@ async def test_workflow_russian_to_english():
         print(f"Source Language: {result.entry.source_language}")
         print(f"Headword: {result.entry.headword}")
         print(f"Number of meanings: {len(result.entry.meanings)}")
-        print(f"Number of translations: {len(result.translations)}")
 
         for i, meaning in enumerate(result.entry.meanings):
             print(f"\n--- Meaning {i + 1} ---")
@@ -57,23 +56,8 @@ async def test_workflow_russian_to_english():
             print(f"   Canonical Form: {meaning.canonical_form}")
             print(f"   Definition: {meaning.definition}")
             print(f"   Part of Speech: {meaning.part_of_speech}")
-            print(f"   Pronunciation: {meaning.pronunciation}")
-            print(f"   Example Sentences: {meaning.example_sentences}")
-            if meaning.synonyms:
-                print(f"   Synonyms: {meaning.synonyms}")
 
         print("\n" + "=" * 50)
-        print("TRANSLATIONS:")
-        print("=" * 50)
-
-        for i, translation in enumerate(result.translations):
-            print(f"\n--- Translation {i + 1} ---")
-            print(f"   Meaning ID: {translation.meaning_local_id}")
-            print(f"   Translation: {translation.translation}")
-            print(f"   Definition: {translation.definition}")
-            print(f"   Pronunciation: {translation.pronunciation}")
-            print(f"   Pronunciation Tips: {translation.pronunciation_tips}")
-            print(f"   Example Translations: {translation.example_sentences_translations}")
 
     except Exception as e:
         print(f"❌ Test failed: {e}")

@@ -1,17 +1,19 @@
 """FSRS API schemas for spaced repetition endpoints."""
 
 from datetime import datetime
+
 from pydantic import BaseModel, Field
 
-from langtools.ai import AiDictionaryEntry, AiMeaningTranslation
+from langtools.ai import AiDictionaryEntry
 from langtools.main.fsrs import Rating
+
 from ..models.fsrs import Fsrs
 
 
 class FsrsCreate(BaseModel):
-    """Request to create new FSRS record for meaning translation."""
+    """Request to create new FSRS record for meaning in dictionary entry."""
 
-    dictionary_entry_translation_id: str
+    dictionary_entry_id: str
     meaning_local_id: str
 
 
@@ -66,7 +68,6 @@ class FsrsItemResponse(BaseModel):
 
     # Full dictionary entry and translation data
     dictionary_entry: AiDictionaryEntry
-    dictionary_entry_translation: list[AiMeaningTranslation]
     meaning_local_id: str
 
 

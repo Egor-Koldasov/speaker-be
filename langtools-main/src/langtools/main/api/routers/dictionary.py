@@ -8,20 +8,18 @@ from pydantic import BaseModel, Field
 
 from langtools.ai import (
     AiDictionaryEntry,
-    AiMeaningTranslation,
     BaseDictionaryParams,
     DictionaryEntryParams,
     DictionaryWorkflowHooks,
     LLMAPIError,
     ModelType,
-    TranslationParams,
     ValidationError,
     generate_dictionary_workflow,
 )
 
 from ..auth.dependencies import get_current_auth_user
 from ..database import get_session
-from ..models import AuthUser, DictionaryEntry, DictionaryEntryTranslation, RUserDictionaryEntry
+from ..models import AuthUser, DictionaryEntry, RUserDictionaryEntry
 from ..pg_queries import dictionary as dictionary_queries
 
 
@@ -50,9 +48,6 @@ class GenerateDictionaryResponse(BaseModel):
     """Response model for dictionary generation endpoint following main package format."""
 
     dictionary_entry: DictionaryEntry = Field(description="Dictionary entry database record")
-    dictionary_entry_translation: DictionaryEntryTranslation = Field(
-        description="Dictionary translation database record"
-    )
     r_user_dictionary_entry: RUserDictionaryEntry = Field(
         description="User-dictionary entry association record"
     )
@@ -108,36 +103,9 @@ async def generate_dictionary_entry(
                     return entry.get_ai_dictionary_entry()
                 return None
 
-        async def retrieve_translations(
-            trans_params: TranslationParams,
-        ) -> Optional[list[AiMeaningTranslation]]:
-            """Retrieve cached translations from database if not forced to regenerate."""
-            # For E2E users (cache-only mode), ignore regeneration flags and use cache if available
-            if not is_e2e_user and (request.regenerate_full or request.regenerate_translations):
-                return None
-
-            with get_session() as session:
-                # First, find the dictionary entry by term and exact source language
-                entry = dictionary_queries.find_latest_dictionary_entry_for_user(
-                    session,
-                    current_user.id,
-                    trans_params.entry.headword,
-                    trans_params.entry.source_language,
-                )
-
-                if entry:
-                    # Then find translations for this entry
-                    translation = dictionary_queries.find_latest_translation_for_entry(
-                        session, entry.id, request.translation_language
-                    )
-                    if translation:
-                        return translation.get_ai_meaning_translations()
-                return None
-
         # Create hooks object
         hooks = DictionaryWorkflowHooks(
             retrieve_base_entry=retrieve_base_entry,
-            retrieve_translations=retrieve_translations,
         )
 
         # Determine if this is an E2E test user (heuristic: example.com emails)
@@ -174,38 +142,16 @@ async def generate_dictionary_entry(
                 )
                 entry_id = new_entry.id
 
-            # Check if we need to save translations
-            existing_translation = dictionary_queries.find_latest_translation_for_entry(
-                session, entry_id, request.translation_language
-            )
-
-            if (
-                not existing_translation
-                or request.regenerate_translations
-                or request.regenerate_full
-            ):
-                # Create new translation
-                new_translation = dictionary_queries.create_dictionary_translation(
-                    session, entry_id, request.translation_language, result.translations
-                )
-                translation_id = new_translation.id
-            else:
-                translation_id = existing_translation.id
-
             session.commit()
 
             # Retrieve the final database records for response
             final_entry = dictionary_queries.get_dictionary_entry_by_id(session, entry_id)
-            final_translation = dictionary_queries.get_dictionary_translation_by_id(
-                session, translation_id
-            )
             final_user_entry = dictionary_queries.get_user_dictionary_entry_association(
                 session, current_user.id, entry_id
             )
 
         return GenerateDictionaryResponse(
             dictionary_entry=final_entry,
-            dictionary_entry_translation=final_translation,
             r_user_dictionary_entry=final_user_entry,
         )
 

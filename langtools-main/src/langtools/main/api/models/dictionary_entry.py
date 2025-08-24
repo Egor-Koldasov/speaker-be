@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from typing import Any, cast
 
 import sqlalchemy as sa
-from sqlalchemy import DateTime, JSON, func
+from sqlalchemy import JSON, DateTime, func
 from sqlalchemy.orm import declared_attr
 from sqlmodel import Field, SQLModel
 
@@ -12,7 +12,8 @@ from langtools.ai import AiDictionaryEntry, AiMeaningTranslation
 
 
 class DictionaryEntry(SQLModel, table=True):
-    """Database model for dictionary_entry table.
+    """
+    Database model for dictionary_entry table.
 
     Stores the AI-generated dictionary entry data.
     """

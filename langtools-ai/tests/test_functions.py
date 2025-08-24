@@ -16,7 +16,6 @@ from langtools.ai.functions import (
 from langtools.ai.models import (
     AiDictionaryEntry,
     AiMeaning,
-    AiMeaningTranslation,
     BaseDictionaryParams,
     DictionaryEntryParams,
     DictionaryWorkflowResult,
@@ -74,17 +73,17 @@ class TestGenerateBaseDictionaryEntry:
                     headword="сырой",
                     local_id="сырой-1",
                     canonical_form="сырой",
-                    alternate_spellings=[],
                     definition="Не подвергшийся тепловой обработке",
                     part_of_speech="прилагательное",
-                    morphology="качественное прилагательное",
-                    register="нейтральный",
-                    frequency="common",
-                    etymology="от праславянского *syrъ",
-                    difficulty_level="intermediate",
-                    learning_priority="high",
-                    pronunciation="ˈsɨrəj",
-                    example_sentences=["Сырое мясо", "Сырые овощи"],
+                    # alternate_spellings=[],
+                    # morphology="качественное прилагательное",
+                    # register="нейтральный",
+                    # frequency="common",
+                    # etymology="от праславянского *syrъ",
+                    # difficulty_level="intermediate",
+                    # learning_priority="high",
+                    # pronunciation="ˈsɨrəj",
+                    # example_sentences=["Сырое мясо", "Сырые овощи"],
                 )
             ],
         )
@@ -125,17 +124,17 @@ class TestGenerateMeaningTranslations:
                     headword="test",
                     local_id="test-1",
                     canonical_form="test",
-                    alternate_spellings=[],
                     definition="test definition",
                     part_of_speech="noun",
-                    morphology="noun",
-                    register="neutral",
-                    frequency="common",
-                    etymology="test",
-                    difficulty_level="beginner",
-                    learning_priority="high",
-                    pronunciation="test",
-                    example_sentences=["test", "example"],
+                    # alternate_spellings=[],
+                    # morphology="noun",
+                    # register="neutral",
+                    # frequency="common",
+                    # etymology="test",
+                    # difficulty_level="beginner",
+                    # learning_priority="high",
+                    # pronunciation="test",
+                    # example_sentences=["test", "example"],
                 )
             ],
         )
@@ -157,17 +156,17 @@ class TestGenerateMeaningTranslations:
                     headword="test",
                     local_id="test-0",
                     canonical_form="test",
-                    alternate_spellings=[],
                     definition="test definition",
                     part_of_speech="noun",
-                    morphology="noun",
-                    register="neutral",
-                    frequency="common",
-                    etymology="test",
-                    difficulty_level="beginner",
-                    learning_priority="high",
-                    pronunciation="test",
-                    example_sentences=["test", "example"],
+                    # alternate_spellings=[],
+                    # morphology="noun",
+                    # register="neutral",
+                    # frequency="common",
+                    # etymology="test",
+                    # difficulty_level="beginner",
+                    # learning_priority="high",
+                    # pronunciation="test",
+                    # example_sentences=["test", "example"],
                 )
             ],
         )
@@ -195,44 +194,22 @@ class TestGenerateDictionaryWorkflow:
                     headword="сырой",
                     local_id="сырой-0",
                     canonical_form="сырой",
-                    alternate_spellings=[],
                     definition="Не подвергшийся тепловой обработке",
                     part_of_speech="прилагательное",
-                    morphology="качественное прилагательное",
-                    register="нейтральный",
-                    frequency="common",
-                    etymology="от праславянского *syrъ",
-                    difficulty_level="intermediate",
-                    learning_priority="high",
-                    pronunciation="ˈsɨrəj",
-                    example_sentences=["Сырое мясо", "Сырые овощи"],
+                    # alternate_spellings=[],
+                    # morphology="качественное прилагательное",
+                    # register="нейтральный",
+                    # frequency="common",
+                    # etymology="от праславянского *syrъ",
+                    # difficulty_level="intermediate",
+                    # learning_priority="high",
+                    # pronunciation="ˈsɨrəj",
+                    # example_sentences=["Сырое мясо", "Сырые овощи"],
                 )
             ],
         )
 
-        translations = [
-            AiMeaningTranslation(
-                meaning_local_id="сырой-0",
-                headword="raw",
-                canonical_form="raw",
-                translation_language="en",
-                translation="raw, uncooked",
-                definition="Not subjected to heat treatment",
-                part_of_speech="adjective",
-                morphology="descriptive adjective",
-                register="neutral",
-                frequency="common",
-                etymology="from Proto-Slavic *syrъ",
-                difficulty_level="intermediate",
-                learning_priority="high",
-                pronunciation="rɔː",
-                pronunciation_tips="Pronounced like 'raw' in English",
-                example_sentences_translations=["Raw meat", "Raw vegetables"],
-            )
-        ]
-
         mock_base_entry.return_value = base_entry
-        mock_translations.return_value = translations
 
         # Test parameters
         params = DictionaryEntryParams(
@@ -247,7 +224,6 @@ class TestGenerateDictionaryWorkflow:
         # Verify result
         assert isinstance(result, DictionaryWorkflowResult)
         assert result.entry == base_entry
-        assert result.translations == translations
 
         # Verify calls
         mock_base_entry.assert_called_once()
@@ -268,17 +244,17 @@ class TestLegacyGenerateDictionaryEntry:
                     headword="test",
                     local_id="test-1",
                     canonical_form="test",
-                    alternate_spellings=[],
                     definition="test",
                     part_of_speech="noun",
-                    morphology="noun",
-                    register="neutral",
-                    frequency="common",
-                    etymology="test",
-                    difficulty_level="beginner",
-                    learning_priority="high",
-                    pronunciation="tɛst",
-                    example_sentences=["a test", "another"],
+                    # alternate_spellings=[],
+                    # morphology="noun",
+                    # register="neutral",
+                    # frequency="common",
+                    # etymology="test",
+                    # difficulty_level="beginner",
+                    # learning_priority="high",
+                    # pronunciation="tɛst",
+                    # example_sentences=["a test", "another"],
                 )
             ],
         )

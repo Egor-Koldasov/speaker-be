@@ -90,7 +90,8 @@ class AiMeaning(BaseModel):
     #     description="Difficulty: beginner, elementary, intermediate, upper intermediate, advanced"
     # )
     # learning_priority: str = Field(description="Learning priority: essential, high, medium, low")
-    # common_mistakes: Optional[List[str]] = Field(default=None, description="Typical learner errors")
+    # common_mistakes: Optional[List[str]] =
+    # Field(default=None, description="Typical learner errors")
     # mnemonic_hints: Optional[List[str]] = Field(
     #     default=None, description="Memory aids and mnemonics"
     # )
@@ -100,9 +101,12 @@ class AiMeaning(BaseModel):
     # example_sentences: List[str] = Field(
     #     description="3-5 example sentences in original language", min_length=2, max_length=5
     # )
-    # collocations: Optional[List[str]] = Field(default=None, description="Common word combinations")
-    # synonyms: Optional[List[str]] = Field(default=None, description="Synonyms in original language")
-    # antonyms: Optional[List[str]] = Field(default=None, description="Antonyms in original language")
+    # collocations: Optional[List[str]] =
+    # Field(default=None, description="Common word combinations")
+    # synonyms: Optional[List[str]] =
+    # Field(default=None, description="Synonyms in original language")
+    # antonyms: Optional[List[str]] =
+    # Field(default=None, description="Antonyms in original language")
 
 
 class BaseDictionaryParams(BaseModel):
@@ -158,7 +162,6 @@ class DictionaryWorkflowResult(BaseModel):
     """Complete result from dictionary workflow with base entry and translations."""
 
     entry: AiDictionaryEntry = Field(description="Base dictionary entry")
-    translations: List[AiMeaningTranslation] = Field(description="Translations for all meanings")
 
 
 class DictionaryWorkflowHooks(BaseModel):
@@ -167,9 +170,6 @@ class DictionaryWorkflowHooks(BaseModel):
     retrieve_base_entry: Optional[
         Callable[[BaseDictionaryParams], Awaitable[Optional[AiDictionaryEntry]]]
     ] = Field(default=None, description="Hook to retrieve cached base dictionary entry")
-    retrieve_translations: Optional[
-        Callable[[TranslationParams], Awaitable[Optional[List[AiMeaningTranslation]]]]
-    ] = Field(default=None, description="Hook to retrieve cached translations")
 
     class Config:
         arbitrary_types_allowed = True

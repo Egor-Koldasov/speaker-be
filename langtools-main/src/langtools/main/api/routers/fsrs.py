@@ -5,7 +5,6 @@ import traceback
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlmodel import Session
 
-
 from ..auth.dependencies import get_current_auth_user
 from ..database import get_session
 from ..models import AuthUser
@@ -51,10 +50,9 @@ async def get_fsrs_records(
 
         # Build response items
         items = []
-        for fsrs, relationship, dictionary_entry, dictionary_translation in records:
+        for fsrs, relationship, dictionary_entry in records:
             # Get the AI models from the database records
             ai_dictionary_entry = dictionary_entry.get_ai_dictionary_entry()
-            ai_meaning_translations = dictionary_translation.get_ai_meaning_translations()
 
             item = FsrsItemResponse(
                 fsrs_id=fsrs.id,
@@ -67,7 +65,6 @@ async def get_fsrs_records(
                 reps=fsrs.reps,
                 lapses=fsrs.lapses,
                 dictionary_entry=ai_dictionary_entry,
-                dictionary_entry_translation=ai_meaning_translations,
                 meaning_local_id=relationship.meaning_local_id,
             )
             items.append(item)
@@ -103,11 +100,11 @@ async def create_fsrs_record(
     """
     Create a new FSRS record for a meaning translation.
 
-    Binds FSRS training data to a specific AiMeaningTranslation within a
-    dictionary entry translation. Returns error if record already exists.
+    Binds FSRS training data to a specific AiMeaning within a
+    dictionary entry. Returns error if record already exists.
 
     Args:
-        request: Request with dictionary_entry_translation_id and meaning_local_id
+        request: Request with dictionary_entry_id and meaning_local_id
         current_user: Current authenticated user
         session: Database session
 
@@ -115,23 +112,23 @@ async def create_fsrs_record(
         Initial FSRS training data
 
     Raises:
-        HTTPException: If meaning translation doesn't exist or record already exists
+        HTTPException: If meaning doesn't exist or record already exists
     """
     try:
         # Verify meaning translation exists
-        if not fsrs_queries.verify_meaning_translation_exists(
-            session, request.dictionary_entry_translation_id, request.meaning_local_id
+        if not fsrs_queries.verify_meaning_exists(
+            session, request.dictionary_entry_id, request.meaning_local_id
         ):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Meaning translation not found for the provided IDs",
+                detail="Meaning not found for the provided dictionary entry and meaning local ID",
             )
 
         # Create FSRS record
         fsrs, _ = fsrs_queries.create_fsrs_record(
             session,
             current_user.id,
-            request.dictionary_entry_translation_id,
+            request.dictionary_entry_id,
             request.meaning_local_id,
         )
 

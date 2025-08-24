@@ -72,15 +72,15 @@ class Fsrs(SQLModel, table=True):
         )
 
 
-class RMeaningTranslationFsrs(SQLModel, table=True):
-    """Database model for r_meaning_translation_fsrs table.
+class RFsrsMeaning(SQLModel, table=True):
+    """Database model for r_fsrs_meaning table.
 
-    Relationship table linking FSRS records to specific meaning translations.
+    Relationship table linking FSRS records to a specific meaning.
     Virtually one-to-one relationship between fsrs and an individual AiMeaning
     identified by meaning_local_id within a dictionary_entry.
     """
 
-    __tablename__ = cast(declared_attr[str], "r_meaning_translation_fsrs")
+    __tablename__ = cast(declared_attr[str], "r_fsrs_meaning")
 
     id: str = Field(primary_key=True, index=True)
     auth_user_id: str = Field(foreign_key="auth_user.id", index=True, nullable=False)

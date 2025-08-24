@@ -5,7 +5,7 @@ from typing import TypedDict, cast
 import pytest
 from httpx import AsyncClient
 
-from langtools.ai.models import AiDictionaryEntry, AiMeaning, AiMeaningTranslation
+from langtools.ai.models import AiDictionaryEntry, AiMeaning
 
 # DB seeding helpers to avoid AI calls in tests (cache-only mode for e2e users)
 from langtools.main.api.database import get_session
@@ -28,73 +28,32 @@ def _make_ai_entry(term: str, source_language: str = "en") -> AiDictionaryEntry:
         headword=term,
         local_id=f"{term}-1",
         canonical_form=term,
-        alternate_spellings=[],
         definition=f"Definition of {term}",
         part_of_speech="noun",
-        semantic_field=None,
-        pronunciation="/term/",
-        tone_notation=None,
-        syllable_count=None,
-        phonetic_variations=None,
-        morphology="N/A",
-        register="neutral",
-        frequency="common",
-        etymology="N/A",
-        difficulty_level="beginner",
-        learning_priority="essential",
-        common_mistakes=None,
-        mnemonic_hints=None,
-        practice_suggestions=None,
-        example_sentences=[f"{term} example 1.", f"{term} example 2."],
-        collocations=None,
-        synonyms=None,
-        antonyms=None,
+        # alternate_spellings=[],
+        # semantic_field=None,
+        # pronunciation="/term/",
+        # tone_notation=None,
+        # syllable_count=None,
+        # phonetic_variations=None,
+        # morphology="N/A",
+        # register="neutral",
+        # frequency="common",
+        # etymology="N/A",
+        # difficulty_level="beginner",
+        # learning_priority="essential",
+        # common_mistakes=None,
+        # mnemonic_hints=None,
+        # practice_suggestions=None,
+        # example_sentences=[f"{term} example 1.", f"{term} example 2."],
+        # collocations=None,
+        # synonyms=None,
+        # antonyms=None,
     )
     return AiDictionaryEntry(headword=term, source_language=source_language, meanings=[meaning])
 
 
-def _make_ai_translations(
-    entry: AiDictionaryEntry, translation_language: str
-) -> list[AiMeaningTranslation]:
-    """Create minimal valid translations for each meaning in entry."""
-    translations: list[AiMeaningTranslation] = []
-    for m in entry.meanings:
-        translations.append(
-            AiMeaningTranslation(
-                meaning_local_id=m.local_id,
-                headword=m.headword,
-                canonical_form=f"{m.canonical_form}-{translation_language}",
-                translation_language=translation_language,
-                translation=f"{m.headword}-{translation_language}",
-                definition=f"Translation of {m.headword} to {translation_language}",
-                part_of_speech=m.part_of_speech,
-                semantic_field=None,
-                pronunciation="/tr/",
-                pronunciation_tips="Tip",
-                tone_notation=None,
-                tone_tips=None,
-                morphology="N/A",
-                register="neutral",
-                frequency="common",
-                etymology="N/A",
-                difficulty_level="beginner",
-                learning_priority="essential",
-                common_mistakes=None,
-                mnemonic_hints=None,
-                practice_suggestions=None,
-                example_sentences_translations=[
-                    f"{m.headword} {translation_language} ex1",
-                    f"{m.headword} {translation_language} ex2",
-                ],
-                collocations=None,
-            )
-        )
-    return translations
-
-
-def _seed_entry_and_optional_translation(
-    user_email: str, term: str, translation_language: str | None
-) -> None:
+def _seed_entry_and_optional_translation(user_email: str, term: str) -> None:
     """Seed base entry and optionally a translation for the specified user."""
     auth_user = find_auth_user_by_email(user_email)
     assert auth_user is not None
@@ -105,17 +64,11 @@ def _seed_entry_and_optional_translation(
             session, auth_user.id, term
         )
         if existing_entry:
-            entry = existing_entry
             # Use the stored AI entry for translation generation consistency
             ai_entry = existing_entry.get_ai_dictionary_entry()
         else:
             ai_entry = _make_ai_entry(term)
-            entry = dictionary_queries.create_dictionary_entry(session, auth_user.id, ai_entry)
-        if translation_language:
-            ai_translations = _make_ai_translations(ai_entry, translation_language)
-            dictionary_queries.create_dictionary_translation(
-                session, entry.id, translation_language, ai_translations
-            )
+            dictionary_queries.create_dictionary_entry(session, auth_user.id, ai_entry)
         session.commit()
 
 
@@ -146,12 +99,11 @@ async def test_generate_dictionary_entry_basic(
     headers = {"Authorization": f"Bearer {token}"}
 
     # Seed cached data first (base + translation) so cache-only path returns 200
-    _seed_entry_and_optional_translation(test_user_data["email"], "hello", "es")
+    _seed_entry_and_optional_translation(test_user_data["email"], "hello")
 
     # Generate dictionary entry
     request_data = {
         "term": "hello",
-        "translation_language": "es",
     }
 
     response = await client.post("/dictionary_entry/generate", json=request_data, headers=headers)
@@ -159,7 +111,6 @@ async def test_generate_dictionary_entry_basic(
 
     result = cast(dict[str, object], response.json())
     assert "dictionary_entry" in result
-    assert "dictionary_entry_translation" in result
     assert "r_user_dictionary_entry" in result
 
     # Verify entry structure
@@ -170,14 +121,6 @@ async def test_generate_dictionary_entry_basic(
     assert "meanings" in entry
     meanings = cast(list[dict[str, object]], entry["meanings"])
     assert len(meanings) > 0
-
-    # Verify translations
-    translation_data = cast(dict[str, object], result["dictionary_entry_translation"])
-    translations = cast(list[dict[str, object]], translation_data["json_data"])
-    assert len(translations) > 0
-    for translation in translations:
-        assert "meaning_local_id" in translation
-        assert "headword" in translation
 
     # Verify user-dictionary entry association
     user_entry_data = cast(dict[str, object], result["r_user_dictionary_entry"])
@@ -198,12 +141,11 @@ async def test_generate_dictionary_entry_cached(
     headers = {"Authorization": f"Bearer {token}"}
 
     # Seed cached data first (base + translation)
-    _seed_entry_and_optional_translation(test_user_data["email"], "test", "fr")
+    _seed_entry_and_optional_translation(test_user_data["email"], "test")
 
     # Generate dictionary entry first time
     request_data = {
         "term": "test",
-        "translation_language": "fr",
     }
 
     response1 = await client.post("/dictionary_entry/generate", json=request_data, headers=headers)
@@ -239,12 +181,11 @@ async def test_generate_dictionary_entry_regenerate_full(
     headers = {"Authorization": f"Bearer {token}"}
 
     # Seed cached data first (base + translation)
-    _seed_entry_and_optional_translation(test_user_data["email"], "computer", "de")
+    _seed_entry_and_optional_translation(test_user_data["email"], "computer")
 
     # Generate dictionary entry first time
     request_data = {
         "term": "computer",
-        "translation_language": "de",
     }
 
     response1 = await client.post("/dictionary_entry/generate", json=request_data, headers=headers)
@@ -267,117 +208,6 @@ async def test_generate_dictionary_entry_regenerate_full(
         )
         == "computer"
     )
-    translations2 = cast(
-        list[dict[str, object]],
-        cast(dict[str, object], result2["dictionary_entry_translation"])["json_data"],
-    )
-    assert len(translations2) > 0
-
-
-@pytest.mark.asyncio
-async def test_generate_dictionary_entry_regenerate_translations_only(
-    client: AsyncClient, test_user_data: TestUserData
-) -> None:
-    """Test regenerating only translations."""
-    # Get auth token
-    token = await get_auth_token(client, test_user_data)
-    headers = {"Authorization": f"Bearer {token}"}
-
-    # Seed cached data first (base + translation)
-    _seed_entry_and_optional_translation(test_user_data["email"], "book", "ja")
-
-    # Generate dictionary entry first time
-    request_data = {
-        "term": "book",
-        "translation_language": "ja",
-    }
-
-    response1 = await client.post("/dictionary_entry/generate", json=request_data, headers=headers)
-    assert response1.status_code == 200
-    result1 = cast(dict[str, object], response1.json())
-
-    # Regenerate translations only
-    request_data["regenerate_translations"] = True  # type: ignore[typeddict-item]
-
-    response2 = await client.post("/dictionary_entry/generate", json=request_data, headers=headers)
-    assert response2.status_code == 200
-    result2 = cast(dict[str, object], response2.json())
-
-    # Entry should be the same, translations may differ
-    result1_entry = cast(
-        dict[str, object], cast(dict[str, object], result1["dictionary_entry"])["json_data"]
-    )
-    result2_entry = cast(
-        dict[str, object], cast(dict[str, object], result2["dictionary_entry"])["json_data"]
-    )
-    assert cast(str, result1_entry["headword"]) == cast(str, result2_entry["headword"])
-    assert cast(str, result1_entry["source_language"]) == cast(
-        str, result2_entry["source_language"]
-    )
-    translations2 = cast(
-        list[dict[str, object]],
-        cast(dict[str, object], result2["dictionary_entry_translation"])["json_data"],
-    )
-    assert len(translations2) > 0
-
-
-@pytest.mark.asyncio
-async def test_generate_dictionary_entry_different_languages(
-    client: AsyncClient, test_user_data: TestUserData
-) -> None:
-    """Test generating translations for different languages from same base entry."""
-    # Get auth token
-    token = await get_auth_token(client, test_user_data)
-    headers = {"Authorization": f"Bearer {token}"}
-
-    term = "water"
-
-    # Seed cached data (base + translations for both languages) so responses come from cache
-    _seed_entry_and_optional_translation(test_user_data["email"], term, "es")
-    _seed_entry_and_optional_translation(test_user_data["email"], term, "fr")
-
-    # Generate for Spanish
-    response_es = await client.post(
-        "/dictionary_entry/generate",
-        json={"term": term, "translation_language": "es"},
-        headers=headers,
-    )
-    assert response_es.status_code == 200
-    result_es = cast(dict[str, object], response_es.json())
-
-    # Generate for French - should reuse base entry
-    response_fr = await client.post(
-        "/dictionary_entry/generate",
-        json={"term": term, "translation_language": "fr"},
-        headers=headers,
-    )
-    assert response_fr.status_code == 200
-    result_fr = cast(dict[str, object], response_fr.json())
-
-    # Base entries should be identical
-    result_es_entry = cast(
-        dict[str, object], cast(dict[str, object], result_es["dictionary_entry"])["json_data"]
-    )
-    result_fr_entry = cast(
-        dict[str, object], cast(dict[str, object], result_fr["dictionary_entry"])["json_data"]
-    )
-    assert cast(str, result_es_entry["headword"]) == cast(str, result_fr_entry["headword"])
-    assert cast(str, result_es_entry["source_language"]) == cast(
-        str, result_fr_entry["source_language"]
-    )
-
-    # But translations should be different
-    translations_es = cast(
-        list[dict[str, object]],
-        cast(dict[str, object], result_es["dictionary_entry_translation"])["json_data"],
-    )
-    translations_fr = cast(
-        list[dict[str, object]],
-        cast(dict[str, object], result_fr["dictionary_entry_translation"])["json_data"],
-    )
-    assert cast(str, translations_es[0]["canonical_form"]) != cast(
-        str, translations_fr[0]["canonical_form"]
-    )
 
 
 @pytest.mark.asyncio
@@ -385,262 +215,7 @@ async def test_generate_dictionary_entry_unauthenticated(client: AsyncClient) ->
     """Test that unauthenticated requests are rejected."""
     request_data = {
         "term": "test",
-        "translation_language": "es",
     }
 
     response = await client.post("/dictionary_entry/generate", json=request_data)
     assert response.status_code == 401
-
-
-@pytest.mark.asyncio
-async def test_generate_dictionary_entry_invalid_language(
-    client: AsyncClient, test_user_data: TestUserData
-) -> None:
-    """Test with invalid language code."""
-    # Get auth token
-    token = await get_auth_token(client, test_user_data)
-    headers = {"Authorization": f"Bearer {token}"}
-
-    request_data = {
-        "term": "test",
-        "translation_language": "invalid_language_code",
-    }
-
-    response = await client.post("/dictionary_entry/generate", json=request_data, headers=headers)
-    # The AI might still try to process this, but it should handle gracefully
-    # We just check that the endpoint doesn't crash
-    assert response.status_code in [200, 400, 503]
-
-
-@pytest.mark.asyncio
-async def test_unicode_storage_and_caching(
-    client: AsyncClient, test_user_data: TestUserData
-) -> None:
-    """Test that Unicode characters are stored properly and caching works."""
-    # Get auth token
-    token = await get_auth_token(client, test_user_data)
-    headers = {"Authorization": f"Bearer {token}"}
-
-    # Use a term with Unicode characters that could be problematic
-    request_data = {
-        "term": "котёл",  # Russian word with special character ё
-        "translation_language": "en",
-    }
-
-    # First request - should call AI and store in database
-    response1 = await client.post("/dictionary_entry/generate", json=request_data, headers=headers)
-
-    # Skip if no API keys (expected in CI)
-    if response1.status_code in [500, 503]:
-        pytest.skip("AI API not available - expected in test environment")
-
-    assert response1.status_code == 200
-    result1 = cast(dict[str, object], response1.json())
-
-    # Verify the response contains the Unicode term correctly
-    entry1 = cast(
-        dict[str, object], cast(dict[str, object], result1["dictionary_entry"])["json_data"]
-    )
-    assert cast(str, entry1["headword"]) == "котёл"
-    assert entry1["source_language"]  # Should be detected (likely "ru")
-
-    # Second request with same parameters - should use cache
-    response2 = await client.post("/dictionary_entry/generate", json=request_data, headers=headers)
-    assert response2.status_code == 200
-    result2 = cast(dict[str, object], response2.json())
-
-    # Results should be identical (from cache)
-    result1_entry = cast(
-        dict[str, object], cast(dict[str, object], result1["dictionary_entry"])["json_data"]
-    )
-    result2_entry = cast(
-        dict[str, object], cast(dict[str, object], result2["dictionary_entry"])["json_data"]
-    )
-    assert cast(str, result1_entry["headword"]) == cast(str, result2_entry["headword"])
-    assert cast(str, result1_entry["source_language"]) == cast(
-        str, result2_entry["source_language"]
-    )
-    assert len(cast(list[dict[str, object]], result1_entry["meanings"])) == len(
-        cast(list[dict[str, object]], result2_entry["meanings"])
-    )
-
-    # The meanings should contain properly formatted Unicode
-    for meaning in cast(
-        list[dict[str, object]],
-        cast(dict[str, object], cast(dict[str, object], result2["dictionary_entry"])["json_data"])[
-            "meanings"
-        ],
-    ):
-        assert cast(str, meaning["headword"]) == "котёл"
-        assert cast(str, meaning["canonical_form"]) == "котёл"
-        # Definition should not contain escaped Unicode sequences
-        if "definition" in meaning:
-            assert "\\u" not in cast(str, meaning["definition"])
-
-
-@pytest.mark.asyncio
-async def test_regenerate_full_with_unicode(
-    client: AsyncClient, test_user_data: TestUserData
-) -> None:
-    """Test that regenerate_full works correctly with Unicode terms."""
-    # Get auth token
-    token = await get_auth_token(client, test_user_data)
-    headers = {"Authorization": f"Bearer {token}"}
-
-    request_data = {
-        "term": "привет",  # Russian greeting
-        "translation_language": "en",
-    }
-
-    # First request
-    response1 = await client.post("/dictionary_entry/generate", json=request_data, headers=headers)
-
-    # Skip if no API keys
-    if response1.status_code in [500, 503]:
-        pytest.skip("AI API not available - expected in test environment")
-
-    assert response1.status_code == 200
-
-    # Force full regeneration
-    request_data["regenerate_full"] = True  # type: ignore[typeddict-item]
-
-    response2 = await client.post("/dictionary_entry/generate", json=request_data, headers=headers)
-    assert response2.status_code == 200
-
-    result2 = cast(dict[str, object], response2.json())
-    assert (
-        cast(
-            str,
-            cast(
-                dict[str, object], cast(dict[str, object], result2["dictionary_entry"])["json_data"]
-            )["headword"],
-        )
-        == "привет"
-    )
-    # Should not contain escaped Unicode
-    assert "\\u" not in str(result2)
-
-
-@pytest.mark.asyncio
-async def test_different_languages_same_term(
-    client: AsyncClient, test_user_data: TestUserData
-) -> None:
-    """Test generating different target languages for the same source term."""
-    # Get auth token
-    token = await get_auth_token(client, test_user_data)
-    headers = {"Authorization": f"Bearer {token}"}
-
-    term = "мир"  # Russian word meaning "world" or "peace"
-
-    # Generate English translation
-    response_en = await client.post(
-        "/dictionary_entry/generate",
-        json={"term": term, "translation_language": "en"},
-        headers=headers,
-    )
-
-    # Skip if no API keys
-    if response_en.status_code in [500, 503]:
-        pytest.skip("AI API not available - expected in test environment")
-
-    assert response_en.status_code == 200
-    result_en = cast(dict[str, object], response_en.json())
-
-    # Generate French translation - should reuse base entry but create new translations
-    response_fr = await client.post(
-        "/dictionary_entry/generate",
-        json={"term": term, "translation_language": "fr"},
-        headers=headers,
-    )
-    assert response_fr.status_code == 200
-    result_fr = cast(dict[str, object], response_fr.json())
-
-    # Base entries should be identical (cached)
-    result_en_entry = cast(
-        dict[str, object], cast(dict[str, object], result_en["dictionary_entry"])["json_data"]
-    )
-    result_fr_entry = cast(
-        dict[str, object], cast(dict[str, object], result_fr["dictionary_entry"])["json_data"]
-    )
-    assert cast(str, result_en_entry["headword"]) == cast(str, result_fr_entry["headword"])
-    assert cast(str, result_en_entry["source_language"]) == cast(
-        str, result_fr_entry["source_language"]
-    )
-
-    # But we should have different translations
-    assert (
-        len(
-            cast(
-                list[dict[str, object]],
-                cast(dict[str, object], result_en["dictionary_entry_translation"])["json_data"],
-            )
-        )
-        > 0
-    )
-    assert (
-        len(
-            cast(
-                list[dict[str, object]],
-                cast(dict[str, object], result_fr["dictionary_entry_translation"])["json_data"],
-            )
-        )
-        > 0
-    )
-
-
-@pytest.mark.asyncio
-async def test_regenerate_translations_only(
-    client: AsyncClient, test_user_data: TestUserData
-) -> None:
-    """Test that regenerate_translations works correctly."""
-    # Get auth token
-    token = await get_auth_token(client, test_user_data)
-    headers = {"Authorization": f"Bearer {token}"}
-
-    request_data = {
-        "term": "дом",  # Russian word for "house"
-        "translation_language": "en",
-    }
-
-    # First request
-    response1 = await client.post("/dictionary_entry/generate", json=request_data, headers=headers)
-
-    # Skip if no API keys
-    if response1.status_code in [500, 503]:
-        pytest.skip("AI API not available - expected in test environment")
-
-    assert response1.status_code == 200
-    result1 = cast(dict[str, object], response1.json())
-
-    # Regenerate translations only
-    request_data["regenerate_translations"] = True  # type: ignore[typeddict-item]
-
-    response2 = await client.post("/dictionary_entry/generate", json=request_data, headers=headers)
-    assert response2.status_code == 200
-    result2 = cast(dict[str, object], response2.json())
-
-    # Base entry should be the same (cached)
-    result1_entry = cast(
-        dict[str, object], cast(dict[str, object], result1["dictionary_entry"])["json_data"]
-    )
-    result2_entry = cast(
-        dict[str, object], cast(dict[str, object], result2["dictionary_entry"])["json_data"]
-    )
-    assert cast(str, result1_entry["headword"]) == cast(str, result2_entry["headword"])
-    assert cast(str, result1_entry["source_language"]) == cast(
-        str, result2_entry["source_language"]
-    )
-
-    # Should have translations
-    assert (
-        len(
-            cast(
-                list[dict[str, object]],
-                cast(dict[str, object], result2["dictionary_entry_translation"])["json_data"],
-            )
-        )
-        > 0
-    )
-
-    # All text should be properly encoded Unicode, not escape sequences
-    assert "\\u" not in str(result2)

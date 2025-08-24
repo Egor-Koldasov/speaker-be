@@ -106,7 +106,7 @@ class LLMClient:
     async def generate_with_parser_translations(
         self, chain: Runnable[dict[str, str], MeaningTranslationList]
     ) -> List[AiMeaningTranslation]:
-        """Execute translation chain with cost logging."""
+        """@deprecated Execute translation chain with cost logging."""
         logger.info("🚀 Executing translation LLM chain...")
 
         if self.model_type in [ModelType.GPT4, ModelType.GPT3_5]:

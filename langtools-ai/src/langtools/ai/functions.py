@@ -90,6 +90,7 @@ async def generate_meaning_translations(
     params: TranslationParams, model: ModelType
 ) -> List[AiMeaningTranslation]:
     """
+    @deprecated
     Generate translations for all meanings in a dictionary entry (step 2 of workflow).
 
     Args:
@@ -182,32 +183,8 @@ async def generate_dictionary_workflow(
         base_entry = await generate_base_dictionary_entry(base_params, model)
         logger.info(f"Generated base entry with {len(base_entry.meanings)} meanings")
 
-    # Step 2: Generate translations
-    translation_params = TranslationParams(
-        entry=base_entry,
-        translation_language=params.translation_language,
-    )
-
-    logger.info("Step 2: Generating translations...")
-
-    # Check if we have a hook to retrieve cached translations
-    translations = None
-    if hooks and hooks.retrieve_translations:
-        logger.info("Checking for cached translations...")
-        translations = await hooks.retrieve_translations(translation_params)
-        if translations:
-            logger.info(f"Retrieved cached {len(translations)} translations")
-
-    # Generate if not cached
-    if not translations:
-        if cache_only:
-            # Do not call AI when cache-only mode is enabled
-            raise LLMAPIError("AI calls are disabled for this request")
-        translations = await generate_meaning_translations(translation_params, model)
-        logger.info(f"Generated {len(translations)} translations")
-
     logger.info("Dictionary workflow completed successfully")
-    return DictionaryWorkflowResult(entry=base_entry, translations=translations)
+    return DictionaryWorkflowResult(entry=base_entry)
 
 
 # Legacy function for backward compatibility - wraps new workflow
