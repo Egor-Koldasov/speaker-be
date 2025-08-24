@@ -76,8 +76,8 @@ class RMeaningTranslationFsrs(SQLModel, table=True):
     """Database model for r_meaning_translation_fsrs table.
 
     Relationship table linking FSRS records to specific meaning translations.
-    Virtually one-to-one relationship between fsrs and an individual AiMeaningTranslation
-    identified by meaning_local_id within a dictionary_entry_translation.
+    Virtually one-to-one relationship between fsrs and an individual AiMeaning
+    identified by meaning_local_id within a dictionary_entry.
     """
 
     __tablename__ = cast(declared_attr[str], "r_meaning_translation_fsrs")
@@ -85,9 +85,7 @@ class RMeaningTranslationFsrs(SQLModel, table=True):
     id: str = Field(primary_key=True, index=True)
     auth_user_id: str = Field(foreign_key="auth_user.id", index=True, nullable=False)
     fsrs_id: str = Field(foreign_key="fsrs.id", index=True, nullable=False, unique=True)
-    dictionary_entry_translation_id: str = Field(
-        foreign_key="dictionary_entry_translation.id", index=True, nullable=False
-    )
+    dictionary_entry_id: str = Field(foreign_key="dictionary_entry.id", index=True, nullable=False)
     meaning_local_id: str = Field(index=True, nullable=False)
 
     created_at: datetime = Field(

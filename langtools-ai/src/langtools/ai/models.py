@@ -64,46 +64,45 @@ class AiMeaning(BaseModel):
     canonical_form: str = Field(
         description="Standard dictionary form - base/citation form (infinitive, nominative, etc.)"
     )
-    alternate_spellings: List[str] = Field(description="Other valid spellings or representations")
     definition: str = Field(description="Clear, comprehensive definition in original language")
     part_of_speech: str = Field(description="Part of speech in original language")
-    semantic_field: Optional[str] = Field(
-        default=None, description="Semantic domain (medicine, technology, sports, etc.)"
-    )
-    pronunciation: str = Field(description="Comma separated list of pronunciations in IPA format")
-    tone_notation: Optional[str] = Field(
-        default=None, description="Tone markers (Mandarin: xuéxí, Vietnamese: học tập)"
-    )
-    syllable_count: Optional[int] = Field(default=None, description="Number of syllables")
-    phonetic_variations: Optional[List[str]] = Field(
-        default=None, description="Regional pronunciation variants"
-    )
-    morphology: str = Field(description="The list of all the morphological features")
-    register: str = Field(
-        description="Formality level: formal, informal, colloquial, archaic, technical, vulgar"
-    )
-    frequency: str = Field(
-        description="Usage frequency: very common, common, uncommon, rare, archaic"
-    )
-    etymology: str = Field(description="A detailed explanation of the word's etymology")
-    difficulty_level: str = Field(
-        description="Difficulty: beginner, elementary, intermediate, upper intermediate, advanced"
-    )
-    learning_priority: str = Field(description="Learning priority: essential, high, medium, low")
-    common_mistakes: Optional[List[str]] = Field(default=None, description="Typical learner errors")
-    mnemonic_hints: Optional[List[str]] = Field(
-        default=None, description="Memory aids and mnemonics"
-    )
-    practice_suggestions: Optional[List[str]] = Field(
-        default=None, description="Suggested practice methods"
-    )
-
-    example_sentences: List[str] = Field(
-        description="3-5 example sentences in original language", min_length=2, max_length=5
-    )
-    collocations: Optional[List[str]] = Field(default=None, description="Common word combinations")
-    synonyms: Optional[List[str]] = Field(default=None, description="Synonyms in original language")
-    antonyms: Optional[List[str]] = Field(default=None, description="Antonyms in original language")
+    # alternate_spellings: List[str] = Field(description="Other valid spellings or representations")
+    # semantic_field: Optional[str] = Field(
+    #     default=None, description="Semantic domain (medicine, technology, sports, etc.)"
+    # )
+    # pronunciation: str = Field(description="Comma separated list of pronunciations in IPA format")
+    # tone_notation: Optional[str] = Field(
+    #     default=None, description="Tone markers (Mandarin: xuéxí, Vietnamese: học tập)"
+    # )
+    # syllable_count: Optional[int] = Field(default=None, description="Number of syllables")
+    # phonetic_variations: Optional[List[str]] = Field(
+    #     default=None, description="Regional pronunciation variants"
+    # )
+    # morphology: str = Field(description="The list of all the morphological features")
+    # register: str = Field(
+    #     description="Formality level: formal, informal, colloquial, archaic, technical, vulgar"
+    # )
+    # frequency: str = Field(
+    #     description="Usage frequency: very common, common, uncommon, rare, archaic"
+    # )
+    # etymology: str = Field(description="A detailed explanation of the word's etymology")
+    # difficulty_level: str = Field(
+    #     description="Difficulty: beginner, elementary, intermediate, upper intermediate, advanced"
+    # )
+    # learning_priority: str = Field(description="Learning priority: essential, high, medium, low")
+    # common_mistakes: Optional[List[str]] = Field(default=None, description="Typical learner errors")
+    # mnemonic_hints: Optional[List[str]] = Field(
+    #     default=None, description="Memory aids and mnemonics"
+    # )
+    # practice_suggestions: Optional[List[str]] = Field(
+    #     default=None, description="Suggested practice methods"
+    # )
+    # example_sentences: List[str] = Field(
+    #     description="3-5 example sentences in original language", min_length=2, max_length=5
+    # )
+    # collocations: Optional[List[str]] = Field(default=None, description="Common word combinations")
+    # synonyms: Optional[List[str]] = Field(default=None, description="Synonyms in original language")
+    # antonyms: Optional[List[str]] = Field(default=None, description="Antonyms in original language")
 
 
 class BaseDictionaryParams(BaseModel):

@@ -5,6 +5,10 @@ Design writing/reading combination approach.
 
 ## Make tool calls typed.
 
+## Move database models out of api package.
+
+## Move database queries out of api package.
+
 ## Add model structure to the prompt for more specific references.
 
 ## Write a more specific template for training messages.
