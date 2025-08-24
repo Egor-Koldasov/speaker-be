@@ -25,7 +25,7 @@ class ModelType(Enum):
 class DictionaryEntryParams(BaseModel):
     """Input parameters for dictionary entry generation."""
 
-    translating_term: str = Field(description="The word or phrase to define and translate")
+    translating_term: str = Field(description="The word or phrase to define")
     user_learning_languages: str = Field(
         description=(
             "A list of languages that the user is learning. "
@@ -37,16 +37,11 @@ class DictionaryEntryParams(BaseModel):
             "can have the same priority."
         )
     )
-    translation_language: str = Field(
-        description="Target language for translations in BCP 47 format"
-    )
-
     model_config = {
         "json_schema_extra": {
             "example": {
                 "translating_term": "сырой",
                 "user_learning_languages": "en:1,ru:2",
-                "translation_language": "en",
             }
         }
     }

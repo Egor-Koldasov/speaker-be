@@ -22,10 +22,6 @@ class TestGenerateDictionaryEntryTool:
                 "headword": "сырой",
                 "source_language": "ru",
             },
-            "dictionary_entry_translation": {
-                "id": "test-translation-id",
-                "translation_language": "en",
-            },
             "r_user_dictionary_entry": {
                 "id": "test-user-entry-id",
             },
@@ -38,7 +34,6 @@ class TestGenerateDictionaryEntryTool:
         result = await generate_dictionary_entry(
             context=mock_context,
             translating_term="сырой",
-            translation_language="en",
             model="claude-sonnet-4-0",
         )
 
@@ -52,10 +47,8 @@ class TestGenerateDictionaryEntryTool:
             method="POST",
             json_data={
                 "term": "сырой",
-                "translation_language": "en",
                 "model": "claude-sonnet-4-0",
                 "regenerate_full": False,
-                "regenerate_translations": False,
             },
             timeout=300.0,
         )
@@ -70,10 +63,6 @@ class TestGenerateDictionaryEntryTool:
                 "headword": "hello",
                 "source_language": "en",
             },
-            "dictionary_entry_translation": {
-                "id": "test-translation-id",
-                "translation_language": "ru",
-            },
             "r_user_dictionary_entry": {
                 "id": "test-user-entry-id",
             },
@@ -86,7 +75,6 @@ class TestGenerateDictionaryEntryTool:
         result = await generate_dictionary_entry(
             context=mock_context,
             translating_term="hello",
-            translation_language="ru",
             model="claude-3-5-haiku-latest",
         )
 
@@ -100,10 +88,8 @@ class TestGenerateDictionaryEntryTool:
             method="POST",
             json_data={
                 "term": "hello",
-                "translation_language": "ru",
                 "model": "claude-3-5-haiku-latest",
                 "regenerate_full": False,
-                "regenerate_translations": False,
             },
             timeout=300.0,
         )
@@ -113,7 +99,6 @@ class TestGenerateDictionaryEntryTool:
         """Test generation with regeneration flags."""
         api_response = {
             "dictionary_entry": {"id": "test-entry-id"},
-            "dictionary_entry_translation": {"id": "test-translation-id"},
             "r_user_dictionary_entry": {"id": "test-user-entry-id"},
         }
 
@@ -124,9 +109,7 @@ class TestGenerateDictionaryEntryTool:
         result = await generate_dictionary_entry(
             context=mock_context,
             translating_term="test",
-            translation_language="en",
             regenerate_full=True,
-            regenerate_translations=True,
         )
 
         assert result == api_response
@@ -138,10 +121,8 @@ class TestGenerateDictionaryEntryTool:
             method="POST",
             json_data={
                 "term": "test",
-                "translation_language": "en",
-                "model": "claude-sonnet-4-0",
+                "model": "gpt-5-mini",
                 "regenerate_full": True,
-                "regenerate_translations": True,
             },
             timeout=300.0,
         )

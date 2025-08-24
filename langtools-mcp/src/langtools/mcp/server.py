@@ -100,9 +100,6 @@ class DictionaryEntryRequest(BaseModel):
     user_learning_languages: str = Field(
         description="User's language preferences in format 'en:1,ru:2'"
     )
-    translation_language: str = Field(
-        description="Target language for translations in BCP 47 format"
-    )
     model: str = Field(
         default="claude-3-5-sonnet-20241022",
         description="LLM model to use for generation",
@@ -112,10 +109,8 @@ class DictionaryEntryRequest(BaseModel):
 async def generate_dictionary_entry(
     context: Context,
     translating_term: str,
-    translation_language: str,
     model: str = "gpt-5-mini",
     regenerate_full: bool = False,
-    regenerate_translations: bool = False,
 ) -> dict[str, object]:
     """
     Generate comprehensive multilingual dictionary entry using the langtools API.
@@ -166,10 +161,8 @@ async def generate_dictionary_entry(
         # Prepare request data
         request_data: dict[str, object] = {
             "term": translating_term,
-            "translation_language": translation_language,
             "model": model_value,
             "regenerate_full": regenerate_full,
-            "regenerate_translations": regenerate_translations,
         }
 
         # Call the API with 5-minute timeout for dictionary generation

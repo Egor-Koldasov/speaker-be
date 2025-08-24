@@ -27,9 +27,6 @@ class GenerateDictionaryRequest(BaseModel):
     """Request model for dictionary generation endpoint."""
 
     term: str = Field(description="The word or phrase to define and translate")
-    translation_language: str = Field(
-        description="Target language for translations in BCP 47 format (e.g., 'en', 'es', 'fr')"
-    )
     model: ModelType = Field(
         default=ModelType.CLAUDE_SONNET_4,
         description="LLM model to use for generation",
@@ -37,10 +34,6 @@ class GenerateDictionaryRequest(BaseModel):
     regenerate_full: bool = Field(
         default=False,
         description="Force regeneration of the complete dictionary entry",
-    )
-    regenerate_translations: bool = Field(
-        default=False,
-        description="Force regeneration of translations only",
     )
 
 
@@ -79,7 +72,6 @@ async def generate_dictionary_entry(
         # Create params for the workflow
         params = DictionaryEntryParams(
             translating_term=request.term,
-            translation_language=request.translation_language,
             user_learning_languages="",  # TODO: Get from user profile
         )
 

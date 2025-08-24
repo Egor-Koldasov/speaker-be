@@ -40,11 +40,6 @@ def create_dictionary_entry_chain(
             ),
             "value": params.user_learning_languages,
         },
-        {
-            "name": "translationLanguage",
-            "description": "Target language for translations and definitions in BCP 47 format",
-            "value": params.translation_language,
-        },
     ]
 
     prompt_template = ChatPromptTemplate.from_messages(  # type: ignore[misc]

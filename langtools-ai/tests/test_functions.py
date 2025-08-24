@@ -11,7 +11,6 @@ from langtools.ai.functions import (
     generate_base_dictionary_entry,
     generate_dictionary_entry,
     generate_dictionary_workflow,
-    generate_meaning_translations,
 )
 from langtools.ai.models import (
     AiDictionaryEntry,
@@ -20,7 +19,6 @@ from langtools.ai.models import (
     DictionaryEntryParams,
     DictionaryWorkflowResult,
     ModelType,
-    TranslationParams,
 )
 
 
@@ -110,80 +108,11 @@ class TestGenerateBaseDictionaryEntry:
         mock_client.generate_with_parser_base.assert_called_once_with(mock_chain)  # type: ignore[misc]
 
 
-class TestGenerateMeaningTranslations:
-    """Test cases for generate_meaning_translations function."""
-
-    async def test_validate_empty_meanings(self) -> None:
-        """Test validation fails for entry with no meanings."""
-        # Construct a valid entry then clear meanings to simulate invalid state
-        base_entry = AiDictionaryEntry(
-            headword="test",
-            source_language="ru",
-            meanings=[
-                AiMeaning(
-                    headword="test",
-                    local_id="test-1",
-                    canonical_form="test",
-                    definition="test definition",
-                    part_of_speech="noun",
-                    # alternate_spellings=[],
-                    # morphology="noun",
-                    # register="neutral",
-                    # frequency="common",
-                    # etymology="test",
-                    # difficulty_level="beginner",
-                    # learning_priority="high",
-                    # pronunciation="test",
-                    # example_sentences=["test", "example"],
-                )
-            ],
-        )
-        base_entry.meanings = []  # simulate empty meanings after construction
-        params = TranslationParams(entry=base_entry, translation_language="en")
-
-        with pytest.raises(
-            ValidationError, match="Dictionary entry must have at least one meaning"
-        ):
-            await generate_meaning_translations(params, ModelType.CLAUDE_SONNET_4)
-
-    async def test_validate_invalid_translation_language(self) -> None:
-        """Test validation fails for invalid translation_language format."""
-        base_entry = AiDictionaryEntry(
-            headword="test",
-            source_language="ru",
-            meanings=[
-                AiMeaning(
-                    headword="test",
-                    local_id="test-0",
-                    canonical_form="test",
-                    definition="test definition",
-                    part_of_speech="noun",
-                    # alternate_spellings=[],
-                    # morphology="noun",
-                    # register="neutral",
-                    # frequency="common",
-                    # etymology="test",
-                    # difficulty_level="beginner",
-                    # learning_priority="high",
-                    # pronunciation="test",
-                    # example_sentences=["test", "example"],
-                )
-            ],
-        )
-        params = TranslationParams(entry=base_entry, translation_language="invalid")
-
-        with pytest.raises(ValidationError, match="Invalid translation_language format"):
-            await generate_meaning_translations(params, ModelType.CLAUDE_SONNET_4)
-
-
 class TestGenerateDictionaryWorkflow:
     """Test cases for generate_dictionary_workflow function."""
 
-    @patch("langtools.ai.functions.generate_meaning_translations")
     @patch("langtools.ai.functions.generate_base_dictionary_entry")
-    async def test_successful_workflow(
-        self, mock_base_entry: Mock, mock_translations: Mock
-    ) -> None:
+    async def test_successful_workflow(self, mock_base_entry: Mock) -> None:
         """Test successful dictionary workflow execution."""
         # Setup mock results
         base_entry = AiDictionaryEntry(
@@ -215,7 +144,6 @@ class TestGenerateDictionaryWorkflow:
         params = DictionaryEntryParams(
             translating_term="сырой",
             user_learning_languages="en:1,ru:2",
-            translation_language="en",
         )
 
         # Execute workflow
@@ -227,7 +155,6 @@ class TestGenerateDictionaryWorkflow:
 
         # Verify calls
         mock_base_entry.assert_called_once()
-        mock_translations.assert_called_once()
 
 
 class TestLegacyGenerateDictionaryEntry:
@@ -263,7 +190,6 @@ class TestLegacyGenerateDictionaryEntry:
         params = DictionaryEntryParams(
             translating_term="test",
             user_learning_languages="en:1",
-            translation_language="es",
         )
 
         result = await generate_dictionary_entry(params, ModelType.CLAUDE_SONNET_4)

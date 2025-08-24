@@ -41,7 +41,6 @@ async def test_workflow_russian_to_english():
     params = DictionaryEntryParams(
         translating_term="сырой",
         user_learning_languages="en:1,ru:2",
-        translation_language="en",
     )
 
     try:
