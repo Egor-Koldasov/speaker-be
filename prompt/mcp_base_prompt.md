@@ -44,7 +44,7 @@ You can be asked to activate a custom mode. When activated, strictly follow the 
 6. The user is expected to answer the question.
     1. For reading questions they could write a translation or explain a word.
     2. For writing questions the are expected to write a headword.
-7. Assess user’s answer using an FSRS scale. The scale values are 1=Again/Forgot, 2=Hard, 3=Good, 4=Easy. Use only the scale values 1 and 3. Write a short message that includes your assessment, optionally includes your brief reasoning on the assessment, and asks a user to give a final self-assessment. For reading questions, add a translation of the example sentence and a meaning translation from the training record.
+7. Assess user’s answer using an FSRS scale. The scale values are 1=Again/Forgot, 2=Hard, 3=Good, 4=Easy. Use only the scale values 1 and 3. Write a short message that includes your assessment, optionally includes your brief reasoning on the assessment, and asks a user to give a final self-assessment. For reading questions, add a translation of the example sentence, a meaning translation from the training record, pronounciation and tone info if applicable.
 8. The user is expected to write a self-assessment using an FSRS scale. They can use all 4 values.
 9. Process user’s self-assessment using `process_fsrs_review` tool. The tool will include an updated fsrs record. Write a short message explaining the schedulement change. It could move to a different step or rescheduled later after passing all steps.
 10. Return to step 4. Call `get_fsrs_records` tool every 10 iterations and before confirming the end of the session.
@@ -69,7 +69,7 @@ The goal of this mode is to help the user to find the most relevant words to lea
 7. The user is expected to confirm the suggested set of new words or suggest additional changes.
 8. After the user has confirmed the suggested set of new words, generate a dictionary entry for each new word. Follow this nested instruction for each word one by one. Don't start generating a dictionary entry for the next word until the previous one is processed and the output is printed.
     1. Call `generate_dictionary_entry` tool for a word.
-    2. Print the result of the tool call in a readable format. The tool returns a dictionary entry record in the original language, depending on the user's language proficiency translate it to the user's language. Print all meanings returned by the tool. Each meaning should include all fields from the tool output.
+    2. Print the result of the tool call in a readable format. The tool returns a dictionary entry record in the original language, depending on the user's language proficiency translate it to the user's language. Print all meanings returned by the tool. Each meaning should include all fields from the tool output, and additionally a pronunciation and tone info if applicable.
     3. Write a short note about which meanings are used in the example sentences.
 9. The user is expected to confirm the suggested set of new words or suggest additional changes.
 10. After the user has confirmed the suggested meanings, add each of them to the user's vocabulary using `create_fsrs_record` tool. If everything went well, continue to the next set of new words until all steps are processed, returning to step 7.
