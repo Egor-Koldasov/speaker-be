@@ -113,36 +113,7 @@ async def generate_dictionary_entry(
     regenerate_full: bool = False,
 ) -> dict[str, object]:
     """
-    Generate comprehensive multilingual dictionary entry using the langtools API.
-
-    This tool creates detailed dictionary entries with multiple meanings, accurate translations,
-    IPA pronunciations, and contextual synonyms. The output is designed to be educational and
-    comprehensive - ALWAYS show the complete results to users, as each component serves a specific
-    learning purpose.
-
-    BEHAVIORAL GUIDANCE:
-    - Display ALL returned meanings, translations, and pronunciations to the user
-    - Encourage users to practice pronunciation using the IPA guides provided
-    - Explain when to use different meanings based on context
-    - Suggest creating example sentences with the new vocabulary
-    - Connect new words to previously learned vocabulary when possible
-    - Be patient and encouraging - language learning is a gradual process
-
-    Args:
-        translating_term: The word or phrase to define and translate
-        translation_language: Target language for translations in BCP 47 format
-        model: LLM model to use for generation
-        regenerate_full: Force regeneration of the complete dictionary entry
-        regenerate_translations: Force regeneration of translations only
-        context: MCP context for authentication
-
-    Returns:
-        Dictionary containing comprehensive multilingual information with meanings,
-        translations, pronunciations (IPA), definitions in both languages, and synonyms.
-        Present this information in full to maximize educational benefit.
-
-    Raises:
-        Exception: If generation fails due to validation or API errors
+    Generate comprehensive dictionary entry using the langtools API.
     """
     try:
         from .api import call_api_with_token
@@ -269,27 +240,6 @@ async def get_fsrs_records(
 ) -> dict[str, object]:
     """
     Get paginated list of FSRS spaced repetition records for the current user.
-
-    FSRS (Free Spaced Repetition Scheduler) records contain spaced repetition training data
-    for vocabulary learning. Records are sorted by due date (soonest due first) and include
-    full dictionary entry and translation data for comprehensive learning support.
-
-    Args:
-        context: MCP context for authentication
-        page: Page number (1-based, default: 1)
-        page_size: Number of items per page (1-100, default: 20)
-
-    Returns:
-        Dictionary containing:
-        - items: List of FSRS records with dictionary data and training metrics
-        - total: Total number of records
-        - page: Current page number
-        - page_size: Items per page
-        - has_next: Whether there are more pages
-        - has_prev: Whether there are previous pages
-
-    Raises:
-        Exception: If API request fails or user is not authenticated
     """
     try:
         from .api import call_api_with_token
@@ -319,34 +269,11 @@ async def get_fsrs_records(
 @mcp.tool()
 async def create_fsrs_record(
     context: Context,
-    dictionary_entry_translation_id: str,
+    dictionary_entry_id: str,
     meaning_local_id: str,
 ) -> dict[str, object]:
     """
     Create a new FSRS spaced repetition record for vocabulary training.
-
-    This tool creates a new FSRS (Free Spaced Repetition Scheduler) record that binds
-    spaced repetition training data to a specific meaning translation within a dictionary
-    entry. This enables systematic vocabulary learning with optimized review scheduling.
-
-    Args:
-        context: MCP context for authentication
-        dictionary_entry_translation_id: ID of the dictionary entry translation
-        meaning_local_id: Local ID of the specific meaning to train
-
-    Returns:
-        Dictionary containing initial FSRS training data:
-        - fsrs_id: Unique identifier for the FSRS record
-        - due: Next review due date
-        - stability: Memory stability (initially None)
-        - difficulty: Learning difficulty (initially None)
-        - state: Current learning state
-        - step: Current learning step
-        - reps: Number of repetitions completed
-        - lapses: Number of times forgotten
-
-    Raises:
-        Exception: If meaning translation doesn't exist, record already exists, or API fails
     """
     try:
         from .api import call_api_with_token
@@ -355,7 +282,7 @@ async def create_fsrs_record(
 
         # Prepare request data
         request_data: dict[str, object] = {
-            "dictionary_entry_translation_id": dictionary_entry_translation_id,
+            "dictionary_entry_id": dictionary_entry_id,
             "meaning_local_id": meaning_local_id,
         }
 
@@ -383,29 +310,6 @@ async def process_fsrs_review(
 ) -> dict[str, object]:
     """
     Process a spaced repetition review session and update training data.
-
-    This tool processes a review session using the FSRS algorithm to update spaced repetition
-    training data. The algorithm adapts future review scheduling based on your performance,
-    optimizing long-term retention of vocabulary.
-
-    Args:
-        context: MCP context for authentication
-        fsrs_id: ID of the FSRS record to update
-        rating: Review rating (1=Again/Forgot, 2=Hard, 3=Good, 4=Easy)
-
-    Returns:
-        Dictionary containing updated FSRS training data:
-        - fsrs_id: FSRS record identifier
-        - due: Next review due date (optimized based on performance)
-        - stability: Updated memory stability
-        - difficulty: Updated learning difficulty
-        - state: Updated learning state
-        - step: Updated learning step
-        - reps: Total repetitions completed
-        - lapses: Total times forgotten
-
-    Raises:
-        Exception: If FSRS record not found, access denied, or invalid rating
     """
     try:
         from .api import call_api_with_token
@@ -446,17 +350,6 @@ async def process_fsrs_review(
 async def me(context: Context) -> dict[str, object]:
     """
     Get current user information using authentication token from MCP context.
-
-    This tool extracts the Bearer token from the MCP context and calls the
-    langtools API /auth/me endpoint to retrieve the current user's profile
-    and authentication information.
-
-    Returns:
-        Dictionary containing user profile and authentication data
-
-    Raises:
-        ValueError: If no authentication token is found in MCP context
-        Exception: If API request fails or user is not authenticated
     """
     try:
         from .api import call_api_with_token
