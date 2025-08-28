@@ -1,0 +1,12 @@
+{
+  "name": "langtools",
+  "private": true,
+  "workspaces": [
+    "langtools-mobile",
+    "langtools-convex"
+  ],
+  "devDependencies": {
+    "langtools-convex": "workspace:*",
+    "langtools-mobile": "workspace:*"
+  }
+}

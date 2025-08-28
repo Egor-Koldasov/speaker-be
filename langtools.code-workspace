@@ -1,6 +1,10 @@
 {
   "folders": [
     {
+      "name": "langtools-convex",
+      "path": "langtools-convex"
+    },
+    {
       "name": "🔧 langtools-utils",
       "path": "langtools-utils"
     },
@@ -15,6 +19,10 @@
     {
       "name": "🔌 langtools-mcp",
       "path": "langtools-mcp"
+    },
+    {
+      "name": "📱 langtools-mobile",
+      "path": "langtools-mobile"
     },
     {
       "name": "📝 Root",
