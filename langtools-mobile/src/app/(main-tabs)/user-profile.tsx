@@ -1,7 +1,7 @@
 import { useAuth } from '@clerk/clerk-expo'
+import { api } from '@convex/_generated/api'
 import { useQuery } from 'convex/react'
 import { Text, TouchableOpacity, View } from 'react-native'
-import { api } from '../../convex/_generated/api'
 
 export default function UserProfile() {
   const { signOut } = useAuth()

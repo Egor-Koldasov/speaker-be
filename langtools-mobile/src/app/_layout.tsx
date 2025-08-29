@@ -70,5 +70,9 @@ function NavigationGuard() {
     )
   }
 
-  return <Stack />
+  return (
+    <Stack>
+      <Stack.Screen name="(main-tabs)" options={{ title: 'Langtools' }} />
+    </Stack>
+  )
 }
