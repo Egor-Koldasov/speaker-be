@@ -6,6 +6,7 @@ import { useFonts } from 'expo-font'
 import { Stack, useRouter, useSegments } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect } from 'react'
+import { Text, View } from 'react-native'
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync()
@@ -60,6 +61,14 @@ function NavigationGuard() {
       router.replace('/sign-in')
     }
   }, [segments, isLoaded, isSignedIn, router])
+
+  if (!isLoaded) {
+    return (
+      <View>
+        <Text>Loading...</Text>
+      </View>
+    )
+  }
 
   return <Stack />
 }

@@ -1,5 +1,4 @@
 import { useSignIn, useSignUp } from '@clerk/clerk-expo'
-import { EmailCodeFactor, SignInFirstFactor } from '@clerk/types'
 import { useRouter } from 'expo-router'
 import React, { useCallback, useMemo } from 'react'
 import { Text, TextInput, TouchableOpacity, View } from 'react-native'
@@ -23,26 +22,9 @@ export function SignIn() {
     if (!isLoaded || !signIn.signIn) return
 
     try {
-      const { supportedFirstFactors } = await signIn.signIn.create({
+      await signIn.signIn.create({
         identifier: emailAddress,
         strategy: 'email_code',
-      })
-
-      const isEmailCodeFactor = (
-        factor: SignInFirstFactor,
-      ): factor is EmailCodeFactor => {
-        return factor.strategy === 'email_code'
-      }
-
-      const emailCodeFactor = supportedFirstFactors?.find(isEmailCodeFactor)
-
-      if (!emailCodeFactor) {
-        throw new Error('No email code factor found')
-      }
-
-      await signIn.signIn.prepareFirstFactor({
-        strategy: 'email_code',
-        emailAddressId: emailCodeFactor.emailAddressId,
       })
 
       setOtpSent(true)
@@ -123,6 +105,16 @@ export function SignIn() {
     router.replace('/')
   }, [emailExists, emailAddress, router, onVerifyOtpSignUp, onVerifyOtpSignIn])
 
+  const onOtpChange = useCallback(
+    (otp: string) => {
+      setOtp(otp)
+      if (otp.length === 6) {
+        onVerifyOtp()
+      }
+    },
+    [onVerifyOtp],
+  )
+
   return (
     <View>
       <Text>Sign in</Text>
@@ -134,13 +126,23 @@ export function SignIn() {
         editable={!otpSent}
         inputMode="email"
         textContentType="emailAddress"
+        returnKeyType={'send'}
+        submitBehavior={'blurAndSubmit'}
+        onSubmitEditing={onSendEmailSignUp}
       />
       {otpSent && (
         <TextInput
           autoCapitalize="none"
           value={otp}
           placeholder="Enter OTP"
-          onChangeText={(otp) => setOtp(otp)}
+          onChangeText={onOtpChange}
+          keyboardType="numeric"
+          inputMode="numeric"
+          maxLength={6}
+          textContentType="oneTimeCode"
+          returnKeyType="done"
+          submitBehavior="blurAndSubmit"
+          onSubmitEditing={onVerifyOtp}
         />
       )}
       {!otpSent && (
