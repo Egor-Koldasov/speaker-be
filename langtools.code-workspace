@@ -62,6 +62,7 @@
       "**/node_modules": true,
       "**/.git": true
     },
-    "python.languageServer": "None"
+    "python.languageServer": "None",
+    "typescript.tsdk": "📝 Root/node_modules/typescript/lib"
   }
 }
