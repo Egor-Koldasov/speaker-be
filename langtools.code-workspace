@@ -1,10 +1,6 @@
 {
   "folders": [
     {
-      "name": "langtools-convex",
-      "path": "langtools-convex"
-    },
-    {
       "name": "🔧 langtools-utils",
       "path": "langtools-utils"
     },
