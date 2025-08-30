@@ -5,8 +5,10 @@ import { ConvexProviderWithClerk } from 'convex/react-clerk'
 import { useFonts } from 'expo-font'
 import { Stack, useRouter, useSegments } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
+import { StatusBar } from 'expo-status-bar'
 import { useEffect } from 'react'
-import { Text, View } from 'react-native'
+import { Loading } from '../components/ui/Loading'
+import { ThemeProvider, useTheme } from '../theme/index'
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync()
@@ -41,7 +43,10 @@ export default function RootLayout() {
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
       <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-        <NavigationGuard />
+        <ThemeProvider>
+          <NavigationGuard />
+          <StatusBar style="light" />
+        </ThemeProvider>
       </ConvexProviderWithClerk>
     </ClerkProvider>
   )
@@ -51,6 +56,7 @@ function NavigationGuard() {
   const segments = useSegments()
   const router = useRouter()
   const { isLoaded, isSignedIn } = useAuth()
+  const { colors } = useTheme()
 
   useEffect(() => {
     if (!isLoaded) return
@@ -63,15 +69,18 @@ function NavigationGuard() {
   }, [segments, isLoaded, isSignedIn, router])
 
   if (!isLoaded) {
-    return (
-      <View>
-        <Text>Loading...</Text>
-      </View>
-    )
+    return <Loading />
   }
 
   return (
-    <Stack>
+    <Stack
+      screenOptions={{
+        headerStyle: { backgroundColor: colors.surface },
+        headerTitleStyle: { color: colors.textPrimary },
+        headerTintColor: colors.accent,
+        contentStyle: { backgroundColor: colors.background },
+      }}
+    >
       <Stack.Screen name="(main-tabs)" options={{ title: 'Langtools' }} />
     </Stack>
   )

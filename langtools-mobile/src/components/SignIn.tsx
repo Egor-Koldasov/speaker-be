@@ -1,8 +1,12 @@
 import { useSignIn, useSignUp } from '@clerk/clerk-expo'
 import { useRouter } from 'expo-router'
 import React, { useCallback, useMemo } from 'react'
-import { Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { View } from 'react-native'
 import { clerkErrorEmailExistsSchema } from '../utils/clerkError'
+import { Button } from './ui/Button'
+import { Loading } from './ui/Loading'
+import { Text } from './ui/Text'
+import { TextInput } from './ui/TextInput'
 
 export function SignIn() {
   const signUp = useSignUp()
@@ -115,9 +119,13 @@ export function SignIn() {
     [onVerifyOtp],
   )
 
+  if (!isLoaded) {
+    return <Loading message="Preparing sign-in…" fullScreen={false} />
+  }
+
   return (
-    <View>
-      <Text>Sign in</Text>
+    <View style={{ gap: 12 }}>
+      <Text variant="subtitle">Sign in</Text>
       <TextInput
         autoCapitalize="none"
         value={emailAddress}
@@ -129,6 +137,7 @@ export function SignIn() {
         returnKeyType={'send'}
         submitBehavior={'blurAndSubmit'}
         onSubmitEditing={onSendEmailSignUp}
+        fullWidth
       />
       {otpSent && (
         <TextInput
@@ -143,18 +152,13 @@ export function SignIn() {
           returnKeyType="done"
           submitBehavior="blurAndSubmit"
           onSubmitEditing={onVerifyOtp}
+          fullWidth
         />
       )}
       {!otpSent && (
-        <TouchableOpacity onPress={onSendEmailSignUp}>
-          <Text>Send email</Text>
-        </TouchableOpacity>
+        <Button title="Send email" onPress={onSendEmailSignUp} fullWidth />
       )}
-      {otpSent && (
-        <TouchableOpacity onPress={onVerifyOtp}>
-          <Text>Verify OTP</Text>
-        </TouchableOpacity>
-      )}
+      {otpSent && <Button title="Verify OTP" onPress={onVerifyOtp} fullWidth />}
     </View>
   )
 }
