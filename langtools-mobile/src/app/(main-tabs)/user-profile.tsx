@@ -10,12 +10,12 @@ import { useTheme } from '../../theme/index'
 
 export default function UserProfile() {
   const { signOut } = useAuth()
-  const userProfile = useQuery(api.users.getUserProfile)
+  const user = useQuery(api.users.getUser)
 
   const { spacing } = useTheme()
   return (
     <Screen>
-      {!userProfile ? (
+      {!user ? (
         <Loading />
       ) : (
         <ThemedView
@@ -25,7 +25,7 @@ export default function UserProfile() {
           style={{ gap: spacing.md }}
         >
           <Text variant="title">Profile</Text>
-          <Text color="secondary">{userProfile?.email ?? '—'}</Text>
+          <Text color="secondary">{user?.email ?? '—'}</Text>
           <Button title="Log out" onPress={() => signOut()} />
         </ThemedView>
       )}
