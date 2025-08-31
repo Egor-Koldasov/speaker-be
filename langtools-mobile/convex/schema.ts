@@ -2,18 +2,41 @@
 import { defineSchema, defineTable } from 'convex/server'
 import { v } from 'convex/values'
 
+const updatedAt = v.optional(v.string())
+
 export default defineSchema({
   // ...authTables,
   dictionaryEntries: defineTable({
-    updatedAt: v.optional(v.string()),
+    headword: v.string(),
+    sourceLanguage: v.string(),
+    updatedAt,
     userId: v.string(),
-  }).index('byUserId', ['userId']),
+  })
+    .index('byUserId', ['userId'])
+    .index('byHeadwordSourceLanguage', ['headword', 'sourceLanguage']),
   dictionaryEntrySenses: defineTable({
-    updatedAt: v.optional(v.string()),
+    updatedAt,
     dictionaryEntryId: v.id('dictionaryEntries'),
     localId: v.string(),
     canonicalForm: v.string(),
     definition: v.string(),
     partOfSpeech: v.string(),
   }).index('byDictionaryEntryIdLocalId', ['dictionaryEntryId', 'localId']),
+  fsrsProgress: defineTable({
+    updatedAt,
+    due: v.string(),
+    stability: v.optional(v.number()),
+    difficulty: v.optional(v.number()),
+    state: v.number(),
+    step: v.number(),
+    last_review: v.optional(v.string()),
+    reps: v.number(),
+    lapses: v.number(),
+  }),
+  relSenseFsrsProgress: defineTable({
+    updatedAt,
+    fsrsProgressId: v.id('fsrsProgress'),
+    senseId: v.id('dictionaryEntrySenses'),
+    userId: v.string(),
+  }).index('byUserIdSenseId', ['userId', 'senseId']),
 })

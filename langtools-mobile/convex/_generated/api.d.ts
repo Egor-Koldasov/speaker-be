@@ -18,6 +18,7 @@ import type * as internal_ from "../internal.js";
 import type * as internalNode from "../internalNode.js";
 import type * as types_User from "../types/User.js";
 import type * as users from "../users.js";
+import type * as utils_requireId from "../utils/requireId.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -33,6 +34,7 @@ declare const fullApi: ApiFromModules<{
   internalNode: typeof internalNode;
   "types/User": typeof types_User;
   users: typeof users;
+  "utils/requireId": typeof utils_requireId;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

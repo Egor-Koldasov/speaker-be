@@ -33,6 +33,8 @@ export const importPgDictionaryEntries = internalMutation({
 
       const dictionaryEntry: WithoutSystemFields<Doc<'dictionaryEntries'>> = {
         userId: dictionaryEntryPgRow.auth_user_id,
+        headword: dictionaryEntryJsonData.headword,
+        sourceLanguage: dictionaryEntryJsonData.source_language,
       }
 
       const dictionaryEntryId = await ctx.db.insert(
@@ -57,7 +59,7 @@ export const importPgDictionaryEntries = internalMutation({
   },
 })
 
-export const migrateUserIds = internalMutation({
+export const migrateDictionaryEntriesUserIds = internalMutation({
   args: {
     userIds: v.array(
       v.object({
@@ -76,6 +78,89 @@ export const migrateUserIds = internalMutation({
       for (const dictionaryEntry of dictionaryEntries) {
         await ctx.db.patch(dictionaryEntry._id, { userId: to })
       }
+
+      const relSenseFsrsProgressList = await ctx.db
+        .query('relSenseFsrsProgress')
+        .withIndex('byUserIdSenseId', (q) => q.eq('userId', from))
+        .collect()
+
+      for (const relSenseFsrsProgress of relSenseFsrsProgressList) {
+        await ctx.db.patch(relSenseFsrsProgress._id, { userId: to })
+      }
+    }
+  },
+})
+
+export const importPgFsrsProgress = internalMutation({
+  args: {
+    fsrsPgRows: v.array(
+      v.object({
+        fsrs_id: v.string(),
+        due: v.string(),
+        stability: v.optional(v.number()),
+        difficulty: v.optional(v.number()),
+        state: v.number(),
+        step: v.number(),
+        last_review: v.optional(v.string()),
+        reps: v.number(),
+        lapses: v.number(),
+        auth_user_id: v.string(),
+        dictionary_entry_id: v.string(),
+        meaning_local_id: v.string(),
+        dictionary_entry_headword: v.string(),
+        dictionary_entry_source_language: v.string(),
+      }),
+    ),
+  },
+  async handler(ctx, { fsrsPgRows }) {
+    for (const fsrsProgressPgRow of fsrsPgRows) {
+      const dictionaryEntry = await ctx.db
+        .query('dictionaryEntries')
+        .withIndex('byHeadwordSourceLanguage', (q) =>
+          q
+            .eq('headword', fsrsProgressPgRow.dictionary_entry_headword)
+            .eq(
+              'sourceLanguage',
+              fsrsProgressPgRow.dictionary_entry_source_language,
+            ),
+        )
+        .unique()
+      if (!dictionaryEntry) {
+        throw new Error(
+          `Dictionary entry not found: ${fsrsProgressPgRow.dictionary_entry_id}`,
+        )
+      }
+
+      const sense = await ctx.db
+        .query('dictionaryEntrySenses')
+        .withIndex('byDictionaryEntryIdLocalId', (q) =>
+          q
+            .eq('dictionaryEntryId', dictionaryEntry._id)
+            .eq('localId', fsrsProgressPgRow.meaning_local_id),
+        )
+        .unique()
+      if (!sense) {
+        throw new Error(
+          `Sense not found: ${fsrsProgressPgRow.meaning_local_id}`,
+        )
+      }
+
+      const fsrsProgressId = await ctx.db.insert('fsrsProgress', {
+        due: fsrsProgressPgRow.due,
+        stability: fsrsProgressPgRow.stability,
+        difficulty: fsrsProgressPgRow.difficulty,
+        state: fsrsProgressPgRow.state,
+        step: fsrsProgressPgRow.step,
+        last_review: fsrsProgressPgRow.last_review,
+        reps: fsrsProgressPgRow.reps,
+        lapses: fsrsProgressPgRow.lapses,
+      })
+
+      await ctx.db.insert('relSenseFsrsProgress', {
+        fsrsProgressId: fsrsProgressId,
+        senseId: sense._id,
+        userId: fsrsProgressPgRow.auth_user_id,
+      })
     }
   },
 })
