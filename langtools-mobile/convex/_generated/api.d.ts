@@ -13,11 +13,13 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as fsrsProgress from "../fsrsProgress.js";
 import type * as http from "../http.js";
 import type * as internal_ from "../internal.js";
 import type * as internalNode from "../internalNode.js";
-import type * as types_User from "../types/User.js";
+import type * as types_AuthUser from "../types/AuthUser.js";
 import type * as users from "../users.js";
+import type * as utils_requireById from "../utils/requireById.js";
 import type * as utils_requireId from "../utils/requireId.js";
 
 /**
@@ -29,11 +31,13 @@ import type * as utils_requireId from "../utils/requireId.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  fsrsProgress: typeof fsrsProgress;
   http: typeof http;
   internal: typeof internal_;
   internalNode: typeof internalNode;
-  "types/User": typeof types_User;
+  "types/AuthUser": typeof types_AuthUser;
   users: typeof users;
+  "utils/requireById": typeof utils_requireById;
   "utils/requireId": typeof utils_requireId;
 }>;
 export declare const api: FilterApi<

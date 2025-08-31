@@ -6,6 +6,13 @@ const updatedAt = v.optional(v.string())
 
 export default defineSchema({
   // ...authTables,
+  users: defineTable({
+    updatedAt,
+    authUserId: v.string(),
+    email: v.string(),
+  })
+    .index('byAuthUserId', ['authUserId'])
+    .index('byEmail', ['email']),
   dictionaryEntries: defineTable({
     headword: v.string(),
     sourceLanguage: v.string(),

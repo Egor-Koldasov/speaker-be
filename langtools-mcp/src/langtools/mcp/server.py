@@ -2,6 +2,7 @@
 
 import logging
 from datetime import datetime
+from typing import cast
 
 from fastmcp import Context, FastMCP
 from pydantic import BaseModel, Field
@@ -12,6 +13,7 @@ from langtools.ai.models import (
     DictionaryEntryParams,
     ModelType,
 )
+from langtools.mcp.convex import call_convex_query, convex, require_token_from_context
 from langtools.mcp.query_auth_middleware import QueryAuthMiddleware
 
 
@@ -237,28 +239,23 @@ async def get_fsrs_records(
     context: Context,
     page: int = 1,
     page_size: int = 20,
-) -> dict[str, object]:
+) -> list[dict[str, object]]:
     """
     Get paginated list of FSRS spaced repetition records for the current user.
     """
     try:
-        from .api import call_api_with_token
-
         logger.info(f"Getting FSRS records for user, page {page}, size {page_size}")
 
-        # Validate parameters
-        page = max(1, page)
-        page_size = max(1, min(100, page_size))
+        token = require_token_from_context(context)
+        convex.set_auth(token)
 
-        # Call the API with query parameters
-        endpoint = f"/fsrs?page={page}&page_size={page_size}"
-        response = await call_api_with_token(
-            context=context,
-            endpoint=endpoint,
-            method="GET",
+        response = cast(
+            list[dict[str, object]],
+            await call_convex_query(context, "fsrsProgress:getFsrsProgressList"),
         )
 
-        logger.info(f"Successfully retrieved FSRS records: {response.get('total', 0)} total")
+        logger.info(f"Successfully retrieved FSRS records: {len(response)} total")
+        logger.info(f"FSRS records: {response}")
         return response
 
     except Exception as e:

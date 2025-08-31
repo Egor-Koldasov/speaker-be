@@ -1,15 +1,18 @@
 import { ClerkProvider, useAuth } from '@clerk/clerk-expo'
 import { tokenCache } from '@clerk/clerk-expo/token-cache'
 import { ConvexQueryCacheProvider } from 'convex-helpers/react/cache'
-import { ConvexReactClient } from 'convex/react'
+import { ConvexReactClient, useQuery } from 'convex/react'
 import { ConvexProviderWithClerk } from 'convex/react-clerk'
 import { useFonts } from 'expo-font'
 import { Stack, useRouter, useSegments } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect } from 'react'
+import { api } from '../../convex/_generated/api'
 import { Loading } from '../components/ui/Loading'
 import { ThemeProvider, useTheme } from '../theme/index'
+import { useLogConvexAuthToken } from '../utils/convex/useLogConvexAuthToken'
+import { useMutationSerial } from '../utils/convex/useMutationSerial'
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync()
@@ -59,6 +62,8 @@ function NavigationGuard() {
   const segments = useSegments()
   const router = useRouter()
   const { isLoaded, isSignedIn } = useAuth()
+  const user = useQuery(api.users.getUser)
+  const { mutate: syncAuthUser } = useMutationSerial(api.users.syncAuthUser)
   const { colors } = useTheme()
 
   useEffect(() => {
@@ -70,6 +75,14 @@ function NavigationGuard() {
       router.replace('/sign-in')
     }
   }, [segments, isLoaded, isSignedIn, router])
+
+  useEffect(() => {
+    if (isSignedIn && user === null) {
+      syncAuthUser({})
+    }
+  }, [isSignedIn, syncAuthUser, user])
+
+  useLogConvexAuthToken()
 
   if (!isLoaded) {
     return <Loading />
