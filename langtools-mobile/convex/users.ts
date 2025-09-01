@@ -1,9 +1,11 @@
 import { Doc } from './_generated/dataModel'
-import { mutation, query, QueryCtx } from './_generated/server'
+import { mutation, query } from './_generated/server'
 import { AuthUser } from './types/AuthUser'
+import { TransactionCtx } from './types/TransactionCtx'
+import { UnknownCtx } from './types/UnknownCtx'
 
 export const getAuthUserByCtx = async (
-  ctx: QueryCtx,
+  ctx: UnknownCtx,
 ): Promise<AuthUser | null> => {
   const userIdentity = await ctx.auth.getUserIdentity()
 
@@ -23,7 +25,7 @@ export const getAuthUserByCtx = async (
 }
 
 export const requireAuthUserByCtx = async (
-  ctx: QueryCtx,
+  ctx: UnknownCtx,
 ): Promise<AuthUser> => {
   const authUser = await getAuthUserByCtx(ctx)
   if (!authUser) {
@@ -33,7 +35,7 @@ export const requireAuthUserByCtx = async (
 }
 
 export const requireUserByCtx = async (
-  ctx: QueryCtx,
+  ctx: TransactionCtx,
 ): Promise<Doc<'users'>> => {
   const user = await getUserByCtx(ctx)
   if (!user) {
@@ -43,7 +45,7 @@ export const requireUserByCtx = async (
 }
 
 export const getUserByCtx = async (
-  ctx: QueryCtx,
+  ctx: TransactionCtx,
 ): Promise<Doc<'users'> | null> => {
   const authUser = await getAuthUserByCtx(ctx)
   if (!authUser) {

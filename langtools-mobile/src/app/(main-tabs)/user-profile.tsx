@@ -13,7 +13,7 @@ export default function UserProfile() {
   const user = useQuery(api.users.getUser)
 
   const { spacing } = useTheme()
-  console.log('user.id', user?.id)
+  console.log('user.id', user?._id)
   return (
     <Screen>
       {!user ? (
