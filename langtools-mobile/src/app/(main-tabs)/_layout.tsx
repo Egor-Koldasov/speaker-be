@@ -20,6 +20,21 @@ export default function MainTabsLayout() {
       }}
     >
       <Tabs.Screen
+        name="ai-chat"
+        options={{
+          title: 'AI Chat',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={
+                focused ? 'chatbubble-ellipses' : 'chatbubble-ellipses-outline'
+              }
+              color={color}
+              size={24}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="user-profile"
         options={{
           title: 'Profile',
