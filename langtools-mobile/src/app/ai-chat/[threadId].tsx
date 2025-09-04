@@ -1,6 +1,7 @@
-import { useAction, useQuery } from 'convex/react'
+import { useThreadMessages } from '@convex-dev/agent/react'
+import { useAction } from 'convex/react'
 import { useLocalSearchParams } from 'expo-router'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import {
   FlatList,
   KeyboardAvoidingView,
@@ -20,10 +21,22 @@ export default function ThreadChat() {
   const { threadId } = useLocalSearchParams<{ threadId: string }>()
   const { spacing, colors } = useTheme()
   const [input, setInput] = useState('')
+  const listRef = useRef<FlatList<any>>(null)
+  const [isAtBottom, setIsAtBottom] = useState(true)
 
-  const messages = useQuery(
-    api.aiChat.listMessages,
-    threadId ? { threadId } : 'skip',
+  const handleScroll = (e: any) => {
+    const { contentOffset, layoutMeasurement, contentSize } = e.nativeEvent
+    const threshold = 24
+    const atBottom =
+      contentOffset.y + layoutMeasurement.height >=
+      contentSize.height - threshold
+    setIsAtBottom(atBottom)
+  }
+
+  const messages = useThreadMessages(
+    api.aiChat.listThreadMessages,
+    { threadId },
+    { initialNumItems: 100, stream: true },
   )
   const sendMessage = useAction(api.aiChat.sendRegularMessage)
 
@@ -37,11 +50,21 @@ export default function ThreadChat() {
         keyboardVerticalOffset={88}
       >
         <FlatList
+          ref={listRef}
           style={{ flex: 1 }}
           contentContainerStyle={{ padding: 20, gap: spacing.md }}
-          data={messages}
+          data={messages.results}
           keyExtractor={(m) => m._id}
           renderItem={({ item }) => <MessageBubble message={item} />}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+          onContentSizeChange={() => {
+            if (isAtBottom) {
+              requestAnimationFrame(() => {
+                listRef.current?.scrollToEnd({ animated: true })
+              })
+            }
+          }}
         />
 
         <RNView
@@ -92,7 +115,7 @@ function MessageBubble({ message }: { message: any }) {
       padded
       style={{
         alignSelf: isUser ? 'flex-end' : 'flex-start',
-        maxWidth: '85%',
+        maxWidth: isUser ? '85%' : '100%',
         backgroundColor: bg,
         gap: spacing.xs,
       }}

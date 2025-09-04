@@ -46,4 +46,11 @@ export default defineSchema({
     senseId: v.id('dictionaryEntrySenses'),
     userId: v.string(),
   }).index('byUserIdSenseId', ['userId', 'senseId']),
+  aiMessageStream: defineTable({
+    updatedAt,
+    threadId: v.string(),
+    streamId: v.string(),
+  })
+    .index('byThreadId', ['threadId'])
+    .index('byStreamId', ['streamId']),
 })

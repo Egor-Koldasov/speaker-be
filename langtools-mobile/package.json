@@ -14,6 +14,7 @@
     "@ai-sdk/openai": "^2.0.23",
     "@clerk/clerk-expo": "^2.14.25",
     "@convex-dev/agent": "^0.2.5",
+    "@convex-dev/persistent-text-streaming": "^0.2.3",
     "@expo/vector-icons": "^14.1.0",
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "^2.3.8",

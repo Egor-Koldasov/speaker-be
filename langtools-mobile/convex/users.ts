@@ -1,5 +1,6 @@
+import { api } from './_generated/api'
 import { Doc } from './_generated/dataModel'
-import { mutation, query } from './_generated/server'
+import { ActionCtx, mutation, query } from './_generated/server'
 import { AuthUser } from './types/AuthUser'
 import { TransactionCtx } from './types/TransactionCtx'
 import { UnknownCtx } from './types/UnknownCtx'
@@ -76,3 +77,13 @@ export const syncAuthUser = mutation({
     }
   },
 })
+
+export const requireUserByActionCtx = async (
+  ctx: ActionCtx,
+): Promise<Doc<'users'>> => {
+  const user = await ctx.runQuery(api.users.getUser)
+  if (!user) {
+    throw new Error('User not found')
+  }
+  return user
+}
