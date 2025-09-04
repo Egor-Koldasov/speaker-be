@@ -1,4 +1,8 @@
-import { useThreadMessages } from '@convex-dev/agent/react'
+import {
+  toUIMessages,
+  UIMessage,
+  useThreadMessages,
+} from '@convex-dev/agent/react'
 import { useAction } from 'convex/react'
 import { useLocalSearchParams } from 'expo-router'
 import { useRef, useState } from 'react'
@@ -21,7 +25,7 @@ export default function ThreadChat() {
   const { threadId } = useLocalSearchParams<{ threadId: string }>()
   const { spacing, colors } = useTheme()
   const [input, setInput] = useState('')
-  const listRef = useRef<FlatList<any>>(null)
+  const listRef = useRef<FlatList<UIMessage>>(null)
   const [isAtBottom, setIsAtBottom] = useState(true)
 
   const handleScroll = (e: any) => {
@@ -40,6 +44,8 @@ export default function ThreadChat() {
   )
   const sendMessage = useAction(api.aiChat.sendRegularMessage)
 
+  const uiMessages = toUIMessages(messages.results)
+
   if (messages === undefined) return <Loading />
 
   return (
@@ -53,8 +59,8 @@ export default function ThreadChat() {
           ref={listRef}
           style={{ flex: 1 }}
           contentContainerStyle={{ padding: 20, gap: spacing.md }}
-          data={messages.results}
-          keyExtractor={(m) => m._id}
+          data={uiMessages}
+          keyExtractor={(m) => m.id}
           renderItem={({ item }) => <MessageBubble message={item} />}
           onScroll={handleScroll}
           scrollEventThrottle={16}
@@ -97,17 +103,12 @@ export default function ThreadChat() {
   )
 }
 
-function MessageBubble({ message }: { message: any }) {
+function MessageBubble({ message }: { message: UIMessage }) {
   const { colors, spacing } = useTheme()
-  const isUser = message.message?.role === 'user'
+  const isUser = message.role === 'user'
   const bg = isUser ? colors.primary : colors.surfaceElevated
   const textColor = colors.textPrimary
-  const content =
-    typeof message.message?.content === 'string'
-      ? message.message?.content
-      : Array.isArray(message.message?.content)
-        ? message.message?.content.map((p: any) => p.text).join(' ')
-        : (message.text ?? '')
+  const content = message.text
   return (
     <View
       background={isUser ? undefined : 'elevated'}

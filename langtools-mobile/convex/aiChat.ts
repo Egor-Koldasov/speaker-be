@@ -9,6 +9,7 @@ import {
 import { PersistentTextStreaming } from '@convex-dev/persistent-text-streaming'
 import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
+import { z } from 'zod/v3'
 import { api, components } from './_generated/api'
 import { action, mutation, query } from './_generated/server'
 import { agent } from './ai/agent'
@@ -45,12 +46,22 @@ export const sendRegularMessage = action({
     await ctx.runQuery(api.aiChat.getExistingThread, {
       threadId: args.threadId,
     })
-    await agent.streamText(
+    const stream = await agent.generateObject(
       ctx,
       { threadId: args.threadId },
-      { prompt: args.message },
-      { saveStreamDeltas: { throttleMs: 100 } },
+      {
+        prompt: args.message,
+        schema: z.object({
+          message: z.string(),
+          sideNotes: z.string(),
+          randomNumber: z.number(),
+        }),
+      },
     )
+
+    // for await (const part of stream.fullStream) {
+    //   console.log(part)
+    // }
   },
 })
 
