@@ -15,6 +15,7 @@ import type * as http from "../http.js";
 import type * as internal_ from "../internal.js";
 import type * as internalNode from "../internalNode.js";
 import type * as types_AuthUser from "../types/AuthUser.js";
+import type * as types_PromptParameter from "../types/PromptParameter.js";
 import type * as types_TransactionCtx from "../types/TransactionCtx.js";
 import type * as types_UnknownCtx from "../types/UnknownCtx.js";
 import type * as users from "../users.js";
@@ -43,6 +44,7 @@ declare const fullApi: ApiFromModules<{
   internal: typeof internal_;
   internalNode: typeof internalNode;
   "types/AuthUser": typeof types_AuthUser;
+  "types/PromptParameter": typeof types_PromptParameter;
   "types/TransactionCtx": typeof types_TransactionCtx;
   "types/UnknownCtx": typeof types_UnknownCtx;
   users: typeof users;
