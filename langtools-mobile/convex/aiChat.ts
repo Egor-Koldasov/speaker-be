@@ -4,17 +4,27 @@ import {
   listMessages,
   syncStreams,
   ThreadDoc,
-  vStreamArgs,
 } from '@convex-dev/agent'
+import { parsePartialJson } from 'ai'
+import { convexToZod } from 'convex-helpers/server/zod'
 import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
-import { z } from 'zod/v4'
+import { z } from 'zod/v3'
+import { throttleAsync } from '../src/utils/data/throttle'
 import { api, components } from './_generated/api'
-import { action, mutation, query } from './_generated/server'
+import { action } from './_generated/server'
 import { agent } from './ai/agent'
 import { PromptParameter } from './types/PromptParameter'
 import { TransactionCtx } from './types/TransactionCtx'
 import { requireUserByCtx } from './users'
+import { mutation } from './utils/mutation'
+import { query } from './utils/query'
+import {
+  aiDictionaryEntrySchema,
+  AiDictionaryEntryStream,
+  aiDictionaryEntryStreamSchema,
+} from './utils/schema/aiDictionaryEntrySchema'
+import { zStreamArgs } from './utils/zStreamArgs'
 
 export const createThread = mutation({
   args: {},
@@ -67,11 +77,26 @@ export const listThreads = query({
   },
 })
 
+export const getDictionaryEntry = query({
+  args: {
+    threadId: z.string(),
+    streamArgs: zStreamArgs,
+  },
+  handler: async (ctx, { threadId, streamArgs }) => {
+    await requireThread(ctx, threadId)
+    const streams = await syncStreams(ctx, components.agent, {
+      streamArgs,
+      threadId,
+    })
+    return { streams }
+  },
+})
+
 export const listThreadMessages = query({
   args: {
-    threadId: v.string(),
-    streamArgs: vStreamArgs,
-    paginationOpts: paginationOptsValidator,
+    threadId: z.string(),
+    streamArgs: zStreamArgs,
+    paginationOpts: convexToZod(paginationOptsValidator),
   },
   handler: async (ctx, args) => {
     await requireThread(ctx, args.threadId)
@@ -102,7 +127,7 @@ export const requireThread = async (ctx: TransactionCtx, threadId: string) => {
 }
 
 export const getExistingThread = query({
-  args: { threadId: v.string() },
+  args: { threadId: z.string() },
   handler: async (ctx, { threadId }) => {
     const thread = await requireThread(ctx, threadId)
     return thread
@@ -112,7 +137,7 @@ export const getExistingThread = query({
 export const generateDictionaryEntry = action({
   args: {
     headword: v.string(),
-    forceLanguage: v.string(),
+    forceLanguage: v.optional(v.string()),
     threadId: v.string(),
   },
   async handler(ctx, { headword, forceLanguage, threadId }) {
@@ -129,8 +154,8 @@ You will be given a set of input parameters.
 Focus on:
 
 - Detecting the correct source language based on the term and user preferences
-- Including all meanings known ordered from most to least common
-- Writing detailed definitions that reflect each meaning and their distinctions
+- Including all senses known ordered from most to least common
+- Writing detailed definitions that reflect each sense and their distinctions
 `
     const parameters: PromptParameter[] = [
       {
@@ -141,7 +166,7 @@ Focus on:
       {
         name: 'forceLanguage',
         description: 'The language to force the definition to be in',
-        value: forceLanguage,
+        value: forceLanguage ?? '',
       },
     ].filter((p) => !!p.value)
 
@@ -173,45 +198,69 @@ Focus on:
             content: JSON.stringify(parameters, null, 2),
           },
         ],
-        schema: z.object({
-          headword: z
-            .string()
-            .describe(
-              'Word form as users encounter it (can be inflected, variant spelling, etc.)',
-            ),
-          sourceLanguage: z
-            .string()
-            .describe(
-              'Original language in BCP 47 format, guessed from word and user preferences',
-            ),
-          meanings: z.array(
-            z.object({
-              localId: z
-                .string()
-                .describe(
-                  'Unique identifier for the meaning in format {headword}-{index} starting from 1',
-                ),
-              canonicalForm: z
-                .string()
-                .describe(
-                  'Standard dictionary form - base/citation form (infinitive, nominative, etc.)',
-                ),
-              definition: z
-                .string()
-                .describe(
-                  'Clear, comprehensive definition in original language',
-                ),
-              partOfSpeech: z
-                .string()
-                .describe('Part of speech in original language'),
-            }),
-          ),
-        }),
+        schema: aiDictionaryEntrySchema,
       },
     )
 
-    for await (const part of stream.partialObjectStream) {
-      console.log(part)
+    let jsonStringSoFar = ''
+
+    const updateDbThrottle = throttleAsync(
+      async (aiDictionaryEntryStream: AiDictionaryEntryStream) => {
+        await ctx.runMutation(api.aiChat.updateAiDictionaryEntryStream, {
+          threadId,
+          aiDictionaryEntryStream,
+        })
+      },
+      1000,
+    )
+
+    for await (const part of stream.textStream) {
+      jsonStringSoFar += part
+      const partialObject = await parsePartialJson(jsonStringSoFar)
+      const validationResult = aiDictionaryEntryStreamSchema.safeParse(
+        partialObject.value,
+      )
+      if (validationResult.success) {
+        updateDbThrottle(validationResult.data)
+      }
     }
+  },
+})
+
+export const updateAiDictionaryEntryStream = mutation({
+  args: {
+    threadId: z.string(),
+    aiDictionaryEntryStream: aiDictionaryEntryStreamSchema,
+  },
+  handler: async (ctx, { aiDictionaryEntryStream, threadId }) => {
+    const dbRow = await ctx.db
+      .query('aiDictionaryEntryStream')
+      .withIndex('byThreadId', (q) => q.eq('threadId', threadId))
+      .unique()
+
+    let id = dbRow?._id
+
+    if (!id) {
+      id = await ctx.db.insert('aiDictionaryEntryStream', {
+        ...aiDictionaryEntryStream,
+        threadId,
+      })
+    }
+
+    await ctx.db.patch(id, {
+      ...aiDictionaryEntryStream,
+      updatedAt: new Date().toISOString(),
+    })
+  },
+})
+
+export const getAiDictionaryEntryStream = query({
+  args: { threadId: z.string() },
+  handler: async (ctx, { threadId }) => {
+    const dbRow = await ctx.db
+      .query('aiDictionaryEntryStream')
+      .withIndex('byThreadId', (q) => q.eq('threadId', threadId))
+      .unique()
+    return dbRow
   },
 })

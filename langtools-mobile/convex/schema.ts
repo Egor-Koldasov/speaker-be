@@ -1,6 +1,8 @@
 // import { authTables } from "@convex-dev/auth/server";
+import { zodToConvex } from 'convex-helpers/server/zod'
 import { defineSchema, defineTable } from 'convex/server'
 import { v } from 'convex/values'
+import { aiDictionaryEntryStreamSchema } from './utils/schema/aiDictionaryEntrySchema'
 
 const updatedAt = v.optional(v.string())
 
@@ -53,4 +55,9 @@ export default defineSchema({
   })
     .index('byThreadId', ['threadId'])
     .index('byStreamId', ['streamId']),
+  aiDictionaryEntryStream: defineTable({
+    updatedAt,
+    threadId: v.string(),
+    ...zodToConvex(aiDictionaryEntryStreamSchema).fields,
+  }).index('byThreadId', ['threadId']),
 })

@@ -12,7 +12,7 @@ export default function MainTabsLayout() {
         tabBarActiveTintColor: colors.accent,
         tabBarInactiveTintColor: colors.textMuted,
         tabBarStyle: Platform.select({
-          ios: { position: 'absolute', backgroundColor: colors.surface },
+          ios: { backgroundColor: colors.surface },
           default: { backgroundColor: colors.surface },
         }),
         tabBarLabelStyle: { color: colors.textSecondary },
@@ -20,7 +20,7 @@ export default function MainTabsLayout() {
       }}
     >
       <Tabs.Screen
-        name="ai-chat"
+        name="ai-chat/index"
         options={{
           title: 'AI Chat',
           tabBarIcon: ({ color, focused }) => (
@@ -28,6 +28,19 @@ export default function MainTabsLayout() {
               name={
                 focused ? 'chatbubble-ellipses' : 'chatbubble-ellipses-outline'
               }
+              color={color}
+              size={24}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="generate-dictionary-entry"
+        options={{
+          title: 'Dictionary',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? 'book' : 'book-outline'}
               color={color}
               size={24}
             />

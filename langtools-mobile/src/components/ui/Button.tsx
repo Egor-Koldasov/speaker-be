@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import { Pressable, PressableProps, Text } from 'react-native'
 import { useTheme } from '../../theme/index'
 import { platformShadow } from '../../theme/shadows'
 
 export type ButtonProps = PressableProps & {
-  title: string
+  title: ReactNode
   tone?: 'primary' | 'secondary' | 'danger'
   size?: 'md' | 'lg'
   fullWidth?: boolean
@@ -27,8 +27,8 @@ export function Button({
         ? colors.primaryMuted
         : colors.primary
 
-  const paddingY = size === 'lg' ? spacing.lg : spacing.md
-  const paddingX = spacing.xl
+  const paddingY = size === 'lg' ? spacing.lg : spacing.xs
+  const paddingX = spacing.sm
   const borderRadius = 14
 
   return (

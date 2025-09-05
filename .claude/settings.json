@@ -1,6 +1,6 @@
 {
   "hooks": {
-    "Stop": [
+    "StopDisabled": [
       {
         "matcher": "",
         "hooks": [
