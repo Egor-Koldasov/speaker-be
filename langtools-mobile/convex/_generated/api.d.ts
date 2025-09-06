@@ -10,6 +10,7 @@
 
 import type * as ai_agent from "../ai/agent.js";
 import type * as aiChat from "../aiChat.js";
+import type * as dictionary from "../dictionary.js";
 import type * as fsrsProgress from "../fsrsProgress.js";
 import type * as http from "../http.js";
 import type * as internal_ from "../internal.js";
@@ -19,11 +20,13 @@ import type * as types_PromptParameter from "../types/PromptParameter.js";
 import type * as types_TransactionCtx from "../types/TransactionCtx.js";
 import type * as types_UnknownCtx from "../types/UnknownCtx.js";
 import type * as users from "../users.js";
+import type * as utils_internalMutation from "../utils/internalMutation.js";
 import type * as utils_mutation from "../utils/mutation.js";
 import type * as utils_query from "../utils/query.js";
 import type * as utils_requireById from "../utils/requireById.js";
 import type * as utils_requireId from "../utils/requireId.js";
 import type * as utils_schema_aiDictionaryEntrySchema from "../utils/schema/aiDictionaryEntrySchema.js";
+import type * as utils_schema_zid from "../utils/schema/zid.js";
 import type * as utils_zStreamArgs from "../utils/zStreamArgs.js";
 
 import type {
@@ -43,6 +46,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   "ai/agent": typeof ai_agent;
   aiChat: typeof aiChat;
+  dictionary: typeof dictionary;
   fsrsProgress: typeof fsrsProgress;
   http: typeof http;
   internal: typeof internal_;
@@ -52,11 +56,13 @@ declare const fullApi: ApiFromModules<{
   "types/TransactionCtx": typeof types_TransactionCtx;
   "types/UnknownCtx": typeof types_UnknownCtx;
   users: typeof users;
+  "utils/internalMutation": typeof utils_internalMutation;
   "utils/mutation": typeof utils_mutation;
   "utils/query": typeof utils_query;
   "utils/requireById": typeof utils_requireById;
   "utils/requireId": typeof utils_requireId;
   "utils/schema/aiDictionaryEntrySchema": typeof utils_schema_aiDictionaryEntrySchema;
+  "utils/schema/zid": typeof utils_schema_zid;
   "utils/zStreamArgs": typeof utils_zStreamArgs;
 }>;
 declare const fullApiWithMounts: typeof fullApi;

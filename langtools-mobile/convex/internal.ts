@@ -72,7 +72,9 @@ export const migrateDictionaryEntriesUserIds = internalMutation({
     for (const { from, to } of userIds) {
       const dictionaryEntries = await ctx.db
         .query('dictionaryEntries')
-        .withIndex('byUserId', (q) => q.eq('userId', from))
+        .withIndex('byUserIdHeadwordSourceLanguage', (q) =>
+          q.eq('userId', from),
+        )
         .collect()
 
       for (const dictionaryEntry of dictionaryEntries) {
@@ -116,8 +118,9 @@ export const importPgFsrsProgress = internalMutation({
     for (const fsrsProgressPgRow of fsrsPgRows) {
       const dictionaryEntry = await ctx.db
         .query('dictionaryEntries')
-        .withIndex('byHeadwordSourceLanguage', (q) =>
+        .withIndex('byUserIdHeadwordSourceLanguage', (q) =>
           q
+            .eq('userId', fsrsProgressPgRow.auth_user_id)
             .eq('headword', fsrsProgressPgRow.dictionary_entry_headword)
             .eq(
               'sourceLanguage',

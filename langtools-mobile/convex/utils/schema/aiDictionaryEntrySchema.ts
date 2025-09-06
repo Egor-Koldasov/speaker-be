@@ -35,6 +35,8 @@ export const aiDictionaryEntrySchema = z.object({
     .describe('List of all senses ordered from most to least common usage'),
 })
 
+export type AiDictionaryEntry = z.infer<typeof aiDictionaryEntrySchema>
+
 export const aiDictionaryEntryStreamSchema = aiDictionaryEntrySchema
   .partial()
   .extend({

@@ -12,6 +12,7 @@ import { View } from '../../components/ui/View'
 import { Theme, useTheme } from '../../theme'
 import { useAction } from '../../utils/convex/useAction'
 import { useMutation } from '../../utils/convex/useMutation'
+import { apiToAiDictionaryEntry } from '../../utils/dictionary/apiToAiDictionaryEntry'
 
 const MOCK_DICTIONARY_ENTRY = {
   headword: 'run',
@@ -53,6 +54,18 @@ export default function GenerateDictionaryEntryPage() {
     api.aiChat.getAiDictionaryEntryStream,
     !threadId ? 'skip' : { threadId },
   )
+  const dictionaryEntries = useQuery(
+    api.dictionary.getDictionaryEntriesByHeadword,
+    !inputText.trim() ? 'skip' : { headword: inputText },
+  )
+
+  const selectedDictionaryEntry = useMemo(() => {
+    if (aiDictionaryEntryStream) return aiDictionaryEntryStream
+    if (dictionaryEntries?.[0]) {
+      return apiToAiDictionaryEntry(dictionaryEntries?.[0])
+    }
+    return null
+  }, [aiDictionaryEntryStream, dictionaryEntries])
 
   const styles = useMemo(() => getStyles(theme), [theme])
 
@@ -81,14 +94,14 @@ export default function GenerateDictionaryEntryPage() {
             style={styles.entryCard}
           >
             <Text variant="subtitle" style={styles.headword}>
-              {aiDictionaryEntryStream?.headword}
+              {selectedDictionaryEntry?.headword}
             </Text>
             <Text variant="label" color="muted" style={styles.language}>
-              {aiDictionaryEntryStream?.sourceLanguage}
+              {selectedDictionaryEntry?.sourceLanguage}
             </Text>
 
             <View style={styles.sensesContainer}>
-              {aiDictionaryEntryStream?.senses?.map((sense, index) => (
+              {selectedDictionaryEntry?.senses?.map((sense, index) => (
                 <View key={sense.localId ?? index} style={styles.senseItem}>
                   <View style={styles.senseHeader}>
                     <Text variant="label" style={styles.senseNumber}>

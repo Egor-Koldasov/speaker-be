@@ -11,12 +11,13 @@ import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
 import { z } from 'zod/v3'
 import { throttleAsync } from '../src/utils/data/throttle'
-import { api, components } from './_generated/api'
+import { api, components, internal } from './_generated/api'
 import { action } from './_generated/server'
 import { agent } from './ai/agent'
 import { PromptParameter } from './types/PromptParameter'
 import { TransactionCtx } from './types/TransactionCtx'
 import { requireUserByCtx } from './users'
+import { internalMutation } from './utils/internalMutation'
 import { mutation } from './utils/mutation'
 import { query } from './utils/query'
 import {
@@ -123,7 +124,7 @@ export const requireThread = async (ctx: TransactionCtx, threadId: string) => {
     console.error('Access denied to thread', threadId)
     throw new Error('Thread not found')
   }
-  return thread
+  return { thread, userId: user._id }
 }
 
 export const getExistingThread = query({
@@ -141,7 +142,7 @@ export const generateDictionaryEntry = action({
     threadId: v.string(),
   },
   async handler(ctx, { headword, forceLanguage, threadId }) {
-    await ctx.runQuery(api.aiChat.getExistingThread, {
+    const thread = await ctx.runQuery(api.aiChat.getExistingThread, {
       threadId,
     })
     const prompt = `
@@ -206,7 +207,7 @@ Focus on:
 
     const updateDbThrottle = throttleAsync(
       async (aiDictionaryEntryStream: AiDictionaryEntryStream) => {
-        await ctx.runMutation(api.aiChat.updateAiDictionaryEntryStream, {
+        await ctx.runMutation(internal.aiChat.updateAiDictionaryEntryStream, {
           threadId,
           aiDictionaryEntryStream,
         })
@@ -221,13 +222,23 @@ Focus on:
         partialObject.value,
       )
       if (validationResult.success) {
-        updateDbThrottle(validationResult.data)
+        await updateDbThrottle(validationResult.data)
       }
     }
+    const aiDictionaryEntry = await stream.object
+
+    await ctx.runMutation(internal.dictionary.createDictionaryEntry, {
+      userId: thread.userId,
+      aiDictionaryEntry,
+    })
+
+    await ctx.runMutation(internal.aiChat.finishAiDictionaryEntryStream, {
+      threadId,
+    })
   },
 })
 
-export const updateAiDictionaryEntryStream = mutation({
+export const updateAiDictionaryEntryStream = internalMutation({
   args: {
     threadId: z.string(),
     aiDictionaryEntryStream: aiDictionaryEntryStreamSchema,
@@ -235,7 +246,9 @@ export const updateAiDictionaryEntryStream = mutation({
   handler: async (ctx, { aiDictionaryEntryStream, threadId }) => {
     const dbRow = await ctx.db
       .query('aiDictionaryEntryStream')
-      .withIndex('byThreadId', (q) => q.eq('threadId', threadId))
+      .withIndex('byThreadIdFinishedAt', (q) =>
+        q.eq('threadId', threadId).eq('finishedAt', undefined),
+      )
       .unique()
 
     let id = dbRow?._id
@@ -254,12 +267,30 @@ export const updateAiDictionaryEntryStream = mutation({
   },
 })
 
+export const finishAiDictionaryEntryStream = internalMutation({
+  args: { threadId: z.string() },
+  handler: async (ctx, { threadId }) => {
+    const dbRow = await ctx.db
+      .query('aiDictionaryEntryStream')
+      .withIndex('byThreadIdFinishedAt', (q) =>
+        q.eq('threadId', threadId).eq('finishedAt', undefined),
+      )
+      .unique()
+    if (!dbRow) {
+      throw new Error('AiDictionaryEntryStream not found')
+    }
+    await ctx.db.patch(dbRow._id, { finishedAt: new Date().toISOString() })
+  },
+})
+
 export const getAiDictionaryEntryStream = query({
   args: { threadId: z.string() },
   handler: async (ctx, { threadId }) => {
     const dbRow = await ctx.db
       .query('aiDictionaryEntryStream')
-      .withIndex('byThreadId', (q) => q.eq('threadId', threadId))
+      .withIndex('byThreadIdFinishedAt', (q) =>
+        q.eq('threadId', threadId).eq('finishedAt', undefined),
+      )
       .unique()
     return dbRow
   },

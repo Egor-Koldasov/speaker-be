@@ -20,9 +20,11 @@ export default defineSchema({
     sourceLanguage: v.string(),
     updatedAt,
     userId: v.string(),
-  })
-    .index('byUserId', ['userId'])
-    .index('byHeadwordSourceLanguage', ['headword', 'sourceLanguage']),
+  }).index('byUserIdHeadwordSourceLanguage', [
+    'userId',
+    'headword',
+    'sourceLanguage',
+  ]),
   dictionaryEntrySenses: defineTable({
     updatedAt,
     dictionaryEntryId: v.id('dictionaryEntries'),
@@ -59,5 +61,6 @@ export default defineSchema({
     updatedAt,
     threadId: v.string(),
     ...zodToConvex(aiDictionaryEntryStreamSchema).fields,
-  }).index('byThreadId', ['threadId']),
+    finishedAt: v.optional(v.string()),
+  }).index('byThreadIdFinishedAt', ['threadId', 'finishedAt']),
 })
