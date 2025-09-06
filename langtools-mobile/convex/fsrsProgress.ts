@@ -1,15 +1,19 @@
 import { asyncMap } from 'convex-helpers'
 import { getManyFrom } from 'convex-helpers/server/relationships'
+import { convexToZod } from 'convex-helpers/server/zod'
 import z from 'zod/v3'
 import { matchDictionaryEntryLanguage } from '../src/utils/dictionary/matchDictionaryEntryLanguage'
 import { isNonNullable } from '../src/utils/isNonNullable'
 import { internal } from './_generated/api'
+import schema from './schema'
 import { requireUserByActionCtx, requireUserByCtx } from './users'
 import { action } from './utils/action'
+import { internalMutation } from './utils/internalMutation'
 import { internalQuery } from './utils/internalQuery'
 import { mutation } from './utils/mutation'
 import { query } from './utils/query'
 import { requireById } from './utils/requireById'
+import { processReviewApiResponseSchema } from './utils/schema/fsrsApiItemSchema'
 import { zid } from './utils/schema/zid'
 
 export const getFsrsProgressList = query({
@@ -135,6 +139,16 @@ export const getFsrsProgressById = internalQuery({
   },
 })
 
+export const updateFsrsProgress = internalMutation({
+  args: {
+    fsrsProgressId: zid('fsrsProgress'),
+    fsrsProgress: convexToZod(schema.tables.fsrsProgress.validator).partial(),
+  },
+  handler: async (ctx, { fsrsProgressId, fsrsProgress }) => {
+    await ctx.db.patch(fsrsProgressId, fsrsProgress)
+  },
+})
+
 export const processReview = action({
   args: {
     fsrsProgressId: zid('fsrsProgress'),
@@ -184,6 +198,23 @@ export const processReview = action({
       throw new Error('Failed to process review')
     }
 
-    console.log('processReview response', await response.json())
+    const processReviewApiResponse = processReviewApiResponseSchema.parse(
+      await response.json(),
+    )
+
+    await ctx.runMutation(internal.fsrsProgress.updateFsrsProgress, {
+      fsrsProgressId,
+      fsrsProgress: {
+        ...processReviewApiResponse.updated_training_data,
+        stability:
+          processReviewApiResponse.updated_training_data.stability ?? undefined,
+        difficulty:
+          processReviewApiResponse.updated_training_data.difficulty ??
+          undefined,
+        last_review:
+          processReviewApiResponse.updated_training_data.last_review ??
+          undefined,
+      },
+    })
   },
 })

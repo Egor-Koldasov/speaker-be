@@ -28,6 +28,7 @@ import type * as utils_query from "../utils/query.js";
 import type * as utils_requireById from "../utils/requireById.js";
 import type * as utils_requireId from "../utils/requireId.js";
 import type * as utils_schema_aiDictionaryEntrySchema from "../utils/schema/aiDictionaryEntrySchema.js";
+import type * as utils_schema_fsrsApiItemSchema from "../utils/schema/fsrsApiItemSchema.js";
 import type * as utils_schema_zid from "../utils/schema/zid.js";
 import type * as utils_zStreamArgs from "../utils/zStreamArgs.js";
 
@@ -66,6 +67,7 @@ declare const fullApi: ApiFromModules<{
   "utils/requireById": typeof utils_requireById;
   "utils/requireId": typeof utils_requireId;
   "utils/schema/aiDictionaryEntrySchema": typeof utils_schema_aiDictionaryEntrySchema;
+  "utils/schema/fsrsApiItemSchema": typeof utils_schema_fsrsApiItemSchema;
   "utils/schema/zid": typeof utils_schema_zid;
   "utils/zStreamArgs": typeof utils_zStreamArgs;
 }>;
