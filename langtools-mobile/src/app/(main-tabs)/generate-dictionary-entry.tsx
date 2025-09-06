@@ -83,45 +83,43 @@ export default function GenerateDictionaryEntryPage() {
     <Screen>
       <KeyboardAwareView style={styles.container}>
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          <Text variant="title" style={styles.title}>
-            Dictionary Entry
-          </Text>
+          {!!selectedDictionaryEntry && (
+            <View
+              background="surface"
+              rounded="lg"
+              padded
+              style={styles.entryCard}
+            >
+              <Text variant="subtitle" style={styles.headword}>
+                {selectedDictionaryEntry?.headword}
+              </Text>
+              <Text variant="label" color="muted" style={styles.language}>
+                {selectedDictionaryEntry?.sourceLanguage}
+              </Text>
 
-          <View
-            background="surface"
-            rounded="lg"
-            padded
-            style={styles.entryCard}
-          >
-            <Text variant="subtitle" style={styles.headword}>
-              {selectedDictionaryEntry?.headword}
-            </Text>
-            <Text variant="label" color="muted" style={styles.language}>
-              {selectedDictionaryEntry?.sourceLanguage}
-            </Text>
-
-            <View style={styles.sensesContainer}>
-              {selectedDictionaryEntry?.senses?.map((sense, index) => (
-                <View key={sense.localId ?? index} style={styles.senseItem}>
-                  <View style={styles.senseHeader}>
-                    <Text variant="label" style={styles.senseNumber}>
-                      {index + 1}.
-                    </Text>
-                    <Text
-                      variant="label"
-                      color="secondary"
-                      style={styles.partOfSpeech}
-                    >
-                      {sense.partOfSpeech}
+              <View style={styles.sensesContainer}>
+                {selectedDictionaryEntry?.senses?.map((sense, index) => (
+                  <View key={sense.localId ?? index} style={styles.senseItem}>
+                    <View style={styles.senseHeader}>
+                      <Text variant="label" style={styles.senseNumber}>
+                        {index + 1}.
+                      </Text>
+                      <Text
+                        variant="label"
+                        color="secondary"
+                        style={styles.partOfSpeech}
+                      >
+                        {sense.partOfSpeech}
+                      </Text>
+                    </View>
+                    <Text variant="body" style={styles.definition}>
+                      {sense.definition}
                     </Text>
                   </View>
-                  <Text variant="body" style={styles.definition}>
-                    {sense.definition}
-                  </Text>
-                </View>
-              ))}
+                ))}
+              </View>
             </View>
-          </View>
+          )}
         </ScrollView>
 
         <View style={styles.inputContainer}>

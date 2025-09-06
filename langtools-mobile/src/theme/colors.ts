@@ -60,5 +60,3 @@ export const lightColors: ThemeColors = {
     danger: '#c45755',
   },
 }
-
-

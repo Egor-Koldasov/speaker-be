@@ -9,6 +9,7 @@ import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect } from 'react'
 import { api } from '../../convex/_generated/api'
+import { headerScreenOptions } from '../components/styles/headerScreenOptions'
 import { Loading } from '../components/ui/Loading'
 import { ThemeProvider, useTheme } from '../theme/index'
 import { useLogConvexAuthToken } from '../utils/convex/useLogConvexAuthToken'
@@ -89,16 +90,9 @@ function NavigationGuard() {
   }
 
   return (
-    <Stack
-      screenOptions={{
-        headerStyle: { backgroundColor: colors.surface },
-        headerTitleStyle: { color: colors.textPrimary },
-        headerTintColor: colors.accent,
-        contentStyle: { backgroundColor: colors.background },
-      }}
-    >
+    <Stack screenOptions={headerScreenOptions({ colors: colors })}>
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-      <Stack.Screen name="(main-tabs)" options={{ title: 'Langtools' }} />
+      <Stack.Screen name="(main-tabs)" options={{ headerShown: false }} />
     </Stack>
   )
 }

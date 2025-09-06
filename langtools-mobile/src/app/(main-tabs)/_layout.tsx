@@ -1,6 +1,7 @@
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { Tabs } from 'expo-router'
 import { Platform } from 'react-native'
+import { headerScreenOptions } from '../../components/styles/headerScreenOptions'
 import { useTheme } from '../../theme/index'
 
 export default function MainTabsLayout() {
@@ -17,6 +18,7 @@ export default function MainTabsLayout() {
         }),
         tabBarLabelStyle: { color: colors.textSecondary },
         tabBarActiveBackgroundColor: colors.surface,
+        ...headerScreenOptions({ colors }),
       }}
     >
       <Tabs.Screen
@@ -37,6 +39,7 @@ export default function MainTabsLayout() {
       <Tabs.Screen
         name="generate-dictionary-entry"
         options={{
+          headerShown: true,
           title: 'Dictionary',
           tabBarIcon: ({ color, focused }) => (
             <Ionicons

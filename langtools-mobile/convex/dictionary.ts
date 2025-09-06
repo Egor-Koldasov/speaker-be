@@ -39,7 +39,7 @@ export const getDictionaryEntriesByHeadword = query({
     const dictionaryEntries = await ctx.db
       .query('dictionaryEntries')
       .withIndex('byUserIdHeadwordSourceLanguage', (q) =>
-        q.eq('userId', user._id).eq('headword', headword),
+        q.eq('userId', user._id).eq('headword', headword.toLocaleLowerCase()),
       )
       .collect()
     const apiDictionaryEntries: ApiDictionaryEntry[] = await asyncMap(

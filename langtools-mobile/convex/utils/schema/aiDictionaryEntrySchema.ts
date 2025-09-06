@@ -1,11 +1,11 @@
 import { z } from 'zod/v3'
 
 export const aiDictionaryEntrySchema = z.object({
-  headword: z
-    .string()
-    .describe(
-      'Word form as users encounter it (can be inflected, variant spelling, etc.)',
-    ),
+  headword: z.string().describe(
+    `Word form as users encounter it (can be inflected, variant spelling, etc.). \
+The letter case should be normalized to be lowercase, except \
+cases where it's essential, like proper nouns.`,
+  ),
   sourceLanguage: z
     .string()
     .describe(
