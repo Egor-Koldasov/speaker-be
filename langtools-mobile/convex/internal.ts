@@ -81,13 +81,13 @@ export const migrateDictionaryEntriesUserIds = internalMutation({
         await ctx.db.patch(dictionaryEntry._id, { userId: to })
       }
 
-      const relSenseFsrsProgressList = await ctx.db
-        .query('relSenseFsrsProgress')
+      const fsrsProgressList = await ctx.db
+        .query('fsrsProgress')
         .withIndex('byUserIdSenseId', (q) => q.eq('userId', from))
         .collect()
 
-      for (const relSenseFsrsProgress of relSenseFsrsProgressList) {
-        await ctx.db.patch(relSenseFsrsProgress._id, { userId: to })
+      for (const fsrsProgress of fsrsProgressList) {
+        await ctx.db.patch(fsrsProgress._id, { userId: to })
       }
     }
   },
@@ -148,7 +148,7 @@ export const importPgFsrsProgress = internalMutation({
         )
       }
 
-      const fsrsProgressId = await ctx.db.insert('fsrsProgress', {
+      await ctx.db.insert('fsrsProgress', {
         due: fsrsProgressPgRow.due,
         stability: fsrsProgressPgRow.stability,
         difficulty: fsrsProgressPgRow.difficulty,
@@ -157,10 +157,6 @@ export const importPgFsrsProgress = internalMutation({
         last_review: fsrsProgressPgRow.last_review,
         reps: fsrsProgressPgRow.reps,
         lapses: fsrsProgressPgRow.lapses,
-      })
-
-      await ctx.db.insert('relSenseFsrsProgress', {
-        fsrsProgressId: fsrsProgressId,
         senseId: sense._id,
         userId: fsrsProgressPgRow.auth_user_id,
       })

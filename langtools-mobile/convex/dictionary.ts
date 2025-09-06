@@ -1,6 +1,7 @@
 import { asyncMap } from 'convex-helpers'
 import z from 'zod/v3'
 import { ApiDictionaryEntry } from '../src/utils/dictionary/ApiDictionaryEntry'
+import { normalizeLanguageCode } from '../src/utils/normalizeLanguageCode'
 import { requireUserByCtx } from './users'
 import { internalMutation } from './utils/internalMutation'
 import { query } from './utils/query'
@@ -16,7 +17,8 @@ export const createDictionaryEntry = internalMutation({
     const dictionaryEntryId = await ctx.db.insert('dictionaryEntries', {
       userId,
       headword: aiDictionaryEntry.headword,
-      sourceLanguage: aiDictionaryEntry.sourceLanguage,
+      sourceLanguageFull: aiDictionaryEntry.sourceLanguage,
+      sourceLanguage: normalizeLanguageCode(aiDictionaryEntry.sourceLanguage),
     })
     await asyncMap(aiDictionaryEntry.senses, async (sense) => {
       await ctx.db.insert('dictionaryEntrySenses', {

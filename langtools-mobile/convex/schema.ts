@@ -18,6 +18,7 @@ export default defineSchema({
   dictionaryEntries: defineTable({
     headword: v.string(),
     sourceLanguage: v.string(),
+    sourceLanguageFull: v.optional(v.string()),
     updatedAt,
     userId: v.string(),
   }).index('byUserIdHeadwordSourceLanguage', [
@@ -35,6 +36,8 @@ export default defineSchema({
   }).index('byDictionaryEntryIdLocalId', ['dictionaryEntryId', 'localId']),
   fsrsProgress: defineTable({
     updatedAt,
+    senseId: v.id('dictionaryEntrySenses'),
+    userId: v.string(),
     due: v.string(),
     stability: v.optional(v.number()),
     difficulty: v.optional(v.number()),
@@ -43,13 +46,9 @@ export default defineSchema({
     last_review: v.optional(v.string()),
     reps: v.number(),
     lapses: v.number(),
-  }),
-  relSenseFsrsProgress: defineTable({
-    updatedAt,
-    fsrsProgressId: v.id('fsrsProgress'),
-    senseId: v.id('dictionaryEntrySenses'),
-    userId: v.string(),
-  }).index('byUserIdSenseId', ['userId', 'senseId']),
+  })
+    .index('byUserIdSenseId', ['userId', 'senseId'])
+    .index('byUserIdDue', ['userId', 'due']),
   aiMessageStream: defineTable({
     updatedAt,
     threadId: v.string(),

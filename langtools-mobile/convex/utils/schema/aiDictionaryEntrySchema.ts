@@ -9,7 +9,7 @@ cases where it's essential, like proper nouns.`,
   sourceLanguage: z
     .string()
     .describe(
-      'Original language in BCP 47 format, guessed from word and user preferences',
+      'Original language in BCP 47 format, guessed from word and user preferences.',
     ),
   senses: z
     .array(
