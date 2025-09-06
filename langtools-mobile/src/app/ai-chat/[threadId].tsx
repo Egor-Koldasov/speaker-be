@@ -6,12 +6,7 @@ import {
 import { useAction } from 'convex/react'
 import { useLocalSearchParams } from 'expo-router'
 import { useRef, useState } from 'react'
-import {
-  FlatList,
-  KeyboardAvoidingView,
-  Platform,
-  View as RNView,
-} from 'react-native'
+import { FlatList, KeyboardAvoidingView, Platform } from 'react-native'
 import { api } from '../../../convex/_generated/api'
 import { Button } from '../../components/ui/Button'
 import { Loading } from '../../components/ui/Loading'
@@ -73,7 +68,7 @@ export default function ThreadChat() {
           }}
         />
 
-        <RNView
+        <View
           style={{
             padding: 20,
             borderTopWidth: 1,
@@ -97,7 +92,7 @@ export default function ThreadChat() {
               await sendMessage({ threadId, message: text })
             }}
           />
-        </RNView>
+        </View>
       </KeyboardAvoidingView>
     </Screen>
   )
