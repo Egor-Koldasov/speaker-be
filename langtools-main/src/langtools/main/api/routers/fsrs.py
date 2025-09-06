@@ -1,9 +1,15 @@
 """FSRS spaced repetition endpoints router."""
 
 import traceback
+from dataclasses import dataclass
+from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from pydantic import BaseModel, Field
 from sqlmodel import Session
+
+from langtools.main.fsrs.functions import process_review
+from langtools.main.fsrs.models import FSRSTrainingData, Rating
 
 from ..auth.dependencies import get_current_auth_user
 from ..database import get_session
@@ -224,6 +230,67 @@ async def process_review_session(
     except Exception as e:
         traceback.print_exc()
         session.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to process review: {str(e)}",
+        )
+
+
+@dataclass
+class ProcessReviewEndpointResponse:
+    updated_training_data: FSRSTrainingData
+
+
+class ProcessReviewParams(BaseModel):
+    """Request to process a review session."""
+
+    fsrs: FSRSTrainingData = Field(description="FSRS training data")
+    rating: Rating = Field(description="Review rating (1=Again, 2=Hard, 3=Good, 4=Easy)")
+    review_time: datetime = Field(description="When the review occurred")
+
+
+@router.post("/process_review", response_model=ProcessReviewResponse)
+async def process_review_endpoint(
+    request: ProcessReviewParams,
+) -> ProcessReviewEndpointResponse:
+    """
+    Process a review session and return updated training data.
+
+    Uses the FSRS algorithm to process the review and update the training state.
+    Only the user who owns the FSRS record can process reviews.
+
+    Args:
+        fsrs_id: FSRS record ID
+        request: Review data with rating and review time
+        current_user: Current authenticated user
+        session: Database session
+
+    Returns:
+        Updated FSRS training data
+
+    Raises:
+        HTTPException: If record not found, access denied, or invalid data
+    """
+    try:
+        updated_training_data = process_review(request.fsrs, request.rating, request.review_time)
+
+        return ProcessReviewEndpointResponse(updated_training_data=updated_training_data)
+
+    except HTTPException:
+        # Re-raise HTTP exceptions as-is
+        raise
+    except ValueError as e:
+        if "not found" in str(e):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=str(e),
+            )
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )
+    except Exception as e:
+        traceback.print_exc()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to process review: {str(e)}",
