@@ -1,5 +1,21 @@
-import { SignIn } from '@/components/SignIn'
+import React from 'react'
+import { SignIn as SignInForm } from '../../components/SignIn'
+import { Screen } from '../../components/ui/Screen'
+import { Text } from '../../components/ui/Text'
+import { View } from '../../components/ui/View'
+import { useTheme } from '../../theme/index'
 
-export default function SignInPage() {
-  return <SignIn />
+export default function SignInScreen() {
+  const { colors, spacing } = useTheme()
+  return (
+    <Screen>
+      <View style={{ gap: spacing.lg }}>
+        <Text variant="title">Welcome</Text>
+        <Text color="secondary">Sign in or create an account</Text>
+        <View background="elevated" rounded="lg" padded>
+          <SignInForm />
+        </View>
+      </View>
+    </Screen>
+  )
 }

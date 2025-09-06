@@ -97,6 +97,7 @@ function NavigationGuard() {
         contentStyle: { backgroundColor: colors.background },
       }}
     >
+      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       <Stack.Screen name="(main-tabs)" options={{ title: 'Langtools' }} />
     </Stack>
   )
