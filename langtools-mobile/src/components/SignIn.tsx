@@ -2,21 +2,25 @@ import { useSignIn, useSignUp } from '@clerk/clerk-expo'
 import { useRouter } from 'expo-router'
 import React, { useCallback, useMemo } from 'react'
 import { View } from 'react-native'
+import { proxy, useSnapshot } from 'valtio'
 import { clerkErrorEmailExistsSchema } from '../utils/clerkError'
 import { Button } from './ui/Button'
 import { Loading } from './ui/Loading'
 import { Text } from './ui/Text'
 import { TextInput } from './ui/TextInput'
 
+const state = proxy({
+  emailAddress: '',
+  otp: '',
+  otpSent: false,
+  emailExists: '',
+})
+
 export function SignIn() {
   const signUp = useSignUp()
   const signIn = useSignIn()
   const router = useRouter()
-  const [emailExists, setEmailExists] = React.useState('')
-
-  const [emailAddress, setEmailAddress] = React.useState('')
-  const [otpSent, setOtpSent] = React.useState(false)
-  const [otp, setOtp] = React.useState('')
+  const snap = useSnapshot(state)
 
   const isLoaded = useMemo(() => {
     return signUp.isLoaded || signIn.isLoaded
@@ -27,15 +31,15 @@ export function SignIn() {
 
     try {
       await signIn.signIn.create({
-        identifier: emailAddress,
+        identifier: state.emailAddress,
         strategy: 'email_code',
       })
 
-      setOtpSent(true)
+      state.otpSent = true
     } catch (err) {
       console.error(JSON.stringify(err, null, 2))
     }
-  }, [emailAddress, isLoaded, signIn.signIn])
+  }, [isLoaded, signIn.signIn])
 
   // Handle the submission of the sign-in form
   const onSendEmailSignUp = useCallback(async () => {
@@ -44,15 +48,15 @@ export function SignIn() {
     // Start the sign-in process using the email and password provided
     try {
       await signUp.signUp.create({
-        emailAddress: emailAddress,
+        emailAddress: state.emailAddress,
       })
 
       await signUp.signUp.prepareEmailAddressVerification()
-      setOtpSent(true)
+      state.otpSent = true
     } catch (err) {
       const errorParsed = clerkErrorEmailExistsSchema.safeParse(err)
       if (errorParsed.success) {
-        setEmailExists(emailAddress)
+        state.emailExists = state.emailAddress
         onSendEmailSignIn()
         return
       }
@@ -60,7 +64,7 @@ export function SignIn() {
       // for more info on error handling
       console.error(JSON.stringify(err, null, 2))
     }
-  }, [emailAddress, isLoaded, onSendEmailSignIn, signUp.signUp])
+  }, [isLoaded, onSendEmailSignIn, signUp.signUp])
 
   const onVerifyOtpSignUp = useCallback(async () => {
     if (!signUp.signUp) {
@@ -68,7 +72,7 @@ export function SignIn() {
       return
     }
     const signUpAttempt = await signUp.signUp.attemptEmailAddressVerification({
-      code: otp,
+      code: state.otp,
     })
 
     // If sign-in process is complete, set the created session as active
@@ -80,7 +84,7 @@ export function SignIn() {
       // complete further steps.
       console.error(JSON.stringify(signUpAttempt, null, 2))
     }
-  }, [otp, signUp])
+  }, [signUp])
 
   const onVerifyOtpSignIn = useCallback(async () => {
     if (!signIn.signIn) {
@@ -90,7 +94,7 @@ export function SignIn() {
 
     const signInAttempt = await signIn.signIn.attemptFirstFactor({
       strategy: 'email_code',
-      code: otp,
+      code: state.otp,
     })
 
     if (signInAttempt.status === 'complete') {
@@ -98,20 +102,20 @@ export function SignIn() {
     } else {
       console.error(JSON.stringify(signInAttempt, null, 2))
     }
-  }, [otp, signIn])
+  }, [signIn])
 
   const onVerifyOtp = useCallback(async () => {
-    if (emailExists === emailAddress) {
+    if (state.emailExists === state.emailAddress) {
       await onVerifyOtpSignIn()
     } else {
       await onVerifyOtpSignUp()
     }
     router.replace('/')
-  }, [emailExists, emailAddress, router, onVerifyOtpSignUp, onVerifyOtpSignIn])
+  }, [router, onVerifyOtpSignUp, onVerifyOtpSignIn])
 
   const onOtpChange = useCallback(
     (otp: string) => {
-      setOtp(otp)
+      state.otp = otp
       if (otp.length === 6) {
         onVerifyOtp()
       }
@@ -128,10 +132,10 @@ export function SignIn() {
       <Text variant="subtitle">Sign in</Text>
       <TextInput
         autoCapitalize="none"
-        value={emailAddress}
+        value={snap.emailAddress}
         placeholder="Enter email"
-        onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
-        editable={!otpSent}
+        onChangeText={(emailAddress) => (state.emailAddress = emailAddress)}
+        editable={!snap.otpSent}
         inputMode="email"
         textContentType="emailAddress"
         returnKeyType={'send'}
@@ -139,10 +143,10 @@ export function SignIn() {
         onSubmitEditing={onSendEmailSignUp}
         fullWidth
       />
-      {otpSent && (
+      {snap.otpSent && (
         <TextInput
           autoCapitalize="none"
-          value={otp}
+          value={snap.otp}
           placeholder="Enter OTP"
           onChangeText={onOtpChange}
           keyboardType="numeric"
@@ -155,10 +159,12 @@ export function SignIn() {
           fullWidth
         />
       )}
-      {!otpSent && (
+      {!snap.otpSent && (
         <Button title="Send email" onPress={onSendEmailSignUp} fullWidth />
       )}
-      {otpSent && <Button title="Verify OTP" onPress={onVerifyOtp} fullWidth />}
+      {snap.otpSent && (
+        <Button title="Verify OTP" onPress={onVerifyOtp} fullWidth />
+      )}
     </View>
   )
 }

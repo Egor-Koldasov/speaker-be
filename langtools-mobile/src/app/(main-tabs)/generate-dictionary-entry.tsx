@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { ScrollView, StyleSheet } from 'react-native'
 import { api } from '../../../convex/_generated/api'
 import { Button } from '../../components/ui/Button'
+import { KeyboardAwareView } from '../../components/ui/KeyboardAwareView'
 import { Screen } from '../../components/ui/Screen'
 import { Text } from '../../components/ui/Text'
 import { TextInput } from '../../components/ui/TextInput'
@@ -67,7 +68,7 @@ export default function GenerateDictionaryEntryPage() {
 
   return (
     <Screen>
-      <View style={styles.container}>
+      <KeyboardAwareView style={styles.container}>
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
           <Text variant="title" style={styles.title}>
             Dictionary Entry
@@ -126,7 +127,7 @@ export default function GenerateDictionaryEntryPage() {
             style={styles.generateButton}
           />
         </View>
-      </View>
+      </KeyboardAwareView>
     </Screen>
   )
 }

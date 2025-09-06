@@ -6,9 +6,10 @@ import {
 import { useAction } from 'convex/react'
 import { useLocalSearchParams } from 'expo-router'
 import { useRef, useState } from 'react'
-import { FlatList, KeyboardAvoidingView, Platform } from 'react-native'
+import { FlatList } from 'react-native'
 import { api } from '../../../convex/_generated/api'
 import { Button } from '../../components/ui/Button'
+import { KeyboardAwareView } from '../../components/ui/KeyboardAwareView'
 import { Loading } from '../../components/ui/Loading'
 import { Screen } from '../../components/ui/Screen'
 import { Text } from '../../components/ui/Text'
@@ -45,11 +46,7 @@ export default function ThreadChat() {
 
   return (
     <Screen style={{ padding: 0 }}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={88}
-      >
+      <KeyboardAwareView style={{ flex: 1 }}>
         <FlatList
           ref={listRef}
           style={{ flex: 1 }}
@@ -93,7 +90,7 @@ export default function ThreadChat() {
             }}
           />
         </View>
-      </KeyboardAvoidingView>
+      </KeyboardAwareView>
     </Screen>
   )
 }
