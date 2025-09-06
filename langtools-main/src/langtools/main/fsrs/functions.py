@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 
 from fsrs import Card as PyFSRSCard
 from fsrs import Rating as PyFSRSRating
+from fsrs import ReviewLog
 from fsrs import Scheduler as PyFSRSScheduler
 from fsrs import State as PyFSRSState
 
@@ -42,7 +43,7 @@ def new_training_data() -> FSRSTrainingData:
 
 def process_review(
     training_data: FSRSTrainingData, rating: Rating, review_time: datetime
-) -> FSRSTrainingData:
+) -> tuple[FSRSTrainingData, ReviewLog]:
     """
     Process a review session and return updated training data.
 
@@ -65,21 +66,24 @@ def process_review(
     py_rating = PyFSRSRating(rating.value)
 
     # Process review
-    updated_py_card, _ = _DEFAULT_SCHEDULER.review_card(py_card, py_rating, review_time)
+    updated_py_card, review_log = _DEFAULT_SCHEDULER.review_card(py_card, py_rating, review_time)
 
     # Convert back to our training data with updated counters
     new_reps = training_data.reps + 1
     new_lapses = training_data.lapses + (1 if rating == Rating.AGAIN else 0)
 
-    return FSRSTrainingData(
-        due=updated_py_card.due,
-        stability=updated_py_card.stability,
-        difficulty=updated_py_card.difficulty,
-        state=FSRSCardState(updated_py_card.state.value),
-        step=updated_py_card.step if updated_py_card.step is not None else 0,
-        last_review=updated_py_card.last_review,
-        reps=new_reps,
-        lapses=new_lapses,
+    return (
+        FSRSTrainingData(
+            due=updated_py_card.due,
+            stability=updated_py_card.stability,
+            difficulty=updated_py_card.difficulty,
+            state=FSRSCardState(updated_py_card.state.value),
+            step=updated_py_card.step if updated_py_card.step is not None else 0,
+            last_review=updated_py_card.last_review,
+            reps=new_reps,
+            lapses=new_lapses,
+        ),
+        review_log,
     )
 
 

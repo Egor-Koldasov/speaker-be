@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fsrs import ReviewLog
 from pydantic import BaseModel, Field
 from sqlmodel import Session
 
@@ -239,6 +240,7 @@ async def process_review_session(
 @dataclass
 class ProcessReviewEndpointResponse:
     updated_training_data: FSRSTrainingData
+    review_log: ReviewLog
 
 
 class ProcessReviewParams(BaseModel):
@@ -272,9 +274,13 @@ async def process_review_endpoint(
         HTTPException: If record not found, access denied, or invalid data
     """
     try:
-        updated_training_data = process_review(request.fsrs, request.rating, request.review_time)
+        updated_training_data, review_log = process_review(
+            request.fsrs, request.rating, request.review_time
+        )
 
-        return ProcessReviewEndpointResponse(updated_training_data=updated_training_data)
+        return ProcessReviewEndpointResponse(
+            updated_training_data=updated_training_data, review_log=review_log
+        )
 
     except HTTPException:
         # Re-raise HTTP exceptions as-is

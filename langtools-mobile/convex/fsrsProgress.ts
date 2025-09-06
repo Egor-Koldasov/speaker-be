@@ -184,6 +184,6 @@ export const processReview = action({
       throw new Error('Failed to process review')
     }
 
-    console.log('processReview response', response)
+    console.log('processReview response', await response.json())
   },
 })
