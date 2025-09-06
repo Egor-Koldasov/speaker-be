@@ -77,8 +77,8 @@ WHERE
 type FsrsPgRow = {
   fsrs_id: string
   due: Date
-  stability: number
-  difficulty: number
+  stability: number | null
+  difficulty: number | null
   state: number
   step: number
   last_review: Date | null
@@ -129,6 +129,8 @@ WHERE
     >['fsrsPgRows'] = fsrsPgRows.map(
       ({ dictionary_entry_json_data, ...fsrsPgRow }) => ({
         ...fsrsPgRow,
+        stability: fsrsPgRow.stability ?? undefined,
+        difficulty: fsrsPgRow.difficulty ?? undefined,
         due: fsrsPgRow.due.toISOString(),
         last_review: fsrsPgRow.last_review?.toISOString(),
         dictionary_entry_headword: dictionary_entry_json_data.headword,

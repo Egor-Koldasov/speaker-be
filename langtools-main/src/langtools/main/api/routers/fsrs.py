@@ -249,7 +249,7 @@ class ProcessReviewParams(BaseModel):
     review_time: datetime = Field(description="When the review occurred")
 
 
-@router.post("/process_review", response_model=ProcessReviewResponse)
+@router.post("/process_review", response_model=ProcessReviewEndpointResponse)
 async def process_review_endpoint(
     request: ProcessReviewParams,
 ) -> ProcessReviewEndpointResponse:

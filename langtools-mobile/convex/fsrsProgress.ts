@@ -3,7 +3,10 @@ import { getManyFrom } from 'convex-helpers/server/relationships'
 import z from 'zod/v3'
 import { matchDictionaryEntryLanguage } from '../src/utils/dictionary/matchDictionaryEntryLanguage'
 import { isNonNullable } from '../src/utils/isNonNullable'
-import { requireUserByCtx } from './users'
+import { internal } from './_generated/api'
+import { requireUserByActionCtx, requireUserByCtx } from './users'
+import { action } from './utils/action'
+import { internalQuery } from './utils/internalQuery'
 import { mutation } from './utils/mutation'
 import { query } from './utils/query'
 import { requireById } from './utils/requireById'
@@ -120,5 +123,67 @@ export const getNextFsrsItems = query({
       .filter(isNonNullable)
       .slice(0, limit)
     return fsrsProgressListLoaded
+  },
+})
+
+export const getFsrsProgressById = internalQuery({
+  args: {
+    fsrsProgressId: zid('fsrsProgress'),
+  },
+  handler: async (ctx, { fsrsProgressId }) => {
+    return await ctx.db.get(fsrsProgressId)
+  },
+})
+
+export const processReview = action({
+  args: {
+    fsrsProgressId: zid('fsrsProgress'),
+    rating: z.number(),
+  },
+  handler: async (ctx, { fsrsProgressId, rating }) => {
+    const user = await requireUserByActionCtx(ctx)
+    const fsrsProgress = await ctx.runQuery(
+      internal.fsrsProgress.getFsrsProgressById,
+      {
+        fsrsProgressId,
+      },
+    )
+    if (!fsrsProgress) {
+      throw new Error('FSRS progress not found')
+    }
+    if (fsrsProgress.userId !== user._id) {
+      throw new Error('FSRS progress does not belong to user')
+    }
+
+    const fsrsApiUrl = new URL(process.env.FSRS_API_URL ?? '')
+    fsrsApiUrl.pathname = `/fsrs/process_review`
+
+    const response = await fetch(fsrsApiUrl.toString(), {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify({
+        fsrs: {
+          due: fsrsProgress.due,
+          stability: fsrsProgress.stability ?? null,
+          difficulty: fsrsProgress.difficulty ?? null,
+          state: fsrsProgress.state,
+          step: fsrsProgress.step,
+          last_review: fsrsProgress.last_review ?? null,
+          reps: fsrsProgress.reps,
+          lapses: fsrsProgress.lapses,
+        },
+        rating,
+        review_time: new Date().toISOString(),
+      }),
+    })
+
+    if (!response.ok) {
+      console.error('processReview request error', await response.text())
+      throw new Error('Failed to process review')
+    }
+
+    console.log('processReview response', response)
   },
 })
