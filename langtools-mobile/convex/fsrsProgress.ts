@@ -5,6 +5,7 @@ import z from 'zod/v3'
 import { matchDictionaryEntryLanguage } from '../src/utils/dictionary/matchDictionaryEntryLanguage'
 import { isNonNullable } from '../src/utils/isNonNullable'
 import { internal } from './_generated/api'
+import { Doc } from './_generated/dataModel'
 import schema from './schema'
 import { requireUserByActionCtx, requireUserByCtx } from './users'
 import { action } from './utils/action'
@@ -154,7 +155,10 @@ export const processReview = action({
     fsrsProgressId: zid('fsrsProgress'),
     rating: z.number(),
   },
-  handler: async (ctx, { fsrsProgressId, rating }) => {
+  handler: async (
+    ctx,
+    { fsrsProgressId, rating },
+  ): Promise<Doc<'fsrsProgress'>> => {
     const user = await requireUserByActionCtx(ctx)
     const fsrsProgress = await ctx.runQuery(
       internal.fsrsProgress.getFsrsProgressById,
@@ -216,5 +220,15 @@ export const processReview = action({
           undefined,
       },
     })
+    const nextFsrsProgress = await ctx.runQuery(
+      internal.fsrsProgress.getFsrsProgressById,
+      {
+        fsrsProgressId,
+      },
+    )
+    if (!nextFsrsProgress) {
+      throw new Error('FSRS progress not found')
+    }
+    return nextFsrsProgress
   },
 })

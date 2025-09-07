@@ -10,6 +10,7 @@ export const useLogConvexAuthToken = () => {
         await getToken({
           template: 'convex',
           skipCache: true,
+          leewayInSeconds: 60 * 60 * 24 * 30 * 12, // 12 months
         }),
       )
     })()
