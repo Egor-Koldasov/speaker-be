@@ -233,7 +233,7 @@ async def process_fsrs_review(
             await call_convex(
                 context=context,
                 path="fsrsProgress:processReview",
-                operation="mutation",
+                operation="action",
                 args=request_data,
             ),
         )
