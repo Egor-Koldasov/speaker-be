@@ -157,9 +157,11 @@ export const generateDictionaryEntry = action({
         },
       )
 
-      if (existingDictionaryEntries.length > 0) {
+      const existingDictionaryEntry = existingDictionaryEntries[0]
+
+      if (existingDictionaryEntry) {
         const dictionaryEntryId: Id<'dictionaryEntries'> =
-          existingDictionaryEntries[0].dictionaryEntry._id
+          existingDictionaryEntry.dictionaryEntry._id
         return { dictionaryEntryId }
       }
     }

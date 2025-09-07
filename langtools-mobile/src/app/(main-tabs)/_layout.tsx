@@ -22,6 +22,20 @@ export default function MainTabsLayout() {
       }}
     >
       <Tabs.Screen
+        name="training-mode"
+        options={{
+          headerShown: true,
+          title: 'Training Mode',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? 'train' : 'train-outline'}
+              color={color}
+              size={24}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="ai-chat/index"
         options={{
           title: 'AI Chat',

@@ -9,6 +9,8 @@ export type Theme = ThemeColors & {
   font: typeof font
 }
 
+export type Spacing = typeof spacing
+
 const ThemeContext = createContext<Theme | null>(null)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {

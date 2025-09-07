@@ -34,6 +34,16 @@ export default defineSchema({
     definition: v.string(),
     partOfSpeech: v.string(),
   }).index('byDictionaryEntryIdLocalId', ['dictionaryEntryId', 'localId']),
+  dictionaryEntrySenseTranslation: defineTable({
+    updatedAt,
+    userId: v.string(),
+    dictionaryEntrySenseId: v.id('dictionaryEntrySenses'),
+    translationLanguage: v.string(),
+    localId: v.string(),
+    canonicalForm: v.string(),
+    partOfSpeech: v.string(),
+    definition: v.string(),
+  }).index('byDictionaryEntrySenseId', ['dictionaryEntrySenseId']),
   fsrsProgress: defineTable({
     updatedAt,
     senseId: v.id('dictionaryEntrySenses'),

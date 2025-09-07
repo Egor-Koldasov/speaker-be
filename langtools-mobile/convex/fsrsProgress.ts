@@ -4,9 +4,10 @@ import { convexToZod } from 'convex-helpers/server/zod'
 import z from 'zod/v3'
 import { matchDictionaryEntryLanguage } from '../src/utils/dictionary/matchDictionaryEntryLanguage'
 import { isNonNullable } from '../src/utils/isNonNullable'
-import { internal } from './_generated/api'
+import { api, internal } from './_generated/api'
 import { Doc } from './_generated/dataModel'
 import schema from './schema'
+import { RegisteredQueryReturnType } from './types/utils/RegisteredQueryReturnType'
 import { requireUserByActionCtx, requireUserByCtx } from './users'
 import { action } from './utils/action'
 import { internalMutation } from './utils/internalMutation'
@@ -128,6 +129,50 @@ export const getNextFsrsItems = query({
       .filter(isNonNullable)
       .slice(0, limit)
     return fsrsProgressListLoaded
+  },
+})
+
+type NextFsrsItem = Awaited<
+  RegisteredQueryReturnType<typeof getNextFsrsItems>
+>[number]
+
+type NextFsrsItemWithTranslations = NextFsrsItem & {
+  senseTranslations: Doc<'dictionaryEntrySenseTranslation'>[]
+}
+
+export const getNextFsrsItemWithTranslations = query({
+  args: {
+    limit: z.number(),
+    sourceLanguage: z.string().optional(),
+  },
+  handler: async (
+    ctx,
+    { limit, sourceLanguage },
+  ): Promise<NextFsrsItemWithTranslations[]> => {
+    await requireUserByCtx(ctx)
+    const nextFsrsItems = await ctx.runQuery(
+      api.fsrsProgress.getNextFsrsItems,
+      {
+        limit,
+        sourceLanguage,
+      },
+    )
+    const nextFsrsItemsWithTranslations = await asyncMap(
+      nextFsrsItems,
+      async (nextFsrsItem) => {
+        const senseTranslations = await ctx.db
+          .query('dictionaryEntrySenseTranslation')
+          .withIndex('byDictionaryEntrySenseId', (q) =>
+            q.eq('dictionaryEntrySenseId', nextFsrsItem.sense._id),
+          )
+          .collect()
+        return {
+          ...nextFsrsItem,
+          senseTranslations,
+        }
+      },
+    )
+    return nextFsrsItemsWithTranslations
   },
 })
 
