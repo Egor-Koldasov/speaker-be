@@ -11,7 +11,9 @@ import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
 import { z } from 'zod/v3'
 import { throttleAsync } from '../src/utils/data/throttle'
+import { ApiDictionaryEntry } from '../src/utils/dictionary/ApiDictionaryEntry'
 import { api, components, internal } from './_generated/api'
+import { Id } from './_generated/dataModel'
 import { action } from './_generated/server'
 import { agent } from './ai/agent'
 import { PromptParameter } from './types/PromptParameter'
@@ -140,11 +142,28 @@ export const generateDictionaryEntry = action({
     headword: v.string(),
     forceLanguage: v.optional(v.string()),
     threadId: v.string(),
+    regenerateFull: v.optional(v.boolean()),
   },
-  async handler(ctx, { headword, forceLanguage, threadId }) {
+  async handler(ctx, { headword, forceLanguage, threadId, regenerateFull }) {
     const thread = await ctx.runQuery(api.aiChat.getExistingThread, {
       threadId,
     })
+
+    if (!regenerateFull) {
+      const existingDictionaryEntries = await ctx.runQuery(
+        api.dictionary.getDictionaryEntriesByHeadword,
+        {
+          headword,
+        },
+      )
+
+      if (existingDictionaryEntries.length > 0) {
+        const dictionaryEntryId: Id<'dictionaryEntries'> =
+          existingDictionaryEntries[0].dictionaryEntry._id
+        return { dictionaryEntryId }
+      }
+    }
+
     const prompt = `
 You are a professional linguist and lexicographer tasked with writing a comprehensive
 dictionary entry in the original language of the provided term.
@@ -227,14 +246,52 @@ Focus on:
     }
     const aiDictionaryEntry = await stream.object
 
-    await ctx.runMutation(internal.dictionary.createDictionaryEntry, {
-      userId: thread.userId,
-      aiDictionaryEntry,
-    })
+    const dictionaryEntryId: Id<'dictionaryEntries'> = await ctx.runMutation(
+      internal.dictionary.createDictionaryEntry,
+      {
+        userId: thread.userId,
+        aiDictionaryEntry,
+      },
+    )
 
     await ctx.runMutation(internal.aiChat.finishAiDictionaryEntryStream, {
       threadId,
     })
+
+    return { dictionaryEntryId }
+  },
+})
+
+export const generateDictionaryEntryComplete = action({
+  args: {
+    headword: v.string(),
+    forceLanguage: v.optional(v.string()),
+    regenerateFull: v.optional(v.boolean()),
+  },
+  handler: async (
+    ctx,
+    { headword, forceLanguage, regenerateFull },
+  ): Promise<{ apiDictionaryEntry: ApiDictionaryEntry }> => {
+    const threadId = await ctx.runMutation(api.aiChat.createThread)
+    const { dictionaryEntryId } = await ctx.runAction(
+      api.aiChat.generateDictionaryEntry,
+      {
+        headword,
+        forceLanguage,
+        threadId,
+        regenerateFull,
+      },
+    )
+    const { apiDictionaryEntry } = await ctx.runQuery(
+      internal.dictionary.getApiDictionaryEntryById,
+      {
+        dictionaryEntryId,
+      },
+    )
+    if (!apiDictionaryEntry) {
+      throw new Error('Dictionary entry not found')
+    }
+    return { apiDictionaryEntry }
   },
 })
 

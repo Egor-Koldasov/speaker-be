@@ -9,7 +9,7 @@ from starlette.requests import Request as StarletteRequest
 
 from langtools.mcp.api import call_api_with_token
 
-convexUrl = os.getenv("CONVEX_URL", "https://deafening-husky-833.convex.cloud")
+convexUrl = os.getenv("CONVEX_URL", "http://84.46.250.192:3210")
 
 convex = ConvexClient(convexUrl)
 logger = logging.getLogger(__name__)
@@ -38,17 +38,18 @@ class ConvexQueryRequestResult:
     status: str
 
 
-async def call_convex_query(  # pyright: ignore[reportAny]
-    context: Context, query: str, args: dict[str, object] = {}
+async def call_convex(  # pyright: ignore[reportAny]
+    context: Context, path: str, operation: str = "query", args: dict[str, object] = {}
 ) -> ConvexQueryResult:  # pyright: ignore[reportExplicitAny]
     """Call a Convex query and return the result."""
 
-    logger.info(f"convexUrl: {convexUrl}")
+    token = require_token_from_context(context)
+    convex.set_auth(token)
     result = await call_api_with_token(
         context=context,
-        endpoint="/api/query",
+        endpoint=f"/api/{operation}",
         method="POST",
-        json_data={"path": query, "args": args, "format": "json"},
+        json_data={"path": path, "args": args, "format": "json"},
         base_url=convexUrl,
     )
 

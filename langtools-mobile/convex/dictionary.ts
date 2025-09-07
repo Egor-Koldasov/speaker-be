@@ -2,8 +2,11 @@ import { asyncMap } from 'convex-helpers'
 import z from 'zod/v3'
 import { ApiDictionaryEntry } from '../src/utils/dictionary/ApiDictionaryEntry'
 import { normalizeLanguageCode } from '../src/utils/normalizeLanguageCode'
+import { Doc } from './_generated/dataModel'
+import { DatabaseReader } from './_generated/server'
 import { requireUserByCtx } from './users'
 import { internalMutation } from './utils/internalMutation'
+import { internalQuery } from './utils/internalQuery'
 import { query } from './utils/query'
 import { aiDictionaryEntrySchema } from './utils/schema/aiDictionaryEntrySchema'
 import { zid } from './utils/schema/zid'
@@ -29,6 +32,7 @@ export const createDictionaryEntry = internalMutation({
         partOfSpeech: sense.partOfSpeech,
       })
     })
+    return dictionaryEntryId
   },
 })
 
@@ -47,18 +51,42 @@ export const getDictionaryEntriesByHeadword = query({
     const apiDictionaryEntries: ApiDictionaryEntry[] = await asyncMap(
       dictionaryEntries,
       async (dictionaryEntry) => {
-        const dictionaryEntrySenses = await ctx.db
-          .query('dictionaryEntrySenses')
-          .withIndex('byDictionaryEntryIdLocalId', (q) =>
-            q.eq('dictionaryEntryId', dictionaryEntry._id),
-          )
-          .collect()
-        return {
-          dictionaryEntry,
-          dictionaryEntrySenses,
-        }
+        return dictionaryEntryToApiDictionaryEntry(ctx.db, dictionaryEntry)
       },
     )
     return apiDictionaryEntries
+  },
+})
+
+const dictionaryEntryToApiDictionaryEntry = async (
+  db: DatabaseReader,
+  dictionaryEntry: Doc<'dictionaryEntries'>,
+) => {
+  const dictionaryEntrySenses = await db
+    .query('dictionaryEntrySenses')
+    .withIndex('byDictionaryEntryIdLocalId', (q) =>
+      q.eq('dictionaryEntryId', dictionaryEntry._id),
+    )
+    .collect()
+  return {
+    dictionaryEntry,
+    dictionaryEntrySenses,
+  }
+}
+
+export const getApiDictionaryEntryById = internalQuery({
+  args: {
+    dictionaryEntryId: zid('dictionaryEntries'),
+  },
+  handler: async (ctx, { dictionaryEntryId }) => {
+    const dictionaryEntry = await ctx.db.get(dictionaryEntryId)
+    if (!dictionaryEntry) {
+      return { apiDictionaryEntry: null }
+    }
+    const apiDictionaryEntry = await dictionaryEntryToApiDictionaryEntry(
+      ctx.db,
+      dictionaryEntry,
+    )
+    return { apiDictionaryEntry }
   },
 })
