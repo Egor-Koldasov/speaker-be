@@ -28,7 +28,7 @@ export default function AiChatThreads() {
         <Text variant="title">AI Chat</Text>
         <Text color="secondary">Your conversations</Text>
         <Button
-          title="New Chat"
+          children="New Chat"
           size="lg"
           onPress={async () => {
             const threadId = await createThread({})

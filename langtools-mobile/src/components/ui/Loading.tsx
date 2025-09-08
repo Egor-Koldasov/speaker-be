@@ -5,18 +5,17 @@ import { Text } from './Text'
 
 export type LoadingProps = {
   message?: string
-  fullScreen?: boolean
+  flex?: boolean
 }
 
-export function Loading({ message = 'Loading…', fullScreen = true }: LoadingProps) {
+export function Loading({ message, flex = true }: LoadingProps) {
   const { colors, spacing } = useTheme()
   return (
     <View
       style={{
-        flex: fullScreen ? 1 : undefined,
+        flex: flex ? 1 : undefined,
         alignItems: 'center',
         justifyContent: 'center',
-        padding: spacing.lg,
       }}
     >
       <ActivityIndicator size="large" color={colors.accent} />
@@ -28,5 +27,3 @@ export function Loading({ message = 'Loading…', fullScreen = true }: LoadingPr
     </View>
   )
 }
-
-

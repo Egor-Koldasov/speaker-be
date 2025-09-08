@@ -12,7 +12,6 @@ import { api } from '../../convex/_generated/api'
 import { headerScreenOptions } from '../components/styles/headerScreenOptions'
 import { Loading } from '../components/ui/Loading'
 import { ThemeProvider, useTheme } from '../theme/index'
-import { useLogConvexAuthToken } from '../utils/convex/useLogConvexAuthToken'
 import { useMutationSerial } from '../utils/convex/useMutationSerial'
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -83,7 +82,7 @@ function NavigationGuard() {
     }
   }, [isSignedIn, syncAuthUser, user])
 
-  useLogConvexAuthToken()
+  // useLogConvexAuthToken()
 
   if (!isLoaded) {
     return <Loading />

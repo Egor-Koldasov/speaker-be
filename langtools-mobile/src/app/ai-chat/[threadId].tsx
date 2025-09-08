@@ -81,7 +81,7 @@ export default function ThreadChat() {
             multiline
           />
           <Button
-            title="Send"
+            children="Send"
             onPress={async () => {
               if (!threadId || !input.trim()) return
               const text = input.trim()

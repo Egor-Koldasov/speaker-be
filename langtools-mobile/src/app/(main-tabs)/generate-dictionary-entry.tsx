@@ -133,7 +133,7 @@ export default function GenerateDictionaryEntryPage() {
             onSubmitEditing={onGenerate}
           />
           <Button
-            title={<Ionicons name="send" size={16} color="white" />}
+            children={<Ionicons name="send" size={16} color="white" />}
             onPress={onGenerate}
             style={styles.generateButton}
           />

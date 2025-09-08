@@ -26,13 +26,7 @@ export function Text({ variant = 'body', color, style, ...rest }: TextProps) {
         ? colors.textSecondary
         : color === 'muted'
           ? colors.textMuted
-          : rest.style &&
-              (Array.isArray(rest.style)
-                ? undefined
-                : (rest.style as any).color)
-            ? undefined
-            : colors.textPrimary
-
+          : colors.textPrimary
   return (
     <RNText
       {...rest}

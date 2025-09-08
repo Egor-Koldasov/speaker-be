@@ -27,7 +27,7 @@ export default function UserProfile() {
         >
           <Text variant="title">Profile</Text>
           <Text color="secondary">{user?.email ?? '—'}</Text>
-          <Button title="Log out" onPress={() => signOut()} />
+          <Button children="Log out" onPress={() => signOut()} />
         </ThemedView>
       )}
     </Screen>

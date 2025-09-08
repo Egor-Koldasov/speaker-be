@@ -4,14 +4,14 @@ import { useTheme } from '../../theme/index'
 import { platformShadow } from '../../theme/shadows'
 
 export type ButtonProps = PressableProps & {
-  title: ReactNode
+  children: ReactNode
   tone?: 'primary' | 'secondary' | 'danger'
   size?: 'md' | 'lg'
   fullWidth?: boolean
 }
 
 export function Button({
-  title,
+  children,
   tone = 'primary',
   size = 'md',
   fullWidth,
@@ -43,7 +43,7 @@ export function Button({
           paddingHorizontal: paddingX,
           alignItems: 'center',
           justifyContent: 'center',
-          width: fullWidth ? '100%' : undefined,
+          flex: fullWidth ? 1 : undefined,
         },
         platformShadow('md'),
         typeof style === 'function' ? style(state) : style,
@@ -56,7 +56,7 @@ export function Button({
           fontWeight: '600',
         }}
       >
-        {title}
+        {children}
       </Text>
     </Pressable>
   )

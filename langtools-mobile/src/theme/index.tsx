@@ -10,6 +10,7 @@ export type Theme = ThemeColors & {
 }
 
 export type Spacing = typeof spacing
+export type Font = typeof font
 
 const ThemeContext = createContext<Theme | null>(null)
 

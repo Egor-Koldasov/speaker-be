@@ -202,6 +202,10 @@ export const createDictionaryEntryTranslation = internalMutation({
           )
         }
         if (senseOriginal.localId !== senseTranslation.localId) {
+          console.error(
+            'aiDictionaryEntryTranslation',
+            aiDictionaryEntryTranslation,
+          )
           throw new Error(
             `Sense local id mismatch: ${senseOriginal.localId} !== ${senseTranslation.localId}`,
           )
