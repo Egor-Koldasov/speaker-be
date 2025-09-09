@@ -28,7 +28,7 @@ export default function MainTabsLayout() {
           title: 'Training Mode',
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
-              name={focused ? 'train' : 'train-outline'}
+              name={focused ? 'infinite' : 'infinite-outline'}
               color={color}
               size={24}
             />

@@ -42,6 +42,7 @@ export default defineSchema({
     localId: v.string(),
     canonicalForm: v.string(),
     partOfSpeech: v.string(),
+    translations: v.array(v.string()),
     definition: v.string(),
   }).index('byDictionaryEntrySenseId', ['dictionaryEntrySenseId']),
   fsrsProgress: defineTable({
@@ -72,4 +73,22 @@ export default defineSchema({
     ...zodToConvex(aiDictionaryEntryStreamSchema).fields,
     finishedAt: v.optional(v.string()),
   }).index('byThreadIdFinishedAt', ['threadId', 'finishedAt']),
+  vocabularyAwareExample: defineTable({
+    updatedAt,
+    dictionaryEntrySenseId: v.id('dictionaryEntrySenses'),
+    exampleSentence: v.string(),
+    exampleSentenceWithoutHeadword: v.string(),
+    wordsUsed: v.array(
+      v.object({
+        headword: v.string(),
+        exampleSentenceForm: v.string(),
+      }),
+    ),
+  }),
+  vocabularyAwareExampleTranslation: defineTable({
+    updatedAt,
+    vocabularyAwareExampleId: v.id('vocabularyAwareExample'),
+    translationLanguage: v.string(),
+    exampleSentence: v.string(),
+  }),
 })

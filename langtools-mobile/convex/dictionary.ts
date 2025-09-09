@@ -1,4 +1,4 @@
-import { asyncMap } from 'convex-helpers'
+import { asyncMap, pick } from 'convex-helpers'
 import z from 'zod/v3'
 import { ApiDictionaryEntry } from '../src/utils/dictionary/ApiDictionaryEntry'
 import { apiToAiDictionaryEntry } from '../src/utils/dictionary/apiToAiDictionaryEntry'
@@ -99,6 +99,24 @@ export const getApiDictionaryEntryById = internalQuery({
   },
 })
 
+export const getDictionaryEntryById = internalQuery({
+  args: {
+    dictionaryEntryId: zid('dictionaryEntries'),
+  },
+  handler: async (ctx, { dictionaryEntryId }) => {
+    return await ctx.db.get(dictionaryEntryId)
+  },
+})
+
+export const getDictionaryEntrySenseById = internalQuery({
+  args: {
+    dictionaryEntrySenseId: zid('dictionaryEntrySenses'),
+  },
+  handler: async (ctx, { dictionaryEntrySenseId }) => {
+    return await ctx.db.get(dictionaryEntrySenseId)
+  },
+})
+
 export const generateDictionaryEntryTranslation = action({
   args: {
     dictionaryEntryId: zid('dictionaryEntries'),
@@ -124,7 +142,15 @@ You will be given a dictionary entry in the original language and a target \
 language that the user is proficient in. Create a dictionary entry in the target \
 language provided that is designed for the language learners. The translated \
 dictionary entry can differ from the original dictionary entry to make the definition \
-more accessible and understandable for the language learners.
+more accessible and understandable for the language learners. \
+Since the original definition is written in the original language, it's written differently \
+from how the translated version should be written. The original definition tries to \
+explain the original word with other words in the same language, while the translated \
+version should explain the word in a way that is adapted to the person of the target \
+language that is learning the language of the word.
+
+Create a direct translation of the word, that focuses on providing multiple \
+variations that fit the particular sense.
 
 Translate all dictionary entry senses.
     `
@@ -215,11 +241,87 @@ export const createDictionaryEntryTranslation = internalMutation({
           localId: senseTranslation.localId,
           canonicalForm: senseTranslation.canonicalForm,
           partOfSpeech: senseTranslation.partOfSpeech,
+          translations: senseTranslation.translations,
           definition: senseTranslation.definition,
           translationLanguage,
           userId: user._id,
         })
       },
     )
+  },
+})
+
+export const getVocabularyContext = internalQuery({
+  args: {
+    extendedInfoLimit: z.number().optional(),
+  },
+  async handler(ctx, { extendedInfoLimit = 500 }) {
+    const user = await requireUserByCtx(ctx)
+    const fsrsProgressList = await ctx.db
+      .query('fsrsProgress')
+      .withIndex('byUserIdDue', (q) => q.eq('userId', user._id))
+      .order('asc')
+      .collect()
+    const vocabularyContextItemsExtended = await asyncMap(
+      fsrsProgressList.slice(0, extendedInfoLimit),
+      async (fsrsProgress) => {
+        const sense = await requireById(ctx.db, fsrsProgress.senseId)
+        const dictionaryEntry = await requireById(
+          ctx.db,
+          sense.dictionaryEntryId,
+        )
+        return {
+          headword: dictionaryEntry.headword,
+          sense: pick(sense, ['partOfSpeech', 'canonicalForm', 'definition']),
+        }
+      },
+    )
+    const vocabularyContextItemsShort = await asyncMap(
+      fsrsProgressList.slice(extendedInfoLimit),
+      async (fsrsProgress) => {
+        const sense = await requireById(ctx.db, fsrsProgress.senseId)
+        const dictionaryEntry = await requireById(
+          ctx.db,
+          sense.dictionaryEntryId,
+        )
+        return dictionaryEntry.headword
+      },
+    )
+    return {
+      vocabularyContextItemsExtended,
+      vocabularyContextItemsShort,
+    }
+  },
+})
+
+export const generateVocabularyAwareExample = action({
+  args: {
+    dictionaryEntrySenseId: zid('dictionaryEntrySenses'),
+  },
+  async handler(ctx, { dictionaryEntrySenseId }) {
+    const user = await requireUserByActionCtx(ctx)
+    const dictionaryEntrySense = await ctx.runQuery(
+      internal.dictionary.getDictionaryEntrySenseById,
+      {
+        dictionaryEntrySenseId,
+      },
+    )
+    if (!dictionaryEntrySense) {
+      throw new Error('Dictionary entry sense not found')
+    }
+    const dictionaryEntry = await ctx.runQuery(
+      internal.dictionary.getDictionaryEntryById,
+      {
+        dictionaryEntryId: dictionaryEntrySense.dictionaryEntryId,
+      },
+    )
+    if (!dictionaryEntry) {
+      throw new Error('Dictionary entry not found')
+    }
+    // const promptParameters: PromptParameter[] = [
+    //   {
+    //     name: ''
+    //   }
+    // ]
   },
 })

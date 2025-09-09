@@ -22,6 +22,7 @@ import type * as types_UnknownCtx from "../types/UnknownCtx.js";
 import type * as types_utils_RegisteredQueryReturnType from "../types/utils/RegisteredQueryReturnType.js";
 import type * as users from "../users.js";
 import type * as utils_action from "../utils/action.js";
+import type * as utils_chatMessage_chatMessage from "../utils/chatMessage/chatMessage.js";
 import type * as utils_dictionary_sortSensesByLocalId from "../utils/dictionary/sortSensesByLocalId.js";
 import type * as utils_internalMutation from "../utils/internalMutation.js";
 import type * as utils_internalQuery from "../utils/internalQuery.js";
@@ -64,6 +65,7 @@ declare const fullApi: ApiFromModules<{
   "types/utils/RegisteredQueryReturnType": typeof types_utils_RegisteredQueryReturnType;
   users: typeof users;
   "utils/action": typeof utils_action;
+  "utils/chatMessage/chatMessage": typeof utils_chatMessage_chatMessage;
   "utils/dictionary/sortSensesByLocalId": typeof utils_dictionary_sortSensesByLocalId;
   "utils/internalMutation": typeof utils_internalMutation;
   "utils/internalQuery": typeof utils_internalQuery;

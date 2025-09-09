@@ -13,38 +13,7 @@ import { Theme, useTheme } from '../../theme'
 import { useAction } from '../../utils/convex/useAction'
 import { useMutation } from '../../utils/convex/useMutation'
 import { apiToAiDictionaryEntry } from '../../utils/dictionary/apiToAiDictionaryEntry'
-
-const MOCK_DICTIONARY_ENTRY = {
-  headword: 'run',
-  sourceLanguage: 'English',
-  senses: [
-    {
-      localId: '1',
-      canonicalForm: 'run',
-      definition:
-        'To move swiftly on foot so that both feet leave the ground during each stride',
-      partOfSpeech: 'verb',
-    },
-    {
-      localId: '2',
-      canonicalForm: 'run',
-      definition: 'To operate or function',
-      partOfSpeech: 'verb',
-    },
-    {
-      localId: '3',
-      canonicalForm: 'run',
-      definition: 'A period of running as exercise or for pleasure',
-      partOfSpeech: 'noun',
-    },
-    {
-      localId: '4',
-      canonicalForm: 'run',
-      definition: 'A continuous series or sequence',
-      partOfSpeech: 'noun',
-    },
-  ],
-}
+import { getSystemLanguageCode } from '../../utils/localization/getSystemLanguageCode'
 
 export default function GenerateDictionaryEntryPage() {
   const [inputText, setInputText] = useState('')
@@ -76,7 +45,11 @@ export default function GenerateDictionaryEntryPage() {
     if (!inputText.trim()) return
     const threadId = await createThread.mutate()
     setThreadId(threadId)
-    await generateDictionaryEntry.exec({ headword: inputText, threadId })
+    await generateDictionaryEntry.exec({
+      headword: inputText,
+      threadId,
+      translationLanguage: getSystemLanguageCode(),
+    })
   }, [createThread, generateDictionaryEntry, inputText])
 
   return (
@@ -132,11 +105,9 @@ export default function GenerateDictionaryEntryPage() {
             returnKeyType="send"
             onSubmitEditing={onGenerate}
           />
-          <Button
-            children={<Ionicons name="send" size={16} color="white" />}
-            onPress={onGenerate}
-            style={styles.generateButton}
-          />
+          <Button onPress={onGenerate} style={styles.generateButton}>
+            <Ionicons name="send" size={16} color="white" />
+          </Button>
         </View>
       </KeyboardAwareView>
     </Screen>

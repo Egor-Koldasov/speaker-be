@@ -79,11 +79,7 @@ export default function TrainingMode() {
     <Screen>
       <View style={styles.trainingContainer}>
         <View style={styles.mainContent}>
-          {isLoading && (
-            <Loading
-              message={`Generating translations. ${snap.generateTranslationAttempt > 0 && ` Retry attempt ${snap.generateTranslationAttempt + 1}`}.`}
-            />
-          )}
+          {isLoading && <Loading />}
           {!nextFsrsItem && !isLoading && <Text>No items to review</Text>}
           {nextFsrsItem && (
             <View style={styles.questionBox}>
@@ -96,12 +92,17 @@ export default function TrainingMode() {
             <>
               <View style={styles.answerBox}>
                 {generateTranslations.isPending && (
-                  <Text>Generating translations...</Text>
+                  <Loading
+                    message={`Generating translations. ${snap.generateTranslationAttempt > 0 && ` Retry attempt ${snap.generateTranslationAttempt + 1}`}.`}
+                  />
                 )}
                 {translation && (
                   <>
                     <Text selectable>{translation.partOfSpeech}</Text>
                     <Text selectable>{translation.canonicalForm}</Text>
+                    <Text selectable>
+                      {translation.translations.join(', ')}
+                    </Text>
                     <Text selectable selectionColor={theme.colors.accent}>
                       {translation.definition}
                     </Text>
@@ -174,7 +175,7 @@ const getStyles = (theme: { spacing: Spacing; font: Font }) =>
       flexGrow: 1,
     },
     questionBox: {
-      padding: theme.spacing.xs,
+      padding: theme.spacing.sm,
       alignItems: 'center',
     },
     headword: {
@@ -182,7 +183,7 @@ const getStyles = (theme: { spacing: Spacing; font: Font }) =>
       paddingVertical: theme.spacing.xs,
     },
     answerBox: {
-      padding: theme.spacing.xs,
+      padding: theme.spacing.sm,
     },
     buttonContainer: {
       padding: theme.spacing.xs,

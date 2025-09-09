@@ -143,8 +143,12 @@ export const generateDictionaryEntry = action({
     forceLanguage: v.optional(v.string()),
     threadId: v.string(),
     regenerateFull: v.optional(v.boolean()),
+    translationLanguage: v.optional(v.string()),
   },
-  async handler(ctx, { headword, forceLanguage, threadId, regenerateFull }) {
+  async handler(
+    ctx,
+    { headword, forceLanguage, threadId, regenerateFull, translationLanguage },
+  ) {
     const thread = await ctx.runQuery(api.aiChat.getExistingThread, {
       threadId,
     })
@@ -259,6 +263,17 @@ Focus on:
     await ctx.runMutation(internal.aiChat.finishAiDictionaryEntryStream, {
       threadId,
     })
+
+    if (translationLanguage) {
+      ctx.scheduler.runAfter(
+        0,
+        api.dictionary.generateDictionaryEntryTranslation,
+        {
+          dictionaryEntryId,
+          translationLanguage,
+        },
+      )
+    }
 
     return { dictionaryEntryId }
   },
