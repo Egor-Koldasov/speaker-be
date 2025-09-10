@@ -6,7 +6,6 @@ import { ConvexProviderWithClerk } from 'convex/react-clerk'
 import { useFonts } from 'expo-font'
 import { Stack, useRouter, useSegments } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
-import { StatusBar } from 'expo-status-bar'
 import { useEffect } from 'react'
 import { api } from '../../convex/_generated/api'
 import { headerScreenOptions } from '../components/styles/headerScreenOptions'
@@ -50,7 +49,6 @@ export default function RootLayout() {
         <ConvexQueryCacheProvider>
           <ThemeProvider>
             <NavigationGuard />
-            <StatusBar style="light" />
           </ThemeProvider>
         </ConvexQueryCacheProvider>
       </ConvexProviderWithClerk>

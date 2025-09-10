@@ -13,6 +13,7 @@ export type ColorTokens = {
   success: string
   warning: string
   danger: string
+  learning: string
 }
 
 export type ThemeColors = {
@@ -38,6 +39,7 @@ export const darkColors: ThemeColors = {
     success: '#3ddc97',
     warning: '#e3b341',
     danger: '#ec6d6a',
+    learning: '#0b70d6',
   },
 }
 
@@ -58,5 +60,6 @@ export const lightColors: ThemeColors = {
     success: '#159f67',
     warning: '#be8d1e',
     danger: '#c45755',
+    learning: '#2aa574',
   },
 }

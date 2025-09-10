@@ -30,6 +30,7 @@ import type * as utils_mutation from "../utils/mutation.js";
 import type * as utils_query from "../utils/query.js";
 import type * as utils_requireById from "../utils/requireById.js";
 import type * as utils_requireId from "../utils/requireId.js";
+import type * as utils_schema_FsrsProgressState from "../utils/schema/FsrsProgressState.js";
 import type * as utils_schema_aiDictionaryEntrySchema from "../utils/schema/aiDictionaryEntrySchema.js";
 import type * as utils_schema_aiDictionaryEntryTranslationSchema from "../utils/schema/aiDictionaryEntryTranslationSchema.js";
 import type * as utils_schema_fsrsApiItemSchema from "../utils/schema/fsrsApiItemSchema.js";
@@ -73,6 +74,7 @@ declare const fullApi: ApiFromModules<{
   "utils/query": typeof utils_query;
   "utils/requireById": typeof utils_requireById;
   "utils/requireId": typeof utils_requireId;
+  "utils/schema/FsrsProgressState": typeof utils_schema_FsrsProgressState;
   "utils/schema/aiDictionaryEntrySchema": typeof utils_schema_aiDictionaryEntrySchema;
   "utils/schema/aiDictionaryEntryTranslationSchema": typeof utils_schema_aiDictionaryEntryTranslationSchema;
   "utils/schema/fsrsApiItemSchema": typeof utils_schema_fsrsApiItemSchema;

@@ -1,9 +1,11 @@
 import { useQuery } from 'convex/react'
+import { StatusBar } from 'expo-status-bar'
 import { useCallback, useEffect, useMemo } from 'react'
 import { StyleSheet } from 'react-native'
 import { proxy, useSnapshot } from 'valtio'
 import { api } from '../../../convex/_generated/api'
 import { Id } from '../../../convex/_generated/dataModel'
+import { TrainingModeHeader } from '../../components/trainingMode/TrainingModeHeader'
 import { Button } from '../../components/ui/Button'
 import { Loading } from '../../components/ui/Loading'
 import { Screen } from '../../components/ui/Screen'
@@ -78,6 +80,8 @@ export default function TrainingMode() {
   return (
     <Screen>
       <View style={styles.trainingContainer}>
+        <StatusBar animated={true} backgroundColor="#ffb507" />
+        <TrainingModeHeader />
         <View style={styles.mainContent}>
           {isLoading && <Loading />}
           {!nextFsrsItem && !isLoading && <Text>No items to review</Text>}

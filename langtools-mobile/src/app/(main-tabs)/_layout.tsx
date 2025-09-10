@@ -24,8 +24,7 @@ export default function MainTabsLayout() {
       <Tabs.Screen
         name="training-mode"
         options={{
-          headerShown: true,
-          title: 'Training Mode',
+          headerShown: false,
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? 'infinite' : 'infinite-outline'}

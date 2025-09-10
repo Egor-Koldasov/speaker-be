@@ -16,6 +16,10 @@ import { mutation } from './utils/mutation'
 import { query } from './utils/query'
 import { requireById } from './utils/requireById'
 import { processReviewApiResponseSchema } from './utils/schema/fsrsApiItemSchema'
+import {
+  FsrsProgressState,
+  fsrsProgressStateSchema,
+} from './utils/schema/FsrsProgressState'
 import { zid } from './utils/schema/zid'
 
 export const getFsrsProgressList = query({
@@ -275,5 +279,48 @@ export const processReview = action({
       throw new Error('FSRS progress not found')
     }
     return nextFsrsProgress
+  },
+})
+
+type FsrsProgressStateToCount = Record<FsrsProgressState, number>
+type FsrsDueStats = {
+  fsrsProgressStateToCount: FsrsProgressStateToCount
+}
+
+export const getFsrsDueStats = query({
+  args: {
+    sourceLanguage: z.string().optional(),
+  },
+  handler: async (ctx, { sourceLanguage }) => {
+    const user = await requireUserByCtx(ctx)
+    const fsrsProgressList = await ctx.db
+      .query('fsrsProgress')
+      .withIndex('byUserIdDue', (q) => q.eq('userId', user._id))
+      .order('asc')
+      .collect()
+
+    const fsrsDueStats: FsrsDueStats = {
+      fsrsProgressStateToCount: {
+        [FsrsProgressState.Learning]: 0,
+        [FsrsProgressState.Review]: 0,
+        [FsrsProgressState.Relearning]: 0,
+      },
+    }
+    for (const fsrsProgress of fsrsProgressList) {
+      const sense = await requireById(ctx.db, fsrsProgress.senseId)
+      const dictionaryEntry = await requireById(ctx.db, sense.dictionaryEntryId)
+      if (
+        !!sourceLanguage &&
+        !matchDictionaryEntryLanguage(dictionaryEntry, sourceLanguage)
+          .isMatching
+      ) {
+        continue
+      }
+      const fsrsProgressState = fsrsProgressStateSchema.parse(
+        fsrsProgress.state,
+      )
+      fsrsDueStats.fsrsProgressStateToCount[fsrsProgressState]++
+    }
+    return fsrsDueStats
   },
 })
