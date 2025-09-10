@@ -3,7 +3,7 @@ import z from 'zod/v3'
 import { ApiDictionaryEntry } from '../src/utils/dictionary/ApiDictionaryEntry'
 import { apiToAiDictionaryEntry } from '../src/utils/dictionary/apiToAiDictionaryEntry'
 import { normalizeLanguageCode } from '../src/utils/normalizeLanguageCode'
-import { internal } from './_generated/api'
+import { api, internal } from './_generated/api'
 import { Doc } from './_generated/dataModel'
 import { DatabaseReader } from './_generated/server'
 import { agent } from './ai/agent'
@@ -13,6 +13,7 @@ import { action } from './utils/action'
 import { sortSensesByLocalId } from './utils/dictionary/sortSensesByLocalId'
 import { internalMutation } from './utils/internalMutation'
 import { internalQuery } from './utils/internalQuery'
+import { processObjectStream } from './utils/objectStream/processObjectStream'
 import { query } from './utils/query'
 import { requireById } from './utils/requireById'
 import { aiDictionaryEntrySchema } from './utils/schema/aiDictionaryEntrySchema'
@@ -120,9 +121,13 @@ export const getDictionaryEntrySenseById = internalQuery({
 export const generateDictionaryEntryTranslation = action({
   args: {
     dictionaryEntryId: zid('dictionaryEntries'),
+    objectStreamId: zid('objectStream').optional(),
     translationLanguage: z.string(),
   },
-  async handler(ctx, { dictionaryEntryId, translationLanguage }) {
+  async handler(
+    ctx,
+    { dictionaryEntryId, translationLanguage, objectStreamId },
+  ) {
     const user = await requireUserByActionCtx(ctx)
     const { apiDictionaryEntry } = await ctx.runQuery(
       internal.dictionary.getApiDictionaryEntryById,
@@ -132,6 +137,12 @@ export const generateDictionaryEntryTranslation = action({
     )
     if (!apiDictionaryEntry) {
       throw new Error('Dictionary entry not found')
+    }
+
+    if (!objectStreamId) {
+      objectStreamId = await ctx.runMutation(
+        api.objectStream.createObjectStream,
+      )
     }
 
     const prompt = `
@@ -167,7 +178,7 @@ Translate all dictionary entry senses.
       },
     ]
 
-    const result = await agent.generateObject(
+    const stream = await agent.streamObject(
       ctx,
       { userId: user._id },
       {
@@ -184,7 +195,14 @@ Translate all dictionary entry senses.
         ],
       },
     )
-    const aiDictionaryEntryTranslation = result.object
+
+    await processObjectStream({
+      ctx,
+      objectStreamId,
+      stream,
+    })
+
+    const aiDictionaryEntryTranslation = await stream.object
     await ctx.runMutation(
       internal.dictionary.createDictionaryEntryTranslation,
       {

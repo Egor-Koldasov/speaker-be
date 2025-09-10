@@ -73,6 +73,13 @@ export default defineSchema({
     ...zodToConvex(aiDictionaryEntryStreamSchema).fields,
     finishedAt: v.optional(v.string()),
   }).index('byThreadIdFinishedAt', ['threadId', 'finishedAt']),
+  objectStream: defineTable({
+    updatedAt,
+    // threadId: v.string(),
+    userId: v.string(),
+    jsonStringSoFar: v.string(),
+    finishedAt: v.optional(v.string()),
+  }),
   vocabularyAwareExample: defineTable({
     updatedAt,
     dictionaryEntrySenseId: v.id('dictionaryEntrySenses'),

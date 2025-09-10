@@ -15,6 +15,7 @@ import type * as fsrsProgress from "../fsrsProgress.js";
 import type * as http from "../http.js";
 import type * as internal_ from "../internal.js";
 import type * as internalNode from "../internalNode.js";
+import type * as objectStream from "../objectStream.js";
 import type * as types_AuthUser from "../types/AuthUser.js";
 import type * as types_PromptParameter from "../types/PromptParameter.js";
 import type * as types_TransactionCtx from "../types/TransactionCtx.js";
@@ -27,6 +28,7 @@ import type * as utils_dictionary_sortSensesByLocalId from "../utils/dictionary/
 import type * as utils_internalMutation from "../utils/internalMutation.js";
 import type * as utils_internalQuery from "../utils/internalQuery.js";
 import type * as utils_mutation from "../utils/mutation.js";
+import type * as utils_objectStream_processObjectStream from "../utils/objectStream/processObjectStream.js";
 import type * as utils_query from "../utils/query.js";
 import type * as utils_requireById from "../utils/requireById.js";
 import type * as utils_requireId from "../utils/requireId.js";
@@ -59,6 +61,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   internal: typeof internal_;
   internalNode: typeof internalNode;
+  objectStream: typeof objectStream;
   "types/AuthUser": typeof types_AuthUser;
   "types/PromptParameter": typeof types_PromptParameter;
   "types/TransactionCtx": typeof types_TransactionCtx;
@@ -71,6 +74,7 @@ declare const fullApi: ApiFromModules<{
   "utils/internalMutation": typeof utils_internalMutation;
   "utils/internalQuery": typeof utils_internalQuery;
   "utils/mutation": typeof utils_mutation;
+  "utils/objectStream/processObjectStream": typeof utils_objectStream_processObjectStream;
   "utils/query": typeof utils_query;
   "utils/requireById": typeof utils_requireById;
   "utils/requireId": typeof utils_requireId;

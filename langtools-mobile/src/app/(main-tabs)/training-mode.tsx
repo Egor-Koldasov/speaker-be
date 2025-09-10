@@ -5,6 +5,7 @@ import { StyleSheet } from 'react-native'
 import { proxy, useSnapshot } from 'valtio'
 import { api } from '../../../convex/_generated/api'
 import { Id } from '../../../convex/_generated/dataModel'
+import { aiDictionaryEntryTranslationStreamSchema } from '../../../convex/utils/schema/aiDictionaryEntryTranslationSchema'
 import { TrainingModeHeader } from '../../components/trainingMode/TrainingModeHeader'
 import { Button } from '../../components/ui/Button'
 import { Loading } from '../../components/ui/Loading'
@@ -13,8 +14,10 @@ import { Text } from '../../components/ui/Text'
 import { View } from '../../components/ui/View'
 import { Font, Spacing, useTheme } from '../../theme'
 import { useAction } from '../../utils/convex/useAction'
+import { useMutation } from '../../utils/convex/useMutation'
 import { withRetry } from '../../utils/convex/withRetry'
 import { getSystemLanguageCode } from '../../utils/localization/getSystemLanguageCode'
+import { useObjectStream } from '../../utils/objectStream/useObjectStream'
 
 enum QuestionStage {
   Question = 'question',
@@ -24,6 +27,7 @@ enum QuestionStage {
 const trainingState = proxy({
   questionStage: QuestionStage.Question,
   generateTranslationAttempt: 0,
+  objectStreamId: null as Id<'objectStream'> | null,
 })
 
 export default function TrainingMode() {
@@ -34,18 +38,33 @@ export default function TrainingMode() {
       limit: 1,
     },
   )
+  const { partialObject: aiDictionaryEntryTranslationStream } = useObjectStream(
+    snap.objectStreamId,
+    aiDictionaryEntryTranslationStreamSchema,
+  )
   const generateTranslations = useAction(
     api.dictionary.generateDictionaryEntryTranslation,
   )
+  const createObjectStream = useMutation(api.objectStream.createObjectStream)
   const processReview = useAction(api.fsrsProgress.processReview)
   const isLoading = !nextFsrsItems
   const nextFsrsItem = nextFsrsItems?.[0]
   const theme = useTheme()
   const styles = useMemo(() => getStyles(theme), [theme])
-  const translation = useMemo(
-    () => nextFsrsItem?.senseTranslations[0],
-    [nextFsrsItem],
-  )
+  const translation = useMemo(() => {
+    if (aiDictionaryEntryTranslationStream.data && nextFsrsItem) {
+      const senseTranslation =
+        aiDictionaryEntryTranslationStream.data.senses?.find(
+          (partialSenseTranslation) => {
+            return (
+              partialSenseTranslation.localId === nextFsrsItem.sense.localId
+            )
+          },
+        )
+      return senseTranslation ?? null
+    }
+    return nextFsrsItem?.senseTranslations[0]
+  }, [aiDictionaryEntryTranslationStream.data, nextFsrsItem])
   const requireTranslations =
     !!nextFsrsItem && nextFsrsItem.senseTranslations.length === 0
 
@@ -53,17 +72,21 @@ export default function TrainingMode() {
     async (dictionaryEntryId: Id<'dictionaryEntries'>) => {
       trainingState.generateTranslationAttempt = 0
       await withRetry({
-        fn: () =>
+        fn: async () => {
+          const objectStreamId = await createObjectStream.mutate()
+          trainingState.objectStreamId = objectStreamId
           generateTranslations.exec({
             dictionaryEntryId,
             translationLanguage: getSystemLanguageCode(),
-          }),
+            objectStreamId,
+          })
+        },
         onRetry: (error, attempt) => {
           trainingState.generateTranslationAttempt = attempt + 1
         },
       })
     },
-    [generateTranslations],
+    [createObjectStream, generateTranslations],
   )
 
   useEffect(() => {
@@ -105,7 +128,7 @@ export default function TrainingMode() {
                     <Text selectable>{translation.partOfSpeech}</Text>
                     <Text selectable>{translation.canonicalForm}</Text>
                     <Text selectable>
-                      {translation.translations.join(', ')}
+                      {translation.translations?.join(', ')}
                     </Text>
                     <Text selectable selectionColor={theme.colors.accent}>
                       {translation.definition}
@@ -142,6 +165,7 @@ export default function TrainingMode() {
                           rating: 1,
                         })
                         trainingState.questionStage = QuestionStage.Question
+                        trainingState.objectStreamId = null
                       }}
                     >
                       Forgot
@@ -154,6 +178,7 @@ export default function TrainingMode() {
                           rating: 3,
                         })
                         trainingState.questionStage = QuestionStage.Question
+                        trainingState.objectStreamId = null
                       }}
                     >
                       Remember
