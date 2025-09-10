@@ -80,21 +80,21 @@ export default defineSchema({
     jsonStringSoFar: v.string(),
     finishedAt: v.optional(v.string()),
   }),
-  vocabularyAwareExample: defineTable({
+  vocabularyAwareSentence: defineTable({
     updatedAt,
     dictionaryEntrySenseId: v.id('dictionaryEntrySenses'),
-    exampleSentence: v.string(),
-    exampleSentenceWithoutHeadword: v.string(),
+    sentence: v.string(),
+    sentenceWithoutHeadword: v.string(),
     wordsUsed: v.array(
       v.object({
         headword: v.string(),
-        exampleSentenceForm: v.string(),
+        sentenceForm: v.string(),
       }),
     ),
   }),
-  vocabularyAwareExampleTranslation: defineTable({
+  vocabularyAwareSentenceTranslation: defineTable({
     updatedAt,
-    vocabularyAwareExampleId: v.id('vocabularyAwareExample'),
+    vocabularyAwareSentenceId: v.id('vocabularyAwareSentence'),
     translationLanguage: v.string(),
     exampleSentence: v.string(),
   }),

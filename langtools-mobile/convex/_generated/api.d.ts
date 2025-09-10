@@ -35,9 +35,11 @@ import type * as utils_requireId from "../utils/requireId.js";
 import type * as utils_schema_FsrsProgressState from "../utils/schema/FsrsProgressState.js";
 import type * as utils_schema_aiDictionaryEntrySchema from "../utils/schema/aiDictionaryEntrySchema.js";
 import type * as utils_schema_aiDictionaryEntryTranslationSchema from "../utils/schema/aiDictionaryEntryTranslationSchema.js";
+import type * as utils_schema_aiVocabularyAwareSentenceSchema from "../utils/schema/aiVocabularyAwareSentenceSchema.js";
 import type * as utils_schema_fsrsApiItemSchema from "../utils/schema/fsrsApiItemSchema.js";
 import type * as utils_schema_zid from "../utils/schema/zid.js";
 import type * as utils_zStreamArgs from "../utils/zStreamArgs.js";
+import type * as vocabularyAwareSentence from "../vocabularyAwareSentence.js";
 
 import type {
   ApiFromModules,
@@ -81,9 +83,11 @@ declare const fullApi: ApiFromModules<{
   "utils/schema/FsrsProgressState": typeof utils_schema_FsrsProgressState;
   "utils/schema/aiDictionaryEntrySchema": typeof utils_schema_aiDictionaryEntrySchema;
   "utils/schema/aiDictionaryEntryTranslationSchema": typeof utils_schema_aiDictionaryEntryTranslationSchema;
+  "utils/schema/aiVocabularyAwareSentenceSchema": typeof utils_schema_aiVocabularyAwareSentenceSchema;
   "utils/schema/fsrsApiItemSchema": typeof utils_schema_fsrsApiItemSchema;
   "utils/schema/zid": typeof utils_schema_zid;
   "utils/zStreamArgs": typeof utils_zStreamArgs;
+  vocabularyAwareSentence: typeof vocabularyAwareSentence;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 

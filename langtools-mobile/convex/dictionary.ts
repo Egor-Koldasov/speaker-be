@@ -311,35 +311,3 @@ export const getVocabularyContext = internalQuery({
     }
   },
 })
-
-export const generateVocabularyAwareExample = action({
-  args: {
-    dictionaryEntrySenseId: zid('dictionaryEntrySenses'),
-  },
-  async handler(ctx, { dictionaryEntrySenseId }) {
-    const user = await requireUserByActionCtx(ctx)
-    const dictionaryEntrySense = await ctx.runQuery(
-      internal.dictionary.getDictionaryEntrySenseById,
-      {
-        dictionaryEntrySenseId,
-      },
-    )
-    if (!dictionaryEntrySense) {
-      throw new Error('Dictionary entry sense not found')
-    }
-    const dictionaryEntry = await ctx.runQuery(
-      internal.dictionary.getDictionaryEntryById,
-      {
-        dictionaryEntryId: dictionaryEntrySense.dictionaryEntryId,
-      },
-    )
-    if (!dictionaryEntry) {
-      throw new Error('Dictionary entry not found')
-    }
-    // const promptParameters: PromptParameter[] = [
-    //   {
-    //     name: ''
-    //   }
-    // ]
-  },
-})
