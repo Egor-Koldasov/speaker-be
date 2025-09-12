@@ -17,6 +17,7 @@ import type * as internal_ from "../internal.js";
 import type * as internalNode from "../internalNode.js";
 import type * as objectStream from "../objectStream.js";
 import type * as types_AuthUser from "../types/AuthUser.js";
+import type * as types_NextFsrsItemWithTranslations from "../types/NextFsrsItemWithTranslations.js";
 import type * as types_PromptParameter from "../types/PromptParameter.js";
 import type * as types_TransactionCtx from "../types/TransactionCtx.js";
 import type * as types_UnknownCtx from "../types/UnknownCtx.js";
@@ -65,6 +66,7 @@ declare const fullApi: ApiFromModules<{
   internalNode: typeof internalNode;
   objectStream: typeof objectStream;
   "types/AuthUser": typeof types_AuthUser;
+  "types/NextFsrsItemWithTranslations": typeof types_NextFsrsItemWithTranslations;
   "types/PromptParameter": typeof types_PromptParameter;
   "types/TransactionCtx": typeof types_TransactionCtx;
   "types/UnknownCtx": typeof types_UnknownCtx;

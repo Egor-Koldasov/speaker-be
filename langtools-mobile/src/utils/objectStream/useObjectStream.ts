@@ -32,7 +32,7 @@ export const useObjectStream = <PartialSchema extends ZodObject<ZodRawShape>>(
     updatePartialObject()
   }, [updatePartialObject])
 
-  const partialObject = useMemo(async () => {
+  const partialObject = useMemo(() => {
     if (!partialUnknownObject?.value) {
       return { data: null, validationError: null }
     }

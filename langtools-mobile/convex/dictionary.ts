@@ -4,10 +4,11 @@ import { ApiDictionaryEntry } from '../src/utils/dictionary/ApiDictionaryEntry'
 import { apiToAiDictionaryEntry } from '../src/utils/dictionary/apiToAiDictionaryEntry'
 import { normalizeLanguageCode } from '../src/utils/normalizeLanguageCode'
 import { api, internal } from './_generated/api'
-import { Doc } from './_generated/dataModel'
+import { Doc, Id } from './_generated/dataModel'
 import { DatabaseReader } from './_generated/server'
 import { agent } from './ai/agent'
 import { PromptParameter } from './types/PromptParameter'
+import { TransactionCtx } from './types/TransactionCtx'
 import { requireUserByActionCtx, requireUserByCtx } from './users'
 import { action } from './utils/action'
 import { sortSensesByLocalId } from './utils/dictionary/sortSensesByLocalId'
@@ -100,21 +101,57 @@ export const getApiDictionaryEntryById = internalQuery({
   },
 })
 
-export const getDictionaryEntryById = internalQuery({
+export const requireDictionaryEntryQuery = internalQuery({
   args: {
     dictionaryEntryId: zid('dictionaryEntries'),
   },
   handler: async (ctx, { dictionaryEntryId }) => {
-    return await ctx.db.get(dictionaryEntryId)
+    const { dictionaryEntry } = await requireDictionaryEntry(
+      ctx,
+      dictionaryEntryId,
+    )
+    return { dictionaryEntry }
   },
 })
 
-export const getDictionaryEntrySenseById = internalQuery({
+/**
+ * Return `dictionaryEntries` entry with a permission check
+ */
+export const requireDictionaryEntry = async (
+  ctx: TransactionCtx,
+  dictionaryEntryId: Id<'dictionaryEntries'>,
+) => {
+  const user = await requireUserByCtx(ctx)
+  const dictionaryEntry = await requireById(ctx.db, dictionaryEntryId)
+  if (dictionaryEntry.userId !== user._id) {
+    throw new Error('Dictionary entry does not belong to the user')
+  }
+  return { dictionaryEntry }
+}
+
+/**
+ * Return `dictionaryEntrySenses` entry with a permission check
+ */
+export const requireDictionaryEntrySense = async (
+  ctx: TransactionCtx,
+  dictionaryEntrySenseId: Id<'dictionaryEntrySenses'>,
+) => {
+  const dictionaryEntrySense = await requireById(ctx.db, dictionaryEntrySenseId)
+  // Permissions are checked through `dictionaryEntries` relations
+  const { dictionaryEntry } = await requireDictionaryEntry(
+    ctx,
+    dictionaryEntrySense.dictionaryEntryId,
+  )
+  // Return `dictionaryEntry` too, because we load it anyway
+  return { dictionaryEntry, dictionaryEntrySense }
+}
+
+export const requireDictionaryEntrySenseQuery = internalQuery({
   args: {
     dictionaryEntrySenseId: zid('dictionaryEntrySenses'),
   },
   handler: async (ctx, { dictionaryEntrySenseId }) => {
-    return await ctx.db.get(dictionaryEntrySenseId)
+    return await requireDictionaryEntrySense(ctx, dictionaryEntrySenseId)
   },
 })
 
@@ -225,7 +262,6 @@ export const createDictionaryEntryTranslation = internalMutation({
     { dictionaryEntryId, translationLanguage, aiDictionaryEntryTranslation },
   ) => {
     const user = await requireUserByCtx(ctx)
-    await requireById(ctx.db, dictionaryEntryId)
 
     const dictionaryEntrySenses = (
       await ctx.db

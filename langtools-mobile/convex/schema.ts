@@ -84,14 +84,13 @@ export default defineSchema({
     updatedAt,
     dictionaryEntrySenseId: v.id('dictionaryEntrySenses'),
     sentence: v.string(),
-    sentenceWithoutHeadword: v.string(),
     wordsUsed: v.array(
       v.object({
         headword: v.string(),
         sentenceForm: v.string(),
       }),
     ),
-  }),
+  }).index('byDictionaryEntrySenseId', ['dictionaryEntrySenseId']),
   vocabularyAwareSentenceTranslation: defineTable({
     updatedAt,
     vocabularyAwareSentenceId: v.id('vocabularyAwareSentence'),

@@ -8,11 +8,6 @@ export const aiVocabularyAwareSentenceSchema = z.object({
           sentence: z
             .string()
             .describe('The regular sentence text for reading practice.'),
-          sentenceWithoutHeadword: z
-            .string()
-            .describe(
-              'The exact same sentence text, but with the target word replaced exactly with \`___\`.',
-            ),
           wordsUsed: z.array(
             z.object({
               sentenceForm: z
@@ -43,11 +38,7 @@ export type AiVocabularyAwareSentence = z.output<
 >
 
 export const aiVocabularyAwareSentenceStreamSchema =
-  aiVocabularyAwareSentenceSchema.partial().extend({
-    sentences: z
-      .array(aiVocabularyAwareSentenceSchema.shape.sentences.element.partial())
-      .optional(),
-  })
+  aiVocabularyAwareSentenceSchema.deepPartial()
 
 export type AiVocabularyAwareSentenceStream = z.output<
   typeof aiVocabularyAwareSentenceStreamSchema

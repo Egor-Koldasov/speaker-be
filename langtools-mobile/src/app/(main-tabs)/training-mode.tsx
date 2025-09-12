@@ -18,6 +18,7 @@ import { useMutation } from '../../utils/convex/useMutation'
 import { withRetry } from '../../utils/convex/withRetry'
 import { getSystemLanguageCode } from '../../utils/localization/getSystemLanguageCode'
 import { useObjectStream } from '../../utils/objectStream/useObjectStream'
+import { useVocabularyAwareSentences } from '../../utils/trainingMode/useVocabularyAwareSentences'
 
 enum QuestionStage {
   Question = 'question',
@@ -32,12 +33,9 @@ const trainingState = proxy({
 
 export default function TrainingMode() {
   const snap = useSnapshot(trainingState)
-  const nextFsrsItems = useQuery(
-    api.fsrsProgress.getNextFsrsItemWithTranslations,
-    {
-      limit: 1,
-    },
-  )
+  const nextFsrsItems = useQuery(api.fsrsProgress.getNextFsrsItemWithExtra, {
+    limit: 1,
+  })
   const { partialObject: aiDictionaryEntryTranslationStream } = useObjectStream(
     snap.objectStreamId,
     aiDictionaryEntryTranslationStreamSchema,
@@ -49,6 +47,10 @@ export default function TrainingMode() {
   const processReview = useAction(api.fsrsProgress.processReview)
   const isLoading = !nextFsrsItems
   const nextFsrsItem = nextFsrsItems?.[0]
+  const { vocabularyAwareSentence, generateVocabularyAwareSentences } =
+    useVocabularyAwareSentences({
+      nextFsrsItem,
+    })
   const theme = useTheme()
   const styles = useMemo(() => getStyles(theme), [theme])
   const translation = useMemo(() => {
@@ -113,6 +115,8 @@ export default function TrainingMode() {
               <Text style={styles.headword} selectable>
                 {nextFsrsItem.dictionaryEntry.headword}
               </Text>
+              {generateVocabularyAwareSentences.isPending && <Loading />}
+              <Text>{vocabularyAwareSentence?.sentence}</Text>
             </View>
           )}
           {snap.questionStage === QuestionStage.Answer && (

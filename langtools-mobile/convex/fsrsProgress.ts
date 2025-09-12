@@ -7,6 +7,7 @@ import { isNonNullable } from '../src/utils/isNonNullable'
 import { api, internal } from './_generated/api'
 import { Doc } from './_generated/dataModel'
 import schema from './schema'
+import { NextFsrsItemWithExtra } from './types/NextFsrsItemWithTranslations'
 import { RegisteredQueryReturnType } from './types/utils/RegisteredQueryReturnType'
 import { requireUserByActionCtx, requireUserByCtx } from './users'
 import { action } from './utils/action'
@@ -21,6 +22,7 @@ import {
   fsrsProgressStateSchema,
 } from './utils/schema/FsrsProgressState'
 import { zid } from './utils/schema/zid'
+import { getVocabularyAwareSentecesBySenseId } from './vocabularyAwareSentence'
 
 export const getFsrsProgressList = query({
   args: {
@@ -136,15 +138,11 @@ export const getNextFsrsItems = query({
   },
 })
 
-type NextFsrsItem = Awaited<
+export type NextFsrsItem = Awaited<
   RegisteredQueryReturnType<typeof getNextFsrsItems>
 >[number]
 
-type NextFsrsItemWithTranslations = NextFsrsItem & {
-  senseTranslations: Doc<'dictionaryEntrySenseTranslation'>[]
-}
-
-export const getNextFsrsItemWithTranslations = query({
+export const getNextFsrsItemWithExtra = query({
   args: {
     limit: z.number(),
     sourceLanguage: z.string().optional(),
@@ -152,7 +150,7 @@ export const getNextFsrsItemWithTranslations = query({
   handler: async (
     ctx,
     { limit, sourceLanguage },
-  ): Promise<NextFsrsItemWithTranslations[]> => {
+  ): Promise<NextFsrsItemWithExtra[]> => {
     await requireUserByCtx(ctx)
     const nextFsrsItems = await ctx.runQuery(
       api.fsrsProgress.getNextFsrsItems,
@@ -161,7 +159,7 @@ export const getNextFsrsItemWithTranslations = query({
         sourceLanguage,
       },
     )
-    const nextFsrsItemsWithTranslations = await asyncMap(
+    const nextFsrsItemsWithExtra = await asyncMap(
       nextFsrsItems,
       async (nextFsrsItem) => {
         const senseTranslations = await ctx.db
@@ -170,13 +168,18 @@ export const getNextFsrsItemWithTranslations = query({
             q.eq('dictionaryEntrySenseId', nextFsrsItem.sense._id),
           )
           .collect()
+        const { vocabularyAwareSentences } =
+          await getVocabularyAwareSentecesBySenseId(ctx, {
+            dictionaryEntrySenseId: nextFsrsItem.sense._id,
+          })
         return {
           ...nextFsrsItem,
           senseTranslations,
+          vocabularyAwareSentences,
         }
       },
     )
-    return nextFsrsItemsWithTranslations
+    return nextFsrsItemsWithExtra
   },
 })
 
