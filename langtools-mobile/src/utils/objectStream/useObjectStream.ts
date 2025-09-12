@@ -21,7 +21,10 @@ export const useObjectStream = <PartialSchema extends ZodObject<ZodRawShape>>(
     ReturnType<typeof parsePartialJson>
   > | null>(null)
   const updatePartialObject = useCallback(async () => {
-    if (!objectStream?.jsonStringSoFar) return null
+    if (!objectStream?.jsonStringSoFar) {
+      setPartialUnknownObject(null)
+      return null
+    }
     const partialUnknownObject_ = await parsePartialJson(
       objectStream.jsonStringSoFar,
     )
