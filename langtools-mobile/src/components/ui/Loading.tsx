@@ -5,17 +5,17 @@ import { Text } from './Text'
 
 export type LoadingProps = {
   message?: string
-  flex?: boolean
 }
 
-export function Loading({ message, flex = true }: LoadingProps) {
+export function Loading({ message }: LoadingProps) {
   const { colors, spacing } = useTheme()
   return (
     <View
       style={{
-        flex: flex ? 1 : undefined,
+        flexShrink: 0,
         alignItems: 'center',
         justifyContent: 'center',
+        width: '100%',
       }}
     >
       <ActivityIndicator size="large" color={colors.accent} />

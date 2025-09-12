@@ -124,7 +124,7 @@ export default function TrainingMode() {
               <View style={styles.answerBox}>
                 {generateTranslations.isPending && (
                   <Loading
-                    message={`Generating translations. ${snap.generateTranslationAttempt > 0 && ` Retry attempt ${snap.generateTranslationAttempt + 1}`}.`}
+                    message={`Generating translations. ${snap.generateTranslationAttempt === 0 ? '' : ` Retry attempt ${snap.generateTranslationAttempt + 1}.`}`}
                   />
                 )}
                 {translation && (

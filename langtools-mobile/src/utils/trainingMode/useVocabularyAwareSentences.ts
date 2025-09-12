@@ -84,8 +84,12 @@ export const useVocabularyAwareSentences = (
   }, [requireGeneration])
 
   const vocabularyAwareSentence = useMemo(() => {
+    if (partialObject.data) {
+      // If example are generating, return the first item to prevent content changes
+      return vocabularyAwareSentences?.[0]
+    }
     return getRandomItem(vocabularyAwareSentences ?? [])
-  }, [vocabularyAwareSentences])
+  }, [partialObject.data, vocabularyAwareSentences])
 
   return {
     vocabularyAwareSentences,
