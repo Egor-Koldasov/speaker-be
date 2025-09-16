@@ -124,7 +124,7 @@ export function SignIn() {
   )
 
   if (!isLoaded) {
-    return <Loading message="Preparing sign-in…" flex={false} />
+    return <Loading message="Preparing sign-in…" />
   }
 
   return (
@@ -159,12 +159,8 @@ export function SignIn() {
           fullWidth
         />
       )}
-      {!snap.otpSent && (
-        <Button children="Send email" onPress={onSendEmailSignUp} fullWidth />
-      )}
-      {snap.otpSent && (
-        <Button children="Verify OTP" onPress={onVerifyOtp} fullWidth />
-      )}
+      {!snap.otpSent && <Button onPress={onSendEmailSignUp}>Send email</Button>}
+      {snap.otpSent && <Button onPress={onVerifyOtp}>Verify OTP</Button>}
     </View>
   )
 }

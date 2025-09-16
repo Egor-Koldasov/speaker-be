@@ -19,6 +19,7 @@ import { withRetry } from '../../utils/convex/withRetry'
 import { getSystemLanguageCode } from '../../utils/localization/getSystemLanguageCode'
 import { useObjectStream } from '../../utils/objectStream/useObjectStream'
 import { useVocabularyAwareSentences } from '../../utils/trainingMode/useVocabularyAwareSentences'
+import { ExampleSentence } from '../../components/trainingMode/ExampleSentence'
 
 enum QuestionStage {
   Question = 'question',
@@ -116,7 +117,9 @@ export default function TrainingMode() {
                 {nextFsrsItem.dictionaryEntry.headword}
               </Text>
               {generateVocabularyAwareSentences.isPending && <Loading />}
-              <Text>{vocabularyAwareSentence?.sentence}</Text>
+              <ExampleSentence
+                vocabularyAwareSentence={vocabularyAwareSentence}
+              />
             </View>
           )}
           {snap.questionStage === QuestionStage.Answer && (

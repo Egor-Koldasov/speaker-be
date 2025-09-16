@@ -8,13 +8,14 @@ import {
 } from './dictionary'
 import { PromptParameter } from './types/PromptParameter'
 import { TransactionCtx } from './types/TransactionCtx'
-import { requireUserByActionCtx } from './users'
+import { requireUserByActionCtx, requireUserByCtx } from './users'
 import { action } from './utils/action'
 import { internalMutation } from './utils/internalMutation'
 import { processObjectStream } from './utils/objectStream/processObjectStream'
 import { query } from './utils/query'
 import { aiVocabularyAwareSentenceSchema } from './utils/schema/aiVocabularyAwareSentenceSchema'
 import { zid } from './utils/schema/zid'
+import z from 'zod/v3'
 
 export const generateVocabularyAwareSentences = action({
   args: {
@@ -202,5 +203,75 @@ export const getVocabularyAwareSentecesByDictionaryEntry = query({
     }
 
     return { vocabularyAwareSentencesBySenseId }
+  },
+})
+
+export type WordToSentenceInfo = {
+  [word: string]: {
+    dictionaryEntry: Doc<'dictionaryEntries'> | null
+    dictionaryEntrySense: Doc<'dictionaryEntrySenses'> | null
+    fsrsProgress: Doc<'fsrsProgress'> | null
+    dictionaryEntrySenseTranslations: Doc<'dictionaryEntrySenseTranslation'>[]
+  }[]
+}
+
+export const getSentenceInfo = query({
+  args: {
+    words: z.array(z.string()),
+    sourceLanguage: z.string().optional(),
+  },
+  async handler(ctx, args) {
+    const { words, sourceLanguage } = args
+    const user = await requireUserByCtx(ctx)
+    const wordToSentenceInfo: WordToSentenceInfo = {}
+    await asyncMap(words, async (word) => {
+      const dictionaryEntry = await ctx.db
+        .query('dictionaryEntries')
+        .withIndex('byUserIdHeadwordSourceLanguage', (q) => {
+          const statement = q.eq('userId', user._id).eq('headword', word)
+          if (sourceLanguage) {
+            return statement.eq('sourceLanguage', sourceLanguage)
+          }
+          return statement
+        })
+        .first()
+      if (!dictionaryEntry) return null
+      const dictionaryEntrySenses = await ctx.db
+        .query('dictionaryEntrySenses')
+        .withIndex('byDictionaryEntryIdLocalId', (q) =>
+          q.eq('dictionaryEntryId', dictionaryEntry._id),
+        )
+        .collect()
+
+      for (const dictionaryEntrySense of dictionaryEntrySenses) {
+        const fsrsProgress = await ctx.db
+          .query('fsrsProgress')
+          .withIndex('byUserIdSenseId', (q) =>
+            q.eq('userId', user._id).eq('senseId', dictionaryEntrySense._id),
+          )
+          .unique()
+        if (!fsrsProgress) continue
+        const dictionaryEntrySenseTranslations = await ctx.db
+          .query('dictionaryEntrySenseTranslation')
+          .withIndex('byDictionaryEntrySenseId', (q) =>
+            q.eq('dictionaryEntrySenseId', dictionaryEntrySense._id),
+          )
+          .collect()
+
+        if (!wordToSentenceInfo[word]) {
+          wordToSentenceInfo[word] = []
+        }
+        wordToSentenceInfo[word].push({
+          dictionaryEntry,
+          dictionaryEntrySense,
+          fsrsProgress,
+          dictionaryEntrySenseTranslations,
+        })
+      }
+    })
+
+    const wordToSentenceInfoPairs = Object.entries(wordToSentenceInfo)
+
+    return { wordToSentenceInfoPairs }
   },
 })
