@@ -3,6 +3,10 @@ import { zodToConvex } from 'convex-helpers/server/zod'
 import { defineSchema, defineTable } from 'convex/server'
 import { v } from 'convex/values'
 import { aiDictionaryEntryStreamSchema } from './utils/schema/aiDictionaryEntrySchema'
+import {
+  aiDictionaryEntrySenseExtraSchema,
+  aiDictionaryEntrySenseExtraTranslationSchema,
+} from './utils/schema/aiDictionaryEntrySenseExtraSchema'
 
 const updatedAt = v.optional(v.string())
 
@@ -97,4 +101,18 @@ export default defineSchema({
     translationLanguage: v.string(),
     exampleSentence: v.string(),
   }),
+  dictionaryEntrySenseExtra: defineTable({
+    updatedAt,
+    dictionaryEntrySenseId: v.id('dictionaryEntrySenses'),
+    ...zodToConvex(aiDictionaryEntrySenseExtraSchema).fields,
+  }).index('byDictionaryEntrySenseId', ['dictionaryEntrySenseId']),
+  dictionaryEntrySenseExtraTranslation: defineTable({
+    updatedAt,
+    dictionaryEntrySenseExtraId: v.id('dictionaryEntrySenseExtra'),
+    translationLanguage: v.string(),
+    ...zodToConvex(aiDictionaryEntrySenseExtraTranslationSchema).fields,
+  }).index('byDictionaryEntrySenseExtraIdTranslationLanguage', [
+    'dictionaryEntrySenseExtraId',
+    'translationLanguage',
+  ]),
 })

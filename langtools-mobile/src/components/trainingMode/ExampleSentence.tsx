@@ -39,6 +39,10 @@ export function ExampleSentence(props: ExampleSentenceProps) {
       <View style={styles.sentence}>
         {vocabularyAwareSentence?.wordsUsed?.map((wordUsed, index) => {
           const selected = wordUsed.headword === selectedWord
+          const isNewWord =
+            wordInfoResult !== undefined &&
+            wordUsed.headword &&
+            !wordToSentenceInfo[wordUsed.headword]
           return (
             <Pressable
               key={index}
@@ -47,14 +51,7 @@ export function ExampleSentence(props: ExampleSentenceProps) {
               }
               style={[selected && styles.wordPressableSelected]}
             >
-              <Text
-                style={[
-                  styles.word,
-                  wordUsed.headword &&
-                    !wordToSentenceInfo[wordUsed.headword] &&
-                    styles.wordNew,
-                ]}
-              >
+              <Text style={[styles.word, isNewWord && styles.wordNew]}>
                 {wordUsed.sentenceForm}
               </Text>
             </Pressable>

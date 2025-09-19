@@ -347,3 +347,39 @@ export const getVocabularyContext = internalQuery({
     }
   },
 })
+
+export const getDictionaryEntrySenseExtra = query({
+  args: {
+    dictionaryEntrySenseId: zid('dictionaryEntrySenses'),
+    translationLanguage: z.string().optional(),
+  },
+  async handler(ctx, { dictionaryEntrySenseId, translationLanguage }) {
+    await requireDictionaryEntrySense(ctx, dictionaryEntrySenseId)
+    const dictionaryEntrySenseExtra = await ctx.db
+      .query('dictionaryEntrySenseExtra')
+      .withIndex('byDictionaryEntrySenseId', (q) =>
+        q.eq('dictionaryEntrySenseId', dictionaryEntrySenseId),
+      )
+      .first()
+    const dictionaryEntrySenseExtraTranslations =
+      !translationLanguage || !dictionaryEntrySenseExtra
+        ? []
+        : await ctx.db
+            .query('dictionaryEntrySenseExtraTranslation')
+            .withIndex(
+              'byDictionaryEntrySenseExtraIdTranslationLanguage',
+              (q) =>
+                q
+                  .eq(
+                    'dictionaryEntrySenseExtraId',
+                    dictionaryEntrySenseExtra._id,
+                  )
+                  .eq('translationLanguage', translationLanguage),
+            )
+            .collect()
+    return {
+      dictionaryEntrySenseExtra,
+      dictionaryEntrySenseExtraTranslations,
+    }
+  },
+})
