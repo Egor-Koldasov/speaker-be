@@ -15,6 +15,7 @@ import type * as fsrsProgress from "../fsrsProgress.js";
 import type * as http from "../http.js";
 import type * as internal_ from "../internal.js";
 import type * as internalNode from "../internalNode.js";
+import type * as learningLanguage from "../learningLanguage.js";
 import type * as objectStream from "../objectStream.js";
 import type * as types_AuthUser from "../types/AuthUser.js";
 import type * as types_NextFsrsItemWithTranslations from "../types/NextFsrsItemWithTranslations.js";
@@ -65,6 +66,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   internal: typeof internal_;
   internalNode: typeof internalNode;
+  learningLanguage: typeof learningLanguage;
   objectStream: typeof objectStream;
   "types/AuthUser": typeof types_AuthUser;
   "types/NextFsrsItemWithTranslations": typeof types_NextFsrsItemWithTranslations;

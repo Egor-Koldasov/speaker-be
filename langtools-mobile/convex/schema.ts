@@ -115,4 +115,10 @@ export default defineSchema({
     'dictionaryEntrySenseExtraId',
     'translationLanguage',
   ]),
+  learningLanguage: defineTable({
+    updatedAt,
+    userId: v.string(),
+    learningLanguages: v.array(v.string()),
+    selectedLearningLanguage: v.string(),
+  }).index('byUserId', ['userId']),
 })

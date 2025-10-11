@@ -1,7 +1,6 @@
 import { useQuery } from 'convex/react'
 import { StatusBar } from 'expo-status-bar'
 import { useCallback, useEffect, useMemo } from 'react'
-import { StyleSheet } from 'react-native'
 import { proxy, useSnapshot } from 'valtio'
 import { api } from '../../../convex/_generated/api'
 import { Id } from '../../../convex/_generated/dataModel'
@@ -20,6 +19,7 @@ import { getSystemLanguageCode } from '../../utils/localization/getSystemLanguag
 import { useObjectStream } from '../../utils/objectStream/useObjectStream'
 import { useVocabularyAwareSentences } from '../../utils/trainingMode/useVocabularyAwareSentences'
 import { ExampleSentence } from '../../components/trainingMode/ExampleSentence'
+import { styles } from '../../utils/styles/styles'
 
 enum QuestionStage {
   Question = 'question',
@@ -201,29 +201,28 @@ export default function TrainingMode() {
   )
 }
 
-const getStyles = (theme: { spacing: Spacing; font: Font }) =>
-  StyleSheet.create({
-    trainingContainer: {
-      flex: 1,
-    },
-    mainContent: {
-      flex: 1,
-      flexGrow: 1,
-    },
-    questionBox: {
-      padding: theme.spacing.sm,
-      alignItems: 'center',
-    },
-    headword: {
-      fontSize: theme.font.size.xl,
-      paddingVertical: theme.spacing.xs,
-    },
-    answerBox: {
-      padding: theme.spacing.sm,
-    },
-    buttonContainer: {
-      padding: theme.spacing.xs,
-      flexDirection: 'row',
-      gap: theme.spacing.xs,
-    },
-  })
+const getStyles = styles((theme: { spacing: Spacing; font: Font }) => ({
+  trainingContainer: {
+    flex: 1,
+  },
+  mainContent: {
+    flex: 1,
+    flexGrow: 1,
+  },
+  questionBox: {
+    padding: theme.spacing.sm,
+    alignItems: 'center',
+  },
+  headword: {
+    fontSize: theme.font.size.xl,
+    paddingVertical: theme.spacing.xs,
+  },
+  answerBox: {
+    padding: theme.spacing.sm,
+  },
+  buttonContainer: {
+    padding: theme.spacing.xs,
+    flexDirection: 'row',
+    gap: theme.spacing.xs,
+  },
+}))
