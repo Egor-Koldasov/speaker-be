@@ -41,6 +41,9 @@ export default function GenerateDictionaryEntryPage() {
   const generateDictionaryEntry = useAction(api.aiChat.generateDictionaryEntry)
   const createThread = useMutation(api.aiChat.createThread)
 
+  const isGenerating =
+    !!aiDictionaryEntryStream && !aiDictionaryEntryStream?.finishedAt
+
   const onGenerate = useCallback(async () => {
     if (!inputText.trim()) return
     const threadId = await createThread.mutate()
@@ -105,8 +108,12 @@ export default function GenerateDictionaryEntryPage() {
             returnKeyType="send"
             onSubmitEditing={onGenerate}
           />
-          <Button onPress={onGenerate} style={styles.generateButton}>
-            <Ionicons name="send" size={16} color="white" />
+          <Button
+            onPress={onGenerate}
+            style={styles.generateButton}
+            loading={isGenerating}
+          >
+            {!isGenerating && <Ionicons name="send" size={16} color="white" />}
           </Button>
         </View>
       </KeyboardAwareView>

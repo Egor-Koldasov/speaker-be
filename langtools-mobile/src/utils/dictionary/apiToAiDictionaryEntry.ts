@@ -8,7 +8,7 @@ export const apiToAiDictionaryEntry = (
 ): AiDictionaryEntry => {
   return {
     headword: apiDictionaryEntry.dictionaryEntry.headword,
-    sourceLanguage: apiDictionaryEntry.dictionaryEntry.sourceLanguage,
+    sourceLanguage: apiDictionaryEntry.dictionaryEntry.sourceLanguageFull ?? '',
     senses: apiDictionaryEntry.dictionaryEntrySenses,
   }
 }

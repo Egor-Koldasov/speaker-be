@@ -52,12 +52,24 @@ export const getDictionaryEntriesByHeadword = query({
   },
   async handler(ctx, { headword }) {
     const user = await requireUserByCtx(ctx)
-    const dictionaryEntries = await ctx.db
+
+    const learningLanguage = await ctx.runQuery(
+      api.learningLanguage.getLearningLanguage,
+      {},
+    )
+
+    const dictionaryEntriesAll = await ctx.db
       .query('dictionaryEntries')
       .withIndex('byUserIdHeadwordSourceLanguage', (q) =>
         q.eq('userId', user._id).eq('headword', headword.toLocaleLowerCase()),
       )
       .collect()
+    const dictionaryEntries = dictionaryEntriesAll.filter((dictionaryEntry) => {
+      return (
+        dictionaryEntry.sourceLanguageFull ===
+        learningLanguage?.selectedLearningLanguage
+      )
+    })
     const apiDictionaryEntries: ApiDictionaryEntry[] = await asyncMap(
       dictionaryEntries,
       async (dictionaryEntry) => {

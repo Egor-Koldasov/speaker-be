@@ -153,6 +153,13 @@ export const generateDictionaryEntry = action({
       threadId,
     })
 
+    const learningLanguage = await ctx.runQuery(
+      api.learningLanguage.getLearningLanguage,
+      {},
+    )
+    const selectedLearningLanguage =
+      learningLanguage?.selectedLearningLanguage ?? undefined
+
     if (!regenerateFull) {
       const existingDictionaryEntries = await ctx.runQuery(
         api.dictionary.getDictionaryEntriesByHeadword,
@@ -190,9 +197,9 @@ Focus on:
         value: headword,
       },
       {
-        name: 'forceLanguage',
-        description: 'The language to force the definition to be in',
-        value: forceLanguage ?? '',
+        name: 'selectedLearningLanguage',
+        description: `The user's selected learning language. If this language can be assumed to be the source language of the word, it should take the main priority as the source language.`,
+        value: selectedLearningLanguage ?? '',
       },
     ].filter((p) => !!p.value)
 
@@ -265,7 +272,7 @@ Focus on:
     })
 
     if (translationLanguage) {
-      ctx.scheduler.runAfter(
+      await ctx.scheduler.runAfter(
         0,
         api.dictionary.generateDictionaryEntryTranslation,
         {
