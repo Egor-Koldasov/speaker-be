@@ -152,6 +152,13 @@ export const getNextFsrsItemWithExtra = query({
     { limit, sourceLanguage },
   ): Promise<NextFsrsItemWithExtra[]> => {
     await requireUserByCtx(ctx)
+    const learningLanguage = await ctx.runQuery(
+      api.learningLanguage.getLearningLanguage,
+      {},
+    )
+    if (!sourceLanguage) {
+      sourceLanguage = learningLanguage?.selectedLearningLanguage ?? undefined
+    }
     const nextFsrsItems = await ctx.runQuery(
       api.fsrsProgress.getNextFsrsItems,
       {
