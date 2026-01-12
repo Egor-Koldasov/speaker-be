@@ -28,6 +28,7 @@ export function KeyboardAwareView({
       style={[
         {
           flex: 1,
+          // backgroundColor: '#0000ff',
         },
         style,
       ]}

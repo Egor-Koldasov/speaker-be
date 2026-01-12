@@ -14,6 +14,7 @@ const state = proxy({
   otp: '',
   otpSent: false,
   emailExists: '',
+  isSigningIn: false,
 })
 
 export function SignIn() {
@@ -30,6 +31,7 @@ export function SignIn() {
     if (!isLoaded || !signIn.signIn) return
 
     try {
+      state.isSigningIn = true
       await signIn.signIn.create({
         identifier: state.emailAddress,
         strategy: 'email_code',
@@ -39,6 +41,7 @@ export function SignIn() {
     } catch (err) {
       console.error(JSON.stringify(err, null, 2))
     }
+    state.isSigningIn = false
   }, [isLoaded, signIn.signIn])
 
   // Handle the submission of the sign-in form
@@ -47,6 +50,7 @@ export function SignIn() {
 
     // Start the sign-in process using the email and password provided
     try {
+      state.isSigningIn = true
       await signUp.signUp.create({
         emailAddress: state.emailAddress,
       })
@@ -159,7 +163,11 @@ export function SignIn() {
           fullWidth
         />
       )}
-      {!snap.otpSent && <Button onPress={onSendEmailSignUp}>Send email</Button>}
+      {!snap.otpSent && (
+        <Button onPress={onSendEmailSignUp} loading={snap.isSigningIn}>
+          Send email
+        </Button>
+      )}
       {snap.otpSent && <Button onPress={onVerifyOtp}>Verify OTP</Button>}
     </View>
   )

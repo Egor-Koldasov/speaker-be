@@ -1,5 +1,10 @@
 import React, { ReactNode } from 'react'
-import { Pressable, PressableProps, Text } from 'react-native'
+import {
+  ActivityIndicator,
+  Pressable,
+  PressableProps,
+  Text,
+} from 'react-native'
 import { useTheme } from '../../theme/index'
 import { platformShadow } from '../../theme/shadows'
 
@@ -8,6 +13,7 @@ export type ButtonProps = PressableProps & {
   tone?: 'primary' | 'secondary' | 'danger'
   size?: 'md' | 'lg'
   fullWidth?: boolean
+  loading?: boolean
 }
 
 export function Button({
@@ -15,6 +21,7 @@ export function Button({
   tone = 'primary',
   size = 'md',
   fullWidth,
+  loading = false,
   style,
   ...rest
 }: ButtonProps) {
@@ -35,6 +42,7 @@ export function Button({
     <Pressable
       accessibilityRole="button"
       {...rest}
+      disabled={loading || rest.disabled}
       style={(state) => [
         {
           backgroundColor: state.pressed ? bg + 'cc' : bg,
@@ -44,11 +52,14 @@ export function Button({
           alignItems: 'center',
           justifyContent: 'center',
           flex: fullWidth ? 1 : undefined,
+          flexDirection: 'row',
+          gap: spacing.xs,
         },
         platformShadow('md'),
         typeof style === 'function' ? style(state) : style,
       ]}
     >
+      {loading && <ActivityIndicator size="small" color={colors.accent} />}
       <Text
         style={{
           color: colors.textPrimary,

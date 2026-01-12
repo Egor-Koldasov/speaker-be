@@ -68,18 +68,30 @@ export function LearningLanguageSelector() {
         renderItem={({ item: locale }) => (
           <Pressable
             key={locale.tag}
-            style={styles.languageListItem}
+            style={[styles.languageListItem]}
             onPress={() => {
               setCurrentLearningLanguage.mutate({
                 selectedLearningLanguage: locale.tag,
               })
             }}
           >
-            <Text>
+            <Text
+              style={[
+                locale.tag === learningLanguage?.selectedLearningLanguage &&
+                  styles.languageListItemSelectedText,
+              ]}
+            >
               {locale.name}
               {locale.location ? ` (${locale.location})` : ''}
             </Text>
-            <Text>[{locale.tag}]</Text>
+            <Text
+              style={[
+                locale.tag === learningLanguage?.selectedLearningLanguage &&
+                  styles.languageListItemSelectedText,
+              ]}
+            >
+              [{locale.tag}]
+            </Text>
           </Pressable>
         )}
       />
@@ -90,8 +102,10 @@ export function LearningLanguageSelector() {
 const getStyles = styles((theme) => ({
   learningLanguageSelector: {
     gap: theme.spacing.sm,
+    flexShrink: 1,
   },
   list: {
+    flexShrink: 1,
     height: 200,
   },
   currentLanguageBox: {
@@ -104,5 +118,8 @@ const getStyles = styles((theme) => ({
     justifyContent: 'space-between',
     // paddingHorizontal: theme.spacing.xs,
     paddingVertical: theme.spacing.xxs / 2,
+  },
+  languageListItemSelectedText: {
+    color: theme.colors.accent,
   },
 }))
