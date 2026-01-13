@@ -113,7 +113,9 @@ function MessageBubble({ message }: { message: UIMessage }) {
         gap: spacing.xs,
       }}
     >
-      <Text style={{ color: textColor }}>{content}</Text>
+      <Text style={{ color: textColor }} selectable>
+        {content}
+      </Text>
     </View>
   )
 }

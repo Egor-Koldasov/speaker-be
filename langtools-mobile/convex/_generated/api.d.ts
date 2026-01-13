@@ -9,6 +9,7 @@
  */
 
 import type * as ai_agent from "../ai/agent.js";
+import type * as ai_suggestNewWordsTool from "../ai/suggestNewWordsTool.js";
 import type * as aiChat from "../aiChat.js";
 import type * as dictionary from "../dictionary.js";
 import type * as fsrsProgress from "../fsrsProgress.js";
@@ -16,6 +17,7 @@ import type * as http from "../http.js";
 import type * as internal_ from "../internal.js";
 import type * as internalNode from "../internalNode.js";
 import type * as learningLanguage from "../learningLanguage.js";
+import type * as newWords from "../newWords.js";
 import type * as objectStream from "../objectStream.js";
 import type * as types_AuthUser from "../types/AuthUser.js";
 import type * as types_NextFsrsItemWithTranslations from "../types/NextFsrsItemWithTranslations.js";
@@ -27,6 +29,7 @@ import type * as users from "../users.js";
 import type * as utils_action from "../utils/action.js";
 import type * as utils_chatMessage_chatMessage from "../utils/chatMessage/chatMessage.js";
 import type * as utils_dictionary_sortSensesByLocalId from "../utils/dictionary/sortSensesByLocalId.js";
+import type * as utils_internalAction from "../utils/internalAction.js";
 import type * as utils_internalMutation from "../utils/internalMutation.js";
 import type * as utils_internalQuery from "../utils/internalQuery.js";
 import type * as utils_mutation from "../utils/mutation.js";
@@ -38,6 +41,7 @@ import type * as utils_schema_FsrsProgressState from "../utils/schema/FsrsProgre
 import type * as utils_schema_aiDictionaryEntrySchema from "../utils/schema/aiDictionaryEntrySchema.js";
 import type * as utils_schema_aiDictionaryEntrySenseExtraSchema from "../utils/schema/aiDictionaryEntrySenseExtraSchema.js";
 import type * as utils_schema_aiDictionaryEntryTranslationSchema from "../utils/schema/aiDictionaryEntryTranslationSchema.js";
+import type * as utils_schema_aiNewWordsSchema from "../utils/schema/aiNewWordsSchema.js";
 import type * as utils_schema_aiVocabularyAwareSentenceSchema from "../utils/schema/aiVocabularyAwareSentenceSchema.js";
 import type * as utils_schema_fsrsApiItemSchema from "../utils/schema/fsrsApiItemSchema.js";
 import type * as utils_schema_zid from "../utils/schema/zid.js";
@@ -60,6 +64,7 @@ import type {
  */
 declare const fullApi: ApiFromModules<{
   "ai/agent": typeof ai_agent;
+  "ai/suggestNewWordsTool": typeof ai_suggestNewWordsTool;
   aiChat: typeof aiChat;
   dictionary: typeof dictionary;
   fsrsProgress: typeof fsrsProgress;
@@ -67,6 +72,7 @@ declare const fullApi: ApiFromModules<{
   internal: typeof internal_;
   internalNode: typeof internalNode;
   learningLanguage: typeof learningLanguage;
+  newWords: typeof newWords;
   objectStream: typeof objectStream;
   "types/AuthUser": typeof types_AuthUser;
   "types/NextFsrsItemWithTranslations": typeof types_NextFsrsItemWithTranslations;
@@ -78,6 +84,7 @@ declare const fullApi: ApiFromModules<{
   "utils/action": typeof utils_action;
   "utils/chatMessage/chatMessage": typeof utils_chatMessage_chatMessage;
   "utils/dictionary/sortSensesByLocalId": typeof utils_dictionary_sortSensesByLocalId;
+  "utils/internalAction": typeof utils_internalAction;
   "utils/internalMutation": typeof utils_internalMutation;
   "utils/internalQuery": typeof utils_internalQuery;
   "utils/mutation": typeof utils_mutation;
@@ -89,6 +96,7 @@ declare const fullApi: ApiFromModules<{
   "utils/schema/aiDictionaryEntrySchema": typeof utils_schema_aiDictionaryEntrySchema;
   "utils/schema/aiDictionaryEntrySenseExtraSchema": typeof utils_schema_aiDictionaryEntrySenseExtraSchema;
   "utils/schema/aiDictionaryEntryTranslationSchema": typeof utils_schema_aiDictionaryEntryTranslationSchema;
+  "utils/schema/aiNewWordsSchema": typeof utils_schema_aiNewWordsSchema;
   "utils/schema/aiVocabularyAwareSentenceSchema": typeof utils_schema_aiVocabularyAwareSentenceSchema;
   "utils/schema/fsrsApiItemSchema": typeof utils_schema_fsrsApiItemSchema;
   "utils/schema/zid": typeof utils_schema_zid;

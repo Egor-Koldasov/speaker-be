@@ -15,7 +15,7 @@ import { ApiDictionaryEntry } from '../src/utils/dictionary/ApiDictionaryEntry'
 import { api, components, internal } from './_generated/api'
 import { Id } from './_generated/dataModel'
 import { action } from './_generated/server'
-import { agent } from './ai/agent'
+import { agent, chatAgent } from './ai/agent'
 import { PromptParameter } from './types/PromptParameter'
 import { TransactionCtx } from './types/TransactionCtx'
 import { requireUserByCtx } from './users'
@@ -28,6 +28,7 @@ import {
   aiDictionaryEntryStreamSchema,
 } from './utils/schema/aiDictionaryEntrySchema'
 import { zStreamArgs } from './utils/zStreamArgs'
+import { internalAction } from './utils/internalAction'
 
 export const createThread = mutation({
   args: {},
@@ -49,11 +50,15 @@ export const sendRegularMessage = action({
     await ctx.runQuery(api.aiChat.getExistingThread, {
       threadId: args.threadId,
     })
-    await agent.streamText(
+    await chatAgent.streamText(
       ctx,
       { threadId: args.threadId },
       {
         prompt: args.message,
+        stopWhen: (options) => {
+          const lastStep = options.steps[options.steps.length - 1]
+          return options.steps.length > 10 || lastStep?.finishReason === 'stop'
+        },
       },
       { saveStreamDeltas: { throttleMs: 100 } },
     )
@@ -317,6 +322,11 @@ export const generateDictionaryEntryComplete = action({
     }
     return { apiDictionaryEntry }
   },
+})
+
+export const testThread = internalAction({
+  args: { threadId: z.string() },
+  handler: async (ctx, { threadId }) => {},
 })
 
 export const updateAiDictionaryEntryStream = internalMutation({

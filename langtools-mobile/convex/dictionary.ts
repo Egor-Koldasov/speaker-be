@@ -323,6 +323,11 @@ export const getVocabularyContext = internalQuery({
   },
   async handler(ctx, { extendedInfoLimit = 500 }) {
     const user = await requireUserByCtx(ctx)
+
+    const learningLanguage = await ctx.runQuery(
+      api.learningLanguage.getLearningLanguage,
+      {},
+    )
     const fsrsProgressList = await ctx.db
       .query('fsrsProgress')
       .withIndex('byUserIdDue', (q) => q.eq('userId', user._id))
